@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Created-By: 21.0-b17 (Oracle Corporation)
+Implementation-Title: OpenSigFiscal
+Implementation-Version: 1.00-b537
+Implementation-Vendor: PhD - Systems Solutions
+Implementation-Url: http://phdss.com.br
+Built-By: Pedro H. Lira - opensig@phdss.com.br
+Built-Date: 06-09-2011 10:47:43
+Main-Class: br.com.opensig.fiscal.client.OpenSigFiscal
+

@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.7.1
+Created-By: 21.0-b17 (Oracle Corporation)
+Implementation-Title: OpenSig
+Implementation-Version: 1.00-b9
+Implementation-Vendor: PhD - Systems Solutions
+Implementation-Url: http://phdss.com.br
+Built-By: Pedro H. Lira - opensig@phdss.com.br
+Built-Date: 05-09-2011 18:17:42
+Main-Class: br.com.opensig.comercial.client.OpenSig
+

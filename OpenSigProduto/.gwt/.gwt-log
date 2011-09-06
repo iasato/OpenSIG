@@ -1,0 +1,850 @@
+Module location: file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/OpenSigProduto.gwt.xml
+Public resources found in...
+   Refreshing resources
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Google/gwt-2.1.1/gwt-user.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Google/gwt-2.1.1/gwt-user.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Google/gwt-2.1.1/gwt-dev.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Google/gwt-2.1.1/gwt-dev.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtOfc/dist/GwtOfc.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtOfc/dist/GwtOfc.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtExt/dist/GwtExt.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtExt/dist/GwtExt.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtExtUx/dist/GwtExtUx.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtExtUx/dist/GwtExtUx.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Java/jpa/toplink-essentials-agent.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Java/jpa/toplink-essentials-agent.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Java/jpa/toplink-essentials.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Java/jpa/toplink-essentials.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/commons-fileupload.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/commons-fileupload.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/core-renderer.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/core-renderer.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/iText.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/iText.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/jettison.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/jettison.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/Json.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/Json.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/jtidy.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/jtidy.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/poi.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/poi.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/simplecaptcha.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/simplecaptcha.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/xstream.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/xstream.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/log4j.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/log4j.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/mail.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/mail.jar
+Translatable source found in...
+   Refreshing resources
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Google/gwt-2.1.1/gwt-user.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Google/gwt-2.1.1/gwt-user.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Google/gwt-2.1.1/gwt-dev.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Google/gwt-2.1.1/gwt-dev.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtOfc/dist/GwtOfc.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtOfc/dist/GwtOfc.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtExt/dist/GwtExt.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtExt/dist/GwtExt.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtExtUx/dist/GwtExtUx.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/Bibliotecas/GwtExtUx/dist/GwtExtUx.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Java/jpa/toplink-essentials-agent.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Java/jpa/toplink-essentials-agent.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Java/jpa/toplink-essentials.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Java/jpa/toplink-essentials.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/commons-fileupload.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/commons-fileupload.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/core-renderer.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/core-renderer.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/iText.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/iText.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/jettison.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/jettison.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/Json.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/Json.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/jtidy.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/jtidy.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/poi.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/poi.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/simplecaptcha.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/simplecaptcha.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/xstream.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/xstream.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/log4j.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/log4j.jar
+      Searching for resources within file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/mail.jar
+         Indexing zip file: /Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/Externas/mail.jar
+Validating newly compiled units
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdTributacao.java'
+      [ERROR] Line 1: The type java.lang.Object cannot be resolved. It is indirectly referenced from required .class files
+      [ERROR] Line 23: The hierarchy of the type ProdTributacao is inconsistent
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/lista/ListagemTributacao.java'
+      [ERROR] Line 17: The hierarchy of the type ListagemTributacao is inconsistent
+      [ERROR] Line 17: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagem<E>; did you forget to inherit a required module?
+      [ERROR] Line 19: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+      [ERROR] Line 26: No source code is available for type com.gwtext.client.data.FieldDef; did you forget to inherit a required module?
+      [ERROR] Line 26: No source code is available for type com.gwtext.client.data.IntegerFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 26: No source code is available for type com.gwtext.client.data.StringFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 27: No source code is available for type com.gwtext.client.data.FloatFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 29: No source code is available for type com.gwtext.client.data.RecordDef; did you forget to inherit a required module?
+      [ERROR] Line 32: No source code is available for type com.gwtext.client.widgets.grid.ColumnConfig; did you forget to inherit a required module?
+      [ERROR] Line 32: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+      [ERROR] Line 41: No source code is available for type com.gwtext.client.widgets.grid.BaseColumnConfig; did you forget to inherit a required module?
+      [ERROR] Line 42: No source code is available for type com.gwtext.client.widgets.grid.ColumnModel; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/servico/ProdutoService.java'
+      [ERROR] Line 10: The hierarchy of the type ProdutoService is inconsistent
+      [ERROR] Line 10: No source code is available for type com.google.gwt.user.client.rpc.RemoteService; did you forget to inherit a required module?
+      [ERROR] Line 12: No source code is available for type java.util.List<E>; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/controlador/comando/ComandoEmbalagem.java'
+      [ERROR] Line 10: The hierarchy of the type ComandoEmbalagem is inconsistent
+      [ERROR] Line 10: No source code is available for type br.com.opensig.core.client.controlador.comando.ComandoFuncao; did you forget to inherit a required module?
+      [ERROR] Line 12: No source code is available for type java.util.Map<K,V>; did you forget to inherit a required module?
+      [ERROR] Line 13: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+      [ERROR] Line 13: The method get(Object) from the type Map refers to the missing type Object
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdCategoria.java'
+      [ERROR] Line 23: The hierarchy of the type ProdCategoria is inconsistent
+      [ERROR] Line 23: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+      [ERROR] Line 23: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+      [ERROR] Line 32: No source code is available for type java.lang.String; did you forget to inherit a required module?
+      [ERROR] Line 59: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/controlador/comando/ComandoProduto.java'
+      [ERROR] Line 11: The hierarchy of the type ComandoProduto is inconsistent
+      [ERROR] Line 11: No source code is available for type br.com.opensig.core.client.controlador.comando.ComandoFuncao; did you forget to inherit a required module?
+      [ERROR] Line 14: No source code is available for type java.util.Map<K,V>; did you forget to inherit a required module?
+      [ERROR] Line 15: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+      [ERROR] Line 15: The method get(Object) from the type Map refers to the missing type Object
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/form/FormularioEmbalagem.java'
+      [ERROR] Line 14: The hierarchy of the type FormularioEmbalagem is inconsistent
+      [ERROR] Line 14: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+      [ERROR] Line 16: No source code is available for type com.gwtext.client.widgets.form.Hidden; did you forget to inherit a required module?
+      [ERROR] Line 17: No source code is available for type com.gwtext.client.widgets.form.TextField; did you forget to inherit a required module?
+      [ERROR] Line 18: No source code is available for type com.gwtext.client.widgets.form.NumberField; did you forget to inherit a required module?
+      [ERROR] Line 21: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+      [ERROR] Line 32: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+      [ERROR] Line 46: No source code is available for type com.gwtext.client.widgets.form.MultiFieldPanel; did you forget to inherit a required module?
+      [ERROR] Line 55: No source code is available for type java.lang.Integer; did you forget to inherit a required module?
+      [ERROR] Line 69: No source code is available for type com.gwtext.client.data.Record; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdEstoque.java'
+      [ERROR] Line 28: The hierarchy of the type ProdEstoque is inconsistent
+      [ERROR] Line 28: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+      [ERROR] Line 28: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+      [ERROR] Line 37: No source code is available for type java.lang.Double; did you forget to inherit a required module?
+      [ERROR] Line 45: No source code is available for type br.com.opensig.empresa.shared.modelo.EmpEmpresa; did you forget to inherit a required module?
+      [ERROR] Line 52: No source code is available for type br.com.opensig.core.shared.modelo.EDirecao; did you forget to inherit a required module?
+      [ERROR] Line 88: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+      [ERROR] Line 96: No source code is available for type java.lang.String; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/OpenSigProduto.java'
+      [ERROR] Line 24: The hierarchy of the type OpenSigProduto is inconsistent
+      [ERROR] Line 24: Implicit super constructor Object() is undefined for default constructor. Must define an explicit constructor
+      [ERROR] Line 24: No source code is available for type com.google.gwt.core.client.EntryPoint; did you forget to inherit a required module?
+      [ERROR] Line 32: No source code is available for type br.com.opensig.core.client.controlador.comando.FabricaComando; did you forget to inherit a required module?
+      [ERROR] Line 33: No source code is available for type br.com.opensig.core.client.controlador.comando.IComando; did you forget to inherit a required module?
+      [ERROR] Line 33: No source code is available for type com.google.gwt.core.client.GWT; did you forget to inherit a required module?
+      [ERROR] Line 33: The method create(Class<?>) from the type GWT refers to the missing type Object
+      [ERROR] Line 34: The method create(Class<?>) from the type GWT refers to the missing type Object
+      [ERROR] Line 35: The method create(Class<?>) from the type GWT refers to the missing type Object
+      [ERROR] Line 36: The method create(Class<?>) from the type GWT refers to the missing type Object
+      [ERROR] Line 39: No source code is available for type java.util.Collection<E>; did you forget to inherit a required module?
+      [ERROR] Line 39: No source code is available for type java.lang.Class<T>; did you forget to inherit a required module?
+      [ERROR] Line 39: No source code is available for type java.util.ArrayList<E>; did you forget to inherit a required module?
+      [ERROR] Line 40: No source code is available for type br.com.opensig.core.client.visao.Ponte; did you forget to inherit a required module?
+      [ERROR] Line 41: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 41: No source code is available for type br.com.opensig.core.client.controlador.comando.lista.ComandoVisualizar; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/controlador/comando/ComandoTributacao.java'
+      [ERROR] Line 10: The hierarchy of the type ComandoTributacao is inconsistent
+      [ERROR] Line 10: No source code is available for type br.com.opensig.core.client.controlador.comando.ComandoFuncao; did you forget to inherit a required module?
+      [ERROR] Line 13: No source code is available for type java.util.Map<K,V>; did you forget to inherit a required module?
+      [ERROR] Line 14: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+      [ERROR] Line 14: The method get(Object) from the type Map refers to the missing type Object
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/form/FormularioTributacao.java'
+      [ERROR] Line 15: The hierarchy of the type FormularioTributacao is inconsistent
+      [ERROR] Line 15: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+      [ERROR] Line 17: No source code is available for type com.gwtext.client.widgets.form.Hidden; did you forget to inherit a required module?
+      [ERROR] Line 18: No source code is available for type com.gwtext.client.widgets.form.TextField; did you forget to inherit a required module?
+      [ERROR] Line 21: No source code is available for type com.gwtext.client.widgets.form.NumberField; did you forget to inherit a required module?
+      [ERROR] Line 24: No source code is available for type com.gwtext.client.widgets.form.TextArea; did you forget to inherit a required module?
+      [ERROR] Line 26: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+      [ERROR] Line 37: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+      [ERROR] Line 73: No source code is available for type com.gwtext.client.widgets.form.MultiFieldPanel; did you forget to inherit a required module?
+      [ERROR] Line 90: No source code is available for type java.lang.Integer; did you forget to inherit a required module?
+      [ERROR] Line 112: No source code is available for type com.gwtext.client.data.Record; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdPreco.java'
+      [ERROR] Line 26: The hierarchy of the type ProdPreco is inconsistent
+      [ERROR] Line 26: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+      [ERROR] Line 26: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+      [ERROR] Line 38: No source code is available for type java.lang.Long; did you forget to inherit a required module?
+      [ERROR] Line 97: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+      [ERROR] Line 105: No source code is available for type java.lang.String; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/form/FormularioProduto.java'
+      [ERROR] Line 60: The import com.gwtextux.client.widgets.window cannot be resolved
+      [ERROR] Line 62: The hierarchy of the type FormularioProduto is inconsistent
+      [ERROR] Line 217: The constructor Object() is undefined
+      [ERROR] Line 222: Object cannot be resolved to a type
+      [ERROR] Line 240: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 249: ToastWindow cannot be resolved to a type
+      [ERROR] Line 274: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 280: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 379: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 401: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 421: The constructor Object() is undefined
+      [ERROR] Line 457: The constructor Object() is undefined
+      [ERROR] Line 490: The constructor Object() is undefined
+      [ERROR] Line 497: ToastWindow cannot be resolved to a type
+      [ERROR] Line 504: The constructor Object() is undefined
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/servico/ProdutoServiceAsync.java'
+      [ERROR] Line 11: The hierarchy of the type ProdutoServiceAsync is inconsistent
+      [ERROR] Line 11: No source code is available for type com.google.gwt.user.client.rpc.RemoteService; did you forget to inherit a required module?
+      [ERROR] Line 13: No source code is available for type java.util.List<E>; did you forget to inherit a required module?
+      [ERROR] Line 13: No source code is available for type com.google.gwt.user.client.rpc.AsyncCallback<T>; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdProduto.java'
+      [ERROR] Line 36: The hierarchy of the type ProdProduto is inconsistent
+      [ERROR] Line 36: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+      [ERROR] Line 36: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+      [ERROR] Line 45: No source code is available for type java.lang.String; did you forget to inherit a required module?
+      [ERROR] Line 49: No source code is available for type java.util.Date; did you forget to inherit a required module?
+      [ERROR] Line 58: No source code is available for type java.lang.Long; did you forget to inherit a required module?
+      [ERROR] Line 68: No source code is available for type java.lang.Double; did you forget to inherit a required module?
+      [ERROR] Line 83: No source code is available for type java.util.List<E>; did you forget to inherit a required module?
+      [ERROR] Line 94: No source code is available for type br.com.opensig.empresa.shared.modelo.EmpFornecedor; did you forget to inherit a required module?
+      [ERROR] Line 116: No source code is available for type br.com.opensig.core.shared.modelo.EDirecao; did you forget to inherit a required module?
+      [ERROR] Line 118: No source code is available for type br.com.opensig.core.shared.modelo.Colecao; did you forget to inherit a required module?
+      [ERROR] Line 291: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+      [ERROR] Line 314: No source code is available for type br.com.opensig.core.client.UtilClient; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/grafico/GraficoProduto.java'
+      [ERROR] Line 7: The hierarchy of the type GraficoProduto is inconsistent
+      [ERROR] Line 7: No source code is available for type br.com.opensig.core.client.visao.abstrato.AGrafico<E>; did you forget to inherit a required module?
+      [ERROR] Line 9: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagem<E>; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/servico/ProdutoProxy.java'
+      [ERROR] Line 12: The hierarchy of the type ProdutoProxy is inconsistent
+      [ERROR] Line 14: No source code is available for type com.google.gwt.core.client.GWT; did you forget to inherit a required module?
+      [ERROR] Line 14: The method create(Class<?>) from the type GWT refers to the missing type Object
+      [ERROR] Line 15: No source code is available for type com.google.gwt.user.client.rpc.ServiceDefTarget; did you forget to inherit a required module?
+      [ERROR] Line 17: Implicit super constructor Object() is undefined. Must explicitly invoke another constructor
+      [ERROR] Line 21: No source code is available for type java.util.List<E>; did you forget to inherit a required module?
+      [ERROR] Line 21: No source code is available for type com.google.gwt.user.client.rpc.AsyncCallback<T>; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/form/FormularioPesquisa.java'
+      [ERROR] Line 39: The hierarchy of the type FormularioPesquisa is inconsistent
+      [ERROR] Line 39: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+      [ERROR] Line 42: No source code is available for type com.gwtext.client.widgets.form.TextField; did you forget to inherit a required module?
+      [ERROR] Line 43: No source code is available for type com.gwtext.client.widgets.form.Checkbox; did you forget to inherit a required module?
+      [ERROR] Line 47: No source code is available for type com.gwtext.client.widgets.ToolbarButton; did you forget to inherit a required module?
+      [ERROR] Line 49: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+      [ERROR] Line 58: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+      [ERROR] Line 60: No source code is available for type com.gwtext.client.core.Ext; did you forget to inherit a required module?
+      [ERROR] Line 61: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroNumero; did you forget to inherit a required module?
+      [ERROR] Line 61: No source code is available for type br.com.opensig.core.client.controlador.filtro.ECompara; did you forget to inherit a required module?
+      [ERROR] Line 62: No source code is available for type com.gwtext.client.data.event.StoreListenerAdapter; did you forget to inherit a required module?
+      [ERROR] Line 63: No source code is available for type com.gwtext.client.data.Store; did you forget to inherit a required module?
+      [ERROR] Line 63: No source code is available for type com.gwtext.client.data.Record; did you forget to inherit a required module?
+      [ERROR] Line 72: No source code is available for type com.gwtext.client.widgets.grid.event.GridRowListenerAdapter; did you forget to inherit a required module?
+      [ERROR] Line 73: No source code is available for type com.gwtext.client.widgets.grid.GridPanel; did you forget to inherit a required module?
+      [ERROR] Line 73: No source code is available for type com.gwtext.client.core.EventObject; did you forget to inherit a required module?
+      [ERROR] Line 78: No source code is available for type com.gwtext.client.widgets.grid.event.GridListenerAdapter; did you forget to inherit a required module?
+      [ERROR] Line 95: No source code is available for type com.gwtext.client.widgets.layout.ColumnLayout; did you forget to inherit a required module?
+      [ERROR] Line 96: No source code is available for type com.gwtext.client.widgets.layout.ColumnLayoutData; did you forget to inherit a required module?
+      [ERROR] Line 102: No source code is available for type com.gwtext.client.widgets.menu.Menu; did you forget to inherit a required module?
+      [ERROR] Line 110: The constructor Object() is undefined
+      [ERROR] Line 110: No source code is available for type com.gwtext.client.widgets.event.KeyListener; did you forget to inherit a required module?
+      [ERROR] Line 126: No source code is available for type com.gwtext.client.widgets.event.ButtonListenerAdapter; did you forget to inherit a required module?
+      [ERROR] Line 127: No source code is available for type com.gwtext.client.widgets.Button; did you forget to inherit a required module?
+      [ERROR] Line 162: No source code is available for type java.lang.Exception; did you forget to inherit a required module?
+      [ERROR] Line 171: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroObjeto; did you forget to inherit a required module?
+      [ERROR] Line 178: No source code is available for type br.com.opensig.core.client.controlador.filtro.GrupoFiltro; did you forget to inherit a required module?
+      [ERROR] Line 184: No source code is available for type br.com.opensig.core.client.controlador.filtro.EJuncao; did you forget to inherit a required module?
+      [ERROR] Line 197: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroTexto; did you forget to inherit a required module?
+      [ERROR] Line 213: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroBinario; did you forget to inherit a required module?
+      [ERROR] Line 214: No source code is available for type br.com.opensig.core.client.controlador.filtro.IFiltro<E>; did you forget to inherit a required module?
+      [ERROR] Line 221: No source code is available for type br.com.opensig.core.client.controlador.comando.IComando; did you forget to inherit a required module?
+      [ERROR] Line 227: No source code is available for type com.gwtext.client.widgets.MessageBox; did you forget to inherit a required module?
+      [ERROR] Line 227: The constructor Object() is undefined
+      [ERROR] Line 227: No source code is available for type com.gwtext.client.widgets.MessageBox.AlertCallback; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdOrigem.java'
+      [ERROR] Line 23: The hierarchy of the type ProdOrigem is inconsistent
+      [ERROR] Line 23: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+      [ERROR] Line 23: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+      [ERROR] Line 32: No source code is available for type java.lang.String; did you forget to inherit a required module?
+      [ERROR] Line 59: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/lista/ListagemProduto.java'
+      [ERROR] Line 36: The hierarchy of the type ListagemProduto is inconsistent
+      [ERROR] Line 36: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagem<E>; did you forget to inherit a required module?
+      [ERROR] Line 38: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+      [ERROR] Line 45: No source code is available for type com.gwtext.client.data.FieldDef; did you forget to inherit a required module?
+      [ERROR] Line 45: No source code is available for type com.gwtext.client.data.IntegerFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 45: No source code is available for type com.gwtext.client.data.StringFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 46: No source code is available for type com.gwtext.client.data.FloatFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 53: No source code is available for type com.gwtext.client.data.DateFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 53: No source code is available for type com.gwtext.client.data.BooleanFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 55: No source code is available for type com.gwtext.client.data.RecordDef; did you forget to inherit a required module?
+      [ERROR] Line 58: No source code is available for type com.gwtext.client.widgets.grid.ColumnConfig; did you forget to inherit a required module?
+      [ERROR] Line 58: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+      [ERROR] Line 110: No source code is available for type com.gwtext.client.widgets.grid.BaseColumnConfig; did you forget to inherit a required module?
+      [ERROR] Line 113: No source code is available for type com.gwtext.client.widgets.grid.ColumnModel; did you forget to inherit a required module?
+      [ERROR] Line 122: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroObjeto; did you forget to inherit a required module?
+      [ERROR] Line 122: No source code is available for type br.com.opensig.core.client.controlador.filtro.ECompara; did you forget to inherit a required module?
+      [ERROR] Line 122: No source code is available for type br.com.opensig.empresa.shared.modelo.EmpEmpresa; did you forget to inherit a required module?
+      [ERROR] Line 122: No source code is available for type br.com.opensig.core.client.visao.Ponte; did you forget to inherit a required module?
+      [ERROR] Line 128: No source code is available for type java.util.Map<K,V>.Entry<K,V>; did you forget to inherit a required module?
+      [ERROR] Line 128: No source code is available for type java.lang.String; did you forget to inherit a required module?
+      [ERROR] Line 128: No source code is available for type com.gwtextux.client.widgets.grid.plugins.GridFilter; did you forget to inherit a required module?
+      [ERROR] Line 129: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 130: No source code is available for type com.gwtextux.client.widgets.grid.plugins.GridBooleanFilter; did you forget to inherit a required module?
+      [ERROR] Line 131: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 134: No source code is available for type br.com.opensig.core.client.servico.CoreProxy<E>; did you forget to inherit a required module?
+      [ERROR] Line 135: No source code is available for type com.gwtext.client.data.Store; did you forget to inherit a required module?
+      [ERROR] Line 135: No source code is available for type com.gwtext.client.data.ArrayReader; did you forget to inherit a required module?
+      [ERROR] Line 137: No source code is available for type com.gwtextux.client.widgets.grid.plugins.GridListFilter; did you forget to inherit a required module?
+      [ERROR] Line 142: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 153: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 164: The method equals(Object) from the type String refers to the missing type Object
+      [ERROR] Line 181: No source code is available for type br.com.opensig.core.shared.modelo.IFavorito; did you forget to inherit a required module?
+      [ERROR] Line 182: The method get(Object) from the type Map<String,GridFilter> refers to the missing type Object
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/controlador/comando/ComandoPesquisa.java'
+      [ERROR] Line 28: The hierarchy of the type ComandoPesquisa is inconsistent
+      [ERROR] Line 28: No source code is available for type br.com.opensig.core.client.controlador.comando.ComandoFuncao; did you forget to inherit a required module?
+      [ERROR] Line 29: No source code is available for type com.google.gwt.user.client.rpc.AsyncCallback<T>; did you forget to inherit a required module?
+      [ERROR] Line 29: No source code is available for type com.gwtext.client.data.Record; did you forget to inherit a required module?
+      [ERROR] Line 31: No source code is available for type com.gwtext.client.widgets.Window; did you forget to inherit a required module?
+      [ERROR] Line 33: No source code is available for type java.util.Map<K,V>; did you forget to inherit a required module?
+      [ERROR] Line 34: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+      [ERROR] Line 34: The method get(Object) from the type Map refers to the missing type Object
+      [ERROR] Line 38: No source code is available for type com.gwtext.client.widgets.layout.FitLayout; did you forget to inherit a required module?
+      [ERROR] Line 41: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+      [ERROR] Line 43: No source code is available for type com.gwtext.client.core.Position; did you forget to inherit a required module?
+      [ERROR] Line 44: No source code is available for type com.gwtext.client.widgets.event.WindowListenerAdapter; did you forget to inherit a required module?
+      [ERROR] Line 46: No source code is available for type com.gwtext.client.widgets.Component; did you forget to inherit a required module?
+      [ERROR] Line 53: No source code is available for type com.gwtext.client.widgets.grid.event.GridRowListenerAdapter; did you forget to inherit a required module?
+      [ERROR] Line 54: No source code is available for type com.gwtext.client.widgets.grid.GridPanel; did you forget to inherit a required module?
+      [ERROR] Line 54: No source code is available for type com.gwtext.client.core.EventObject; did you forget to inherit a required module?
+      [ERROR] Line 59: No source code is available for type com.gwtext.client.widgets.grid.event.GridListenerAdapter; did you forget to inherit a required module?
+      [ERROR] Line 81: No source code is available for type com.gwtext.client.data.event.StoreListenerAdapter; did you forget to inherit a required module?
+      [ERROR] Line 82: No source code is available for type com.gwtext.client.data.Store; did you forget to inherit a required module?
+      [ERROR] Line 93: No source code is available for type br.com.opensig.core.client.controlador.comando.form.ComandoSalvar<E>; did you forget to inherit a required module?
+      [ERROR] Line 99: No source code is available for type br.com.opensig.core.client.controlador.comando.AComando<E>; did you forget to inherit a required module?
+      [ERROR] Line 111: No source code is available for type com.gwtext.client.core.Ext; did you forget to inherit a required module?
+      [ERROR] Line 130: No source code is available for type java.lang.NullPointerException; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/servico/ProdutoException.java'
+      [ERROR] Line 12: The hierarchy of the type ProdutoException is inconsistent
+      [ERROR] Line 12: No source code is available for type br.com.opensig.core.client.servico.OpenSigException; did you forget to inherit a required module?
+      [ERROR] Line 25: No source code is available for type java.lang.String; did you forget to inherit a required module?
+      [ERROR] Line 32: No source code is available for type java.lang.Throwable; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/lista/ListagemPreco.java'
+      [ERROR] Line 31: The hierarchy of the type ListagemPreco is inconsistent
+      [ERROR] Line 31: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagemEditor<E>; did you forget to inherit a required module?
+      [ERROR] Line 33: No source code is available for type com.gwtext.client.data.Store; did you forget to inherit a required module?
+      [ERROR] Line 34: No source code is available for type com.gwtext.client.widgets.form.NumberField; did you forget to inherit a required module?
+      [ERROR] Line 36: No source code is available for type com.gwtext.client.data.RecordDef; did you forget to inherit a required module?
+      [ERROR] Line 45: No source code is available for type com.gwtext.client.data.FieldDef; did you forget to inherit a required module?
+      [ERROR] Line 45: No source code is available for type com.gwtext.client.data.IntegerFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 45: No source code is available for type com.gwtext.client.data.StringFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 46: No source code is available for type com.gwtext.client.data.FloatFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 52: No source code is available for type br.com.opensig.core.client.servico.CoreProxy<E>; did you forget to inherit a required module?
+      [ERROR] Line 53: No source code is available for type com.gwtext.client.data.ArrayReader; did you forget to inherit a required module?
+      [ERROR] Line 57: No source code is available for type com.gwtext.client.widgets.grid.ColumnConfig; did you forget to inherit a required module?
+      [ERROR] Line 61: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+      [ERROR] Line 61: The constructor Object() is undefined
+      [ERROR] Line 61: No source code is available for type com.gwtext.client.widgets.grid.Renderer; did you forget to inherit a required module?
+      [ERROR] Line 62: No source code is available for type java.lang.String; did you forget to inherit a required module?
+      [ERROR] Line 62: Object cannot be resolved to a type
+      [ERROR] Line 62: No source code is available for type com.gwtext.client.widgets.grid.CellMetadata; did you forget to inherit a required module?
+      [ERROR] Line 62: No source code is available for type com.gwtext.client.data.Record; did you forget to inherit a required module?
+      [ERROR] Line 73: No source code is available for type com.gwtext.client.widgets.grid.GridEditor; did you forget to inherit a required module?
+      [ERROR] Line 86: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagem<E>; did you forget to inherit a required module?
+      [ERROR] Line 98: No source code is available for type com.gwtext.client.widgets.grid.BaseColumnConfig; did you forget to inherit a required module?
+      [ERROR] Line 99: No source code is available for type com.gwtext.client.widgets.grid.ColumnModel; did you forget to inherit a required module?
+      [ERROR] Line 102: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroNumero; did you forget to inherit a required module?
+      [ERROR] Line 102: No source code is available for type br.com.opensig.core.client.controlador.filtro.ECompara; did you forget to inherit a required module?
+      [ERROR] Line 109: No source code is available for type java.util.List<E>; did you forget to inherit a required module?
+      [ERROR] Line 120: No source code is available for type java.lang.Exception; did you forget to inherit a required module?
+      [ERROR] Line 126: No source code is available for type java.lang.Long; did you forget to inherit a required module?
+      [ERROR] Line 137: No source code is available for type com.gwtext.client.widgets.form.ComboBox; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/lista/ListagemEmbalagem.java'
+      [ERROR] Line 16: The hierarchy of the type ListagemEmbalagem is inconsistent
+      [ERROR] Line 16: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagem<E>; did you forget to inherit a required module?
+      [ERROR] Line 18: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+      [ERROR] Line 25: No source code is available for type com.gwtext.client.data.FieldDef; did you forget to inherit a required module?
+      [ERROR] Line 25: No source code is available for type com.gwtext.client.data.IntegerFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 25: No source code is available for type com.gwtext.client.data.StringFieldDef; did you forget to inherit a required module?
+      [ERROR] Line 26: No source code is available for type com.gwtext.client.data.RecordDef; did you forget to inherit a required module?
+      [ERROR] Line 29: No source code is available for type com.gwtext.client.widgets.grid.ColumnConfig; did you forget to inherit a required module?
+      [ERROR] Line 29: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+      [ERROR] Line 34: No source code is available for type com.gwtext.client.widgets.grid.BaseColumnConfig; did you forget to inherit a required module?
+      [ERROR] Line 35: No source code is available for type com.gwtext.client.widgets.grid.ColumnModel; did you forget to inherit a required module?
+   [ERROR] Errors in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdEmbalagem.java'
+      [ERROR] Line 23: The hierarchy of the type ProdEmbalagem is inconsistent
+      [ERROR] Line 23: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+      [ERROR] Line 23: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+      [ERROR] Line 32: No source code is available for type java.lang.String; did you forget to inherit a required module?
+      [ERROR] Line 81: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+Removing invalidated units
+Resolving br.com.opensig.produto.shared.modelo.ProdEmbalagem
+   Found type 'br.com.opensig.produto.shared.modelo.ProdEmbalagem'
+      [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+Resolving br.com.opensig.produto.client.controlador.comando.ComandoProduto
+   Found type 'br.com.opensig.produto.client.controlador.comando.ComandoProduto'
+      [WARN] Unable to resolve supertype br/com/opensig/core/client/controlador/comando/ComandoFuncao
+Resolving br.com.opensig.produto.client.visao.form.FormularioPesquisa
+   Found type 'br.com.opensig.produto.client.visao.form.FormularioPesquisa'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AFormulario
+      Found type 'br.com.opensig.produto.shared.modelo.ProdProduto'
+         [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+      [ERROR] Unable to resolve class br/com/opensig/produto/shared/modelo/ProdProduto
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.shared.modelo.ProdOrigem
+   Found type 'br.com.opensig.produto.shared.modelo.ProdOrigem'
+      [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+Resolving br.com.opensig.produto.client.servico.ProdutoService
+   Found type 'br.com.opensig.produto.client.servico.ProdutoService'
+      [WARN] Unable to resolve interface com/google/gwt/user/client/rpc/RemoteService
+Resolving br.com.opensig.produto.shared.modelo.ProdCategoria
+   Found type 'br.com.opensig.produto.shared.modelo.ProdCategoria'
+      [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+Resolving br.com.opensig.produto.client.controlador.comando.ComandoTributacao
+   Found type 'br.com.opensig.produto.client.controlador.comando.ComandoTributacao'
+      [WARN] Unable to resolve supertype br/com/opensig/core/client/controlador/comando/ComandoFuncao
+Resolving br.com.opensig.produto.client.servico.ProdutoServiceAsync
+   Found type 'br.com.opensig.produto.client.servico.ProdutoServiceAsync'
+      [WARN] Unable to resolve interface com/google/gwt/user/client/rpc/RemoteService
+Resolving br.com.opensig.produto.client.servico.ProdutoProxy
+   Found type 'br.com.opensig.produto.client.servico.ProdutoProxy'
+      [WARN] Unable to resolve supertype java/lang/Object
+Resolving br.com.opensig.produto.client.controlador.comando.ComandoPesquisa
+   Found type 'br.com.opensig.produto.client.controlador.comando.ComandoPesquisa'
+      [WARN] Unable to resolve supertype br/com/opensig/core/client/controlador/comando/ComandoFuncao
+Resolving br.com.opensig.produto.client.controlador.comando.ComandoEmbalagem
+   Found type 'br.com.opensig.produto.client.controlador.comando.ComandoEmbalagem'
+      [WARN] Unable to resolve supertype br/com/opensig/core/client/controlador/comando/ComandoFuncao
+Resolving br.com.opensig.produto.client.visao.form.FormularioEmbalagem
+   Found type 'br.com.opensig.produto.client.visao.form.FormularioEmbalagem'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AFormulario
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.client.OpenSigProduto
+   Found type 'br.com.opensig.produto.client.OpenSigProduto'
+      [WARN] Unable to resolve supertype java/lang/Object
+Resolving br.com.opensig.produto.client.visao.form.FormularioTributacao
+   Found type 'br.com.opensig.produto.client.visao.form.FormularioTributacao'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AFormulario
+      [ERROR] Unable to resolve class br/com/opensig/produto/shared/modelo/ProdTributacao
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.shared.modelo.ProdPreco
+   Found type 'br.com.opensig.produto.shared.modelo.ProdPreco'
+      [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+Resolving br.com.opensig.produto.client.servico.ProdutoException
+   Found type 'br.com.opensig.produto.client.servico.ProdutoException'
+      [WARN] Unable to resolve supertype br/com/opensig/core/client/servico/OpenSigException
+Resolving br.com.opensig.produto.client.visao.lista.ListagemEmbalagem
+   Found type 'br.com.opensig.produto.client.visao.lista.ListagemEmbalagem'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AListagem
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.client.visao.lista.ListagemPreco
+   Found type 'br.com.opensig.produto.client.visao.lista.ListagemPreco'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AListagemEditor
+      [ERROR] Unable to resolve class java/util/List
+      [WARN] Unable to resolve method method validar
+Resolving br.com.opensig.produto.shared.modelo.ProdEstoque
+   Found type 'br.com.opensig.produto.shared.modelo.ProdEstoque'
+      [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+Resolving br.com.opensig.produto.client.visao.grafico.GraficoProduto
+   Found type 'br.com.opensig.produto.client.visao.grafico.GraficoProduto'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AGrafico
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AListagem
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.client.visao.lista.ListagemTributacao
+   Found type 'br.com.opensig.produto.client.visao.lista.ListagemTributacao'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AListagem
+      [ERROR] Unable to resolve class br/com/opensig/produto/shared/modelo/ProdTributacao
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.client.visao.lista.ListagemProduto
+   Found type 'br.com.opensig.produto.client.visao.lista.ListagemProduto'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AListagem
+      [WARN] Unable to resolve method method <init>
+[ERROR] Unable to find type 'java.lang.Object'
+   [ERROR] Hint: Check that your module inherits 'com.google.gwt.core.Core' either directly or indirectly (most often by inheriting module 'com.google.gwt.user.User')
+Refreshing module 'br.com.opensig.produto.OpenSigProduto'
+   Refreshing resources
+   Refreshing resources
+   Refreshing resources
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdTributacao.java'
+   [ERROR] Line 1: The type java.lang.Object cannot be resolved. It is indirectly referenced from required .class files
+   [ERROR] Line 23: The hierarchy of the type ProdTributacao is inconsistent
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/lista/ListagemTributacao.java'
+   [ERROR] Line 17: The hierarchy of the type ListagemTributacao is inconsistent
+   [ERROR] Line 17: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagem<E>; did you forget to inherit a required module?
+   [ERROR] Line 19: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+   [ERROR] Line 26: No source code is available for type com.gwtext.client.data.FieldDef; did you forget to inherit a required module?
+   [ERROR] Line 26: No source code is available for type com.gwtext.client.data.IntegerFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 26: No source code is available for type com.gwtext.client.data.StringFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 27: No source code is available for type com.gwtext.client.data.FloatFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 29: No source code is available for type com.gwtext.client.data.RecordDef; did you forget to inherit a required module?
+   [ERROR] Line 32: No source code is available for type com.gwtext.client.widgets.grid.ColumnConfig; did you forget to inherit a required module?
+   [ERROR] Line 32: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+   [ERROR] Line 41: No source code is available for type com.gwtext.client.widgets.grid.BaseColumnConfig; did you forget to inherit a required module?
+   [ERROR] Line 42: No source code is available for type com.gwtext.client.widgets.grid.ColumnModel; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/servico/ProdutoService.java'
+   [ERROR] Line 10: The hierarchy of the type ProdutoService is inconsistent
+   [ERROR] Line 10: No source code is available for type com.google.gwt.user.client.rpc.RemoteService; did you forget to inherit a required module?
+   [ERROR] Line 12: No source code is available for type java.util.List<E>; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/controlador/comando/ComandoEmbalagem.java'
+   [ERROR] Line 10: The hierarchy of the type ComandoEmbalagem is inconsistent
+   [ERROR] Line 10: No source code is available for type br.com.opensig.core.client.controlador.comando.ComandoFuncao; did you forget to inherit a required module?
+   [ERROR] Line 12: No source code is available for type java.util.Map<K,V>; did you forget to inherit a required module?
+   [ERROR] Line 13: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+   [ERROR] Line 13: The method get(Object) from the type Map refers to the missing type Object
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdCategoria.java'
+   [ERROR] Line 23: The hierarchy of the type ProdCategoria is inconsistent
+   [ERROR] Line 23: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+   [ERROR] Line 23: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+   [ERROR] Line 32: No source code is available for type java.lang.String; did you forget to inherit a required module?
+   [ERROR] Line 59: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/controlador/comando/ComandoProduto.java'
+   [ERROR] Line 11: The hierarchy of the type ComandoProduto is inconsistent
+   [ERROR] Line 11: No source code is available for type br.com.opensig.core.client.controlador.comando.ComandoFuncao; did you forget to inherit a required module?
+   [ERROR] Line 14: No source code is available for type java.util.Map<K,V>; did you forget to inherit a required module?
+   [ERROR] Line 15: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+   [ERROR] Line 15: The method get(Object) from the type Map refers to the missing type Object
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/form/FormularioEmbalagem.java'
+   [ERROR] Line 14: The hierarchy of the type FormularioEmbalagem is inconsistent
+   [ERROR] Line 14: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+   [ERROR] Line 16: No source code is available for type com.gwtext.client.widgets.form.Hidden; did you forget to inherit a required module?
+   [ERROR] Line 17: No source code is available for type com.gwtext.client.widgets.form.TextField; did you forget to inherit a required module?
+   [ERROR] Line 18: No source code is available for type com.gwtext.client.widgets.form.NumberField; did you forget to inherit a required module?
+   [ERROR] Line 21: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+   [ERROR] Line 32: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+   [ERROR] Line 46: No source code is available for type com.gwtext.client.widgets.form.MultiFieldPanel; did you forget to inherit a required module?
+   [ERROR] Line 55: No source code is available for type java.lang.Integer; did you forget to inherit a required module?
+   [ERROR] Line 69: No source code is available for type com.gwtext.client.data.Record; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdEstoque.java'
+   [ERROR] Line 28: The hierarchy of the type ProdEstoque is inconsistent
+   [ERROR] Line 28: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+   [ERROR] Line 28: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+   [ERROR] Line 37: No source code is available for type java.lang.Double; did you forget to inherit a required module?
+   [ERROR] Line 45: No source code is available for type br.com.opensig.empresa.shared.modelo.EmpEmpresa; did you forget to inherit a required module?
+   [ERROR] Line 52: No source code is available for type br.com.opensig.core.shared.modelo.EDirecao; did you forget to inherit a required module?
+   [ERROR] Line 88: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+   [ERROR] Line 96: No source code is available for type java.lang.String; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/OpenSigProduto.java'
+   [ERROR] Line 24: The hierarchy of the type OpenSigProduto is inconsistent
+   [ERROR] Line 24: Implicit super constructor Object() is undefined for default constructor. Must define an explicit constructor
+   [ERROR] Line 24: No source code is available for type com.google.gwt.core.client.EntryPoint; did you forget to inherit a required module?
+   [ERROR] Line 32: No source code is available for type br.com.opensig.core.client.controlador.comando.FabricaComando; did you forget to inherit a required module?
+   [ERROR] Line 33: No source code is available for type br.com.opensig.core.client.controlador.comando.IComando; did you forget to inherit a required module?
+   [ERROR] Line 33: No source code is available for type com.google.gwt.core.client.GWT; did you forget to inherit a required module?
+   [ERROR] Line 33: The method create(Class<?>) from the type GWT refers to the missing type Object
+   [ERROR] Line 34: The method create(Class<?>) from the type GWT refers to the missing type Object
+   [ERROR] Line 35: The method create(Class<?>) from the type GWT refers to the missing type Object
+   [ERROR] Line 36: The method create(Class<?>) from the type GWT refers to the missing type Object
+   [ERROR] Line 39: No source code is available for type java.util.Collection<E>; did you forget to inherit a required module?
+   [ERROR] Line 39: No source code is available for type java.lang.Class<T>; did you forget to inherit a required module?
+   [ERROR] Line 39: No source code is available for type java.util.ArrayList<E>; did you forget to inherit a required module?
+   [ERROR] Line 40: No source code is available for type br.com.opensig.core.client.visao.Ponte; did you forget to inherit a required module?
+   [ERROR] Line 41: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 41: No source code is available for type br.com.opensig.core.client.controlador.comando.lista.ComandoVisualizar; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/controlador/comando/ComandoTributacao.java'
+   [ERROR] Line 10: The hierarchy of the type ComandoTributacao is inconsistent
+   [ERROR] Line 10: No source code is available for type br.com.opensig.core.client.controlador.comando.ComandoFuncao; did you forget to inherit a required module?
+   [ERROR] Line 13: No source code is available for type java.util.Map<K,V>; did you forget to inherit a required module?
+   [ERROR] Line 14: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+   [ERROR] Line 14: The method get(Object) from the type Map refers to the missing type Object
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/form/FormularioTributacao.java'
+   [ERROR] Line 15: The hierarchy of the type FormularioTributacao is inconsistent
+   [ERROR] Line 15: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+   [ERROR] Line 17: No source code is available for type com.gwtext.client.widgets.form.Hidden; did you forget to inherit a required module?
+   [ERROR] Line 18: No source code is available for type com.gwtext.client.widgets.form.TextField; did you forget to inherit a required module?
+   [ERROR] Line 21: No source code is available for type com.gwtext.client.widgets.form.NumberField; did you forget to inherit a required module?
+   [ERROR] Line 24: No source code is available for type com.gwtext.client.widgets.form.TextArea; did you forget to inherit a required module?
+   [ERROR] Line 26: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+   [ERROR] Line 37: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+   [ERROR] Line 73: No source code is available for type com.gwtext.client.widgets.form.MultiFieldPanel; did you forget to inherit a required module?
+   [ERROR] Line 90: No source code is available for type java.lang.Integer; did you forget to inherit a required module?
+   [ERROR] Line 112: No source code is available for type com.gwtext.client.data.Record; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdPreco.java'
+   [ERROR] Line 26: The hierarchy of the type ProdPreco is inconsistent
+   [ERROR] Line 26: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+   [ERROR] Line 26: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+   [ERROR] Line 38: No source code is available for type java.lang.Long; did you forget to inherit a required module?
+   [ERROR] Line 97: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+   [ERROR] Line 105: No source code is available for type java.lang.String; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/form/FormularioProduto.java'
+   [ERROR] Line 60: The import com.gwtextux.client.widgets.window cannot be resolved
+   [ERROR] Line 62: The hierarchy of the type FormularioProduto is inconsistent
+   [ERROR] Line 217: The constructor Object() is undefined
+   [ERROR] Line 222: Object cannot be resolved to a type
+   [ERROR] Line 240: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 249: ToastWindow cannot be resolved to a type
+   [ERROR] Line 274: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 280: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 379: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 401: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 421: The constructor Object() is undefined
+   [ERROR] Line 457: The constructor Object() is undefined
+   [ERROR] Line 490: The constructor Object() is undefined
+   [ERROR] Line 497: ToastWindow cannot be resolved to a type
+   [ERROR] Line 504: The constructor Object() is undefined
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/servico/ProdutoServiceAsync.java'
+   [ERROR] Line 11: The hierarchy of the type ProdutoServiceAsync is inconsistent
+   [ERROR] Line 11: No source code is available for type com.google.gwt.user.client.rpc.RemoteService; did you forget to inherit a required module?
+   [ERROR] Line 13: No source code is available for type java.util.List<E>; did you forget to inherit a required module?
+   [ERROR] Line 13: No source code is available for type com.google.gwt.user.client.rpc.AsyncCallback<T>; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdProduto.java'
+   [ERROR] Line 36: The hierarchy of the type ProdProduto is inconsistent
+   [ERROR] Line 36: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+   [ERROR] Line 36: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+   [ERROR] Line 45: No source code is available for type java.lang.String; did you forget to inherit a required module?
+   [ERROR] Line 49: No source code is available for type java.util.Date; did you forget to inherit a required module?
+   [ERROR] Line 58: No source code is available for type java.lang.Long; did you forget to inherit a required module?
+   [ERROR] Line 68: No source code is available for type java.lang.Double; did you forget to inherit a required module?
+   [ERROR] Line 83: No source code is available for type java.util.List<E>; did you forget to inherit a required module?
+   [ERROR] Line 94: No source code is available for type br.com.opensig.empresa.shared.modelo.EmpFornecedor; did you forget to inherit a required module?
+   [ERROR] Line 116: No source code is available for type br.com.opensig.core.shared.modelo.EDirecao; did you forget to inherit a required module?
+   [ERROR] Line 118: No source code is available for type br.com.opensig.core.shared.modelo.Colecao; did you forget to inherit a required module?
+   [ERROR] Line 291: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+   [ERROR] Line 314: No source code is available for type br.com.opensig.core.client.UtilClient; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/grafico/GraficoProduto.java'
+   [ERROR] Line 7: The hierarchy of the type GraficoProduto is inconsistent
+   [ERROR] Line 7: No source code is available for type br.com.opensig.core.client.visao.abstrato.AGrafico<E>; did you forget to inherit a required module?
+   [ERROR] Line 9: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagem<E>; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/servico/ProdutoProxy.java'
+   [ERROR] Line 12: The hierarchy of the type ProdutoProxy is inconsistent
+   [ERROR] Line 14: No source code is available for type com.google.gwt.core.client.GWT; did you forget to inherit a required module?
+   [ERROR] Line 14: The method create(Class<?>) from the type GWT refers to the missing type Object
+   [ERROR] Line 15: No source code is available for type com.google.gwt.user.client.rpc.ServiceDefTarget; did you forget to inherit a required module?
+   [ERROR] Line 17: Implicit super constructor Object() is undefined. Must explicitly invoke another constructor
+   [ERROR] Line 21: No source code is available for type java.util.List<E>; did you forget to inherit a required module?
+   [ERROR] Line 21: No source code is available for type com.google.gwt.user.client.rpc.AsyncCallback<T>; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/form/FormularioPesquisa.java'
+   [ERROR] Line 39: The hierarchy of the type FormularioPesquisa is inconsistent
+   [ERROR] Line 39: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+   [ERROR] Line 42: No source code is available for type com.gwtext.client.widgets.form.TextField; did you forget to inherit a required module?
+   [ERROR] Line 43: No source code is available for type com.gwtext.client.widgets.form.Checkbox; did you forget to inherit a required module?
+   [ERROR] Line 47: No source code is available for type com.gwtext.client.widgets.ToolbarButton; did you forget to inherit a required module?
+   [ERROR] Line 49: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+   [ERROR] Line 58: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+   [ERROR] Line 60: No source code is available for type com.gwtext.client.core.Ext; did you forget to inherit a required module?
+   [ERROR] Line 61: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroNumero; did you forget to inherit a required module?
+   [ERROR] Line 61: No source code is available for type br.com.opensig.core.client.controlador.filtro.ECompara; did you forget to inherit a required module?
+   [ERROR] Line 62: No source code is available for type com.gwtext.client.data.event.StoreListenerAdapter; did you forget to inherit a required module?
+   [ERROR] Line 63: No source code is available for type com.gwtext.client.data.Store; did you forget to inherit a required module?
+   [ERROR] Line 63: No source code is available for type com.gwtext.client.data.Record; did you forget to inherit a required module?
+   [ERROR] Line 72: No source code is available for type com.gwtext.client.widgets.grid.event.GridRowListenerAdapter; did you forget to inherit a required module?
+   [ERROR] Line 73: No source code is available for type com.gwtext.client.widgets.grid.GridPanel; did you forget to inherit a required module?
+   [ERROR] Line 73: No source code is available for type com.gwtext.client.core.EventObject; did you forget to inherit a required module?
+   [ERROR] Line 78: No source code is available for type com.gwtext.client.widgets.grid.event.GridListenerAdapter; did you forget to inherit a required module?
+   [ERROR] Line 95: No source code is available for type com.gwtext.client.widgets.layout.ColumnLayout; did you forget to inherit a required module?
+   [ERROR] Line 96: No source code is available for type com.gwtext.client.widgets.layout.ColumnLayoutData; did you forget to inherit a required module?
+   [ERROR] Line 102: No source code is available for type com.gwtext.client.widgets.menu.Menu; did you forget to inherit a required module?
+   [ERROR] Line 110: The constructor Object() is undefined
+   [ERROR] Line 110: No source code is available for type com.gwtext.client.widgets.event.KeyListener; did you forget to inherit a required module?
+   [ERROR] Line 126: No source code is available for type com.gwtext.client.widgets.event.ButtonListenerAdapter; did you forget to inherit a required module?
+   [ERROR] Line 127: No source code is available for type com.gwtext.client.widgets.Button; did you forget to inherit a required module?
+   [ERROR] Line 162: No source code is available for type java.lang.Exception; did you forget to inherit a required module?
+   [ERROR] Line 171: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroObjeto; did you forget to inherit a required module?
+   [ERROR] Line 178: No source code is available for type br.com.opensig.core.client.controlador.filtro.GrupoFiltro; did you forget to inherit a required module?
+   [ERROR] Line 184: No source code is available for type br.com.opensig.core.client.controlador.filtro.EJuncao; did you forget to inherit a required module?
+   [ERROR] Line 197: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroTexto; did you forget to inherit a required module?
+   [ERROR] Line 213: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroBinario; did you forget to inherit a required module?
+   [ERROR] Line 214: No source code is available for type br.com.opensig.core.client.controlador.filtro.IFiltro<E>; did you forget to inherit a required module?
+   [ERROR] Line 221: No source code is available for type br.com.opensig.core.client.controlador.comando.IComando; did you forget to inherit a required module?
+   [ERROR] Line 227: No source code is available for type com.gwtext.client.widgets.MessageBox; did you forget to inherit a required module?
+   [ERROR] Line 227: The constructor Object() is undefined
+   [ERROR] Line 227: No source code is available for type com.gwtext.client.widgets.MessageBox.AlertCallback; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdOrigem.java'
+   [ERROR] Line 23: The hierarchy of the type ProdOrigem is inconsistent
+   [ERROR] Line 23: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+   [ERROR] Line 23: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+   [ERROR] Line 32: No source code is available for type java.lang.String; did you forget to inherit a required module?
+   [ERROR] Line 59: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/lista/ListagemProduto.java'
+   [ERROR] Line 36: The hierarchy of the type ListagemProduto is inconsistent
+   [ERROR] Line 36: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagem<E>; did you forget to inherit a required module?
+   [ERROR] Line 38: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+   [ERROR] Line 45: No source code is available for type com.gwtext.client.data.FieldDef; did you forget to inherit a required module?
+   [ERROR] Line 45: No source code is available for type com.gwtext.client.data.IntegerFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 45: No source code is available for type com.gwtext.client.data.StringFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 46: No source code is available for type com.gwtext.client.data.FloatFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 53: No source code is available for type com.gwtext.client.data.DateFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 53: No source code is available for type com.gwtext.client.data.BooleanFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 55: No source code is available for type com.gwtext.client.data.RecordDef; did you forget to inherit a required module?
+   [ERROR] Line 58: No source code is available for type com.gwtext.client.widgets.grid.ColumnConfig; did you forget to inherit a required module?
+   [ERROR] Line 58: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+   [ERROR] Line 110: No source code is available for type com.gwtext.client.widgets.grid.BaseColumnConfig; did you forget to inherit a required module?
+   [ERROR] Line 113: No source code is available for type com.gwtext.client.widgets.grid.ColumnModel; did you forget to inherit a required module?
+   [ERROR] Line 122: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroObjeto; did you forget to inherit a required module?
+   [ERROR] Line 122: No source code is available for type br.com.opensig.core.client.controlador.filtro.ECompara; did you forget to inherit a required module?
+   [ERROR] Line 122: No source code is available for type br.com.opensig.empresa.shared.modelo.EmpEmpresa; did you forget to inherit a required module?
+   [ERROR] Line 122: No source code is available for type br.com.opensig.core.client.visao.Ponte; did you forget to inherit a required module?
+   [ERROR] Line 128: No source code is available for type java.util.Map<K,V>.Entry<K,V>; did you forget to inherit a required module?
+   [ERROR] Line 128: No source code is available for type java.lang.String; did you forget to inherit a required module?
+   [ERROR] Line 128: No source code is available for type com.gwtextux.client.widgets.grid.plugins.GridFilter; did you forget to inherit a required module?
+   [ERROR] Line 129: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 130: No source code is available for type com.gwtextux.client.widgets.grid.plugins.GridBooleanFilter; did you forget to inherit a required module?
+   [ERROR] Line 131: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 134: No source code is available for type br.com.opensig.core.client.servico.CoreProxy<E>; did you forget to inherit a required module?
+   [ERROR] Line 135: No source code is available for type com.gwtext.client.data.Store; did you forget to inherit a required module?
+   [ERROR] Line 135: No source code is available for type com.gwtext.client.data.ArrayReader; did you forget to inherit a required module?
+   [ERROR] Line 137: No source code is available for type com.gwtextux.client.widgets.grid.plugins.GridListFilter; did you forget to inherit a required module?
+   [ERROR] Line 142: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 153: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 164: The method equals(Object) from the type String refers to the missing type Object
+   [ERROR] Line 181: No source code is available for type br.com.opensig.core.shared.modelo.IFavorito; did you forget to inherit a required module?
+   [ERROR] Line 182: The method get(Object) from the type Map<String,GridFilter> refers to the missing type Object
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/controlador/comando/ComandoPesquisa.java'
+   [ERROR] Line 28: The hierarchy of the type ComandoPesquisa is inconsistent
+   [ERROR] Line 28: No source code is available for type br.com.opensig.core.client.controlador.comando.ComandoFuncao; did you forget to inherit a required module?
+   [ERROR] Line 29: No source code is available for type com.google.gwt.user.client.rpc.AsyncCallback<T>; did you forget to inherit a required module?
+   [ERROR] Line 29: No source code is available for type com.gwtext.client.data.Record; did you forget to inherit a required module?
+   [ERROR] Line 31: No source code is available for type com.gwtext.client.widgets.Window; did you forget to inherit a required module?
+   [ERROR] Line 33: No source code is available for type java.util.Map<K,V>; did you forget to inherit a required module?
+   [ERROR] Line 34: No source code is available for type br.com.opensig.core.shared.modelo.permissao.SisFuncao; did you forget to inherit a required module?
+   [ERROR] Line 34: The method get(Object) from the type Map refers to the missing type Object
+   [ERROR] Line 38: No source code is available for type com.gwtext.client.widgets.layout.FitLayout; did you forget to inherit a required module?
+   [ERROR] Line 41: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+   [ERROR] Line 43: No source code is available for type com.gwtext.client.core.Position; did you forget to inherit a required module?
+   [ERROR] Line 44: No source code is available for type com.gwtext.client.widgets.event.WindowListenerAdapter; did you forget to inherit a required module?
+   [ERROR] Line 46: No source code is available for type com.gwtext.client.widgets.Component; did you forget to inherit a required module?
+   [ERROR] Line 53: No source code is available for type com.gwtext.client.widgets.grid.event.GridRowListenerAdapter; did you forget to inherit a required module?
+   [ERROR] Line 54: No source code is available for type com.gwtext.client.widgets.grid.GridPanel; did you forget to inherit a required module?
+   [ERROR] Line 54: No source code is available for type com.gwtext.client.core.EventObject; did you forget to inherit a required module?
+   [ERROR] Line 59: No source code is available for type com.gwtext.client.widgets.grid.event.GridListenerAdapter; did you forget to inherit a required module?
+   [ERROR] Line 81: No source code is available for type com.gwtext.client.data.event.StoreListenerAdapter; did you forget to inherit a required module?
+   [ERROR] Line 82: No source code is available for type com.gwtext.client.data.Store; did you forget to inherit a required module?
+   [ERROR] Line 93: No source code is available for type br.com.opensig.core.client.controlador.comando.form.ComandoSalvar<E>; did you forget to inherit a required module?
+   [ERROR] Line 99: No source code is available for type br.com.opensig.core.client.controlador.comando.AComando<E>; did you forget to inherit a required module?
+   [ERROR] Line 111: No source code is available for type com.gwtext.client.core.Ext; did you forget to inherit a required module?
+   [ERROR] Line 130: No source code is available for type java.lang.NullPointerException; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/servico/ProdutoException.java'
+   [ERROR] Line 12: The hierarchy of the type ProdutoException is inconsistent
+   [ERROR] Line 12: No source code is available for type br.com.opensig.core.client.servico.OpenSigException; did you forget to inherit a required module?
+   [ERROR] Line 25: No source code is available for type java.lang.String; did you forget to inherit a required module?
+   [ERROR] Line 32: No source code is available for type java.lang.Throwable; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/lista/ListagemPreco.java'
+   [ERROR] Line 31: The hierarchy of the type ListagemPreco is inconsistent
+   [ERROR] Line 31: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagemEditor<E>; did you forget to inherit a required module?
+   [ERROR] Line 33: No source code is available for type com.gwtext.client.data.Store; did you forget to inherit a required module?
+   [ERROR] Line 34: No source code is available for type com.gwtext.client.widgets.form.NumberField; did you forget to inherit a required module?
+   [ERROR] Line 36: No source code is available for type com.gwtext.client.data.RecordDef; did you forget to inherit a required module?
+   [ERROR] Line 45: No source code is available for type com.gwtext.client.data.FieldDef; did you forget to inherit a required module?
+   [ERROR] Line 45: No source code is available for type com.gwtext.client.data.IntegerFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 45: No source code is available for type com.gwtext.client.data.StringFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 46: No source code is available for type com.gwtext.client.data.FloatFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 52: No source code is available for type br.com.opensig.core.client.servico.CoreProxy<E>; did you forget to inherit a required module?
+   [ERROR] Line 53: No source code is available for type com.gwtext.client.data.ArrayReader; did you forget to inherit a required module?
+   [ERROR] Line 57: No source code is available for type com.gwtext.client.widgets.grid.ColumnConfig; did you forget to inherit a required module?
+   [ERROR] Line 61: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+   [ERROR] Line 61: The constructor Object() is undefined
+   [ERROR] Line 61: No source code is available for type com.gwtext.client.widgets.grid.Renderer; did you forget to inherit a required module?
+   [ERROR] Line 62: No source code is available for type java.lang.String; did you forget to inherit a required module?
+   [ERROR] Line 62: Object cannot be resolved to a type
+   [ERROR] Line 62: No source code is available for type com.gwtext.client.widgets.grid.CellMetadata; did you forget to inherit a required module?
+   [ERROR] Line 62: No source code is available for type com.gwtext.client.data.Record; did you forget to inherit a required module?
+   [ERROR] Line 73: No source code is available for type com.gwtext.client.widgets.grid.GridEditor; did you forget to inherit a required module?
+   [ERROR] Line 86: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagem<E>; did you forget to inherit a required module?
+   [ERROR] Line 98: No source code is available for type com.gwtext.client.widgets.grid.BaseColumnConfig; did you forget to inherit a required module?
+   [ERROR] Line 99: No source code is available for type com.gwtext.client.widgets.grid.ColumnModel; did you forget to inherit a required module?
+   [ERROR] Line 102: No source code is available for type br.com.opensig.core.client.controlador.filtro.FiltroNumero; did you forget to inherit a required module?
+   [ERROR] Line 102: No source code is available for type br.com.opensig.core.client.controlador.filtro.ECompara; did you forget to inherit a required module?
+   [ERROR] Line 109: No source code is available for type java.util.List<E>; did you forget to inherit a required module?
+   [ERROR] Line 120: No source code is available for type java.lang.Exception; did you forget to inherit a required module?
+   [ERROR] Line 126: No source code is available for type java.lang.Long; did you forget to inherit a required module?
+   [ERROR] Line 137: No source code is available for type com.gwtext.client.widgets.form.ComboBox; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/client/visao/lista/ListagemEmbalagem.java'
+   [ERROR] Line 16: The hierarchy of the type ListagemEmbalagem is inconsistent
+   [ERROR] Line 16: No source code is available for type br.com.opensig.core.client.visao.abstrato.AListagem<E>; did you forget to inherit a required module?
+   [ERROR] Line 18: No source code is available for type br.com.opensig.core.client.visao.abstrato.AFormulario<E>; did you forget to inherit a required module?
+   [ERROR] Line 25: No source code is available for type com.gwtext.client.data.FieldDef; did you forget to inherit a required module?
+   [ERROR] Line 25: No source code is available for type com.gwtext.client.data.IntegerFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 25: No source code is available for type com.gwtext.client.data.StringFieldDef; did you forget to inherit a required module?
+   [ERROR] Line 26: No source code is available for type com.gwtext.client.data.RecordDef; did you forget to inherit a required module?
+   [ERROR] Line 29: No source code is available for type com.gwtext.client.widgets.grid.ColumnConfig; did you forget to inherit a required module?
+   [ERROR] Line 29: No source code is available for type br.com.opensig.core.client.OpenSigCore; did you forget to inherit a required module?
+   [ERROR] Line 34: No source code is available for type com.gwtext.client.widgets.grid.BaseColumnConfig; did you forget to inherit a required module?
+   [ERROR] Line 35: No source code is available for type com.gwtext.client.widgets.grid.ColumnModel; did you forget to inherit a required module?
+[WARN] Warnings in 'file:/Users/pedrohenriquelira/Documents/Projetos/PH_Informatica/OpenSigProduto/src/br/com/opensig/produto/shared/modelo/ProdEmbalagem.java'
+   [ERROR] Line 23: The hierarchy of the type ProdEmbalagem is inconsistent
+   [ERROR] Line 23: No source code is available for type br.com.opensig.core.shared.modelo.Dados; did you forget to inherit a required module?
+   [ERROR] Line 23: No source code is available for type java.io.Serializable; did you forget to inherit a required module?
+   [ERROR] Line 32: No source code is available for type java.lang.String; did you forget to inherit a required module?
+   [ERROR] Line 81: No source code is available for type java.lang.Number; did you forget to inherit a required module?
+Removing invalidated units
+Resolving br.com.opensig.produto.shared.modelo.ProdProduto
+   Found type 'br.com.opensig.produto.shared.modelo.ProdProduto'
+      [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+Resolving br.com.opensig.produto.client.controlador.comando.ComandoProduto
+   Found type 'br.com.opensig.produto.client.controlador.comando.ComandoProduto'
+      [WARN] Unable to resolve supertype br/com/opensig/core/client/controlador/comando/ComandoFuncao
+Resolving br.com.opensig.produto.client.servico.ProdutoServiceAsync
+   Found type 'br.com.opensig.produto.client.servico.ProdutoServiceAsync'
+      [WARN] Unable to resolve interface com/google/gwt/user/client/rpc/RemoteService
+Resolving br.com.opensig.produto.shared.modelo.ProdCategoria
+   Found type 'br.com.opensig.produto.shared.modelo.ProdCategoria'
+      [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+Resolving br.com.opensig.produto.client.controlador.comando.ComandoPesquisa
+   Found type 'br.com.opensig.produto.client.controlador.comando.ComandoPesquisa'
+      [WARN] Unable to resolve supertype br/com/opensig/core/client/controlador/comando/ComandoFuncao
+Resolving br.com.opensig.produto.client.visao.lista.ListagemEmbalagem
+   Found type 'br.com.opensig.produto.client.visao.lista.ListagemEmbalagem'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AListagem
+      Found type 'br.com.opensig.produto.shared.modelo.ProdEmbalagem'
+         [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+      [ERROR] Unable to resolve class br/com/opensig/produto/shared/modelo/ProdEmbalagem
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.client.visao.form.FormularioPesquisa
+   Found type 'br.com.opensig.produto.client.visao.form.FormularioPesquisa'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AFormulario
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.client.servico.ProdutoProxy
+   Found type 'br.com.opensig.produto.client.servico.ProdutoProxy'
+      [WARN] Unable to resolve supertype java/lang/Object
+Resolving br.com.opensig.produto.client.visao.lista.ListagemProduto
+   Found type 'br.com.opensig.produto.client.visao.lista.ListagemProduto'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AListagem
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.client.visao.form.FormularioTributacao
+   Found type 'br.com.opensig.produto.client.visao.form.FormularioTributacao'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AFormulario
+      [ERROR] Unable to resolve class br/com/opensig/produto/shared/modelo/ProdTributacao
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.client.OpenSigProduto
+   Found type 'br.com.opensig.produto.client.OpenSigProduto'
+      [WARN] Unable to resolve supertype java/lang/Object
+Resolving br.com.opensig.produto.shared.modelo.ProdEstoque
+   Found type 'br.com.opensig.produto.shared.modelo.ProdEstoque'
+      [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+Resolving br.com.opensig.produto.client.visao.grafico.GraficoProduto
+   Found type 'br.com.opensig.produto.client.visao.grafico.GraficoProduto'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AGrafico
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AListagem
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.client.controlador.comando.ComandoTributacao
+   Found type 'br.com.opensig.produto.client.controlador.comando.ComandoTributacao'
+      [WARN] Unable to resolve supertype br/com/opensig/core/client/controlador/comando/ComandoFuncao
+Resolving br.com.opensig.produto.client.servico.ProdutoService
+   Found type 'br.com.opensig.produto.client.servico.ProdutoService'
+      [WARN] Unable to resolve interface com/google/gwt/user/client/rpc/RemoteService
+Resolving br.com.opensig.produto.client.controlador.comando.ComandoEmbalagem
+   Found type 'br.com.opensig.produto.client.controlador.comando.ComandoEmbalagem'
+      [WARN] Unable to resolve supertype br/com/opensig/core/client/controlador/comando/ComandoFuncao
+Resolving br.com.opensig.produto.client.visao.lista.ListagemTributacao
+   Found type 'br.com.opensig.produto.client.visao.lista.ListagemTributacao'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AListagem
+      [ERROR] Unable to resolve class br/com/opensig/produto/shared/modelo/ProdTributacao
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.shared.modelo.ProdOrigem
+   Found type 'br.com.opensig.produto.shared.modelo.ProdOrigem'
+      [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+Resolving br.com.opensig.produto.client.servico.ProdutoException
+   Found type 'br.com.opensig.produto.client.servico.ProdutoException'
+      [WARN] Unable to resolve supertype br/com/opensig/core/client/servico/OpenSigException
+Resolving br.com.opensig.produto.shared.modelo.ProdPreco
+   Found type 'br.com.opensig.produto.shared.modelo.ProdPreco'
+      [WARN] Unable to resolve supertype br/com/opensig/core/shared/modelo/Dados
+Resolving br.com.opensig.produto.client.visao.form.FormularioEmbalagem
+   Found type 'br.com.opensig.produto.client.visao.form.FormularioEmbalagem'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AFormulario
+      [WARN] Unable to resolve method method <init>
+Resolving br.com.opensig.produto.client.visao.lista.ListagemPreco
+   Found type 'br.com.opensig.produto.client.visao.lista.ListagemPreco'
+      [ERROR] Unable to resolve class br/com/opensig/core/client/visao/abstrato/AListagemEditor
+      [ERROR] Unable to resolve class java/util/List
+      [WARN] Unable to resolve method method validar
+[ERROR] Unable to find type 'java.lang.Object'
+   [ERROR] Hint: Check that your module inherits 'com.google.gwt.core.Core' either directly or indirectly (most often by inheriting module 'com.google.gwt.user.User')
