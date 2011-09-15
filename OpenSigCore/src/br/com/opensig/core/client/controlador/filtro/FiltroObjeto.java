@@ -12,8 +12,6 @@ import br.com.opensig.core.shared.modelo.Dados;
  */
 public class FiltroObjeto extends AFiltro<Dados> {
 
-	private static final long serialVersionUID = 1L;
-
 	/**
 	 * @see AFiltro#AFiltro()
 	 */

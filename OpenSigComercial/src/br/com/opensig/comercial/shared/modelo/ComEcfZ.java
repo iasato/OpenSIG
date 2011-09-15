@@ -23,8 +23,6 @@ import br.com.opensig.core.shared.modelo.EDirecao;
 @Table(name = "com_ecf_z")
 public class ComEcfZ extends Dados implements Serializable {
 
-	private static final long serialVersionUID = 4966302699401243686L;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "com_ecf_z_id")

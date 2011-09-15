@@ -61,7 +61,7 @@ public class EnviarNfeInutilizada extends Chain {
 		}
 	}
 
-	private String montaProcInutNfe(String inut, String proc) throws OpenSigException {
+	public static String montaProcInutNfe(String inut, String proc) throws OpenSigException {
 		// transforma em doc
 		Document doc1 = UtilServer.getXml(inut);
 		Document doc2 = UtilServer.getXml(proc);

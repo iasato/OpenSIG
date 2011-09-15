@@ -26,7 +26,6 @@ import br.com.opensig.core.shared.modelo.Dados;
 @Entity
 @Table(name = "sis_permissao")
 public class SisPermissao extends Dados implements Serializable, Comparable<SisPermissao> {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

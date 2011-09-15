@@ -58,8 +58,7 @@ import br.com.opensig.permissao.shared.modelo.SisUsuario;
 
 public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoService {
 
-	private static final long serialVersionUID = -7949461066268853021L;
-	private static List<SisAcao> acoesPadroes = null;
+	private List<SisAcao> acoesPadroes = null;
 
 	public Autenticacao entrar(String usuario, String senha, String captcha, int empresa, boolean permissao) throws PermissaoException {
 		// recupera a sessão atual
@@ -100,13 +99,6 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 					throw new PermissaoException("Usuario ou Senha ou Empresa invalidos!");
 				}
 
-				// valida se ja esta logado
-				if (SessionManager.APP.containsValue(sisUsuario.getId().toString())) {
-					throw new PermissaoException("Usuario ja tem uma sessao aberta!");
-				} else {
-					SessionManager.APP.put(sessao.getId(), sisUsuario.getId().toString());
-				}
-
 				for (SisGrupo grupo : sisUsuario.getSisGrupos()) {
 					if (grupo.getEmpEmpresa().getEmpEmpresaId() == empresa && grupo.getSisGrupoDesconto() > sisUsuario.getSisUsuarioDesconto()) {
 						sisUsuario.setSisUsuarioDesconto(grupo.getSisGrupoDesconto());
@@ -126,7 +118,14 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 					}
 				}
 
-				if (!permissao) {
+				if (!permissao && !sisUsuario.getSisUsuarioSistema()) {
+					// valida se ja esta logado
+					if (SessionManager.APP.containsValue(sisUsuario.getId().toString())) {
+						throw new PermissaoException("Usuario ja tem uma sessao aberta!");
+					} else {
+						SessionManager.APP.put(sessao.getId(), sisUsuario.getId().toString());
+					}
+					
 					// seta o usuario logado na sessão
 					sessao.setAttribute("Autenticacao", autenticacao);
 				}
@@ -139,6 +138,7 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 		} else {
 			// caso já esteja logado só recupera da sessão
 			autenticacao = (Autenticacao) sessao.getAttribute("Autenticacao");
+			sessao.setAttribute(Captcha.NAME, null);
 			usuario = autenticacao.getUsuario()[1];
 			empresa = Integer.valueOf(autenticacao.getEmpresa()[0]);
 		}

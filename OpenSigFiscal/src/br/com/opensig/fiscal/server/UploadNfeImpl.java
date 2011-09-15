@@ -26,8 +26,6 @@ import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
 
 public class UploadNfeImpl extends UploadServiceImpl {
 
-	private static final long serialVersionUID = 1L;
-
 	protected void finalizar(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		HttpSession sessao = req.getSession();
 		boolean sucesso = true;

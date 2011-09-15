@@ -13,7 +13,6 @@ import br.com.opensig.core.client.UtilClient;
  */
 public abstract class Dados implements Serializable {
 
-	private static final long serialVersionUID = 1L;
 	protected String pu;
 	protected String tabela;
 	protected Colecao[] colecao;

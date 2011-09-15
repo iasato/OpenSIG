@@ -15,8 +15,6 @@ import br.com.opensig.core.client.controlador.parametro.AParametro;
  */
 public abstract class AFiltro<E extends Serializable> extends AParametro<E> implements IFiltro<E> {
 
-	private static final long serialVersionUID = 1L;
-
 	/**
 	 * Construtor padrao.
 	 */

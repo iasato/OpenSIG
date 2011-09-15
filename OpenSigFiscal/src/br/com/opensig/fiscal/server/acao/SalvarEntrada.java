@@ -59,9 +59,9 @@ public class SalvarEntrada extends Chain {
 		new ValidarPlano(null, servico, status, empresa).execute();
 		
 		doc = UtilServer.getXml(xml);
-		if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.ordinal()) {
+		if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
 			salvar();
-		} else if (status.getFisNotaStatusId() == ENotaStatus.CANCELADO.ordinal()) {
+		} else if (status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId()) {
 			atualizar();
 		}
 
@@ -153,7 +153,7 @@ public class SalvarEntrada extends Chain {
 
 				// verifica se o status na sefaz é igual ao informado
 				if (situacao.getCStat().equals("100")) {
-					if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.ordinal() && situacao.getProtNFe() != null) {
+					if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId() && situacao.getProtNFe() != null) {
 						// valida se a data da nota ainda pode ser cancelada
 						int dias = Integer.valueOf(UtilServer.CONF.get("nfe.tempo_cancela"));
 						Calendar cal = Calendar.getInstance();
@@ -166,7 +166,7 @@ public class SalvarEntrada extends Chain {
 						} else {
 							nota.setFisNotaEntradaRecibo("PROVISORIO");
 						}
-					} else if (status.getFisNotaStatusId() == ENotaStatus.CANCELADO.ordinal() && situacao.getRetCancNFe() != null) {
+					} else if (status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId() && situacao.getRetCancNFe() != null) {
 						nota.setFisNotaEntradaRecibo("OK");
 					} else {
 						nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));

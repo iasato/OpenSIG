@@ -19,8 +19,6 @@ import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 @Table(name = "com_ecf")
 public class ComEcf extends Dados implements Serializable {
 
-	private static final long serialVersionUID = 2653171555341138705L;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "com_ecf_id")

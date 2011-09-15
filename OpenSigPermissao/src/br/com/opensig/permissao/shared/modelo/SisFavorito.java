@@ -36,7 +36,6 @@ import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
 @Entity
 @Table(name = "sis_favorito")
 public class SisFavorito extends Dados implements Serializable, IFavorito {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

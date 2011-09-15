@@ -13,8 +13,6 @@ import br.com.opensig.core.client.controlador.parametro.ParametroException;
  */
 public class FiltroBinario extends AFiltro<Integer> {
 
-	private static final long serialVersionUID = 1L;
-
 	/**
 	 * @see AFiltro#AFiltro()
 	 */

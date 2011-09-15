@@ -50,7 +50,7 @@ public class CancelarVenda extends Chain {
 		// atualiza venda
 		AtualizarVenda atuVenda = new AtualizarVenda(next);
 		if (saida != null) {
-			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.ordinal()) {
+			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
 				// valida se a data da nota ainda pode ser cancelada
 				int dias = Integer.valueOf(UtilServer.CONF.get("nfe.tempo_cancela"));
 				Calendar cal = Calendar.getInstance();

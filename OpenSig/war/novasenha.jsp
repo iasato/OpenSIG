@@ -21,8 +21,9 @@
 	String redir = "document.location = '/';";
 
 	if (email == null || id == null || email.isEmpty() || id.isEmpty()) {
-		msg = "alert('Email ou Id inválidos');" + redir;
-	} else {
+		msg = "alert('Email ou Id inválidos');";
+	} 
+	else {
 		SisUsuario usuario = new SisUsuario();
 		FiltroTexto ft1 = new FiltroTexto("sisUsuarioEmail", ECompara.IGUAL, email);
 		FiltroTexto ft2 = new FiltroTexto("sisUsuarioSenha", ECompara.IGUAL, id);
@@ -38,121 +39,23 @@
 			if (!cap.isCorrect(captcha)) {
 				msg = "alert('Código da imagem inválido!');";
 			} else {
-				nova = UtilServer.SHA1(nova);
 				usuario.setSisUsuarioSenha(nova);
 				core.salvar(usuario);
 				msg = "alert('Senha alterada com sucesso!');" + redir;
 			}
 		}
 	}
+
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
 <head>
-<style>
-html,body {
-	background: #C4C4C4;
-	margin: 0;
-	padding: 0;
-	margin-left: 0px; margin-top : 0px;
-	font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial,
-		Helvetica, sans-serif;
-	font-size: 12px;
-	margin-top: 0px;
-}
+<link rel="shortcut icon" href="img/favicon.ico" />
+<link rel="stylesheet" type="text/css" href="css/Basico.css" />
 
-p,h1,form,button {
-	border: 0px;
-	margin: 0px;
-	padding: 0px;
-}
-
-.spacer {
-	clear: both;
-	height: 1px;
-}
-
-/* ----------- My Form ----------- */
-.myform {
-	width: 520px;
-	height: 280px;
-	padding: 14px;
-	position: absolute;
-	left: 50%;
-	top: 50%;
-	margin-left: -267px;
-	margin-top: -147px;
-}
-
-/* ----------- stylized ----------- */
-#stylized {
-	border: solid 2px #b7ddf2;
-	background: #ebf4fb;
-}
-
-#stylized h1 {
-	font-size: 14px;
-	font-weight: bold;
-	margin-bottom: 8px;
-}
-
-#stylized p {
-	font-size: 11px;
-	color: #666666;
-	margin-bottom: 20px;
-	border-bottom: solid 1px #b7ddf2;
-	padding-bottom: 10px;
-}
-
-#stylized label {
-	display: block;
-	font-weight: bold;
-	text-align: right;
-	width: 100px;
-	float: left;
-}
-
-#stylized .small {
-	color: #666666;
-	display: block;
-	font-size: 11px;
-	font-weight: normal;
-	text-align: right;
-	width: 100px;
-}
-
-#stylized input {
-	float: left;
-	font-size: 12px;
-	padding: 4px 2px;
-	border: solid 1px #b7ddf2;
-	width: 400px;
-	margin: 2px 0 20px 10px;
-}
-
-#stylized img {
-	float: left;
-	font-size: 12px;
-	padding: 4px 2px;
-	margin: 2px 0 20px 10px;
-}
-
-#stylized button {
-	clear: both;
-	width: 125px;
-	height: 31px;
-	text-align: center;
-	background: #666666 no-repeat;
-	color: #FFFFFF;
-	font-size: 12px;
-	font-weight: bold;
-	cursor: pointer;
-	position: absolute;
-	left: 50%;
-	margin-left: -62px;
-}
-</style>
+<script src="js/ext/adapter/jquery/jquery_mini.js" language="javascript"></script>
+<script src="opensig/js/OpenSigCore_mini.js" language="javascript"></script>
 
 <script type="text/javascript">
 	<%=msg%>
@@ -181,6 +84,7 @@ p,h1,form,button {
 			return false;
 		}
 		else {
+			document.senha.nova.value = encrypt.sha1(strNova);
 			return true;
 		}
 	}
@@ -190,7 +94,7 @@ p,h1,form,button {
 <title>OpenSIG - Sistemas Integrados Gerenciáveis Open Source</title>
 </head>
 <body onload="javascript:document.senha.nova.focus();">
-	<div id="stylized" class="myform">
+	<div id="stylized" class="myform" style="height: 350px">
 
 		<form id="senha" name="senha" method="post"
 			action="novasenha.jsp?email=<%=email%>&id=<%=id%>"
@@ -200,8 +104,7 @@ p,h1,form,button {
 			<h1>Alterar Senha</h1>
 			<p>Este formulário &eacute; usado para alterar a senha no
 				sistema.</p>
-			<label>Nova Senha <span class="small">Digite a nova
-					senha</span> </label> <input type="password" name="nova" id="nova" maxlength="40" />
+			<label>Nova Senha <span class="small">Digite senha</span> </label> <input type="password" name="nova" id="nova" maxlength="40" />
 			<label>Confirmar Senha <span class="small">Confirme a
 					senha</span> </label> <input type="password" name="confirma" id="confirma"
 				maxlength="40" /> <label>Segurança <span class="small">Veja
@@ -210,8 +113,11 @@ p,h1,form,button {
 				name="captcha" id="captcha" maxlength="5" class="small" />
 
 			<div class="spacer"></div>
-			<button type="submit">Salvar</button>
-
+			<button type="submit" style="margin-left: 190px;">Salvar</button>
+			
+			<div class="spacer"></div><br/>
+			<p>Caso deseje mais informa&ccedil;&otilde;s entre em contato conosco. <a href="mailto:opensig@phdss.com.br">opensig@phdss.com.br</a></p>
+			&copy; <a href="http://phdss.com.br"><i>PhD - Systems Solutions</i></a>
 		</form>
 	</div>
 </body>

@@ -78,7 +78,7 @@ public class FormularioCertificado extends AFormulario<FisCertificado> {
 		btnArquivo.setIconCls("icon-chave");
 		btnArquivo.addListener(new ButtonListenerAdapter() {
 			public void onClick(Button button, EventObject e) {
-				String cnpj = hdnCnpj.getValueAsString().replaceAll("\\D", "") + ".pfx";
+				String cnpj = hdnCnpj.getValueAsString().replaceAll("\\D", "");
 				abrirUpload(cnpj);
 			}
 		});
@@ -148,13 +148,13 @@ public class FormularioCertificado extends AFormulario<FisCertificado> {
 	public void gerarListas() {
 	}
 
-	private void abrirUpload(String nome) {
+	private void abrirUpload(String cnpj) {
 		UploadDialog uplArquivo = new UploadDialog();
 		uplArquivo.setModal(true);
 		uplArquivo.setUrl(GWT.getHostPageBaseURL() + "UploadService");
 		uplArquivo.setAllowCloseOnUpload(false);
 		uplArquivo.setPermittedExtensions(new String[] { "pfx" });
-		uplArquivo.setBaseParams(new UrlParam[] { new UrlParam("acao", "salvar"), new UrlParam("path", UtilClient.CONF.get("nfe.certificado")), new UrlParam("nome", nome) });
+		uplArquivo.setBaseParams(new UrlParam[] { new UrlParam("acao", "salvar"), new UrlParam("real", "sim"), new UrlParam("path", UtilClient.CONF.get("sistema.empresas") + cnpj + "/"), new UrlParam("nome", "certificado.pfx") });
 		uplArquivo.addListener(new UploadDialogListenerAdapter() {
 			public void onUploadSuccess(UploadDialog source, String filename, JavaScriptObject data) {
 				txtArquivo.setValue(filename);

@@ -17,8 +17,6 @@ import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
  */
 public class FiltroData extends AFiltro<Date> {
 
-	private static final long serialVersionUID = 1L;
-
 	/**
 	 * @see AFiltro#AFiltro()
 	 */

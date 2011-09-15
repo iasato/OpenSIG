@@ -11,8 +11,6 @@ import br.com.opensig.core.client.controlador.parametro.ParametroException;
  */
 public class FiltroEnum extends AFiltro<Enum> {
 
-	private static final long serialVersionUID = 1L;
-
 	/**
 	 * @see AFiltro#AFiltro()
 	 */

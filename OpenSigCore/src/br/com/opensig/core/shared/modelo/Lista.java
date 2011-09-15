@@ -13,7 +13,6 @@ import java.util.List;
  */
 public class Lista<E extends Dados> implements Serializable {
 
-	private static final long serialVersionUID = 6147983300224210243L;
 	private List<E> lista;
 	private String[][] dados;
 	private int total;

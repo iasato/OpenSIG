@@ -40,7 +40,7 @@ public class EnviarEmail implements Runnable {
 			String assunto = "";
 			String msg = "";
 			Anexo[] anexos = null;
-			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.ordinal()) {
+			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
 				// assunto
 				assunto = "NFe - " + saida.getFisNotaSaidaChave();
 				// inserindo parametros

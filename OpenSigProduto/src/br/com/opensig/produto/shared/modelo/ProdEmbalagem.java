@@ -21,7 +21,6 @@ import br.com.opensig.core.shared.modelo.Dados;
 @Entity
 @Table(name = "prod_embalagem")
 public class ProdEmbalagem extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

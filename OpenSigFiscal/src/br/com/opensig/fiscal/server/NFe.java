@@ -55,7 +55,7 @@ public class NFe {
 		try {
 			// monta o arquivo
 			String cnpj = empresa.getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", "");
-			String pfx = UtilServer.getRealPath(UtilServer.CONF.get("nfe.certificado") + cnpj + ".pfx");
+			String pfx = UtilServer.CONF.get("sistema.empresas") + cnpj + "/certificado.pfx";
 			// faz a busca pela senha
 			FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
 			FiscalServiceImpl<FisCertificado> service = new FiscalServiceImpl<FisCertificado>();
@@ -63,8 +63,6 @@ public class NFe {
 			cert = service.selecionar(cert, fo, false);
 
 			// chaves
-			PrivateKey pk = null;
-			KeyInfo ki = null;
 			String tag = null;
 			if (status == ENotaStatus.AUTORIZANDO) {
 				tag = "NFe";
@@ -85,8 +83,8 @@ public class NFe {
 			XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
 			ArrayList<Transform> transformList = signatureFactory(fac);
 			Object[] chaves = lerCertificado(pfx, senha, fac);
-			pk = (PrivateKey) chaves[0];
-			ki = (KeyInfo) chaves[1];
+			PrivateKey pk = (PrivateKey) chaves[0];
+			KeyInfo ki = (KeyInfo) chaves[1];
 
 			// parse no xml e pega o id
 			Element ele = (Element) doc.getElementsByTagName(status == ENotaStatus.AUTORIZANDO ? "infNFe" : tag).item(0);
@@ -250,7 +248,7 @@ public class NFe {
 		return resp;
 	}
 
-	private static ArrayList<Transform> signatureFactory(XMLSignatureFactory signatureFactory) throws Exception {
+	public static ArrayList<Transform> signatureFactory(XMLSignatureFactory signatureFactory) throws Exception {
 		// seta as transformacaoes e envelopes
 		ArrayList<Transform> transformList = new ArrayList<Transform>();
 		TransformParameterSpec tps = null;
@@ -262,10 +260,9 @@ public class NFe {
 		return transformList;
 	}
 
-	private static Object[] lerCertificado(String certificado, String senha, XMLSignatureFactory signatureFactory) throws Exception {
-		// chave e informacao da chave
+	public static Object[] lerCertificado(String certificado, String senha, XMLSignatureFactory signatureFactory) throws Exception {
+		// chave
 		PrivateKey pk = null;
-		KeyInfo ki = null;
 
 		// le o certificado
 		InputStream entrada = new FileInputStream(certificado);
@@ -295,8 +292,8 @@ public class NFe {
 		// gera a informacao
 		x509Content.add(cert);
 		X509Data x509Data = keyInfoFactory.newX509Data(x509Content);
-		ki = keyInfoFactory.newKeyInfo(Collections.singletonList(x509Data));
+		KeyInfo ki = keyInfoFactory.newKeyInfo(Collections.singletonList(x509Data));
 
-		return new Object[] { pk, ki };
+		return new Object[] { pk, ki, cert };
 	}
 }

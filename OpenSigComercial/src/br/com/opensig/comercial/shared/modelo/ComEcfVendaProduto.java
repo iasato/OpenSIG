@@ -20,7 +20,6 @@ import br.com.opensig.produto.shared.modelo.ProdProduto;
 @Entity
 @Table(name = "com_ecf_venda_produto")
 public class ComEcfVendaProduto extends Dados implements Serializable {
-	private static final long serialVersionUID = -3608407694648671096L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

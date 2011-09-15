@@ -21,7 +21,6 @@ import br.com.opensig.core.client.controlador.parametro.ParametroException;
 
 public class GrupoFiltro implements IFiltro {
 
-	private static final long serialVersionUID = 1L;
 	private Map<IFiltro, EJuncao> filtros = new LinkedHashMap<IFiltro, EJuncao>();
 
 	/**

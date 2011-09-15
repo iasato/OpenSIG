@@ -12,8 +12,6 @@ import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 public class ProdutoServiceImpl extends CoreServiceImpl implements ProdutoService {
 
-	private static final long serialVersionUID = -2514399052263047200L;
-
 	public ProdProduto salvarProduto(ProdProduto produto, List<ProdCategoria> categorias) throws ProdutoException {
 		try {
 			new SalvarProduto(null, this, produto, categorias).execute();

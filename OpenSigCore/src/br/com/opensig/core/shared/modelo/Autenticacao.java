@@ -14,7 +14,6 @@ import br.com.opensig.core.shared.modelo.permissao.SisModulo;
  */
 public class Autenticacao implements Serializable {
 
-	private static final long serialVersionUID = -5010002520668925052L;
 	private String[] usuario;
 	private String[] empresa;
 	private List<SisModulo> modulos;

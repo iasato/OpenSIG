@@ -100,8 +100,8 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 				int status = record.getAsInteger("fisNotaStatus.fisNotaStatusId");
 				int id = record.getAsInteger(nomes.get("id"));
 
-				if (status == ENotaStatus.AUTORIZANDO.ordinal() || status == ENotaStatus.AUTORIZADO.ordinal() || status == ENotaStatus.INUTILIZANDO.ordinal()
-						|| status == ENotaStatus.INUTILIZADO.ordinal() || status == ENotaStatus.CANCELADO.ordinal() || status == ENotaStatus.CANCELANDO.ordinal()) {
+				if (status == ENotaStatus.AUTORIZANDO.getId() || status == ENotaStatus.AUTORIZADO.getId() || status == ENotaStatus.INUTILIZANDO.getId()
+						|| status == ENotaStatus.INUTILIZADO.getId() || status == ENotaStatus.CANCELADO.getId() || status == ENotaStatus.CANCELANDO.getId()) {
 					baixarArquivo("xml", status, id);
 				} else {
 					new ToastWindow(OpenSigCore.i18n.txtNfe(), OpenSigCore.i18n.errRegistro()).show();
@@ -118,7 +118,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 				int status = record.getAsInteger("fisNotaStatus.fisNotaStatusId");
 				int id = record.getAsInteger(nomes.get("id"));
 
-				if (status != ENotaStatus.INUTILIZANDO.ordinal() && status != ENotaStatus.INUTILIZADO.ordinal() && status != ENotaStatus.ERRO.ordinal()) {
+				if (status != ENotaStatus.INUTILIZANDO.getId() && status != ENotaStatus.INUTILIZADO.getId() && status != ENotaStatus.ERRO.getId()) {
 					baixarArquivo("pdf", status, id);
 				} else {
 					new ToastWindow(OpenSigCore.i18n.txtDanfe(), OpenSigCore.i18n.errRegistro()).show();
@@ -135,7 +135,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 				int status = record.getAsInteger("fisNotaStatus.fisNotaStatusId");
 				int id = record.getAsInteger(nomes.get("id"));
 
-				if (status == ENotaStatus.CANCELANDO.ordinal() || status == ENotaStatus.CANCELADO.ordinal()) {
+				if (status == ENotaStatus.CANCELANDO.getId() || status == ENotaStatus.CANCELADO.getId()) {
 					baixarArquivo("xml", status, id);
 				} else {
 					new ToastWindow(OpenSigCore.i18n.txtCancelada(), OpenSigCore.i18n.errRegistro()).show();
@@ -151,8 +151,8 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 			public boolean execute(GridPanel grid, final Record record, String action, Object value, String dataIndex, int rowIndex, int colIndex) {
 				int status = record.getAsInteger("fisNotaStatus.fisNotaStatusId");
 
-				if (status == ENotaStatus.ERRO.ordinal() || status == ENotaStatus.FS_DA.ordinal() || status == ENotaStatus.AUTORIZANDO.ordinal() || status == ENotaStatus.CANCELANDO.ordinal()
-						|| status == ENotaStatus.INUTILIZANDO.ordinal()) {
+				if (status == ENotaStatus.ERRO.getId() || status == ENotaStatus.FS_DA.getId() || status == ENotaStatus.AUTORIZANDO.getId() || status == ENotaStatus.CANCELANDO.getId()
+						|| status == ENotaStatus.INUTILIZANDO.getId()) {
 					MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtErro());
 					int id = record.getAsInteger(nomes.get("id"));
 					CoreProxy<E> proxy = new CoreProxy<E>(classe);
@@ -179,7 +179,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 		ccErro.setMenuDisabled(true);
 		ccErro.setCellActions(new GridCellAction[] { cellErro });
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccStatusId, ccStatus, ccNumero, ccData, sumValor, ccChave, sumIcms, sumIpi, sumPis, sumCofins, ccProtocolo,
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccStatusId, ccStatus, ccCadastro, ccNumero, ccData, sumValor, ccChave, sumIcms, sumIpi, sumPis, sumCofins, ccProtocolo,
 				ccXml, ccDanfe, ccProtocoloCancelado, ccXmlCancelado, ccRecibo, ccErro };
 		modelos = new ColumnModel(bcc);
 
@@ -204,7 +204,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 			public void onSuccess(E result) {
 				classe = result;
 				String arquivo;
-				if (status == ENotaStatus.CANCELANDO.ordinal() || status == ENotaStatus.CANCELADO.ordinal()) {
+				if (status == ENotaStatus.CANCELANDO.getId() || status == ENotaStatus.CANCELADO.getId()) {
 					arquivo = OpenSigCoreJS.base64encode(getXmlCancelado(result));
 				} else {
 					arquivo = OpenSigCoreJS.base64encode(getXml(result));

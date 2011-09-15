@@ -14,7 +14,6 @@ import br.com.opensig.core.shared.modelo.Dados;
 @Entity
 @Table(name = "sis_acao")
 public class SisAcao extends Dados implements Serializable, Comparable<SisAcao> {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

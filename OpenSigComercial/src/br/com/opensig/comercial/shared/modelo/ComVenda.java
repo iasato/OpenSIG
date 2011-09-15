@@ -37,7 +37,6 @@ import br.com.opensig.permissao.shared.modelo.SisUsuario;
 @Entity
 @Table(name = "com_venda")
 public class ComVenda extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

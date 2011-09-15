@@ -34,7 +34,6 @@ import br.com.opensig.empresa.shared.modelo.EmpFornecedor;
 @Entity
 @Table(name = "prod_produto")
 public class ProdProduto extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

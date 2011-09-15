@@ -26,7 +26,6 @@ import br.com.opensig.core.shared.modelo.IFavoritoCampo;
 @Entity
 @Table(name = "sis_favorito_campo")
 public class SisFavoritoCampo extends Dados implements Serializable, IFavoritoCampo {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

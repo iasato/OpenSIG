@@ -33,7 +33,6 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  */
 public class MailServiceImpl extends RemoteServiceServlet implements MailService {
 
-	private static final long serialVersionUID = 3502335847222344286L;
 	private static final Properties conf = new Properties();
 
 	@Override

@@ -70,7 +70,7 @@ public class EnviarNfeCancelada extends Chain {
 		}
 	}
 	
-	private String montaProcCancNfe(String canc, String proc) throws OpenSigException {
+	public static String montaProcCancNfe(String canc, String proc) throws OpenSigException {
 		// transforma em doc
 		Document doc1 = UtilServer.getXml(canc);
 		Document doc2 = UtilServer.getXml(proc);

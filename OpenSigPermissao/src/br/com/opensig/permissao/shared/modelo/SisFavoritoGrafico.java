@@ -26,7 +26,6 @@ import br.com.opensig.core.shared.modelo.IFavoritoGrafico;
 @Entity
 @Table(name="sis_favorito_grafico")
 public class SisFavoritoGrafico extends Dados implements Serializable, IFavoritoGrafico {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

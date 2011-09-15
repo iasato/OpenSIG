@@ -30,7 +30,7 @@ public interface FiscalServiceAsync<E extends Dados> extends CoreServiceAsync<E>
 
 	public abstract void receberNFe(String xml, int empresa, String recibo, AsyncCallback<String> asyncallback);
 
-	public abstract void receberNFe(FisNotaSaida saida, AsyncCallback<Map<String, String>> asyncCallback);
+	public abstract void analisarNFe(FisNotaSaida saida, AsyncCallback<Map<String, String>> asyncCallback);
 
 	public abstract void cancelar(String xml, int empresa, AsyncCallback<String> asyncallback);
 

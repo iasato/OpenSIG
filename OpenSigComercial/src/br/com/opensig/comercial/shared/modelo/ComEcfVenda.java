@@ -28,8 +28,6 @@ import br.com.opensig.financeiro.shared.modelo.FinReceber;
 @Table(name = "com_ecf_venda")
 public class ComEcfVenda extends Dados implements Serializable {
 
-	private static final long serialVersionUID = 6150303538709890932L;
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "com_ecf_venda_id")

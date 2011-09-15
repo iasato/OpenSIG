@@ -499,14 +499,21 @@ public class AnalisarNfe extends Chain {
 		}
 
 		private ProdTributacao getTributacao(String cst) {
+			ProdTributacao resp = null;
+
 			// percorre as tributacoes
 			for (ProdTributacao trib : tributacao) {
-				if (trib.getProdTributacaoCst().equals(cst)) {
+				if (cst.length() == 2 && trib.getProdTributacaoCst().equals(cst)) {
 					return trib;
+				} else if (cst.length() == 3 && trib.getProdTributacaoCson().equals(cst)) {
+					return trib;
+				} else if (trib.getProdTributacaoCst().equals("00")) {
+					resp = trib;
 				}
 			}
+
 			// se nao achar colocar a padrao 00
-			return new ProdTributacao(1);
+			return resp;
 		}
 	}
 

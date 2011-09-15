@@ -3,9 +3,6 @@ package br.com.opensig.core.server;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
@@ -15,7 +12,7 @@ import javax.servlet.http.HttpSessionListener;
  * @author Pedro H. Lira
  * @version 1.0
  */
-public class SessionManager implements HttpSessionListener, ServletContextListener {
+public class SessionManager implements HttpSessionListener {
 
 	/**
 	 * Variavel a nivel de aplicacao que armazena as sessoes logadas.
@@ -38,19 +35,5 @@ public class SessionManager implements HttpSessionListener, ServletContextListen
 	@Override
 	public void sessionDestroyed(HttpSessionEvent arg0) {
 		APP.remove(arg0.getSession().getId());
-	}
-
-	/**
-	 * Ao iniciar o contexto da aplicacao seta a caminho fisico
-	 */
-	@Override
-	public void contextInitialized(ServletContextEvent arg0) {
-        ServletContext context = arg0.getServletContext();
-        System.setProperty("rootPath", context.getRealPath("/"));
-	}
-	
-	@Override
-	public void contextDestroyed(ServletContextEvent arg0) {
-		// TODO Auto-generated method stub
 	}
 }

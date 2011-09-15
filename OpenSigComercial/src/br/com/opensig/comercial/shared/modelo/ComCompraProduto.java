@@ -27,7 +27,6 @@ import br.com.opensig.produto.shared.modelo.ProdProduto;
 @Entity
 @Table(name = "com_compra_produto")
 public class ComCompraProduto extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

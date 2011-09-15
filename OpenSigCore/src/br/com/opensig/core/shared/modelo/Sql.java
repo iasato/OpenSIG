@@ -14,7 +14,6 @@ import br.com.opensig.core.client.controlador.parametro.IParametro;
 
 public class Sql implements Serializable {
 
-	private static final long serialVersionUID = 1L;
 	private Dados classe;
 	private EComando comando;
 	private IParametro parametro;

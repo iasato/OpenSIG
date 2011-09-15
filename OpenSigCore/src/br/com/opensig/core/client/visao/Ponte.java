@@ -28,6 +28,7 @@ import br.com.opensig.core.client.padroes.Observable;
 import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.core.shared.modelo.ILogin;
 
+import com.google.gwt.core.client.GWT;
 import com.gwtext.client.state.CookieProvider;
 import com.gwtext.client.state.CookieProviderConfig;
 import com.gwtext.client.state.Manager;
@@ -58,9 +59,8 @@ public class Ponte extends Observable {
 
 	private Ponte() {
 		CookieProviderConfig cpf = new CookieProviderConfig();
-		cpf.setDomain(null);
+		cpf.setDomain(GWT.getHostPageBaseURL().replace("http://", ""));
 		cpf.setPath("/");
-		cpf.setSecure(true);
 		CookieProvider cookie = new CookieProvider(cpf);
 		Manager.setProvider(cookie);
 

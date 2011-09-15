@@ -45,8 +45,6 @@ import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
 
 public class ComercialServiceImpl extends CoreServiceImpl implements ComercialService {
 
-	private static final long serialVersionUID = 2394832515672850909L;
-
 	public FisNotaSaida gerarNfe(ComVenda venda, ComFrete frete) throws ComercialException {
 		try {
 			GerarNfe gerar = new GerarNfe(null, this, venda, frete);

@@ -31,7 +31,6 @@ import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 @Entity
 @Table(name = "sis_grupo")
 public class SisGrupo extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

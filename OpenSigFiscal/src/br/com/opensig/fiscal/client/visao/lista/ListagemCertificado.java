@@ -69,7 +69,7 @@ public class ListagemCertificado extends AListagem<FisCertificado> {
 			public boolean execute(GridPanel grid, final Record record, String action, Object value, String dataIndex, int rowIndex, int colIndex) {
 				String cnpj = record.getAsString("empEmpresa.empEntidade.empEntidadeDocumento1");
 				if (cnpj != null) {
-					cnpj = cnpj.replaceAll("\\D", "") + ".png";
+					cnpj = cnpj.replaceAll("\\D", "");
 					abrirUpload(cnpj);
 					return true;
 				} else {
@@ -123,13 +123,13 @@ public class ListagemCertificado extends AListagem<FisCertificado> {
 		super.setFavorito(favorito);
 	}
 
-	private void abrirUpload(String nome) {
+	private void abrirUpload(String cnpj) {
 		UploadDialog uplArquivo = new UploadDialog();
 		uplArquivo.setModal(true);
 		uplArquivo.setUrl(GWT.getHostPageBaseURL() + "UploadService");
 		uplArquivo.setAllowCloseOnUpload(false);
 		uplArquivo.setPermittedExtensions(new String[] { "png" });
-		uplArquivo.setBaseParams(new UrlParam[] { new UrlParam("acao", "salvar"), new UrlParam("path", "/WEB-INF/nfe/logo/"), new UrlParam("nome", nome) });
+		uplArquivo.setBaseParams(new UrlParam[] { new UrlParam("acao", "salvar"), new UrlParam("real", "sim"), new UrlParam("path", UtilClient.CONF.get("sistema.empresas") + cnpj + "/"), new UrlParam("nome", "logo.png") });
 		uplArquivo.addListener(new UploadDialogListenerAdapter() {
 			public void onUploadSuccess(UploadDialog source, String filename, JavaScriptObject data) {
 				new ToastWindow(OpenSigCore.i18n.txtImagem(), OpenSigCore.i18n.msgSalvarOK()).show();

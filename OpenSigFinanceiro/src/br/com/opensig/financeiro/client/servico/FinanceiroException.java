@@ -10,7 +10,6 @@ import br.com.opensig.core.client.servico.CoreException;
  *
  */
 public class FinanceiroException extends CoreException {
-    private static final long serialVersionUID = -5203345892627186453L;
 
     /**
      * @see CoreException#CoreException

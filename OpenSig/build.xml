@@ -6,7 +6,6 @@
 	<property name="ext" location="../Externas" />
 	<property name="mf" location="war/manifesto" />
 	<property name="lib" location="war/WEB-INF/lib" />
-	<property name="log" location="war/WEB-INF/logs" />
 	<property name="classes" location="war/WEB-INF/classes" />
 	<property name="pacote" value="br.com.opensig.client" />
 	<property name="versao" value="1.00" />
@@ -20,7 +19,7 @@
 		<tstamp>
 			<format property="hoje" pattern="dd-MM-yyyy HH:mm:ss" />
 		</tstamp>
-		
+
 		<manifest file="${mf}/${ant.project.name}.MF">
 			<attribute name="Implementation-Title" value="${ant.project.name}" />
 			<attribute name="Implementation-Version" value="${versao}-b${build.number}" />
@@ -31,13 +30,11 @@
 			<attribute name="Main-Class" value="${pacote}.${ant.project.name}" />
 		</manifest>
 	</target>
-	
+
 	<target name="limpar">
-		<delete file="${src}/META-INF/${ant.project.name}.MF" />
 		<delete dir="${dist}" />
 		<delete dir="${mf}" />
 		<delete dir="${lib}" />
-		<delete dir="${log}" />
 		<delete dir="${classes}" failonerror="false" />
 		<delete dir="war/opensig" failonerror="false" />
 	</target>
@@ -46,7 +43,6 @@
 		<mkdir dir="${mf}" />
 		<mkdir dir="${classes}" />
 		<mkdir dir="${lib}" />
-		<mkdir dir="${log}" />
 
 		<copy todir="${mf}">
 			<fileset file="../OpenSigCore/src/META-INF/OpenSigCore.MF" />
@@ -106,8 +102,18 @@
 		<war destfile="${dist}/${ant.project.name}.war" basedir="war" webxml="war/WEB-INF/web.xml" />
 	</target>
 
-	<target name="debugar" depends="gwtc, war" />
+	<target name="gwtDebugar">
+		<delete file="src/br/com/opensig/OpenSig.gwt.xml" />
+		<copy file="OpenSig.debugar" tofile="src/br/com/opensig/OpenSig.gwt.xml" />
+	</target>
+	
+	<target name="gwtPublicar">
+		<delete file="src/br/com/opensig/OpenSig.gwt.xml" />
+		<copy file="OpenSig.publicar" tofile="src/br/com/opensig/OpenSig.gwt.xml" />
+	</target>
 
-	<target name="publicar" depends="gwtc, limparLibs, war" />
+	<target name="debugar" depends="gwtDebugar, gwtc, war" />
+
+	<target name="publicar" depends="gwtPublicar, gwtc, limparLibs, war" />
 
 </project>

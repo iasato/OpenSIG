@@ -53,15 +53,13 @@ import org.xml.sax.ErrorHandler;
 import br.com.opensig.core.client.servico.OpenSigException;
 
 public class UtilServer extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	// letras acentuadas
-	private static String acentuado = "çÇáéíóúýÁÉÍÓÚÝàèìòùÀÈÌÒÙãõñäëïöüÿÄËÏÖÜÃÕÑâêîôûÂÊÎÔÛ";
-	// letras sem acentos
-	private static String semAcento = "cCaeiouyAEIOUYaeiouAEIOUaonaeiouyAEIOUAONaeiouAEIOU";
 	// tabela com vinculos das letras
 	private static char[] tabela = new char[256];
 	// hora de desvio para verao
 	private static int VERAO = 0;
+	// path local
+	private static String PATH = "";
+
 	/**
 	 * Log do sistema
 	 */
@@ -78,10 +76,12 @@ public class UtilServer extends HttpServlet {
 	 * Chave mestre para criptografar
 	 */
 	public static String CHAVE;
-	
-	
+
 	// setando a tabela de letras
 	static {
+		String acentuado = "çÇáéíóúýÁÉÍÓÚÝàèìòùÀÈÌÒÙãõñäëïöüÿÄËÏÖÜÃÕÑâêîôûÂÊÎÔÛ";
+		String semAcento = "cCaeiouyAEIOUYaeiouAEIOUaonaeiouyAEIOUAONaeiouAEIOU";
+		
 		for (int i = 0; i < tabela.length; ++i) {
 			tabela[i] = (char) i;
 		}
@@ -108,14 +108,18 @@ public class UtilServer extends HttpServlet {
 
 		// setando o verao
 		VERAO = Integer.valueOf(getServletContext().getInitParameter("sistema.verao")).intValue();
-		
+
 		// setando a chave/senha
 		CHAVE = getServletContext().getInitParameter("sistema.chave");
+		
+		// setando o path local
+		PATH = getServletContext().getRealPath("/");
 
 		// configurando o as opcoes do app
+		String pathEmpresas = getServletContext().getInitParameter("sistema.empresas");
 		Properties prop = new Properties();
 		try {
-			FileInputStream fis = new FileInputStream(getServletContext().getRealPath("/WEB-INF/conf/app.conf"));
+			FileInputStream fis = new FileInputStream(pathEmpresas + "app.conf");
 			BufferedReader br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
 			prop.load(br);
 			fis.close();
@@ -123,6 +127,7 @@ public class UtilServer extends HttpServlet {
 			LOG.error("Nao leu os dados de conf do App.", ex);
 		} finally {
 			// adicionando os valores
+			CONF.put("sistema.empresas", pathEmpresas);
 			for (Entry<Object, Object> entry : prop.entrySet()) {
 				CONF.put(entry.getKey().toString(), entry.getValue().toString());
 			}
@@ -137,7 +142,7 @@ public class UtilServer extends HttpServlet {
 	 * @return o local absoluto do arquivo.
 	 */
 	public static String getRealPath(String relativo) {
-		return System.getProperty("rootPath") + relativo;
+		return PATH + relativo;
 	}
 
 	/**

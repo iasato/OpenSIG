@@ -1,13 +1,17 @@
 package br.com.opensig.fiscal.server;
 
 import java.io.FileInputStream;
-import java.security.Security;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Properties;
 
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.util.AXIOMUtil;
+import org.apache.commons.httpclient.protocol.Protocol;
 import org.jasypt.util.text.BasicTextEncryptor;
 import org.w3c.dom.Document;
 
@@ -69,33 +73,8 @@ public class Sefaz {
 
 	/**
 	 * Contrutor da classe.
-	 * 
-	 * @param pfx
-	 *            caminho do certificado.
-	 * @param senha
-	 *            senha do certificado.
-	 * @throws OpenSigException
-	 *             caso ocorra uma excecao.
 	 */
-	@SuppressWarnings("restriction")
-	public Sefaz(String pfx, String senha) {
-		// Informações do Certificado Digital.
-		System.setProperty("java.protocol.handler.pkgs", "com.sun.net.ssl.internal.www.protocol");
-		Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-
-		System.setProperty("javax.net.ssl.keyStoreType", "PKCS12");
-		System.setProperty("sun.security.ssl.allowUnsafeRenegotiation", "true");
-
-		System.clearProperty("javax.net.ssl.keyStore");
-		System.clearProperty("javax.net.ssl.keyStorePassword");
-		System.clearProperty("javax.net.ssl.trustStore");
-
-		System.setProperty("javax.net.ssl.keyStore", pfx);
-		System.setProperty("javax.net.ssl.keyStorePassword", senha);
-
-		System.setProperty("javax.net.ssl.trustStoreType", "JKS");
-		String ca = UtilServer.CONF.get("nfe.certificado") + "NFeCacerts";
-		System.setProperty("javax.net.ssl.trustStore", UtilServer.getRealPath(ca));
+	private Sefaz() throws Exception {
 	}
 
 	/**
@@ -114,16 +93,30 @@ public class Sefaz {
 			FiscalServiceImpl<FisCertificado> service = new FiscalServiceImpl<FisCertificado>();
 			FisCertificado cert = new FisCertificado();
 			cert = service.selecionar(cert, fn, false);
+			
 			// monta o arquivo
 			String cnpj = UtilServer.normaliza(cert.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento1());
 			cnpj = cnpj.replaceAll("\\D", "");
-			String pfx = UtilServer.getRealPath(UtilServer.CONF.get("nfe.certificado") + cnpj + ".pfx");
+			String pfx = UtilServer.CONF.get("sistema.empresas") + cnpj + "/certificado.pfx";
+			
 			// descriptografa a senha
 			BasicTextEncryptor seguranca = new BasicTextEncryptor();
 			seguranca.setPassword(UtilServer.CHAVE);
 			String senha = seguranca.decrypt(cert.getFisCertificadoSenha());
+			
 			// conecta na sefaz
-			return new Sefaz(pfx, senha);
+			XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
+			Object[] chaves = NFe.lerCertificado(pfx, senha, fac);
+			PrivateKey pk = (PrivateKey) chaves[0];
+			X509Certificate x509 = (X509Certificate) chaves[2];
+			String cacerts = UtilServer.CONF.get("sistema.empresas") + "NFeCacerts";
+			SocketFactoryDinamico sfd = new SocketFactoryDinamico(x509, pk, cacerts);
+			
+			// ativando o protocolo
+			Protocol protocol = new Protocol("https", sfd, 443);
+			Protocol.registerProtocol("https", protocol);
+
+			return new Sefaz();
 		} catch (Exception e) {
 			throw new FiscalException("Problemas com o certificado.");
 		}

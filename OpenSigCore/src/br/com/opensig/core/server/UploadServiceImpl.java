@@ -30,7 +30,6 @@ import org.json.JSONObject;
  */
 public class UploadServiceImpl extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
 	/**
 	 * Local do arquivo.
 	 */
@@ -89,12 +88,13 @@ public class UploadServiceImpl extends HttpServlet {
 
 			nomeArquivo = params.get("nome") != null ? params.get("nome") : nomeArquivo;
 			pathArquivo = params.get("path") != null ? params.get("path") : "/upload/temp/";
+			pathArquivo = params.get("real") != null ? pathArquivo + nomeArquivo: UtilServer.getRealPath(pathArquivo) + nomeArquivo;
 
 			if (params.get("acao") != null && params.get("acao").equals("salvar")) {
 				if (params.get("local") != null && params.get("local").equals("sessao")) {
 					req.getSession().setAttribute(nomeArquivo, baos.toByteArray());
 				} else {
-					File arquivo = new File(UtilServer.getRealPath(pathArquivo) + nomeArquivo);
+					File arquivo = new File(pathArquivo);
 					if (arquivo.exists()) {
 						arquivo.delete();
 					}

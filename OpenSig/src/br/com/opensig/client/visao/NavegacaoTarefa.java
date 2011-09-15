@@ -104,7 +104,7 @@ public class NavegacaoTarefa extends ANavegacao {
 		}
 	}
 
-	// cria uma noava funcao sub-menu em formato de sub-tarefa
+	// cria uma nova funcao sub-menu em formato de sub-tarefa
 	private boolean gerarFuncao(TreeNode node, SisFuncao sisFuncao) {
 		final Record rec = getRegistro(FUNCOES, sisFuncao.getSisFuncaoClasse());
 

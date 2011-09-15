@@ -72,7 +72,7 @@ public class RetornarNfe implements Runnable {
 		}
 	}
 
-	private String montaProcNfe(String nfe, String proc) throws OpenSigException {
+	public static String montaProcNfe(String nfe, String proc) throws OpenSigException {
 		// transforma em doc
 		Document doc1 = UtilServer.getXml(nfe);
 		Document doc2 = UtilServer.getXml(proc);

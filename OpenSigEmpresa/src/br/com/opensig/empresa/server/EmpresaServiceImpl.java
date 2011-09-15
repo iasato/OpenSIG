@@ -26,8 +26,6 @@ import br.com.opensig.empresa.shared.modelo.EmpTransportadora;
 
 public class EmpresaServiceImpl<E extends Dados> extends CoreServiceImpl<E> implements EmpresaService<E> {
 
-	private static final long serialVersionUID = -1699952917432099701L;
-
 	public E salvar(E dados) throws EmpresaException {
 		if (dados instanceof EmpEmpresa) {
 			return (E) salvarEmpresa((EmpEmpresa) dados);

@@ -32,8 +32,6 @@ import br.com.opensig.financeiro.shared.modelo.FinRetorno;
 
 public class FinanceiroServiceImpl extends CoreServiceImpl implements FinanceiroService {
 
-	private static final long serialVersionUID = -1740106892594863626L;
-
 	public String gerar(int boletoId, EArquivo tipo, boolean recibo) throws FinanceiroException {
 		String retorno = "";
 		HttpSession sessao = getThreadLocalRequest().getSession();

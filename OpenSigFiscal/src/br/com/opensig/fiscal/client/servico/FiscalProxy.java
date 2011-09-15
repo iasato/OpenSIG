@@ -23,6 +23,10 @@ public class FiscalProxy<E extends Dados> extends CoreProxy<E> implements Fiscal
 		sdf.setServiceEntryPoint(GWT.getHostPageBaseURL() + "FiscalService");
 	}
 
+	public void analisarNFe(FisNotaSaida saida, AsyncCallback<Map<String, String>> asyncCallback) {
+		async.analisarNFe(saida, asyncCallback);
+	}
+	
 	public void exportar(String arquivo, String nome, String tipo, AsyncCallback<String> asyncCallback) {
 		async.exportar(arquivo, nome, tipo, asyncCallback);
 	}
@@ -55,10 +59,6 @@ public class FiscalProxy<E extends Dados> extends CoreProxy<E> implements Fiscal
 		async.receberNFe(xml, empresa, recibo, asyncallback);
 	}
 	
-	public void receberNFe(FisNotaSaida saida, AsyncCallback<Map<String, String>> asyncCallback) {
-		async.receberNFe(saida, asyncCallback);
-	}
-
 	public void cancelar(FisNotaSaida saida, String motivo, AsyncCallback<Map<String, String>> asyncCallback) {
 		async.cancelar(saida, motivo, asyncCallback);
 	};

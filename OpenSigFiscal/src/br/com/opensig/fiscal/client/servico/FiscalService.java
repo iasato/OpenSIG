@@ -13,6 +13,8 @@ import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
 
 public interface FiscalService<E extends Dados> extends CoreService<E> {
 
+	public Map<String, String> analisarNFe(FisNotaSaida saida) throws FiscalException;
+
 	public String backup(E classe, IFiltro filtro) throws ExportacaoException;
 
 	public String exportar(String arquivo, String nome, String tipo) throws ExportacaoException;
@@ -29,8 +31,6 @@ public interface FiscalService<E extends Dados> extends CoreService<E> {
 
 	public String receberNFe(String xml, int empresa, String recibo) throws FiscalException;
 
-	public Map<String, String> receberNFe(FisNotaSaida saida) throws FiscalException;
-
 	public String cancelar(String xml, int empresa) throws FiscalException;
 
 	public Map<String, String> cancelar(FisNotaSaida saida, String motivo) throws FiscalException;
@@ -40,6 +40,6 @@ public interface FiscalService<E extends Dados> extends CoreService<E> {
 	public Map<String, String> inutilizar(FisNotaSaida saida, String motivo, int ini, int fim) throws FiscalException;
 
 	public Map<String, String> salvarSaida(String xml, FisNotaStatus status, EmpEmpresa empresa) throws FiscalException;
-	
+
 	public void salvarCertificado(FisCertificado certificado) throws FiscalException;
 }

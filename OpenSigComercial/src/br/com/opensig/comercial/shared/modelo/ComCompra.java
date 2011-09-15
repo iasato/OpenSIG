@@ -37,7 +37,6 @@ import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 @Entity
 @Table(name = "com_compra")
 public class ComCompra extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

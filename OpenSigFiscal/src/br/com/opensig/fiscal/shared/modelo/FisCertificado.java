@@ -30,7 +30,6 @@ import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 @Entity
 @Table(name = "fis_certificado")
 public class FisCertificado extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -33,10 +33,10 @@ public class EnviarNfe extends Chain {
 			long id = new Date().getTime();
 
 			// adicionando dados ao xml
-			xml = xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
-			xml = xml.replace(" xmlns=\"http://www.portalfiscal.inf.br/nfe\"", "");
+			int nfeINI = xml.indexOf("<NFe");
+			int nfeFIM = xml.indexOf("</NFe>");
 			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + UtilServer.CONF.get("nfe.versao") + "\"><idLote>" + id + "</idLote>"
-					+ xml + "</enviNFe>";
+					+ xml.substring(nfeINI, nfeFIM) + "</NFe></enviNFe>";
 			// assina
 			Document doc = UtilServer.getXml(xml);
 			if (doc.getElementsByTagName("Signature").item(0) == null) {

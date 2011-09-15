@@ -13,7 +13,6 @@ import br.com.opensig.core.client.controlador.filtro.IFiltro;
  */
 public class ExportacaoListagem<E extends Dados> implements Serializable {
 
-	private static final long serialVersionUID = 1L;
 	private String[][] dados;
 	private E unidade;
 	private String campoOrdem;

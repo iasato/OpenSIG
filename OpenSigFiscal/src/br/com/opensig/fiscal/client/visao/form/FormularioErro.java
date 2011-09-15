@@ -133,7 +133,7 @@ public class FormularioErro extends AFormulario<FisNotaSaida> {
 		MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtSituacao());
 		setDados();
 		FiscalProxy<FisNotaSaida> proxy = new FiscalProxy<FisNotaSaida>();
-		proxy.receberNFe(classe, new AsyncCallback<Map<String, String>>() {
+		proxy.analisarNFe(classe, new AsyncCallback<Map<String, String>>() {
 
 			public void onSuccess(Map<String, String> result) {
 				MessageBox.hide();
@@ -158,21 +158,22 @@ public class FormularioErro extends AFormulario<FisNotaSaida> {
 			public void onSuccess(Map<String, String> result) {
 				MessageBox.hide();
 				ENotaStatus status = ENotaStatus.valueOf(result.get("status"));
+
 				if (status == ENotaStatus.ERRO) {
 					MessageBox.alert(OpenSigCore.i18n.txtSalvar(), result.get("msg"));
 				} else {
-					janela.close();
-					getLista().getPanel().getStore().reload();
-					new ToastWindow(OpenSigCore.i18n.txtSalvar(), status.name()).show();
-
 					if (status == ENotaStatus.AUTORIZANDO) {
 						Timer tempo = new Timer() {
 							public void run() {
 								getLista().getPanel().getStore().reload();
+								janela.close();
 							}
 						};
-						int espera = Integer.valueOf(UtilClient.CONF.get("nfe.tempo_recebendo"));
+						int espera = Integer.valueOf(UtilClient.CONF.get("nfe.tempo_retorno"));
 						tempo.schedule(1000 * espera);
+					} else {
+						getLista().getPanel().getStore().reload();
+						janela.close();
 					}
 				}
 			}

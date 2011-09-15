@@ -21,7 +21,6 @@ import br.com.opensig.core.shared.modelo.Dados;
 @Entity
 @Table(name = "fis_nota_status")
 public class FisNotaStatus extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,7 +37,7 @@ public class FisNotaStatus extends Dados implements Serializable {
 	public FisNotaStatus(ENotaStatus status) {
 		super("pu_fiscal", "FisNotaStatus", "fisNotaStatusId", "fisNotaStatusDescricao");
 		if (status != null) {
-			this.fisNotaStatusId = status.ordinal();
+			this.fisNotaStatusId = status.getId();
 			this.fisNotaStatusDescricao = status.name();
 		}
 	}

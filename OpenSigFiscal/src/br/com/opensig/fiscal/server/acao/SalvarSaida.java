@@ -57,7 +57,7 @@ public class SalvarSaida extends Chain {
 		IFiltro filtro;
 
 		// faz o filtro
-		if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.ordinal() || status.getFisNotaStatusId() == ENotaStatus.INUTILIZADO.ordinal()) {
+		if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.getId() || status.getFisNotaStatusId() == ENotaStatus.INUTILIZADO.getId()) {
 			GrupoFiltro gf = new GrupoFiltro();
 			FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
 			gf.add(fo, EJuncao.E);
@@ -66,7 +66,7 @@ public class SalvarSaida extends Chain {
 			FiltroNumero fn = new FiltroNumero("fisNotaSaidaNumero", ECompara.IGUAL, numero);
 			gf.add(fn);
 			filtro = gf;
-		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.ordinal()) {
+		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.getId()) {
 			String chave = doc.getElementsByTagName("infNFe").item(0).getAttributes().item(0).getNodeValue().replace("NFe", "");
 			filtro = new FiltroTexto("fisNotaSaidaChave", ECompara.IGUAL, chave);
 		} else {
@@ -80,20 +80,20 @@ public class SalvarSaida extends Chain {
 		// verifica se ja existe
 		if (nota != null) {
 			atualizar(filtro);
-		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.ordinal() || status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.ordinal()) {
+		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.getId() || status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
 			salvarNota();
-		} else if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.ordinal() || status.getFisNotaStatusId() == ENotaStatus.CANCELADO.ordinal()) {
+		} else if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.getId() || status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId()) {
 			throw new FiscalException("Não foi encontrado no sistema a nota fiscal de saida correspondente ao cancelamento!");
-		} else if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.ordinal() || status.getFisNotaStatusId() == ENotaStatus.INUTILIZADO.ordinal()) {
+		} else if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.getId() || status.getFisNotaStatusId() == ENotaStatus.INUTILIZADO.getId()) {
 			salvarInut();
 		}
 
 		// enviando para sefaz
-		if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.ordinal()) {
+		if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.getId()) {
 			next = new EnviarNfeCancelada(next, servico, nota);
-		} else if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.ordinal()) {
+		} else if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.getId()) {
 			next = new EnviarNfeInutilizada(next, servico, nota);
-		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.ordinal()) {
+		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.getId()) {
 			next = new EnviarNfe(next, servico, nota);
 		}
 
@@ -155,14 +155,14 @@ public class SalvarSaida extends Chain {
 				cofins = "0.00";
 			}
 			// valida a autorizada com protocolo
-			if (prot.equals("") && status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.ordinal()) {
+			if (prot.equals("") && status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
 				UtilServer.LOG.debug("Nao achou o protocolo.");
 				throw new FiscalException(UtilServer.CONF.get("errInvalido") + " -> nProt");
 			}
 			// em caso de contigencia com FS-DA
 			String tipoEmissao = UtilServer.getValorTag(doc.getDocumentElement(), "tpEmis", true);
 			if (tipoEmissao.equals("5")) {
-				status.setFisNotaStatusId(ENotaStatus.FS_DA.ordinal());
+				status.setFisNotaStatusId(ENotaStatus.FS_DA.getId());
 			}
 
 			// cria a saida
@@ -203,7 +203,7 @@ public class SalvarSaida extends Chain {
 			if (prot == null) {
 				prot = "";
 			}
-			if (prot.equals("") && status.getFisNotaStatusId() == ENotaStatus.INUTILIZADO.ordinal()) {
+			if (prot.equals("") && status.getFisNotaStatusId() == ENotaStatus.INUTILIZADO.getId()) {
 				UtilServer.LOG.debug("Nao achou o protocolo.");
 				throw new FiscalException(UtilServer.CONF.get("errInvalido") + " -> nProt");
 			}
@@ -254,7 +254,7 @@ public class SalvarSaida extends Chain {
 			prot = "";
 		}
 
-		if (prot.equals("") && status.getFisNotaStatusId() != ENotaStatus.INUTILIZANDO.ordinal() && status.getFisNotaStatusId() != ENotaStatus.AUTORIZANDO.ordinal()) {
+		if (prot.equals("") && status.getFisNotaStatusId() != ENotaStatus.INUTILIZANDO.getId() && status.getFisNotaStatusId() != ENotaStatus.AUTORIZANDO.getId()) {
 			UtilServer.LOG.debug("Nao achou o protocolo.");
 			throw new FiscalException(UtilServer.CONF.get("errInvalido") + " -> nProt");
 		}
@@ -262,8 +262,8 @@ public class SalvarSaida extends Chain {
 		// cria o sql
 		ParametroTexto pt = null;
 		ParametroTexto pt1 = null;
-		if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.ordinal() || status.getFisNotaStatusId() == ENotaStatus.CANCELADO.ordinal()) {
-			pt = new ParametroTexto("fisNotaSaidaProtocoloCancelado", status.getFisNotaStatusId() == ENotaStatus.CANCELADO.ordinal() ? prot : "");
+		if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.getId() || status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId()) {
+			pt = new ParametroTexto("fisNotaSaidaProtocoloCancelado", status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId() ? prot : "");
 			pt1 = new ParametroTexto("fisNotaSaidaXmlCancelado", xml);
 			nota.setFisNotaSaidaXmlCancelado(xml);
 		} else {

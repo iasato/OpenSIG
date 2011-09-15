@@ -26,7 +26,6 @@ import br.com.opensig.empresa.shared.modelo.EmpEstado;
 @Entity
 @Table(name = "fis_incentivo_estado")
 public class FisIncentivoEstado extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

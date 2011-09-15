@@ -66,8 +66,6 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  */
 public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet implements CoreService<E> {
 
-	private static final long serialVersionUID = 1L;
-
 	@Override
 	public Lista<E> selecionar(Dados classe, int inicio, int limite, IFiltro filtro, boolean removeDependencia) throws CoreException, ParametroException {
 

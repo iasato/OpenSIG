@@ -7,33 +7,43 @@ public enum ENotaStatus implements Serializable {
 	/**
 	 * Enquanto autoriza a nfe.
 	 */
-	AUTORIZANDO,
+	AUTORIZANDO(1),
 	/**
 	 * Após autorizado a nfe.
 	 */
-	AUTORIZADO,
+	AUTORIZADO(2),
 	/**
 	 * Enquando cancela a nfe.
 	 */
-	CANCELANDO,
+	CANCELANDO(3),
 	/**
 	 * Após cancelado a nfe.
 	 */
-	CANCELADO,
+	CANCELADO(4),
 	/**
 	 * Enquando inutiliza a nfe.
 	 */
-	INUTILIZANDO,
+	INUTILIZANDO(5),
 	/**
 	 * Após inutilizado a nfe.
 	 */
-	INUTILIZADO,
+	INUTILIZADO(6),
 	/**
 	 * Enquando tem erro na nfe.
 	 */
-	ERRO,
+	ERRO(7),
 	/**
 	 * NFe em contigencia de FS-DA.
 	 */
-	FS_DA;
+	FS_DA(8);
+
+	private int id;
+
+	private ENotaStatus(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
+	}
 }

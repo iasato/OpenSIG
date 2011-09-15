@@ -76,7 +76,7 @@
 		<init-param>
 			<description>Categoria e appender ativo</description>
 			<param-name>log4j.rootCategory</param-name>
-			<param-value>ERROR, R, S</param-value>
+			<param-value>DEBUG, S</param-value>
 		</init-param>
 		<init-param>
 			<description>tipo de appender</description>
@@ -84,9 +84,9 @@
 			<param-value>org.apache.log4j.DailyRollingFileAppender</param-value>
 		</init-param>
 		<init-param>
-			<description>local do arquivo</description>
+			<description>path local completo do arquivo</description>
 			<param-name>log4j.appender.R.File</param-name>
-			<param-value>${rootPath}WEB-INF/logs/opensig.log</param-value>
+			<param-value>opensig</param-value>
 		</init-param>
 		<init-param>
 			<description>adiciona ao final</description>
@@ -96,7 +96,7 @@
 		<init-param>
 			<description>padrao da data</description>
 			<param-name>log4j.appender.R.DatePattern</param-name>
-			<param-value>'_'yyyy-MM-dd</param-value>
+			<param-value>'_'yyyy-MM-dd'.log'</param-value>
 		</init-param>
 		<init-param>
 			<description>formato do texto</description>
@@ -125,6 +125,7 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
+	<!--
 	<servlet>
 		<description>Robo de auto execucao de tarefas agendas</description>
 		<servlet-name>RoboOpenSIG</servlet-name>
@@ -144,9 +145,9 @@
 			<param-name>org.quartz.threadPool.threadCount</param-name>
 			<param-value>10</param-value>
 		</init-param>
-		<!-- Adicionar como parametros as tarefas aqui -->
 		<load-on-startup>3</load-on-startup>
 	</servlet>
+	 -->
 	<servlet>
 		<description>Servico de email</description>
 		<servlet-name>MailService</servlet-name>
@@ -164,7 +165,7 @@
 		<init-param>
 			<description>usuario</description>
 			<param-name>mail.user</param-name>
-			<param-value>opensig@phdss.com.br</param-value>
+			<param-value></param-value>
 		</init-param>
 		<init-param>
 			<description>senha</description>
@@ -334,6 +335,11 @@
 		<description>Chave mestre usada para criptografar outras senhas.</description>
 		<param-name>sistema.chave</param-name>
 		<param-value>opensig</param-value>
+	</context-param>
+	<context-param>
+		<description>Path padrao das empresas e suas configuracoes e arquivos.</description>
+		<param-name>sistema.empresas</param-name>
+		<param-value>/Users/pedrohenriquelira/Documents/Projetos/Git/empresas/</param-value>
 	</context-param>
 	<!-- Config Server -->
 	<session-config>

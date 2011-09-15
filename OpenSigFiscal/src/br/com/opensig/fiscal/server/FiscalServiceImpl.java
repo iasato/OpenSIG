@@ -55,6 +55,8 @@ import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.client.servico.FiscalException;
 import br.com.opensig.fiscal.client.servico.FiscalService;
+import br.com.opensig.fiscal.server.acao.EnviarEmail;
+import br.com.opensig.fiscal.server.acao.EnviarNfeCancelada;
 import br.com.opensig.fiscal.server.acao.GerarNfeCancelada;
 import br.com.opensig.fiscal.server.acao.GerarNfeInutilizada;
 import br.com.opensig.fiscal.server.acao.RetornarNfe;
@@ -64,12 +66,12 @@ import br.com.opensig.fiscal.shared.modelo.FisCertificado;
 import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
+import br.com.opensig.retconssitnfe.TProtNFe.InfProt;
+import br.com.opensig.retconssitnfe.TRetCancNFe.InfCanc;
 import br.com.opensig.retconssitnfe.TRetConsSitNFe;
 
 @SuppressWarnings("restriction")
 public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> implements FiscalService<E> {
-
-	private static final long serialVersionUID = -5971833392255947385L;
 
 	public String exportar(String arquivo, String nome, String tipo) throws ExportacaoException {
 		// valida sessao
@@ -105,16 +107,16 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
 			// local do relatorio jasper
 			String tipoImp = UtilServer.getValorTag(doc.getDocumentElement(), "tpImp", true);
-			String jasper = UtilServer.getRealPath(UtilServer.CONF.get("nfe.danfe" + tipoImp));
+			String jasper = UtilServer.CONF.get("sistema.empresas") + "danfe/danfe" + tipoImp + ".jasper";
 			// fonte de dados
 			String xpath = UtilServer.getValorTag(doc.getDocumentElement(), "nProt", false);
-			xpath = xpath == null ? "/nfe/infNFe/det" : "/nfeProc/nfe/infNFe/det";
+			xpath = xpath == null ? "/nfe/infNFe/det" : "/nfeProc/NFe/infNFe/det";
 			JRXmlDataSource ds = new JRXmlDataSource(doc, xpath);
 			// parametros
 			Map<String, Object> param = NFe.getFaturas(doc);
 			Element ele = (Element) doc.getElementsByTagName("infNFe").item(0);
 			String chave = ele.getAttribute("Id");
-			param.put("Logo", "../logo/" + chave.substring(9, 23) + ".png");
+			param.put("Logo", "../" + chave.substring(9, 23) + "/logo.png");
 			param.put("REPORT_LOCALE", UtilServer.LOCAL);
 			// gerando o relatorio
 			JasperPrint print = JasperFillManager.fillReport(jasper, param, ds);
@@ -147,7 +149,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 				FiltroTexto ft = new FiltroTexto("fisNotaSaidaChave", ECompara.IGUAL, chave);
 				FisNotaSaida nota = (FisNotaSaida) selecionar(new FisNotaSaida(), ft, false);
 
-				if (nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.ordinal() || nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.CANCELADO.ordinal()) {
+				if (nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId() || nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.CANCELADO.getId()) {
 					if (opcao.equals("2")) {
 						obj = nota.getFisNotaSaidaXml().getBytes();
 						nome = chave + "-procNFe.xml";
@@ -272,7 +274,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 
 				// verifica se o status na sefaz é igual ao informado
 				if (situacao.getCStat().equals("100")) {
-					if (nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.ordinal() && situacao.getProtNFe() != null) {
+					if (nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId() && situacao.getProtNFe() != null) {
 						// valida se a data da nota ainda pode ser cancelada
 						int dias = Integer.valueOf(UtilServer.CONF.get("nfe.tempo_cancela"));
 						Calendar cal = Calendar.getInstance();
@@ -287,7 +289,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 							nota.setFisNotaEntradaRecibo("PROVISORIO");
 							prov++;
 						}
-					} else if (nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.CANCELADO.ordinal() && situacao.getRetCancNFe() != null) {
+					} else if (nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.CANCELADO.getId() && situacao.getRetCancNFe() != null) {
 						nota.setFisNotaEntradaRecibo("OK");
 						ok++;
 					} else {
@@ -370,27 +372,72 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		}
 	}
 
-	public Map<String, String> receberNFe(FisNotaSaida saida) throws FiscalException {
+	public Map<String, String> analisarNFe(FisNotaSaida saida) throws FiscalException {
+		String para = null;
+		Map<String, String> resp = new HashMap<String, String>();
+
 		// gerar o objeto
 		try {
-			FiltroNumero fn = new FiltroNumero("empEmpresaId", ECompara.IGUAL, saida.getEmpEmpresa().getEmpEmpresaId());
-			EmpEmpresa empresa = (EmpEmpresa) selecionar(saida.getEmpEmpresa(), fn, false);
-			saida.setEmpEmpresa(empresa);
+			String proc = situacao(Integer.valueOf(UtilServer.CONF.get("nfe.tipoamb")), saida.getFisNotaSaidaChave(), saida.getEmpEmpresa().getEmpEmpresaId());
+			TRetConsSitNFe sit = UtilServer.xmlToObj(proc, "br.com.opensig.retconssitnfe");
 
-			RetornarNfe retorno = new RetornarNfe(this, saida, 0);
-			retorno.run();
+			// verifica se sucesso
+			if (sit.getProtNFe() != null) {
+				InfProt inf = sit.getProtNFe().getInfProt();
+				if (inf.getCStat().equals("100")) {
+					saida.setFisNotaSaidaXml(RetornarNfe.montaProcNfe(saida.getFisNotaSaidaXml(), proc));
+					saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.AUTORIZADO));
+					saida.setFisNotaSaidaProtocolo(inf.getNProt());
 
-			Map<String, String> resp = new HashMap<String, String>();
-			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.ordinal()) {
+					Document doc = UtilServer.getXml(saida.getFisNotaSaidaXml());
+					para = UtilServer.getValorTag(doc.getDocumentElement(), "email", false);
+				} else {
+					saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
+					saida.setFisNotaSaidaErro(inf.getXMotivo());
+				}
+			} else if (sit.getRetCancNFe() != null) {
+				InfCanc inf = sit.getRetCancNFe().getInfCanc();
+				if (inf.getCStat().equals("100")) {
+					saida.setFisNotaSaidaXml(EnviarNfeCancelada.montaProcCancNfe(saida.getFisNotaSaidaXml(), proc));
+					saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.CANCELADO));
+					saida.setFisNotaSaidaProtocoloCancelado(inf.getNProt());
+
+					Document doc = UtilServer.getXml(saida.getFisNotaSaidaXml());
+					para = UtilServer.getValorTag(doc.getDocumentElement(), "email", false);
+				} else {
+					saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
+					saida.setFisNotaSaidaErro(inf.getXMotivo());
+				}
+			} else {
+				saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
+				saida.setFisNotaSaidaErro(sit.getXMotivo());
+			}
+		} catch (Exception e) {
+			saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
+			saida.setFisNotaSaidaErro(e.getMessage());
+		} finally {
+			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.getId()) {
 				resp.put("status", ENotaStatus.ERRO.name());
+				resp.put("msg", saida.getFisNotaSaidaErro());
+
 			} else {
 				resp.put("status", ENotaStatus.AUTORIZADO.name());
+				resp.put("msg", ENotaStatus.AUTORIZADO.name());
 			}
-			resp.put("msg", saida.getFisNotaSaidaErro());
-			return resp;
-		} catch (Exception e) {
-			throw new FiscalException(e.getMessage());
+
+			try {
+				salvar((E) saida, false);
+				if (para != null) {
+					EnviarEmail email = new EnviarEmail(this, saida);
+					Thread enviar = new Thread(email);
+					enviar.start();
+				}
+			} catch (OpenSigException e) {
+				UtilServer.LOG.error("Problemas ao salvar a saida apos consultar situacao.", e);
+			}
 		}
+
+		return resp;
 	}
 
 	public String receberNFe(String xml, int empresa, String recibo) throws FiscalException {
@@ -423,7 +470,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			saida = gerar.getSaida();
 
 			Map<String, String> resp = new HashMap<String, String>();
-			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.ordinal()) {
+			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.getId()) {
 				resp.put("status", ENotaStatus.ERRO.name());
 			} else {
 				resp.put("status", ENotaStatus.CANCELADO.name());
@@ -463,7 +510,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			saida = gerar.getSaida();
 
 			Map<String, String> resp = new HashMap<String, String>();
-			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.ordinal()) {
+			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.getId()) {
 				resp.put("status", ENotaStatus.ERRO.name());
 			} else {
 				resp.put("status", ENotaStatus.INUTILIZADO.name());
@@ -505,7 +552,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		try {
 			// pega o certificado
 			String cnpj = certificado.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", "");
-			String pfx = UtilServer.getRealPath(UtilServer.CONF.get("nfe.certificado") + cnpj + ".pfx");
+			String pfx = UtilServer.CONF.get("sistema.empresas") + cnpj + "/certificado.pfx";
 			// seta o tipo
 			KeyStore keystore = KeyStore.getInstance(("PKCS12"));
 			keystore.load(new FileInputStream(pfx), certificado.getFisCertificadoSenha().toCharArray());

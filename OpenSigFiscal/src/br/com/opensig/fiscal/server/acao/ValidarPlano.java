@@ -72,7 +72,7 @@ public class ValidarPlano extends Chain {
 			Date fim = cal.getTime();
 
 			// totais
-			if (plano.getEmpPlanoLimite() < Integer.valueOf(UtilServer.CONF.get("nfe.plano")) || status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.ordinal()) {
+			if (plano.getEmpPlanoLimite() < Integer.valueOf(UtilServer.CONF.get("nfe.plano")) || status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
 				int total = getTotalSaida(plano.getEmpPlanoLimite(), inicio, fim);
 				total += getTotalEntrada(plano.getEmpPlanoLimite(), inicio, fim);
 				int usado = total / plano.getEmpPlanoLimite() * 100;

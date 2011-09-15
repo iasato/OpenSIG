@@ -23,7 +23,6 @@ import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 @Entity
 @Table(name = "com_natureza")
 public class ComNatureza extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@Column(name = "com_natureza_id")

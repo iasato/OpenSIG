@@ -21,7 +21,6 @@ import br.com.opensig.core.shared.modelo.Dados;
 @Entity
 @Table(name = "emp_endereco_tipo")
 public class EmpEnderecoTipo extends Dados implements Serializable {
-	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
