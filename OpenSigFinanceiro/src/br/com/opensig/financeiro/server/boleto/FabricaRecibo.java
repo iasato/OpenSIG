@@ -1,6 +1,5 @@
 package br.com.opensig.financeiro.server.boleto;
 
-import br.com.opensig.core.shared.modelo.EArquivo;
 
 /**
  * Classe para recuparar o boleto de acordo com o tipo.
@@ -32,16 +31,13 @@ public class FabricaRecibo {
 	 *            da classe que representa a exportacao.
 	 * @return a exportacao propriemente dita.
 	 */
-	public IRecibo getRecibo(EArquivo tipo) {
+	public IRecibo getRecibo(String tipo) {
 		IRecibo boleto;
 
-		switch (tipo) {
-		case PDF:
+		if (tipo.equalsIgnoreCase("pdf")) {
 			boleto = new ReciboPdf();
-			break;
-		default:
+		} else {
 			boleto = new ReciboHtml();
-			break;
 		}
 
 		return boleto;

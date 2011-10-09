@@ -3,7 +3,7 @@ package br.com.opensig.permissao.client.controlador.comando;
 import br.com.opensig.core.client.controlador.comando.ComandoFuncao;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.ANavegacao;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.permissao.client.visao.form.FormularioAcesso;
 
 import com.gwtext.client.data.Record;

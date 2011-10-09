@@ -11,12 +11,14 @@ import br.com.opensig.comercial.shared.modelo.ComNatureza;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.servico.CoreProxy;
+import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.IListagem;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.financeiro.client.visao.form.FormularioPagar;
 import br.com.opensig.produto.client.controlador.comando.ComandoPesquisa;
 import br.com.opensig.produto.shared.modelo.ProdCategoria;
+import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 import com.google.gwt.core.client.Scheduler;
@@ -40,6 +42,7 @@ import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.MessageBox;
 import com.gwtext.client.widgets.MessageBox.ConfirmCallback;
 import com.gwtext.client.widgets.TabPanel;
+import com.gwtext.client.widgets.ToolTip;
 import com.gwtext.client.widgets.Toolbar;
 import com.gwtext.client.widgets.Window;
 import com.gwtext.client.widgets.event.ButtonListenerAdapter;
@@ -51,11 +54,9 @@ import com.gwtext.client.widgets.form.TextField;
 import com.gwtext.client.widgets.form.event.CheckboxListenerAdapter;
 import com.gwtext.client.widgets.form.event.FormPanelListenerAdapter;
 import com.gwtext.client.widgets.grid.BaseColumnConfig;
-import com.gwtext.client.widgets.grid.CellMetadata;
 import com.gwtext.client.widgets.grid.ColumnConfig;
 import com.gwtext.client.widgets.grid.GridEditor;
 import com.gwtext.client.widgets.grid.GridPanel;
-import com.gwtext.client.widgets.grid.Renderer;
 import com.gwtext.client.widgets.grid.event.EditorGridListenerAdapter;
 import com.gwtext.client.widgets.grid.event.GridRowListenerAdapter;
 import com.gwtext.client.widgets.layout.FitLayout;
@@ -64,7 +65,6 @@ import com.gwtextux.client.widgets.window.ToastWindow;
 
 public class ListagemValidarProduto {
 
-	private IListagem lista;
 	private Window wnd;
 	private TabPanel tab;
 	private ListagemCompraProdutos gridProdutos;
@@ -76,13 +76,10 @@ public class ListagemValidarProduto {
 	private NumberField txtFrete;
 	private Checkbox chkFechar;
 	private Checkbox chkPagar;
-	private String arquivo;
 	private Map contexto;
 
-	public ListagemValidarProduto(IListagem lista, String arquivo, ComCompra compra, Dados dados) {
-		this.lista = lista;
+	public ListagemValidarProduto(ComCompra compra, Dados dados) {
 		this.compra = compra;
-		this.arquivo = arquivo;
 		contexto = new HashMap();
 		contexto.put("dados", dados);
 
@@ -119,15 +116,13 @@ public class ListagemValidarProduto {
 
 			public void onSuccess(Record result) {
 				Record rec = gridProdutos.getSelectionModel().getSelected();
-				int row = gridProdutos.getStore().indexOf(rec);
-
 				rec.set("prodProdutoId", result.getAsInteger("prodProdutoId"));
 				rec.set("prodProduto.prodProdutoBarra", result.getAsString("prodProdutoBarra"));
 				rec.set("prodProduto.prodProdutoDescricao", result.getAsString("prodProdutoDescricao"));
 				rec.set("prodProduto.prodProdutoReferencia", result.getAsString("prodProdutoReferencia"));
 				rec.set("prodProduto.prodProdutoIncentivo", result.getAsBoolean("prodProdutoIncentivo"));
+				rec.set("prodEmbalagem.prodEmbalagemId", result.getAsInteger("prodEmbalagem.prodEmbalagemId"));
 				rec.set("comCompraProdutoPreco", result.getAsDouble("prodProdutoPreco"));
-				atualizaItem(rec, row);
 			}
 		};
 
@@ -140,34 +135,22 @@ public class ListagemValidarProduto {
 			};
 		});
 		gridProdutos.addGridRowListener(new GridRowListenerAdapter() {
-			public void onRowDblClick(GridPanel grid, int rowIndex, EventObject e) {
+			public void onRowContextMenu(GridPanel grid, int rowIndex, EventObject e) {
 				ComandoPesquisa cmdPesquisa = new ComandoPesquisa(asyncPesquisa);
 				cmdPesquisa.execute(contexto);
 			}
 		});
 		gridProdutos.addEditorGridListener(new EditorGridListenerAdapter() {
-			public void onAfterEdit(GridPanel grid, Record record, String field, Object newValue, Object oldValue, int rowIndex, int colIndex) {
-				atualizaItem(record, rowIndex);
+			public boolean doBeforeEdit(GridPanel grid, Record record, String field, Object value, int rowIndex, int colIndex) {
+				return record.getAsInteger("prodProdutoId") == 0 || field.equals("prodEmbalagem.prodEmbalagemId") || field.equals("comCompraProdutoPreco")
+						|| field.equals("prodProduto.prodProdutoIncentivo");
 			}
 		});
 
-		return gridProdutos;
-	}
+		ToolTip tip = new ToolTip(OpenSigCore.i18n.msgCompraProduto());
+		tip.applyTo(gridProdutos);
 
-	private void atualizaItem(Record rec, int row) {
-		// recupera
-		ComCompraProduto comPro = compra.getComCompraProdutos().get(row);
-		ProdProduto prod = comPro.getProdProduto();
-		// altera
-		comPro.setComCompraProdutoPreco(rec.getAsDouble("comCompraProdutoPreco"));
-		prod.setProdProdutoId(rec.getAsInteger("prodProdutoId"));
-		prod.setProdProdutoBarra(rec.getAsString("prodProduto.prodProdutoBarra") != null ? Long.valueOf(rec.getAsString("prodProduto.prodProdutoBarra")) : null);
-		prod.setProdProdutoDescricao(rec.getAsString("prodProduto.prodProdutoDescricao"));
-		prod.setProdProdutoReferencia(rec.getAsString("prodProduto.prodProdutoReferencia"));
-		prod.setProdProdutoIncentivo(rec.getAsBoolean("prodProduto.prodProdutoIncentivo"));
-		// seta
-		comPro.setProdProduto(prod);
-		compra.getComCompraProdutos().set(row, comPro);
+		return gridProdutos;
 	}
 
 	private FormularioPagar getPagamento() {
@@ -297,6 +280,10 @@ public class ListagemValidarProduto {
 	private void salvar() {
 		// validando a compra
 		boolean validado = true;
+		int row = 0;
+		for (Record rec : gridProdutos.getStore().getRecords()) {
+			atualizaItem(rec, row++);
+		}
 
 		if (dtRecebimento.getValue() == null) {
 			validado = false;
@@ -321,7 +308,6 @@ public class ListagemValidarProduto {
 			ProdProduto prod = cProd.getProdProduto();
 			if (prod.getProdProdutoId() == 0) {
 				prod.setProdProdutoCategoria(cmbCategoria.getValue());
-				prod.setEmpFabricante(prod.getEmpFornecedor());
 			}
 		}
 
@@ -334,6 +320,25 @@ public class ListagemValidarProduto {
 			wnd.close();
 			gerarPreco();
 		}
+	}
+
+	private void atualizaItem(Record rec, int row) {
+		// recupera
+		ComCompraProduto comPro = compra.getComCompraProdutos().get(row);
+		ProdProduto prod = comPro.getProdProduto();
+		// altera
+		prod.setProdProdutoId(rec.getAsInteger("prodProdutoId"));
+		prod.setProdProdutoBarra(rec.getAsString("prodProduto.prodProdutoBarra") != null ? Long.valueOf(rec.getAsString("prodProduto.prodProdutoBarra")) : null);
+		prod.setProdProdutoDescricao(rec.getAsString("prodProduto.prodProdutoDescricao"));
+		prod.setProdProdutoReferencia(rec.getAsString("prodProduto.prodProdutoReferencia"));
+		prod.setProdProdutoIncentivo(rec.getAsBoolean("prodProduto.prodProdutoIncentivo"));
+		prod.setProdEmbalagem(new ProdEmbalagem(rec.getAsInteger("prodEmbalagem.prodEmbalagemId")));
+
+		// seta
+		comPro.setProdProduto(prod);
+		comPro.setComCompraProdutoPreco(rec.getAsDouble("comCompraProdutoPreco"));
+		comPro.setProdEmbalagem(new ProdEmbalagem(rec.getAsInteger("prodEmbalagem.prodEmbalagemId")));
+		compra.getComCompraProdutos().set(row, comPro);
 	}
 
 	private void gerarPreco() {
@@ -352,16 +357,17 @@ public class ListagemValidarProduto {
 	private void enviar() {
 		MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtSalvar());
 		ComercialProxy proxy = new ComercialProxy();
-		proxy.importarNfe(arquivo, compra, new AsyncCallback() {
+		proxy.salvarCompra(compra, new AsyncCallback<ComCompra>() {
 			public void onFailure(Throwable caught) {
 				MessageBox.hide();
-				MessageBox.alert(OpenSigCore.i18n.txtSalvar(), caught.getMessage());
-				new ToastWindow(OpenSigCore.i18n.txtSalvar(), OpenSigCore.i18n.errSalvar()).show();
+				MessageBox.alert(OpenSigCore.i18n.txtSalvar(), OpenSigCore.i18n.errSalvar());
+				new ToastWindow(OpenSigCore.i18n.txtSalvar(), caught.getMessage()).show();
 			};
 
-			public void onSuccess(Object result) {
+			public void onSuccess(ComCompra result) {
 				MessageBox.hide();
-				lista.getPanel().getStore().reload();
+				TabPanel tab = (TabPanel) Ponte.getCentro().getActiveTab();
+				((IListagem) tab.getActiveTab()).getPanel().getStore().reload();
 				new ToastWindow(OpenSigCore.i18n.txtSalvar(), OpenSigCore.i18n.msgSalvarOK()).show();
 			};
 		});
@@ -372,20 +378,6 @@ public class ListagemValidarProduto {
 		for (int i = 0; i < compra.getComCompraProdutos().size(); i++) {
 			dados[i] = compra.getComCompraProdutos().get(i).toArray();
 		}
-
-		Renderer editor = new Renderer() {
-			public String render(Object value, CellMetadata cellMetadata, Record record, int rowIndex, int colNum, Store store) {
-				if (value != null) {
-					if (record.getAsInteger("prodProdutoId") == 0) {
-						return "<span style='color:blue;'>" + value.toString() + "</span>";
-					} else {
-						return value.toString();
-					}
-				} else {
-					return "";
-				}
-			}
-		};
 
 		for (BaseColumnConfig base : gridProdutos.getModelos().getColumnConfigs()) {
 			ColumnConfig conf = null;
@@ -407,7 +399,6 @@ public class ListagemValidarProduto {
 				gridProdutos.setEditorListener(txtBarra);
 				gridProdutos.getModelos().setEditable(conf.getId(), true);
 				conf.setEditor(new GridEditor(txtBarra));
-				conf.setRenderer(editor);
 			}
 			// descricao
 			if (conf.getDataIndex().equals("prodProduto.prodProdutoDescricao")) {
@@ -418,7 +409,6 @@ public class ListagemValidarProduto {
 				gridProdutos.setEditorListener(txtDescricao);
 				gridProdutos.getModelos().setEditable(conf.getId(), true);
 				conf.setEditor(new GridEditor(txtDescricao));
-				conf.setRenderer(editor);
 			}
 			// ref
 			if (conf.getDataIndex().equals("prodProduto.prodProdutoReferencia")) {
@@ -429,7 +419,6 @@ public class ListagemValidarProduto {
 				gridProdutos.setEditorListener(txtRef);
 				gridProdutos.getModelos().setEditable(conf.getId(), true);
 				conf.setEditor(new GridEditor(txtRef));
-				conf.setRenderer(editor);
 			}
 			// embalagem
 			if (conf.getDataIndex().startsWith("prodEmbalagem.prodEmbalagemId")) {
@@ -450,6 +439,15 @@ public class ListagemValidarProduto {
 		MemoryProxy proxy = new MemoryProxy(dados);
 		ArrayReader reader = new ArrayReader(gridProdutos.getCampos());
 		Store store = new Store(proxy, reader);
+		store.addStoreListener(new StoreListenerAdapter() {
+			public void onLoad(Store store, Record[] records) {
+				for (int i = 0; i < records.length; i++) {
+					if (records[i].getAsInteger("prodProdutoId") == 0) {
+						gridProdutos.getView().getRow(i).getStyle().setColor("blue");
+					}
+				}
+			}
+		});
 
 		return store;
 	}

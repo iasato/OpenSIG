@@ -17,6 +17,8 @@ import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
+import br.com.opensig.produto.server.acao.SalvarProduto;
+import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 public class SalvarCompra extends Chain {
 
@@ -33,7 +35,8 @@ public class SalvarCompra extends Chain {
 	public void execute() throws OpenSigException {
 		EntityManagerFactory emf = null;
 		EntityManager em = null;
-
+		validarProduto();
+		
 		try {
 			// recupera uma instância do gerenciador de entidades
 			emf = Conexao.getInstancia(compra.getPu());
@@ -43,8 +46,6 @@ public class SalvarCompra extends Chain {
 			// salva
 			List<ComCompraProduto> produtos = compra.getComCompraProdutos();
 			compra.setComCompraProdutos(null);
-			compra.setFinPagar(null);
-			compra.setFisNotaEntrada(null);
 			servico.salvar(em, compra);
 
 			// deleta
@@ -57,7 +58,7 @@ public class SalvarCompra extends Chain {
 				comProd.setComCompra(compra);
 			}
 			servico.salvar(em, produtos);
-			
+
 			if (next != null) {
 				next.execute();
 			}
@@ -75,4 +76,19 @@ public class SalvarCompra extends Chain {
 		}
 	}
 
+	private void validarProduto() throws ComercialException {
+		try {
+			// salva os produtos novos
+			for (ComCompraProduto comProd : compra.getComCompraProdutos()) {
+				ProdProduto prod = comProd.getProdProduto();
+				if (prod.getProdProdutoId() == 0) {
+					SalvarProduto salProduto = new SalvarProduto(null, servico, prod, null);
+					salProduto.execute();
+				}
+			}
+		} catch (Exception ex) {
+			UtilServer.LOG.error("Erro ao validar o produto.", ex);
+			throw new ComercialException(ex.getMessage());
+		}
+	}
 }

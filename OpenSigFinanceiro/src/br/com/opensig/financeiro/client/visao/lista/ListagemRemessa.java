@@ -10,6 +10,7 @@ import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.js.OpenSigCoreJS;
 import br.com.opensig.core.client.servico.CoreProxy;
+import br.com.opensig.core.client.servico.ExportacaoProxy;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AListagem;
 import br.com.opensig.core.client.visao.abstrato.IFormulario;
@@ -85,7 +86,8 @@ public class ListagemRemessa extends AListagem<FinRemessa> {
 
 					public void onSuccess(FinRemessa result) {
 						String arquivo = OpenSigCoreJS.base64encode(result.getFinRemessaArquivo());
-						core.exportar(arquivo, OpenSigCore.i18n.txtArquivo() + "_" + result.getFinRemessaId(), "rem", new AsyncCallback<String>() {
+						ExportacaoProxy proxy = new ExportacaoProxy();
+						proxy.exportar(arquivo, OpenSigCore.i18n.txtArquivo() + "_" + result.getFinRemessaId() + ".rem", new AsyncCallback<String>() {
 							public void onSuccess(String result) {
 								UtilClient.exportar("CoreService?id=" + result);
 							}

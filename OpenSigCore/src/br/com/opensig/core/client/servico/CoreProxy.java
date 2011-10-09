@@ -15,11 +15,8 @@ import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.controlador.parametro.ParametroException;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
-import br.com.opensig.core.shared.modelo.ExportacaoRegistro;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.Sql;
 
@@ -43,12 +40,10 @@ import com.gwtextux.client.widgets.window.ToastWindow;
  * @author Pedro H. Lira
  * @version 1.0
  */
-
 public class CoreProxy<E extends Dados> extends GWTProxy implements CoreServiceAsync<E> {
 
 	private static final CoreServiceAsync async = (CoreServiceAsync) GWT.create(CoreService.class);
 	private static final ServiceDefTarget sdf = (ServiceDefTarget) async;
-	private static final long serialVersionUID = 7137949607308298394L;
 
 	/**
 	 * O objeto setado genericamente.
@@ -356,21 +351,6 @@ public class CoreProxy<E extends Dados> extends GWTProxy implements CoreServiceA
 	@Override
 	public void executar(Sql[] sqls, AsyncCallback<Integer[]> asyncCallback) {
 		async.executar(sqls, asyncCallback);
-	}
-
-	@Override
-	public void exportar(ExportacaoListagem expLista, EArquivo tipo, AsyncCallback<String> asyncCallback) {
-		async.exportar(expLista, tipo, asyncCallback);
-	}
-
-	@Override
-	public void exportar(ExportacaoRegistro expRegistro, EArquivo tipo, AsyncCallback<String> asyncCallback) {
-		async.exportar(expRegistro, tipo, asyncCallback);
-	}
-
-	@Override
-	public void exportar(String arquivo, String nome, String tipo, AsyncCallback<String> asyncCallback) {
-		async.exportar(arquivo, nome, tipo, asyncCallback);
 	}
 
 	// Gets e Seteres

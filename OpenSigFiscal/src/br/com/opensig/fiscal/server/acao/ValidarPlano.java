@@ -76,10 +76,11 @@ public class ValidarPlano extends Chain {
 				int total = getTotalSaida(plano.getEmpPlanoLimite(), inicio, fim);
 				total += getTotalEntrada(plano.getEmpPlanoLimite(), inicio, fim);
 				int usado = total / plano.getEmpPlanoLimite() * 100;
-
+				int aviso = UtilServer.CONF.get("nfe.aviso") == null ? 90 : Integer.valueOf(UtilServer.CONF.get("nfe.aviso"));
+				
 				if (usado >= 100) {
 					throw new FiscalException("Aumente o limite do seu plano, pois ja usou a quantidade maxima deste mes.");
-				} else if (usado == Integer.valueOf(UtilServer.CONF.get("nfe.aviso"))) {
+				} else if (usado == aviso) {
 					try {
 						// enviando, caso nao ache manda para o sistema
 						String para = null;

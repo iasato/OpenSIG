@@ -10,14 +10,14 @@ import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.client.visao.NavegacaoLista;
 import br.com.opensig.core.client.visao.Paginador;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.EArquivo;
+import br.com.opensig.core.shared.modelo.ExpListagem;
 import br.com.opensig.core.shared.modelo.IFavorito;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.RecordDef;
 import com.gwtext.client.data.Store;
@@ -170,18 +170,17 @@ public interface IListagem<E extends Dados> {
 	public void setFavorito(IFavorito favorito);
 
 	/**
-	 * Metodo que seta os dados para exportacao.
-	 * 
-	 * @param tipo
-	 *            o tipo de arquivo.
-	 * @param inicio
-	 *            a pagina de inicio da exportacao.
-	 * @param limite
-	 *            a pagina de fim da exportacao.
-	 * @param asyncCallback
-	 *            a funcao de retorno apos exportado.
+	 * Metodo que pega os dados para exportacao.
 	 */
-	public void setExportacao(EArquivo tipo, int inicio, int limite, AsyncCallback<String> asyncCallback);
+	public ExpListagem<E> getExportacao();
+
+	/**
+	 * Metodo que recupera o tipo de importacao.
+	 * 
+	 * @param modo
+	 *            o tipo de opcoes para importar.
+	 */
+	public void setImportacao(SisExpImp modo);
 
 	/**
 	 * Metodo que retorna o objeto visual da listagem.
@@ -295,7 +294,7 @@ public interface IListagem<E extends Dados> {
 	public boolean validarCampoBinario(String valor);
 
 	// Gets e Seteres
-	
+
 	public boolean isBarraTarefa();
 
 	public void setBarraTarefa(boolean barraTarefa);

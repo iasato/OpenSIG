@@ -3,13 +3,12 @@ package br.com.opensig.core.server;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -81,7 +80,7 @@ public class UtilServer extends HttpServlet {
 	static {
 		String acentuado = "çÇáéíóúýÁÉÍÓÚÝàèìòùÀÈÌÒÙãõñäëïöüÿÄËÏÖÜÃÕÑâêîôûÂÊÎÔÛ";
 		String semAcento = "cCaeiouyAEIOUYaeiouAEIOUaonaeiouyAEIOUAONaeiouAEIOU";
-		
+
 		for (int i = 0; i < tabela.length; ++i) {
 			tabela[i] = (char) i;
 		}
@@ -111,25 +110,30 @@ public class UtilServer extends HttpServlet {
 
 		// setando a chave/senha
 		CHAVE = getServletContext().getInitParameter("sistema.chave");
-		
+
 		// setando o path local
 		PATH = getServletContext().getRealPath("/");
 
 		// configurando o as opcoes do app
 		String pathEmpresas = getServletContext().getInitParameter("sistema.empresas");
-		Properties prop = new Properties();
-		try {
-			FileInputStream fis = new FileInputStream(pathEmpresas + "app.conf");
-			BufferedReader br = new BufferedReader(new InputStreamReader(fis, Charset.forName("UTF-8")));
-			prop.load(br);
-			fis.close();
-		} catch (Exception ex) {
-			LOG.error("Nao leu os dados de conf do App.", ex);
-		} finally {
-			// adicionando os valores
-			CONF.put("sistema.empresas", pathEmpresas);
-			for (Entry<Object, Object> entry : prop.entrySet()) {
-				CONF.put(entry.getKey().toString(), entry.getValue().toString());
+		CONF.put("sistema.empresas", pathEmpresas);
+
+		File dir = new File(pathEmpresas + "conf/");
+		for (File conf : dir.listFiles()) {
+			if (conf.isFile() && conf.getName().endsWith(".conf")) {
+				Properties prop = new Properties();
+				try {
+					FileInputStream fis = new FileInputStream(conf);
+					prop.load(fis);
+					fis.close();
+				} catch (Exception ex) {
+					LOG.error("Nao leu os dados do arquivo -> " + conf.getName(), ex);
+				} finally {
+					// adicionando os valores
+					for (Entry<Object, Object> entry : prop.entrySet()) {
+						CONF.put(entry.getKey().toString(), entry.getValue().toString());
+					}
+				}
 			}
 		}
 	}
@@ -370,11 +374,9 @@ public class UtilServer extends HttpServlet {
 	 * @param valor
 	 *            o valor a ser formatado
 	 * @param inteiros
-	 *            o minimo de inteiros, que serao completados com ZEROS se
-	 *            preciso
+	 *            o minimo de inteiros, que serao completados com ZEROS se preciso
 	 * @param decimal
-	 *            o minimo de decimais, que serao completados com ZEROS se
-	 *            preciso
+	 *            o minimo de decimais, que serao completados com ZEROS se preciso
 	 * @param grupo
 	 *            se sera colocado separador de grupo de milhar
 	 * @return uma String com o numero formatado
@@ -503,8 +505,7 @@ public class UtilServer extends HttpServlet {
 	 * @param tag
 	 *            nome da tag que deseja recuperar o valor.
 	 * @param excecao
-	 *            se passado true dispara a exception se ocorrer erro, se false
-	 *            retorna null
+	 *            se passado true dispara a exception se ocorrer erro, se false retorna null
 	 * @return valor da tag encontrada ou NULL se nao achada.
 	 * @exception NullPointerException
 	 *                exceção disparada em caso de erro.

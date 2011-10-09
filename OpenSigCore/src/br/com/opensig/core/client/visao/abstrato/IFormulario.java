@@ -1,15 +1,14 @@
 package br.com.opensig.core.client.visao.abstrato;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.EArquivo;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpRegistro;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.Toolbar;
 import com.gwtext.client.widgets.ToolbarMenuButton;
@@ -114,13 +113,13 @@ public interface IFormulario<E extends Dados> {
 
 	public void setLista(IListagem<E> lista);
 
-	public Collection<ExportacaoListagem> getExpLista();
+	public List<ExpListagem> getExpLista();
 
-	public void setExpLista(Collection<ExportacaoListagem> expLista);
+	public void setExpLista(List<ExpListagem> expLista);
 
 	public void setFieldFocus(Field campo);
 
-	public void setExportacao(EArquivo tipo, AsyncCallback<String> asyncCallback);
+	public ExpRegistro<E> getExportacao();
 
 	public Toolbar getTlbAcao();
 

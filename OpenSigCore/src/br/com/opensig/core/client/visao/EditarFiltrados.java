@@ -208,7 +208,6 @@ public class EditarFiltrados {
 							ComandoSalvarFinal cmdFim = new ComandoSalvarFinal() {
 								public void execute(Map contexto) {
 									super.execute(contexto);
-									wndEditar.close();
 								}
 							};
 

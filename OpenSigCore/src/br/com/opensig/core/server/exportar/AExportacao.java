@@ -6,6 +6,11 @@ import java.util.Date;
 import java.util.Locale;
 
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Dados;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpRegistro;
+import br.com.opensig.core.shared.modelo.Lista;
+import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 
 /**
  * Classe abstrata que generaliza a forma como o sistema trata as exportacoes.
@@ -13,12 +18,28 @@ import br.com.opensig.core.server.UtilServer;
  * @author Pedro H. Lira
  * @version 1.0
  */
-public abstract class AExportacao implements IExportacao {
+public abstract class AExportacao<E extends Dados> implements IExportacao<E> {
 
+	/**
+	 * Dados recuperados do banco.
+	 */
+	protected Lista lista;
+	/**
+	 * Modo de exportacao
+	 */
+	protected SisExpImp modo;
 	/**
 	 * valors agrupados para usar como sumarios.
 	 */
 	protected double[] agrupados;
+	/**
+	 * tipo de exportacao em listagem.
+	 */
+	protected ExpListagem<E> expLista;
+	/**
+	 * tipo de exportacao em registro.
+	 */
+	protected ExpRegistro<E> expReg;
 
 	/**
 	 * Metodo que identifica o tipo de valor e formata de acordo com a
@@ -48,9 +69,9 @@ public abstract class AExportacao implements IExportacao {
 					}
 				} catch (Exception e4) {
 					if (valor.equalsIgnoreCase("true")) {
-						retorno = "Sim";
+						retorno = UtilServer.CONF.get("txtSim");
 					} else if (valor.equalsIgnoreCase("false")) {
-						retorno = "Nao";
+						retorno = UtilServer.CONF.get("txtNao");
 					}
 				}
 			}

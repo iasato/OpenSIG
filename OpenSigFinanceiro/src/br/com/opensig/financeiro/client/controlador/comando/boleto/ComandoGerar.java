@@ -5,7 +5,6 @@ import java.util.Map;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.AComando;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.financeiro.client.servico.FinanceiroProxy;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -16,14 +15,14 @@ public class ComandoGerar extends AComando {
 
 	private AsyncCallback<String> asyncCallback;
 	private AComando gerar;
-	private EArquivo tipo;
+	private String tipo;
 	private boolean recibo;
 
 	public ComandoGerar() {
-		this(EArquivo.HTML, false);
+		this("html", false);
 	}
 
-	public ComandoGerar(final EArquivo tipo, final boolean recibo) {
+	public ComandoGerar(String tipo, boolean recibo) {
 		this.tipo = tipo;
 		this.recibo = recibo;
 
@@ -66,11 +65,11 @@ public class ComandoGerar extends AComando {
 		};
 	}
 
-	public EArquivo getTipo() {
+	public String getTipo() {
 		return tipo;
 	}
 
-	public void setTipo(EArquivo tipo) {
+	public void setTipo(String tipo) {
 		this.tipo = tipo;
 	}
 

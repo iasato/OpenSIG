@@ -11,16 +11,16 @@ import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvar;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvarFinal;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
-import br.com.opensig.core.client.controlador.filtro.EJuncao;
-import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
-import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.servico.CoreProxy;
+import br.com.opensig.core.client.visao.JanelaUpload;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
 import br.com.opensig.core.shared.modelo.EBusca;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.EDirecao;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpMeta;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.financeiro.client.servico.FinanceiroProxy;
 import br.com.opensig.financeiro.client.visao.lista.ListagemBoletos;
@@ -29,16 +29,17 @@ import br.com.opensig.financeiro.shared.modelo.FinConta;
 import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
 import br.com.opensig.financeiro.shared.modelo.FinRetorno;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.core.EventObject;
+import com.gwtext.client.core.UrlParam;
 import com.gwtext.client.data.ArrayReader;
 import com.gwtext.client.data.FieldDef;
 import com.gwtext.client.data.IntegerFieldDef;
 import com.gwtext.client.data.MemoryProxy;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.RecordDef;
+import com.gwtext.client.data.SortState;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.data.event.StoreListenerAdapter;
@@ -66,7 +67,8 @@ public class FormularioRetorno extends AFormulario<FinRetorno> {
 	private ComboBox cmbConta;
 	private ListagemBoletos boletos;
 	private List<FinRecebimento> financeiros;
-
+	private JanelaUpload janela;
+	
 	public FormularioRetorno(SisFuncao funcao) {
 		super(new FinRetorno(), funcao);
 		inicializar();
@@ -89,7 +91,7 @@ public class FormularioRetorno extends AFormulario<FinRetorno> {
 		btnArquivo.setTooltip(OpenSigCore.i18n.msgAnalisar());
 		btnArquivo.addListener(new ButtonListenerAdapter() {
 			public void onClick(Button button, EventObject e) {
-				abrirUpload();
+				abrirArquivo();
 			}
 		});
 
@@ -102,6 +104,43 @@ public class FormularioRetorno extends AFormulario<FinRetorno> {
 		// lista
 		boletos = new ListagemBoletos();
 		add(boletos);
+	}
+	
+	private void abrirArquivo() {
+		janela = new JanelaUpload("ret");
+		janela.setParams(new UrlParam[] {JanelaUpload.ACAO_LER});
+		janela.inicializar();
+		
+		janela.getUplArquivo().purgeListeners();
+		janela.getUplArquivo().addListener(new UploadDialogListenerAdapter() {
+			public void onUploadSuccess(UploadDialog source, String filename, JavaScriptObject data) {
+				arquivo = JavaScriptObjectHelper.getAttribute(data, "dados");
+				txtArquivo.setValue(filename);
+				analisar();
+				source.close();
+			}
+
+			public void onUploadError(UploadDialog source, String filename, JavaScriptObject data) {
+				arquivo = null;
+				txtArquivo.setValue(null);
+				boletos.getStore().removeAll();
+				new ToastWindow(OpenSigCore.i18n.txtErro(), JavaScriptObjectHelper.getAttribute(data, "dados")).show();
+			}
+
+			public void onUploadFailed(UploadDialog source, String filename) {
+				arquivo = null;
+				txtArquivo.setValue(null);
+				boletos.getStore().removeAll();
+			}
+
+			public boolean onBeforeAdd(UploadDialog source, String filename) {
+				return source.getQueuedCount() == 0;
+			}
+			
+			public void onFileAdd(UploadDialog source, String filename) {
+				source.startUpload();
+			}
+		});
 	}
 	
 	@Override
@@ -213,52 +252,39 @@ public class FormularioRetorno extends AFormulario<FinRetorno> {
 	}
 
 	public void gerarListas() {
-		// selecionado e filtro
-		Record rec = lista.getPanel().getSelectionModel().getSelected();
-		String[] ids = rec.getAsString("finRetornoBoletos").split(" ");
-		GrupoFiltro gf = new GrupoFiltro();
-
-		for (String bol : ids) {
-			FiltroNumero fn = new FiltroNumero("finRecebimentoId", ECompara.IGUAL, bol);
-			gf.add(fn, EJuncao.OU);
-		}
-
 		// boletos
 		ListagemFinanciados<FinRecebimento> fin = new ListagemFinanciados<FinRecebimento>(new FinRecebimento(), false);
-		Integer[] tamanhos = new Integer[fin.getModelos().getColumnCount()];
-		String[] rotulos = new String[fin.getModelos().getColumnCount()];
-		EBusca[] agrupamentos = new EBusca[fin.getModelos().getColumnCount()];
-
+		List<ExpMeta> metadados = new ArrayList<ExpMeta>();
 		for (int i = 0; i < fin.getModelos().getColumnCount(); i++) {
-			if (!fin.getModelos().isHidden(i)) {
-				tamanhos[i] = fin.getModelos().getColumnWidth(i);
-				rotulos[i] = fin.getModelos().getColumnHeader(i);
-				
+			if (fin.getModelos().isHidden(i)) {
+				metadados.add(null);
+			} else {
+				ExpMeta meta = new ExpMeta(fin.getModelos().getColumnHeader(i), fin.getModelos().getColumnWidth(i), null);	
 				if (fin.getModelos().getColumnConfigs()[i] instanceof SummaryColumnConfig) {
 					SummaryColumnConfig col = (SummaryColumnConfig) fin.getModelos().getColumnConfigs()[i];
 					String tp = col.getSummaryType().equals("average") ? "AVG" : col.getSummaryType().toUpperCase();
-					agrupamentos[i] = EBusca.getBusca(tp);
+					meta.setGrupo(EBusca.getBusca(tp));
 				}
+				metadados.add(meta);
 			}
 		}
 
-		tamanhos[5] = tamanhos[4];
-		tamanhos[4] = null;
-		rotulos[5] = rotulos[4];
-		rotulos[4] = null;
-		agrupamentos[5] = agrupamentos[4];
-		agrupamentos[4] = null;
+		// trocando campos visiveis
+		metadados.set(5, metadados.get(4));
+		metadados.set(4, null);
 
-		ExportacaoListagem<FinRecebimento> recebimentos = new ExportacaoListagem<FinRecebimento>();
-		recebimentos.setUnidade(fin.getClasse());
-		recebimentos.setFiltro(gf);
-		recebimentos.setTamanhos(tamanhos);
-		recebimentos.setRotulos(rotulos);
-		recebimentos.setAgrupamentos(agrupamentos);
+		SortState ordem = boletos.getStore().getSortState();
+		FinRecebimento recebimento = new FinRecebimento();
+		recebimento.setCampoOrdem(ordem.getField());
+		recebimento.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
+		
+		ExpListagem<FinRecebimento> recebimentos = new ExpListagem<FinRecebimento>();
+		recebimentos.setClasse(recebimento);
+		recebimentos.setMetadados(metadados);
 		recebimentos.setNome(boletos.getTitle());
 
 		// sub listagens
-		expLista = new ArrayList<ExportacaoListagem>();
+		expLista = new ArrayList<ExpListagem>();
 		expLista.add(recebimentos);
 	}
 
@@ -285,40 +311,6 @@ public class FormularioRetorno extends AFormulario<FinRetorno> {
 				}
 			}
 		});
-	}
-
-	private void abrirUpload() {
-		UploadDialog uplArquivo = new UploadDialog();
-		uplArquivo.setModal(true);
-		uplArquivo.setUrl(GWT.getHostPageBaseURL() + "UploadService");
-		uplArquivo.setAllowCloseOnUpload(false);
-		uplArquivo.setPermittedExtensions(new String[] { "ret" });
-		uplArquivo.addListener(new UploadDialogListenerAdapter() {
-			public void onUploadSuccess(UploadDialog source, String filename, JavaScriptObject data) {
-				arquivo = JavaScriptObjectHelper.getAttribute(data, "dados");
-				txtArquivo.setValue(filename);
-				analisar();
-				source.close();
-			}
-
-			public void onUploadError(UploadDialog source, String filename, JavaScriptObject data) {
-				arquivo = null;
-				txtArquivo.setValue(null);
-				boletos.getStore().removeAll();
-				new ToastWindow(OpenSigCore.i18n.txtErro(), JavaScriptObjectHelper.getAttribute(data, "dados")).show();
-			}
-
-			public void onUploadFailed(UploadDialog source, String filename) {
-				arquivo = null;
-				txtArquivo.setValue(null);
-				boletos.getStore().removeAll();
-			}
-
-			public boolean onBeforeAdd(UploadDialog source, String filename) {
-				return source.getQueuedCount() == 0;
-			}
-		});
-		uplArquivo.show();
 	}
 
 	public String getArquivo() {

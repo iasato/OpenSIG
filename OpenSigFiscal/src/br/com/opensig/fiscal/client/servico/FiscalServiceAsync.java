@@ -17,7 +17,7 @@ public interface FiscalServiceAsync<E extends Dados> extends CoreServiceAsync<E>
 	public abstract void backup(E classe, IFiltro filtro, AsyncCallback<String> asyncCallback);
 
 	public abstract void exportar(String arquivo, String nome, String tipo, AsyncCallback<String> asyncCallback);
-
+	
 	public abstract void status(int ambiente, int uf, int empresa, AsyncCallback<String> asyncallback);
 
 	public abstract void validar(int ambiente, IFiltro filtro, int empresa, AsyncCallback<String> asyncallback);

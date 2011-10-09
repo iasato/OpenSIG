@@ -12,9 +12,9 @@ import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.visao.ComboEntidade;
 import br.com.opensig.core.client.visao.Ponte;
-import br.com.opensig.core.shared.modelo.permissao.SisAcao;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
-import br.com.opensig.core.shared.modelo.permissao.SisModulo;
+import br.com.opensig.core.shared.modelo.sistema.SisAcao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisModulo;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.regexp.shared.MatchResult;
@@ -335,13 +335,6 @@ public class UtilClient {
 	}
 
 	/**
-	 * Métod que realiza um "refresh" na tela.
-	 */
-	public final static native void atualizar()/*-{
-												$wnd.location.reload( false );
-												}-*/;
-
-	/**
 	 * Metodo que retorna o resultado de uma expressao.
 	 * 
 	 * @param expressao
@@ -351,16 +344,6 @@ public class UtilClient {
 	public final static native String eval(String expressao)/*-{
 															return eval(expressao).toString();
 															}-*/;
-
-	/**
-	 * Metodo que abre uma janela no navegador.
-	 * 
-	 * @param url
-	 *            o endereco da página solicitada.
-	 */
-	public static native void abrirUrl(String url)/*-{
-													window.open(url);
-													}-*/;
 
 	/**
 	 * Metodo que solicita a exportacao

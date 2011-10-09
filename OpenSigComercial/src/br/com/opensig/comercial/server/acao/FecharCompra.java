@@ -48,7 +48,7 @@ public class FecharCompra extends Chain {
 		// atauliza estoque
 		AtualizarEstoque atuEst = new AtualizarEstoque(atuProd);
 		// seleciona os produtos
-		this.setNext(atuEst);
+		this.next = atuEst;
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package br.com.opensig.financeiro.client.controlador.comando.boleto;
 import java.util.Map;
 
 import br.com.opensig.core.client.OpenSigCore;
-import br.com.opensig.core.shared.modelo.EArquivo;
 
 import com.gwtext.client.data.Record;
 import com.gwtext.client.widgets.MessageBox;
@@ -11,10 +10,10 @@ import com.gwtext.client.widgets.MessageBox;
 public class ComandoRecibo extends ComandoGerar {
 
 	public ComandoRecibo() {
-		this(EArquivo.HTML);
+		this("html");
 	}
 
-	public ComandoRecibo(EArquivo tipo) {
+	public ComandoRecibo(String tipo) {
 		super(tipo, true);
 	}
 

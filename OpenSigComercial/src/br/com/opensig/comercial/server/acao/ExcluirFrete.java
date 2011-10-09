@@ -30,7 +30,7 @@ public class ExcluirFrete extends Chain {
 		// atualiza os conta
 		AtualizarConta atuConta = new AtualizarConta(delFrete);
 		// seleciona os produtos
-		this.setNext(atuConta);
+		this.next = atuConta;
 	}
 
 	public void execute() throws OpenSigException {

@@ -4,7 +4,7 @@ import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.FabricaComando;
 import br.com.opensig.core.client.visao.abstrato.IFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 
 import com.gwtext.client.widgets.Window;
@@ -47,7 +47,11 @@ public class ListagemEntrada extends AListagemNota<FisNotaEntrada> {
 		return result.getFisNotaEntradaChave();
 	}
 
-	protected void getErro(FisNotaEntrada result) {
+	protected String getErro(FisNotaEntrada result) {
+		return result.getFisNotaEntradaErro();
+	}
+
+	protected void mostrarErro(FisNotaEntrada result) {
 		TextArea txtErro = new TextArea(OpenSigCore.i18n.txtErro(), "fisNotaErro");
 		txtErro.setSize(790, 590);
 		txtErro.setReadOnly(true);
@@ -57,7 +61,7 @@ public class ListagemEntrada extends AListagemNota<FisNotaEntrada> {
 		wnd.add(txtErro);
 		wnd.show();
 	}
-	
+
 	@Override
 	public void irPara() {
 		Menu mnuContexto = new Menu();

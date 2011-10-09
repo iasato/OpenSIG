@@ -5,21 +5,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportar;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarCsv;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarHtml;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarPdf;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarXls;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarXml;
-import br.com.opensig.core.client.controlador.comando.importar.ComandoImportar;
-import br.com.opensig.core.client.controlador.comando.importar.ComandoImportarCsv;
-import br.com.opensig.core.client.controlador.comando.importar.ComandoImportarXls;
-import br.com.opensig.core.client.controlador.comando.importar.ComandoImportarXml;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoEditar;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoEditarFiltrados;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluir;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluirFiltrados;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoExportar;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoFavorito;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoImportar;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoImprimir;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovo;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovoDuplicar;
@@ -75,15 +67,7 @@ public class Ponte extends Observable {
 		acoesPadroes.add(ComandoExcluirFiltrados.class);
 		acoesPadroes.add(ComandoImprimir.class);
 		acoesPadroes.add(ComandoExportar.class);
-		acoesPadroes.add(ComandoExportarXls.class);
-		acoesPadroes.add(ComandoExportarXml.class);
-		acoesPadroes.add(ComandoExportarCsv.class);
-		acoesPadroes.add(ComandoExportarHtml.class);
-		acoesPadroes.add(ComandoExportarPdf.class);
 		acoesPadroes.add(ComandoImportar.class);
-		acoesPadroes.add(ComandoImportarXml.class);
-		acoesPadroes.add(ComandoImportarCsv.class);
-		acoesPadroes.add(ComandoImportarXls.class);
 		acoesPadroes.add(ComandoFavorito.class);
 	}
 

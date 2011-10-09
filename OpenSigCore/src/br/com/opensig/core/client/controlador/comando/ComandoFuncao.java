@@ -6,7 +6,7 @@ import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.ANavegacao;
 import br.com.opensig.core.shared.modelo.IFavoritoGrafico;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
 import com.gwtext.client.core.Position;
 import com.gwtext.client.data.Record;
@@ -90,7 +90,7 @@ public class ComandoFuncao extends AComando<SisFuncao> {
 										TAB.setActiveTab(2);
 									}
 								}
-								MessageBox.wait(OpenSigCore.i18n.txtAguarde(), LISTA.getPanel().getTitle());
+								MessageBox.wait(OpenSigCore.i18n.txtAguarde(), TAB.getTitle());
 							}
 						});
 					}

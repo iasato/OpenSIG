@@ -23,6 +23,7 @@ import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EDirecao;
 import br.com.opensig.empresa.shared.modelo.EmpCliente;
 import br.com.opensig.financeiro.shared.modelo.FinReceber;
+import br.com.opensig.permissao.shared.modelo.SisUsuario;
 
 @Entity
 @Table(name = "com_ecf_venda")
@@ -35,6 +36,9 @@ public class ComEcfVenda extends Dados implements Serializable {
 
 	@Column(name = "com_ecf_venda_bruto")
 	private Double comEcfVendaBruto;
+
+	@Column(name = "com_ecf_venda_fechada")
+	private int comEcfVendaFechada;
 
 	@Column(name = "com_ecf_venda_cancelada")
 	private int comEcfVendaCancelada;
@@ -54,6 +58,10 @@ public class ComEcfVenda extends Dados implements Serializable {
 
 	@Column(name = "com_ecf_venda_observacao")
 	private String comEcfVendaObservacao;
+
+	@JoinColumn(name = "sis_usuario_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private SisUsuario sisUsuario;
 
 	@JoinColumn(name = "emp_cliente_id")
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -93,6 +101,14 @@ public class ComEcfVenda extends Dados implements Serializable {
 
 	public void setComEcfVendaBruto(Double comEcfVendaBruto) {
 		this.comEcfVendaBruto = comEcfVendaBruto;
+	}
+
+	public boolean getComEcfVendaFechada() {
+		return comEcfVendaFechada == 0 ? false : true;
+	}
+
+	public void setComEcfVendaFechada(boolean comEcfVendaFechada) {
+		this.comEcfVendaFechada = comEcfVendaFechada == false ? 0 : 1;
 	}
 
 	public boolean getComEcfVendaCancelada() {
@@ -159,6 +175,14 @@ public class ComEcfVenda extends Dados implements Serializable {
 		this.finReceber = finReceber;
 	}
 
+	public SisUsuario getSisUsuario() {
+		return sisUsuario;
+	}
+
+	public void setSisUsuario(SisUsuario sisUsuario) {
+		this.sisUsuario = sisUsuario;
+	}
+
 	public ComEcf getComEcf() {
 		return this.comEcf;
 	}
@@ -184,13 +208,17 @@ public class ComEcfVenda extends Dados implements Serializable {
 	}
 
 	public String[] toArray() {
-		return new String[] { comEcfVendaId + "", comEcf.getComEcfId() + "", comEcf.getEmpEmpresa().getEmpEmpresaId() + "", comEcf.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(),
-				comEcf.getComEcfSerie(), empCliente.getEmpClienteId() + "", empCliente.getEmpEntidade().getEmpEntidadeId() + "", empCliente.getEmpEntidade().getEmpEntidadeNome1(),
-				comEcfVendaCoo + "", UtilClient.getDataHoraGrid(comEcfVendaData), comEcfVendaBruto.toString(), comEcfVendaDesconto.toString(), comEcfVendaLiquido.toString(),
-				finReceber.getFinReceberId() + "", getComEcfVendaCancelada() + "", comEcfVendaObservacao };
+		int receberId = finReceber == null ? 0 : finReceber.getFinReceberId();
+		int contaId = finReceber == null ? 0 : finReceber.getFinConta().getFinContaId();
+
+		return new String[] { comEcfVendaId + "", comEcf.getEmpEmpresa().getEmpEmpresaId() + "", comEcf.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(), sisUsuario.getSisUsuarioId() + "",
+				sisUsuario.getSisUsuarioLogin(), empCliente.getEmpClienteId() + "", empCliente.getEmpEntidade().getEmpEntidadeId() + "", empCliente.getEmpEntidade().getEmpEntidadeNome1(),
+				comEcf.getComEcfId() + "", comEcf.getComEcfSerie(), comEcfVendaCoo + "", UtilClient.getDataHoraGrid(comEcfVendaData), comEcfVendaBruto.toString(), comEcfVendaDesconto.toString(),
+				comEcfVendaLiquido.toString(), getComEcfVendaFechada() + "", contaId + "", receberId + "", getComEcfVendaCancelada() + "", comEcfVendaObservacao };
 	}
 
 	public void anularDependencia() {
+		sisUsuario = null;
 		empCliente = null;
 		finReceber = null;
 		comEcf = null;

@@ -10,7 +10,6 @@ import com.gwtext.client.core.EventObject;
 import com.gwtext.client.core.Position;
 import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.Component;
-import com.gwtext.client.widgets.MessageBox;
 import com.gwtext.client.widgets.Window;
 import com.gwtext.client.widgets.event.ButtonListenerAdapter;
 import com.gwtext.client.widgets.event.KeyListener;
@@ -102,7 +101,7 @@ public class BloquearSessao {
 				}
 
 				public void onFailure(Throwable caught) {
-					MessageBox.alert(OpenSigCore.i18n.txtErro(), OpenSigCore.i18n.errInvalido());
+					com.google.gwt.user.client.Window.Location.reload();
 				}
 			});
 		}

@@ -21,9 +21,11 @@ import br.com.opensig.core.client.visao.ComboEntidade;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
 import br.com.opensig.core.shared.modelo.EBusca;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
+import br.com.opensig.core.shared.modelo.EDirecao;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpMeta;
 import br.com.opensig.core.shared.modelo.Lista;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.empresa.shared.modelo.EmpFornecedor;
 import br.com.opensig.produto.client.servico.ProdutoProxy;
@@ -43,6 +45,7 @@ import com.gwtext.client.data.FieldDef;
 import com.gwtext.client.data.IntegerFieldDef;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.RecordDef;
+import com.gwtext.client.data.SortState;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.data.event.StoreListenerAdapter;
@@ -227,7 +230,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 				}
 			};
 		}
-		
+
 		return comando;
 	}
 
@@ -537,47 +540,42 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 	}
 
 	public void gerarListas() {
-		// selecionado e filtro
-		Record rec = lista.getPanel().getSelectionModel().getSelected();
-		classe.setProdProdutoId(rec.getAsInteger("prodProdutoId"));
-		FiltroObjeto fo = new FiltroObjeto("prodProduto", ECompara.IGUAL, classe);
-
 		// precos
-		Integer[] tamPrecos = new Integer[gridPrecos.getModelos().getColumnCount()];
-		String[] rotPrecos = new String[gridPrecos.getModelos().getColumnCount()];
-		EBusca[] agrupamentos = new EBusca[gridPrecos.getModelos().getColumnCount()];
-
+		List<ExpMeta> metadados = new ArrayList<ExpMeta>();
 		for (int i = 0; i < gridPrecos.getModelos().getColumnCount(); i++) {
-			if (!gridPrecos.getModelos().isHidden(i)) {
-				tamPrecos[i] = gridPrecos.getModelos().getColumnWidth(i);
-				rotPrecos[i] = gridPrecos.getModelos().getColumnHeader(i);
-				
+			if (gridPrecos.getModelos().isHidden(i)) {
+				metadados.add(null);
+			} else {
+				ExpMeta meta = new ExpMeta(gridPrecos.getModelos().getColumnHeader(i), gridPrecos.getModelos().getColumnWidth(i), null);
 				if (gridPrecos.getModelos().getColumnConfigs()[i] instanceof SummaryColumnConfig) {
 					SummaryColumnConfig col = (SummaryColumnConfig) gridPrecos.getModelos().getColumnConfigs()[i];
 					String tp = col.getSummaryType().equals("average") ? "AVG" : col.getSummaryType().toUpperCase();
-					agrupamentos[i] = EBusca.getBusca(tp);
+					meta.setGrupo(EBusca.getBusca(tp));
 				}
+				metadados.add(meta);
 			}
 		}
 
 		// alterando campos visiveis
-		tamPrecos[2] = tamPrecos[1];
-		rotPrecos[2] = rotPrecos[1];
-		agrupamentos[2] = agrupamentos[1];
-		tamPrecos[1] = null;
-		rotPrecos[1] = null;
-		agrupamentos[1] = null;
+		metadados.set(2, metadados.get(1));
+		metadados.set(1, null);
 
-		ExportacaoListagem<ProdPreco> precos = new ExportacaoListagem<ProdPreco>();
-		precos.setUnidade(new ProdPreco());
-		precos.setFiltro(fo);
-		precos.setTamanhos(tamPrecos);
-		precos.setRotulos(rotPrecos);
-		precos.setAgrupamentos(agrupamentos);
+		SortState ordem = gridPrecos.getStore().getSortState();
+		ProdPreco preco = new ProdPreco();
+		preco.setCampoOrdem(ordem.getField());
+		preco.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
+		// filtro
+		int id = UtilClient.getSelecionado(lista.getPanel());
+		FiltroObjeto filtro = new FiltroObjeto("proProduto", ECompara.IGUAL, new ProdProduto(id));
+		
+		ExpListagem<ProdPreco> precos = new ExpListagem<ProdPreco>();
+		precos.setClasse(preco);
+		precos.setMetadados(metadados);
 		precos.setNome(gridPrecos.getTitle());
+		precos.setFiltro(filtro);
 
 		// sub listagens
-		expLista = new ArrayList<ExportacaoListagem>();
+		expLista = new ArrayList<ExpListagem>();
 		expLista.add(precos);
 	}
 

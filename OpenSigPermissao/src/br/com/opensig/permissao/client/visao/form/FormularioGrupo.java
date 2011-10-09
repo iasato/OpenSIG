@@ -6,7 +6,7 @@ import java.util.List;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.permissao.shared.modelo.SisGrupo;
 import br.com.opensig.permissao.shared.modelo.SisPermissao;

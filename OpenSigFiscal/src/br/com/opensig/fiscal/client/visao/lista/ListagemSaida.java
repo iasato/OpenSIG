@@ -9,7 +9,7 @@ import br.com.opensig.core.client.controlador.comando.FabricaComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluir;
 import br.com.opensig.core.client.visao.abstrato.IFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.fiscal.client.servico.FiscalProxy;
 import br.com.opensig.fiscal.client.visao.form.FormularioErro;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
@@ -92,7 +92,11 @@ public class ListagemSaida extends AListagemNota<FisNotaSaida> {
 		return result.getFisNotaSaidaChave();
 	}
 
-	protected void getErro(FisNotaSaida result) {
+	protected String getErro(FisNotaSaida result) {
+		return result.getFisNotaSaidaErro();
+	}
+	
+	protected void mostrarErro(FisNotaSaida result) {
 		Window wnd = new Window(OpenSigCore.i18n.txtErro(), 800, 600, true, false);
 		FormularioErro frmErro = new FormularioErro(result, getFuncao(), wnd);
 		frmErro.setLista(this);

@@ -1,9 +1,8 @@
 package br.com.opensig.core.client.visao.abstrato;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import br.com.opensig.core.client.OpenSigCore;
@@ -14,21 +13,18 @@ import br.com.opensig.core.client.controlador.comando.form.ComandoCancelar;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvar;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovo;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovoDuplicar;
-import br.com.opensig.core.client.servico.CoreProxy;
+import br.com.opensig.core.client.controlador.filtro.ECompara;
+import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.EArquivo;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
-import br.com.opensig.core.shared.modelo.ExportacaoRegistro;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.EBusca;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpMeta;
+import br.com.opensig.core.shared.modelo.ExpRegistro;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.core.EventObject;
 import com.gwtext.client.core.Function;
 import com.gwtext.client.core.Position;
-import com.gwtext.client.data.BooleanFieldDef;
-import com.gwtext.client.data.DateFieldDef;
-import com.gwtext.client.data.FloatFieldDef;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.Component;
@@ -44,6 +40,7 @@ import com.gwtext.client.widgets.menu.BaseItem;
 import com.gwtext.client.widgets.menu.Item;
 import com.gwtext.client.widgets.menu.Menu;
 import com.gwtext.client.widgets.menu.event.BaseItemListenerAdapter;
+import com.gwtextux.client.widgets.grid.plugins.SummaryColumnConfig;
 
 /**
  * Classe abstrata que representa o modelo genérico dos formulários do sistema.
@@ -90,7 +87,7 @@ public abstract class AFormulario<E extends Dados> extends FormPanel implements 
 	/**
 	 * Sub-listagens do formulario para exportacao.
 	 */
-	protected Collection<ExportacaoListagem> expLista;
+	protected List<ExpListagem> expLista;
 	/**
 	 * Se a opcao duplicar esta ativa naquele momento.
 	 */
@@ -225,56 +222,36 @@ public abstract class AFormulario<E extends Dados> extends FormPanel implements 
 	}
 
 	@Override
-	public void setExportacao(EArquivo tipo, AsyncCallback<String> asyncCallback) {
-		Collection<String> rotulos = new ArrayList<String>();
-		Collection<String> dados = new ArrayList<String>();
-		Record rec = lista.getPanel().getSelectionModel().getSelected();
-
-		int j = 0;
+	public ExpRegistro<E> getExportacao() {
+		List<ExpMeta> metadados = new ArrayList<ExpMeta>();
 		for (int i = 0; i < lista.getModelos().getColumnCount(); i++) {
-			if (!lista.getModelos().getColumnHeader(i).startsWith("<div")) {
-				try {
-					if (!lista.getModelos().isHidden(i)) {
-						rotulos.add(lista.getModelos().getColumnHeader(i));
-
-						if (lista.getCampos().getFields()[j] instanceof DateFieldDef) {
-							Date data = rec.getAsDate(rec.getFields()[j]);
-							if (data != null) {
-								dados.add(DateTimeFormat.getFormat("MM/dd/yyyy").format(data));
-							} else {
-								dados.add(null);
-							}
-						} else if (lista.getCampos().getFields()[j] instanceof FloatFieldDef) {
-							float valor = rec.getAsFloat(rec.getFields()[j]);
-							if ("NaN".equals(valor + "")) {
-								dados.add("0.00");
-							} else {
-								dados.add(valor + "");
-							}
-						} else if (lista.getCampos().getFields()[j] instanceof BooleanFieldDef) {
-							boolean binario = rec.getAsBoolean(rec.getFields()[j]);
-							dados.add(binario ? OpenSigCore.i18n.txtSim() : OpenSigCore.i18n.txtNao());
-						} else {
-							dados.add(rec.getAsString(rec.getFields()[j]));
-						}
-					}
-					j++;
-				} catch (Exception e) {
-					dados.add("");
+			if (lista.getModelos().isHidden(i)) {
+				metadados.add(null);
+			} else if (!lista.getModelos().getColumnHeader(i).startsWith("<div")) {
+				ExpMeta meta = new ExpMeta(lista.getModelos().getColumnHeader(i), lista.getModelos().getColumnWidth(i), null);
+				if (lista.getModelos().getColumnConfigs()[i] instanceof SummaryColumnConfig) {
+					SummaryColumnConfig col = (SummaryColumnConfig) lista.getModelos().getColumnConfigs()[i];
+					String tp = col.getSummaryType().equals("average") ? "AVG" : col.getSummaryType().toUpperCase();
+					meta.setGrupo(EBusca.getBusca(tp));
 				}
+				metadados.add(meta);
 			}
 		}
 
+		// filtro
+		int id = UtilClient.getSelecionado(lista.getPanel());
+		FiltroNumero filtro = new FiltroNumero(classe.getCampoId(), ECompara.IGUAL, id);
+
 		Record recFuncao = UtilClient.getRegistro(ANavegacao.FUNCOES, "classe", funcao.getSisFuncaoClasse());
-		ExportacaoRegistro expRegistro = new ExportacaoRegistro();
-		expRegistro.setRotulos(rotulos.toArray(new String[] {}));
-		expRegistro.setDados(dados.toArray(new String[] {}));
+		ExpRegistro<E> expRegistro = new ExpRegistro<E>();
+		expRegistro.setClasse(classe);
 		expRegistro.setNome(recFuncao.getAsString("nome"));
+		expRegistro.setMetadados(metadados);
+		expRegistro.setFiltro(filtro);
 
 		gerarListas();
-		CoreProxy<E> core = new CoreProxy<E>();
 		expRegistro.setExpLista(expLista);
-		core.exportar(expRegistro, tipo, asyncCallback);
+		return expRegistro;
 	}
 
 	@Override
@@ -367,12 +344,12 @@ public abstract class AFormulario<E extends Dados> extends FormPanel implements 
 	}
 
 	@Override
-	public Collection<ExportacaoListagem> getExpLista() {
+	public List<ExpListagem> getExpLista() {
 		return expLista;
 	}
 
 	@Override
-	public void setExpLista(Collection<ExportacaoListagem> expLista) {
+	public void setExpLista(List<ExpListagem> expLista) {
 		this.expLista = expLista;
 	}
 

@@ -4,11 +4,8 @@ import java.util.Collection;
 
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
-import br.com.opensig.core.shared.modelo.ExportacaoRegistro;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.Sql;
 
@@ -22,7 +19,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  * @author Pedro H. Lira
  * @version 1.0
  */
-
 public interface CoreServiceAsync<E extends Dados> {
 
 	/**
@@ -90,25 +86,4 @@ public interface CoreServiceAsync<E extends Dados> {
 	 *            um objeto assincrono com inteiros.
 	 */
 	public abstract void executar(Sql[] sqls, AsyncCallback<Integer[]> asyncCallback);
-
-	/**
-	 * @see CoreService#exportar(ExportacaoListagem, EArquivo)
-	 * @param asyncCallback
-	 *            um objeto assincrono com strings.
-	 */
-	public abstract void exportar(ExportacaoListagem expLista, EArquivo tipo, AsyncCallback<String> asyncCallback);
-
-	/**
-	 * @see CoreService#exportar(ExportacaoRegistro, EArquivo)
-	 * @param asyncCallback
-	 *            um objeto assincrono com strings.
-	 */
-	public abstract void exportar(ExportacaoRegistro expRegistro, EArquivo tipo, AsyncCallback<String> asyncCallback);
-
-	/**
-	 * @see CoreService#exportar(String, String, String)
-	 * @param asyncCallback
-	 *            um objeto assincrono com strings.
-	 */
-	public abstract void exportar(String arquivo, String nome, String tipo, AsyncCallback<String> asyncCallback);
 }

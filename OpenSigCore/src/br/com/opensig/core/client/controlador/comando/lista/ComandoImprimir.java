@@ -4,14 +4,16 @@ import java.util.Map;
 
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarHtml;
-import br.com.opensig.core.client.servico.OpenSigException;
+import br.com.opensig.core.client.controlador.comando.ComandoAcao;
+import br.com.opensig.core.client.controlador.comando.EModo;
+import br.com.opensig.core.client.visao.JanelaExportar;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.core.Ext;
 import com.gwtext.client.widgets.MessageBox;
-import com.gwtext.client.widgets.MessageBox.AlertCallback;
+import com.gwtext.client.widgets.event.ButtonListenerAdapter;
 
 /**
  * Classe de exportacao do tipo impressao em tela.
@@ -19,40 +21,50 @@ import com.gwtext.client.widgets.MessageBox.AlertCallback;
  * @author Pedro H. Lira
  * @version 1.0
  */
-public class ComandoImprimir extends ComandoExportarHtml {
+public class ComandoImprimir extends ComandoAcao {
 
-	@Override
-	public void execute(final Map contexto) {
-		setAsyncCallback(new AsyncCallback<String>() {
+	private AsyncCallback<String> async;
 
+	/**
+	 * Construtor padrao.
+	 */
+	public ComandoImprimir() {
+		async = new AsyncCallback<String>() {
 			public void onSuccess(String arg0) {
 				LISTA.getPanel().getEl().unmask();
 				if (Ext.isOpera()) {
-					UtilClient.abrirUrl(GWT.getHostPageBaseURL() + "CoreService?modo=text/html&id=" + arg0);
+					Window.open(GWT.getHostPageBaseURL() + "ExportacaoService?modo=text/html&id=" + arg0, "", "");
 				} else {
-					UtilClient.exportar(GWT.getHostPageBaseURL() + "CoreService?modo=text/html&id=" + arg0);
-				}
-
-				if (comando != null) {
-					comando.execute(contexto);
+					UtilClient.exportar(GWT.getHostPageBaseURL() + "ExportacaoService?modo=text/html&id=" + arg0);
 				}
 			}
 
 			public void onFailure(Throwable arg0) {
 				LISTA.getPanel().getEl().unmask();
-				if (arg0 instanceof OpenSigException) {
-					MessageBox.alert(OpenSigCore.i18n.txtAtencao(), OpenSigCore.i18n.errSessao(), new AlertCallback() {
-
-						public void execute() {
-							UtilClient.atualizar();
-						}
-					});
-				} else {
-					MessageBox.alert(OpenSigCore.i18n.txtImprimir(), OpenSigCore.i18n.errImprimir());
-				}
+				MessageBox.alert(OpenSigCore.i18n.txtImprimir(), OpenSigCore.i18n.errImprimir());
 			}
-		});
+		};
+	}
 
+	@Override
+	public void execute(final Map contexto) {
 		super.execute(contexto);
+		FORM.setLista(LISTA);
+		final EModo modo = contexto.get("acao") != null ? (EModo) contexto.get("acao") : EModo.LISTAGEM;
+		final JanelaExportar janela = new JanelaExportar(FORM, modo, async);
+
+		janela.getBtnOK().purgeListeners();
+		janela.getBtnOK().addListener(new ButtonListenerAdapter() {
+			public void onClick(com.gwtext.client.widgets.Button button, com.gwtext.client.core.EventObject e) {
+				janela.getDataView().select(1);
+				janela.setRec(janela.getStore().getAt(1));
+				janela.exportar();
+			};
+		});
+		janela.getPanTipo().setVisible(false);
+		janela.setIconCls("icon-imprimir");
+		janela.setTitle(OpenSigCore.i18n.txtImprimir());
+		janela.setHeight(145);
+		janela.show();
 	}
 }

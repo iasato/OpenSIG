@@ -4,7 +4,7 @@ import br.com.opensig.comercial.shared.modelo.ComNatureza;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 
 import com.gwtext.client.data.Record;

@@ -2,6 +2,7 @@ package br.com.opensig.permissao.server;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -17,9 +18,14 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.persistence.PersistenceException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import nl.captcha.Captcha;
+import nl.captcha.backgrounds.GradiatedBackgroundProducer;
+import nl.captcha.servlet.CaptchaServletUtil;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
 import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
@@ -36,9 +42,9 @@ import br.com.opensig.core.server.SessionManager;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Lista;
-import br.com.opensig.core.shared.modelo.permissao.SisAcao;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
-import br.com.opensig.core.shared.modelo.permissao.SisModulo;
+import br.com.opensig.core.shared.modelo.sistema.SisAcao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisModulo;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.permissao.client.servico.PermissaoException;
 import br.com.opensig.permissao.client.servico.PermissaoService;
@@ -70,10 +76,10 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 	 * @see PermissaoService#entrar(String, String, String, int, boolean)
 	 */
 	public Autenticacao entrar(HttpSession sessao, String usuario, String senha, String captcha, int empresa, boolean permissao) throws PermissaoException {
-		Autenticacao autenticacao;
+		Autenticacao auth = SessionManager.LOGIN.get(sessao);
 
 		// verifica se o usuário já está logado na sessão
-		if (sessao.getAttribute("Autenticacao") == null || permissao) {
+		if (auth == null || permissao) {
 			// valida o captcha
 			if (!captcha.isEmpty()) {
 				Captcha cap = (Captcha) sessao.getAttribute(Captcha.NAME);
@@ -108,26 +114,27 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 					}
 				}
 
-				autenticacao = new Autenticacao();
-				autenticacao.setUsuario(sisUsuario.toArray());
-				autenticacao.setModulos(gerarPermissoes(sisUsuario));
+				auth = new Autenticacao();
+				auth.setUsuario(sisUsuario.toArray());
+				auth.setModulos(gerarPermissoes(sisUsuario));
 				for (EmpEmpresa emp : sisUsuario.getEmpEmpresas()) {
 					if (emp.getEmpEmpresaId() == empresa) {
-						autenticacao.setEmpresa(emp.toArray());
+						auth.setEmpresa(emp.toArray());
 						break;
 					}
 				}
 
-				if (!permissao && !sisUsuario.getSisUsuarioSistema()) {
-					// valida se ja esta logado
-					if (SessionManager.APP.containsValue(sisUsuario.getId().toString())) {
-						throw new PermissaoException("Usuario ja tem uma sessao aberta!");
-					} else {
-						SessionManager.APP.put(sessao.getId(), sisUsuario.getId().toString());
+				// valida login se nao for somente para permissao
+				if (!permissao) {
+					// usuario de sistema podem ter mais de uma sessao logada
+					for (Entry<HttpSession, Autenticacao> entry : SessionManager.LOGIN.entrySet()) {
+						if (auth.equals(entry.getValue())) {
+							SessionManager.destruir(entry.getKey());
+							break;
+						}
 					}
-					
-					// seta o usuario logado na sessão
-					sessao.setAttribute("Autenticacao", autenticacao);
+
+					SessionManager.LOGIN.put(sessao, auth);
 				}
 			} catch (PermissaoException pe) {
 				throw pe;
@@ -137,40 +144,43 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 			}
 		} else {
 			// caso já esteja logado só recupera da sessão
-			autenticacao = (Autenticacao) sessao.getAttribute("Autenticacao");
 			sessao.setAttribute(Captcha.NAME, null);
-			usuario = autenticacao.getUsuario()[1];
-			empresa = Integer.valueOf(autenticacao.getEmpresa()[0]);
+			usuario = auth.getUsuario()[1];
+			empresa = Integer.valueOf(auth.getEmpresa()[0]);
 		}
 
 		try {
-			autenticacao.setConf(getConfig(empresa, usuario));
+			auth.setConf(getConfig(empresa, usuario));
 		} catch (OpenSigException e) {
 			UtilServer.LOG.error("Erro no login", e);
 			throw new PermissaoException(e.getMessage());
 		}
 
-		return autenticacao;
+		return auth;
 	}
 
 	@Override
 	public void sair() {
-		// recupera a sessão atual
-		HttpSession sessao = getThreadLocalRequest().getSession();
-		sessao.setAttribute("Autenticacao", null);
-		SessionManager.APP.remove(sessao.getId());
+		// sai do sistema
+		SessionManager.destruir(getThreadLocalRequest().getSession());
 	}
 
 	@Override
-	public void bloquear(boolean bloqueio) {
+	public boolean isLogado() {
+		// verifica se esta logado
+		return SessionManager.LOGIN.get(getThreadLocalRequest().getSession()) != null;
+	}
+
+	@Override
+	public void bloquear(boolean bloqueio) throws PermissaoException {
 		// recupera a sessão atual
-		HttpSession sessao = getThreadLocalRequest().getSession();
+		Autenticacao auth = SessionManager.LOGIN.get(getThreadLocalRequest().getSession());
 
 		// verifica se o usuário já está logado na sessão
-		if (sessao.getAttribute("Autenticacao") != null) {
-			Autenticacao autenticacao = (Autenticacao) sessao.getAttribute("Autenticacao");
-			autenticacao.setBloqueado(bloqueio);
-			sessao.setAttribute("Autenticacao", autenticacao);
+		if (auth != null) {
+			auth.setBloqueado(bloqueio);
+		} else {
+			throw new PermissaoException("Sessao expirou!");
 		}
 	}
 
@@ -369,5 +379,15 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 		UtilServer.LOCAL = locale;
 
 		return UtilServer.CONF;
+	}
+
+	/**
+	 * Metodo que recupera que interage com o envio do navegador.
+	 */
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Captcha captcha = new Captcha.Builder(150, 50).addText().addBackground(new GradiatedBackgroundProducer()).gimp().addNoise().addBorder().build();
+		req.getSession().setAttribute(Captcha.NAME, captcha);
+		CaptchaServletUtil.writeImage(resp, captcha.getImage());
 	}
 }

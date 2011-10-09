@@ -25,8 +25,10 @@ import br.com.opensig.core.client.visao.ComboEntidade;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
 import br.com.opensig.core.shared.modelo.EBusca;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.EDirecao;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpMeta;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.empresa.shared.modelo.EmpFornecedor;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
@@ -39,6 +41,7 @@ import com.gwtext.client.data.FieldDef;
 import com.gwtext.client.data.IntegerFieldDef;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.RecordDef;
+import com.gwtext.client.data.SortState;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.widgets.Button;
@@ -60,7 +63,6 @@ import com.gwtextux.client.widgets.window.ToastWindow;
 
 public class FormularioValorProduto extends AFormulario<ComValorProduto> {
 
-	private ComValorProduto comValorProduto;
 	private Label lblVariaveis;
 	private Label lblValidar;
 	private Label variaveis;
@@ -76,7 +78,6 @@ public class FormularioValorProduto extends AFormulario<ComValorProduto> {
 	private TextArea txtFormula;
 	private ListagemValorArredonda gridArredonda;
 	private ToolbarButton btnFormula;
-	private List<ComValorArredonda> arredondados;
 
 	public FormularioValorProduto(SisFuncao funcao) {
 		super(new ComValorProduto(), funcao);
@@ -177,7 +178,7 @@ public class FormularioValorProduto extends AFormulario<ComValorProduto> {
 		gridArredonda = new ListagemValorArredonda(true);
 		add(gridArredonda);
 
-		addListener(new FormPanelListenerAdapter(){
+		addListener(new FormPanelListenerAdapter() {
 			public void onRender(Component component) {
 				super.onRender(component);
 				getTopToolbar().addSeparator();
@@ -198,13 +199,13 @@ public class FormularioValorProduto extends AFormulario<ComValorProduto> {
 				}
 			};
 		}
-		
+
 		return comando;
 	}
-	
+
 	public boolean setDados() {
 		boolean retorno = true;
-		arredondados = new ArrayList<ComValorArredonda>();
+		List<ComValorArredonda> arredondados = new ArrayList<ComValorArredonda>();
 
 		if (!gridArredonda.validar(arredondados)) {
 			retorno = false;
@@ -322,48 +323,39 @@ public class FormularioValorProduto extends AFormulario<ComValorProduto> {
 	}
 
 	public void gerarListas() {
-		// selecionado e filtro
-		Record rec = lista.getPanel().getSelectionModel().getSelected();
-		classe.setComValorProdutoId(rec.getAsInteger("comValorProdutoId"));
-		FiltroObjeto fo = new FiltroObjeto("comValorProduto", ECompara.IGUAL, classe);
-
 		// produtos
-		Integer[] tamanhos = new Integer[gridArredonda.getModelos().getColumnCount()];
-		String[] rotulos = new String[gridArredonda.getModelos().getColumnCount()];
-		EBusca[] agrupamentos = new EBusca[gridArredonda.getModelos().getColumnCount()];
-
+		List<ExpMeta> metadados = new ArrayList<ExpMeta>();
 		for (int i = 0; i < gridArredonda.getModelos().getColumnCount(); i++) {
-			if (!gridArredonda.getModelos().isHidden(i)) {
-				tamanhos[i] = gridArredonda.getModelos().getColumnWidth(i);
-				rotulos[i] = gridArredonda.getModelos().getColumnHeader(i);
-				
+			if (gridArredonda.getModelos().isHidden(i)) {
+				metadados.add(null);
+			} else {
+				ExpMeta meta = new ExpMeta(gridArredonda.getModelos().getColumnHeader(i), gridArredonda.getModelos().getColumnWidth(i), null);
 				if (gridArredonda.getModelos().getColumnConfigs()[i] instanceof SummaryColumnConfig) {
 					SummaryColumnConfig col = (SummaryColumnConfig) gridArredonda.getModelos().getColumnConfigs()[i];
 					String tp = col.getSummaryType().equals("average") ? "AVG" : col.getSummaryType().toUpperCase();
-					agrupamentos[i] = EBusca.getBusca(tp);
+					meta.setGrupo(EBusca.getBusca(tp));
 				}
+				metadados.add(meta);
 			}
 		}
 
-		ExportacaoListagem<ComValorArredonda> arredonda = new ExportacaoListagem<ComValorArredonda>();
-		arredonda.setUnidade(new ComValorArredonda());
-		arredonda.setFiltro(fo);
-		arredonda.setTamanhos(tamanhos);
-		arredonda.setRotulos(rotulos);
-		arredonda.setAgrupamentos(agrupamentos);
+		SortState ordem = gridArredonda.getStore().getSortState();
+		ComValorArredonda comArr = new ComValorArredonda();
+		comArr.setCampoOrdem(ordem.getField());
+		comArr.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
+		// filtro
+		int id = UtilClient.getSelecionado(lista.getPanel());
+		FiltroObjeto filtro = new FiltroObjeto("comValorProduto", ECompara.IGUAL, new ComValorProduto(id));
+		
+		ExpListagem<ComValorArredonda> arredonda = new ExpListagem<ComValorArredonda>();
+		arredonda.setClasse(comArr);
+		arredonda.setMetadados(metadados);
 		arredonda.setNome(gridArredonda.getTitle());
+		arredonda.setFiltro(filtro);
 
 		// sub listagens
-		expLista = new ArrayList<ExportacaoListagem>();
+		expLista = new ArrayList<ExpListagem>();
 		expLista.add(arredonda);
-	}
-
-	public ComValorProduto getComValorProduto() {
-		return comValorProduto;
-	}
-
-	public void setComValorProduto(ComValorProduto comValorProduto) {
-		this.comValorProduto = comValorProduto;
 	}
 
 	public Label getLblVariaveis() {
@@ -484,14 +476,6 @@ public class FormularioValorProduto extends AFormulario<ComValorProduto> {
 
 	public void setBtnFormula(ToolbarButton btnFormula) {
 		this.btnFormula = btnFormula;
-	}
-
-	public List<ComValorArredonda> getArredondados() {
-		return arredondados;
-	}
-
-	public void setArredondados(List<ComValorArredonda> arredondados) {
-		this.arredondados = arredondados;
 	}
 
 }

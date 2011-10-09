@@ -27,8 +27,9 @@ import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpMeta;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.empresa.shared.modelo.EmpEstado;
 import br.com.opensig.empresa.shared.modelo.EmpFornecedor;
@@ -94,7 +95,7 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 	private boolean autosave;
 	private AsyncCallback asyncSalvar;
 	private ComandoPesquisa cmdPesquisa;
-	
+
 	public FormularioCompra(SisFuncao funcao) {
 		super(new ComCompra(), funcao);
 		inicializar();
@@ -270,7 +271,7 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 			}
 		};
 		cmdPesquisa = new ComandoPesquisa(asyncPesquisa);
-		
+
 		gridProdutos = new ListagemCompraProdutos(true) {
 			public IComando AntesDoComando(IComando comando) {
 				if (comando instanceof ComandoAdicionar) {
@@ -355,7 +356,7 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 				}
 			}
 		});
-		
+
 		asyncSalvar = new AsyncCallback<ComCompra>() {
 			public void onFailure(Throwable caught) {
 				contexto.put("erro", caught);
@@ -379,7 +380,7 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 			};
 		};
 	}
-	
+
 	private void autoSave() {
 		autosave = true;
 		IComando comando = AntesDaAcao(new ComandoSalvar());
@@ -390,7 +391,7 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 	public IComando AntesDaAcao(IComando comando) {
 		// salavando
 		if (comando instanceof ComandoSalvar) {
-			MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtSalvar());	
+			MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtSalvar());
 			// salavando
 			IComando salvar = new AComando(new ComandoSalvarFinal()) {
 				public void execute(Map contexto) {
@@ -625,49 +626,42 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 	}
 
 	public void gerarListas() {
-		// selecionado e filtro
-		Record rec = lista.getPanel().getSelectionModel().getSelected();
-		classe.setComCompraId(rec.getAsInteger("comCompraId"));
-		FiltroObjeto fo = new FiltroObjeto("comCompra", ECompara.IGUAL, classe);
-
 		// produtos
-		Integer[] tamanhos = new Integer[gridProdutos.getModelos().getColumnCount()];
-		String[] rotulos = new String[gridProdutos.getModelos().getColumnCount()];
-		EBusca[] agrupamentos = new EBusca[gridProdutos.getModelos().getColumnCount()];
-
+		List<ExpMeta> metadados = new ArrayList<ExpMeta>();
 		for (int i = 0; i < gridProdutos.getModelos().getColumnCount(); i++) {
-			if (!gridProdutos.getModelos().isHidden(i)) {
-				tamanhos[i] = gridProdutos.getModelos().getColumnWidth(i);
-				rotulos[i] = gridProdutos.getModelos().getColumnHeader(i);
-				
+			if (gridProdutos.getModelos().isHidden(i)) {
+				metadados.add(null);
+			} else {
+				ExpMeta meta = new ExpMeta(gridProdutos.getModelos().getColumnHeader(i), gridProdutos.getModelos().getColumnWidth(i), null);
 				if (gridProdutos.getModelos().getColumnConfigs()[i] instanceof SummaryColumnConfig) {
 					SummaryColumnConfig col = (SummaryColumnConfig) gridProdutos.getModelos().getColumnConfigs()[i];
 					String tp = col.getSummaryType().equals("average") ? "AVG" : col.getSummaryType().toUpperCase();
-					agrupamentos[i] = EBusca.getBusca(tp);
+					meta.setGrupo(EBusca.getBusca(tp));
 				}
+				metadados.add(meta);
 			}
 		}
 
-		tamanhos[11] = tamanhos[10];
-		tamanhos[10] = null;
-		rotulos[11] = rotulos[10];
-		rotulos[10] = null;
-		agrupamentos[11] = agrupamentos[10];
-		agrupamentos[10] = null;
+		// trocando campos visiveis
+		metadados.set(11, metadados.get(10));
+		metadados.set(10, null);
 
 		SortState ordem = gridProdutos.getStore().getSortState();
-		ExportacaoListagem<ComCompraProduto> produtos = new ExportacaoListagem<ComCompraProduto>();
-		produtos.setUnidade(new ComCompraProduto());
-		produtos.setFiltro(fo);
-		produtos.setCampoOrdem(ordem.getField());
-		produtos.setDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
-		produtos.setTamanhos(tamanhos);
-		produtos.setRotulos(rotulos);
-		produtos.setAgrupamentos(agrupamentos);
+		ComCompraProduto comProd = new ComCompraProduto();
+		comProd.setCampoOrdem(ordem.getField());
+		comProd.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
+		// filtro
+		int id = UtilClient.getSelecionado(lista.getPanel());
+		FiltroObjeto filtro = new FiltroObjeto("comCompra", ECompara.IGUAL, new ComCompra(id));
+		
+		ExpListagem<ComCompraProduto> produtos = new ExpListagem<ComCompraProduto>();
+		produtos.setClasse(comProd);
+		produtos.setMetadados(metadados);
 		produtos.setNome(gridProdutos.getTitle());
+		produtos.setFiltro(filtro);
 
 		// sub listagens
-		expLista = new ArrayList<ExportacaoListagem>();
+		expLista = new ArrayList<ExpListagem>();
 		expLista.add(produtos);
 	}
 

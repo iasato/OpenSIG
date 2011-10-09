@@ -29,9 +29,10 @@ import br.com.opensig.core.client.visao.abstrato.AFormulario;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpMeta;
 import br.com.opensig.core.shared.modelo.Lista;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.empresa.shared.modelo.EmpEntidade;
 import br.com.opensig.financeiro.client.visao.lista.ListagemFinanciados;
@@ -281,49 +282,41 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 	}
 
 	public void gerarListas() {
-		// selecionado e filtro
-		Record rec = lista.getPanel().getSelectionModel().getSelected();
-		classe.setId(rec.getAsInteger(nomes.get("id")));
-		FiltroObjeto fo = new FiltroObjeto(nomes.get("classe"), ECompara.IGUAL, classe);
-
 		// produtos
-		Integer[] tamanhos = new Integer[gridFormas.getModelos().getColumnCount()];
-		String[] rotulos = new String[gridFormas.getModelos().getColumnCount()];
-		EBusca[] agrupamentos = new EBusca[gridFormas.getModelos().getColumnCount()];
-
+		List<ExpMeta> metadados = new ArrayList<ExpMeta>();
 		for (int i = 0; i < gridFormas.getModelos().getColumnCount(); i++) {
-			if (!gridFormas.getModelos().isHidden(i)) {
-				tamanhos[i] = gridFormas.getModelos().getColumnWidth(i);
-				rotulos[i] = gridFormas.getModelos().getColumnHeader(i);
-				
+			if (gridFormas.getModelos().isHidden(i)) {
+				metadados.add(null);
+			} else {
+				ExpMeta meta = new ExpMeta(gridFormas.getModelos().getColumnHeader(i), gridFormas.getModelos().getColumnWidth(i), null);
 				if (gridFormas.getModelos().getColumnConfigs()[i] instanceof SummaryColumnConfig) {
 					SummaryColumnConfig col = (SummaryColumnConfig) gridFormas.getModelos().getColumnConfigs()[i];
 					String tp = col.getSummaryType().equals("average") ? "AVG" : col.getSummaryType().toUpperCase();
-					agrupamentos[i] = EBusca.getBusca(tp);
+					meta.setGrupo(EBusca.getBusca(tp));
 				}
+				metadados.add(meta);
 			}
 		}
 
-		tamanhos[5] = tamanhos[4];
-		tamanhos[4] = null;
-		rotulos[5] = rotulos[4];
-		rotulos[4] = null;
-		agrupamentos[5] = agrupamentos[4];
-		agrupamentos[4] = null;
+		// trocando campos visiveis
+		metadados.set(5, metadados.get(4));
+		metadados.set(4, null);
 
 		SortState ordem = gridFormas.getStore().getSortState();
-		ExportacaoListagem<T> financiados = new ExportacaoListagem<T>();
-		financiados.setUnidade(financeiro);
-		financiados.setFiltro(fo);
-		financiados.setCampoOrdem(ordem.getField());
-		financiados.setDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
-		financiados.setTamanhos(tamanhos);
-		financiados.setRotulos(rotulos);
-		financiados.setAgrupamentos(agrupamentos);
+		financeiro.setCampoOrdem(ordem.getField());
+		financeiro.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
+		int id = UtilClient.getSelecionado(lista.getPanel());
+		classe.setId(id);
+		FiltroObjeto filtro = new FiltroObjeto(nomes.get("classe"), ECompara.IGUAL, classe);
+		
+		ExpListagem<T> financiados = new ExpListagem<T>();
+		financiados.setClasse(financeiro);
+		financiados.setMetadados(metadados);
 		financiados.setNome(gridFormas.getTitle());
+		financiados.setFiltro(filtro);
 
 		// sub listagens
-		expLista = new ArrayList<ExportacaoListagem>();
+		expLista = new ArrayList<ExpListagem>();
 		expLista.add(financiados);
 	}
 

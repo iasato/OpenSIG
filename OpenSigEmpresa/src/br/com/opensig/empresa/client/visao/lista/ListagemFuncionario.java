@@ -44,7 +44,7 @@ public class ListagemFuncionario extends AListagemEntidade<EmpFuncionario> {
 		listaColunas.add(new ColumnConfig(OpenSigCore.i18n.txtCod(), "empFuncionarioId", 50, true));
 		listaColunas.add(ccEmpresaId);
 		listaColunas.add(ccEmpresa);
-		super.configurar("empEntidade");
+		super.configurar();
 
 		listaCampos.add(new IntegerFieldDef("empEmpresa.empEmpresaId"));
 		listaCampos.add(new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"));

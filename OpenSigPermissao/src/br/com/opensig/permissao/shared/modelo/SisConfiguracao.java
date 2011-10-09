@@ -12,7 +12,6 @@ import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
  * 
  * @author Pedro H. Lira
  * @version 1.0
- * @since 15/10/2008
  */
 @Entity
 @Table(name = "sis_configuracao")

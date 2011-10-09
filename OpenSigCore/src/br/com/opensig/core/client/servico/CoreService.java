@@ -5,11 +5,8 @@ import java.util.Collection;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.controlador.parametro.ParametroException;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
-import br.com.opensig.core.shared.modelo.ExportacaoRegistro;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.Sql;
 
@@ -23,7 +20,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
  * @author Pedro H. Lira
  * @version 1.0
  */
-
 public interface CoreService<E extends Dados> extends RemoteService {
 
 	/**
@@ -171,42 +167,4 @@ public interface CoreService<E extends Dados> extends RemoteService {
 	 *             dispara uma exceção caso ocorra erro na execução do comando.
 	 */
 	public Integer[] executar(Sql[] sqls) throws CoreException;
-
-	/**
-	 * 
-	 * @param expLista
-	 *            a listagem a ser exportada.
-	 * @param tipo
-	 *            o tipo de arquido da exportacao.
-	 * @return o id que identifica a sessao com o arquivo exportado.
-	 * @throws ExportacaoException
-	 *             ocorre caso tenha erro na geracao do arquivo.
-	 */
-	public String exportar(ExportacaoListagem expLista, EArquivo tipo) throws ExportacaoException;
-
-	/**
-	 * 
-	 * @param expRegistro
-	 *            o registro a ser exportado.
-	 * @param tipo
-	 *            o tipo de arquido da exportacao.
-	 * @return o id que identifica a sessao com o arquivo exportado.
-	 * @throws ExportacaoException
-	 *             ocorre caso tenha erro na geracao do arquivo.
-	 */
-	public String exportar(ExportacaoRegistro expRegistro, EArquivo tipo) throws ExportacaoException;
-
-	/**
-	 * 
-	 * @param arquivo
-	 *            o conteudo do arquivo a ser gerado.
-	 * @param nome
-	 *            o nome do arquivo a ser gerado.
-	 * @param tipo
-	 *            o tipo do arquivo a ser gerado.
-	 * @return o id que identifica a sessao com o arquivo exportado.
-	 * @throws ExportacaoException
-	 *             ocorre caso tenha erro na geracao do arquivo.
-	 */
-	public String exportar(String arquivo, String nome, String tipo) throws ExportacaoException;
 }

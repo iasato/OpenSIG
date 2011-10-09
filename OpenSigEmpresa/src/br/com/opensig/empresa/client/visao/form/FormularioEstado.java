@@ -3,7 +3,7 @@ package br.com.opensig.empresa.client.visao.form;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEstado;
 import br.com.opensig.empresa.shared.modelo.EmpPais;
 

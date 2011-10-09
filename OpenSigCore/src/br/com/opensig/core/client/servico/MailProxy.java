@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
 /**
- * Interface que padroniza o envio de email de forma assincrona.
+ * Classe que padroniza o envio de email de forma assincrona.
  * 
  * @author Pedro H. Lira
  * @version 1.0

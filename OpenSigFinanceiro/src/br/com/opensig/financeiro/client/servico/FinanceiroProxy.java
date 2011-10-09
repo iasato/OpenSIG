@@ -3,7 +3,6 @@ package br.com.opensig.financeiro.client.servico;
 import java.util.List;
 
 import br.com.opensig.core.client.servico.CoreProxy;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.financeiro.shared.modelo.FinCategoria;
 import br.com.opensig.financeiro.shared.modelo.FinPagar;
 import br.com.opensig.financeiro.shared.modelo.FinReceber;
@@ -24,7 +23,7 @@ public class FinanceiroProxy extends CoreProxy implements FinanceiroServiceAsync
 		sdf.setServiceEntryPoint(GWT.getHostPageBaseURL() + "FinanceiroService");
 	}
 
-	public void gerar(int boletoId, EArquivo tipo, boolean recibo, AsyncCallback<String> asyncCallback) {
+	public void gerar(int boletoId, String tipo, boolean recibo, AsyncCallback<String> asyncCallback) {
 		async.gerar(boletoId, tipo, recibo, asyncCallback);
 	}
 

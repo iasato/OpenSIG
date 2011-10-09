@@ -3,11 +3,10 @@ package br.com.opensig.financeiro.server.boleto;
 import java.text.DateFormat;
 
 import br.com.opensig.core.server.UtilServer;
-import br.com.opensig.core.server.exportar.ExportacaoHtml;
-import br.com.opensig.core.shared.modelo.ExportacaoRegistro;
+import br.com.opensig.core.server.exportar.Html;
 import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
 
-public class ReciboHtml extends ExportacaoHtml implements IRecibo {
+public class ReciboHtml extends Html implements IRecibo {
 
 	public byte[] getRecibo(String[] empresa, FinRecebimento boleto) {
 		// inicio do arquivo
@@ -19,9 +18,7 @@ public class ReciboHtml extends ExportacaoHtml implements IRecibo {
 		// inicio do registro
 		sb.append("<table>");
 		// cabeçalho do registro
-		ExportacaoRegistro reg = new ExportacaoRegistro();
-		reg.setNome("RECIBO");
-		sb.append(reg);
+		sb.append("RECIBO");
 		// corpo do registro
 		sb.append(getCorpoRegistro(boleto));
 		// fim do registro

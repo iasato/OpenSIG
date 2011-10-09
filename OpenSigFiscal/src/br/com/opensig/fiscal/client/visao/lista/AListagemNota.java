@@ -1,6 +1,7 @@
 package br.com.opensig.fiscal.client.visao.lista;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,11 +13,14 @@ import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.js.OpenSigCoreJS;
 import br.com.opensig.core.client.servico.CoreProxy;
+import br.com.opensig.core.client.servico.ImportacaoProxy;
+import br.com.opensig.core.client.visao.JanelaUpload;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AListagem;
 import br.com.opensig.core.client.visao.abstrato.IFormulario;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.IFavorito;
+import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.client.servico.FiscalProxy;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
@@ -52,6 +56,7 @@ import com.gwtextux.client.widgets.window.ToastWindow;
 public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 
 	protected Map<String, String> nomes;
+	protected JanelaUpload<E> janela;
 
 	public AListagemNota(IFormulario<E> formulario) {
 		super(formulario);
@@ -100,9 +105,9 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 				int status = record.getAsInteger("fisNotaStatus.fisNotaStatusId");
 				int id = record.getAsInteger(nomes.get("id"));
 
-				if (status == ENotaStatus.AUTORIZANDO.getId() || status == ENotaStatus.AUTORIZADO.getId() || status == ENotaStatus.INUTILIZANDO.getId()
-						|| status == ENotaStatus.INUTILIZADO.getId() || status == ENotaStatus.CANCELADO.getId() || status == ENotaStatus.CANCELANDO.getId()) {
-					baixarArquivo("xml", status, id);
+				if (status == ENotaStatus.AUTORIZANDO.getId() || status == ENotaStatus.AUTORIZADO.getId() || status == ENotaStatus.INUTILIZANDO.getId() || status == ENotaStatus.INUTILIZADO.getId()
+						|| status == ENotaStatus.CANCELADO.getId() || status == ENotaStatus.CANCELANDO.getId()) {
+					baixarArquivo("xml", false, id);
 				} else {
 					new ToastWindow(OpenSigCore.i18n.txtNfe(), OpenSigCore.i18n.errRegistro()).show();
 				}
@@ -119,7 +124,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 				int id = record.getAsInteger(nomes.get("id"));
 
 				if (status != ENotaStatus.INUTILIZANDO.getId() && status != ENotaStatus.INUTILIZADO.getId() && status != ENotaStatus.ERRO.getId()) {
-					baixarArquivo("pdf", status, id);
+					baixarArquivo("pdf", false, id);
 				} else {
 					new ToastWindow(OpenSigCore.i18n.txtDanfe(), OpenSigCore.i18n.errRegistro()).show();
 				}
@@ -136,7 +141,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 				int id = record.getAsInteger(nomes.get("id"));
 
 				if (status == ENotaStatus.CANCELANDO.getId() || status == ENotaStatus.CANCELADO.getId()) {
-					baixarArquivo("xml", status, id);
+					baixarArquivo("xml", true, id);
 				} else {
 					new ToastWindow(OpenSigCore.i18n.txtCancelada(), OpenSigCore.i18n.errRegistro()).show();
 				}
@@ -179,8 +184,8 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 		ccErro.setMenuDisabled(true);
 		ccErro.setCellActions(new GridCellAction[] { cellErro });
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccStatusId, ccStatus, ccCadastro, ccNumero, ccData, sumValor, ccChave, sumIcms, sumIpi, sumPis, sumCofins, ccProtocolo,
-				ccXml, ccDanfe, ccProtocoloCancelado, ccXmlCancelado, ccRecibo, ccErro };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccStatusId, ccStatus, ccCadastro, ccNumero, ccData, sumValor, ccChave, sumIcms, sumIpi, sumPis, sumCofins,
+				ccProtocolo, ccXml, ccDanfe, ccProtocoloCancelado, ccXmlCancelado, ccRecibo, ccErro };
 		modelos = new ColumnModel(bcc);
 
 		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteEmpresa.class) == null) {
@@ -191,7 +196,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 		super.inicializar();
 	}
 
-	private void baixarArquivo(final String extensao, final int status, int id) {
+	private void baixarArquivo(final String extensao, final boolean cancelado, int id) {
 		MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtArquivo());
 		CoreProxy<E> proxy = new CoreProxy<E>(classe);
 		proxy.selecionar(id, new AsyncCallback<E>() {
@@ -204,7 +209,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 			public void onSuccess(E result) {
 				classe = result;
 				String arquivo;
-				if (status == ENotaStatus.CANCELANDO.getId() || status == ENotaStatus.CANCELADO.getId()) {
+				if (cancelado) {
 					arquivo = OpenSigCoreJS.base64encode(getXmlCancelado(result));
 				} else {
 					arquivo = OpenSigCoreJS.base64encode(getXml(result));
@@ -271,13 +276,61 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 		super.setFavorito(favorito);
 	}
 
+	@Override
+	public void setImportacao(final SisExpImp modo) {
+		janela = new JanelaUpload<E>();
+		janela.setTipos(modo.getSisExpImpExtensoes() != null ? modo.getSisExpImpExtensoes().split(" ") : null);
+		janela.setAssincrono(new AsyncCallback() {
+			public void onSuccess(Object result) {
+				analisar(modo);
+			}
+
+			public void onFailure(Throwable caught) {
+				analisar(modo);
+			}
+		});
+		janela.inicializar();
+	}
+
+	private void analisar(SisExpImp modo) {
+		if (janela.getOks().size() > 0) {
+			MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtNfe());
+			ImportacaoProxy<E> proxy = new ImportacaoProxy<E>();
+			proxy.importar(classe, modo, janela.getOks(), new AsyncCallback<Map<String, List<E>>>() {
+
+				public void onSuccess(Map<String, List<E>> result) {
+					janela.getOks().clear();
+					janela.getErros().clear();
+					MessageBox.hide();
+					
+					if (result.size() == 0) {
+						new ToastWindow(OpenSigCore.i18n.txtNfe(), OpenSigCore.i18n.msgImportarOK()).show();
+					} else {
+						for (E erro : result.get("erro")) {
+							janela.getErros().add(getErro(erro));
+						}
+						janela.resultado();
+					}
+				}
+
+				public void onFailure(Throwable caught) {
+					MessageBox.hide();
+					MessageBox.alert(OpenSigCore.i18n.txtNfe(), caught.toString());
+					new ToastWindow(OpenSigCore.i18n.txtImportar(), OpenSigCore.i18n.errImportar()).show();
+				}
+			});
+		}
+	}
+
 	protected abstract String getXml(E result);
 
 	protected abstract String getXmlCancelado(E result);
 
 	protected abstract String getChave(E result);
 
-	protected abstract void getErro(E result);
+	protected abstract String getErro(E result);
+	
+	protected abstract void mostrarErro(E result);
 
 	public Map<String, String> getNomes() {
 		return nomes;

@@ -27,7 +27,8 @@ import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AListagem;
 import br.com.opensig.core.client.visao.abstrato.IFormulario;
 import br.com.opensig.core.shared.modelo.IFavorito;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
+import br.com.opensig.empresa.client.controlador.comando.ComandoCliente;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.financeiro.client.controlador.comando.ComandoReceber;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
@@ -273,6 +274,13 @@ public class ListagemVenda extends AListagem<ComVenda> {
 	public void irPara() {
 		Menu mnuContexto = new Menu();
 
+		// cliente
+		SisFuncao cliente = UtilClient.getFuncaoPermitida(ComandoCliente.class);
+		MenuItem itemCliente = gerarFuncao(cliente, "empClienteId", "empCliente.empClienteId");
+		if (itemCliente != null) {
+			mnuContexto.addItem(itemCliente);
+		}
+		
 		// produtos venda
 		SisFuncao produto = UtilClient.getFuncaoPermitida(ComandoVendaProduto.class);
 		MenuItem itemProduto = gerarFuncao(produto, "comVenda.comVendaId", "comVendaId");

@@ -12,13 +12,13 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <%
-	String url = request.getContextPath() + "/CoreService?data=" + new Date().getTime();
+	String url = request.getContextPath() + "/PermissaoService?data=" + new Date().getTime();
 	String email = request.getParameter("email");
 	String id = request.getParameter("id");
 	String nova = request.getParameter("nova");
 	String captcha = request.getParameter("captcha");
 	String msg = "";
-	String redir = "document.location = '/';";
+	String redir = "document.location = '" + request.getContextPath() + "';";
 
 	if (email == null || id == null || email.isEmpty() || id.isEmpty()) {
 		msg = "alert('Email ou Id inválidos');";

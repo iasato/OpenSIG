@@ -10,7 +10,7 @@ import br.com.opensig.core.client.controlador.filtro.FiltroTexto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.produto.client.visao.lista.ListagemPreco;
 import br.com.opensig.produto.client.visao.lista.ListagemProduto;
 import br.com.opensig.produto.shared.modelo.ProdProduto;

@@ -1,2 +1,0 @@
-serviceClass: br.com.opensig.produto.client.servico.ProdutoService
-path: DA04341C09B6108375227867D0BABCD6.gwt.rpc

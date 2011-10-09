@@ -7,7 +7,6 @@ import org.jboleto.FabricaBanco;
 import org.jboleto.JBoletoBean;
 
 import br.com.opensig.core.server.UtilServer;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.empresa.shared.modelo.EmpEndereco;
 import br.com.opensig.empresa.shared.modelo.EmpEntidade;
 import br.com.opensig.financeiro.client.servico.FinanceiroException;
@@ -26,7 +25,7 @@ public abstract class ACobranca implements ICobranca {
 		this.banco = banco;
 	}
 
-	public byte[] boleto(EArquivo tipo, String[] empresa, FinRecebimento finBoleto) throws FinanceiroException {
+	public byte[] boleto(String tipo, String[] empresa, FinRecebimento finBoleto) throws FinanceiroException {
 		IBoleto bol = FabricaBoleto.getInstancia().getBoleto(tipo);
 		JBoletoBean bean = getBean(empresa, finBoleto);
 		Banco banco = FabricaBanco.getBanco(bean, this.banco);

@@ -1,17 +1,37 @@
 package br.com.opensig.comercial.client.visao.form;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import br.com.opensig.comercial.client.servico.ComercialProxy;
+import br.com.opensig.comercial.client.visao.lista.ListagemEcfZTotais;
 import br.com.opensig.comercial.shared.modelo.ComEcf;
 import br.com.opensig.comercial.shared.modelo.ComEcfZ;
+import br.com.opensig.comercial.shared.modelo.ComEcfZTotais;
 import br.com.opensig.core.client.OpenSigCore;
+import br.com.opensig.core.client.UtilClient;
+import br.com.opensig.core.client.controlador.comando.AComando;
+import br.com.opensig.core.client.controlador.comando.IComando;
+import br.com.opensig.core.client.controlador.comando.form.ComandoSalvar;
+import br.com.opensig.core.client.controlador.comando.form.ComandoSalvarFinal;
+import br.com.opensig.core.client.controlador.filtro.ECompara;
+import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
+import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.EBusca;
+import br.com.opensig.core.shared.modelo.EDirecao;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpMeta;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
 import com.gwtext.client.data.ArrayReader;
 import com.gwtext.client.data.FieldDef;
 import com.gwtext.client.data.IntegerFieldDef;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.RecordDef;
+import com.gwtext.client.data.SortState;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.data.event.StoreListenerAdapter;
@@ -22,6 +42,8 @@ import com.gwtext.client.widgets.form.DateField;
 import com.gwtext.client.widgets.form.Hidden;
 import com.gwtext.client.widgets.form.MultiFieldPanel;
 import com.gwtext.client.widgets.form.NumberField;
+import com.gwtextux.client.widgets.grid.plugins.SummaryColumnConfig;
+import com.gwtextux.client.widgets.window.ToastWindow;
 
 public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 
@@ -33,6 +55,7 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 	private DateField dtData;
 	private NumberField txtBruto;
 	private NumberField txtTotal;
+	private ListagemEcfZTotais gridTotais;
 
 	public FormularioEcfZ(SisFuncao funcao) {
 		super(new ComEcfZ(), funcao);
@@ -42,7 +65,7 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 	public void inicializar() {
 		super.inicializar();
 
-		hdnCod = new Hidden("comEcfId", "0");
+		hdnCod = new Hidden("comEcfZId", "0");
 		add(hdnCod);
 
 		txtCoo = new NumberField(OpenSigCore.i18n.txtCoo(), "comEcfZCoo", 50);
@@ -86,9 +109,37 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 		linha1.addToRow(txtBruto, 120);
 		linha1.addToRow(txtTotal, 120);
 		add(linha1);
+		
+		gridTotais = new ListagemEcfZTotais(true);
+		add(gridTotais);
 	}
 
+	@Override
+	public IComando AntesDaAcao(IComando comando) {
+		// salavando
+		if (comando instanceof ComandoSalvar) {
+			comando = new AComando(new ComandoSalvarFinal()) {
+				public void execute(Map contexto) {
+					super.execute(contexto);
+					ComercialProxy proxy = new ComercialProxy();
+					proxy.salvarEcfZ(classe, ASYNC);
+				}
+			};
+		}
+
+		return comando;
+	}
+	
 	public boolean setDados() {
+		boolean retorno = true;
+		List<ComEcfZTotais> totais = new ArrayList<ComEcfZTotais>();
+
+		if (!gridTotais.validar(totais)) {
+			retorno = false;
+			new ToastWindow(OpenSigCore.i18n.txtListagem(), OpenSigCore.i18n.errLista()).show();
+		}
+		
+		classe.setComZTotais(totais);
 		classe.setComEcfZId(Integer.valueOf(hdnCod.getValueAsString()));
 		if (cmbEcf.getValue() != null) {
 			ComEcf ecf = new ComEcf(Integer.valueOf(cmbEcf.getValue()));
@@ -111,11 +162,14 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 			classe.setComEcfZTotal(txtTotal.getValue().doubleValue());
 		}
 
-		return true;
+		return retorno;
 	}
 
 	public void limparDados() {
 		getForm().reset();
+		FiltroNumero fn = new FiltroNumero("comEcfZTotaisId", ECompara.IGUAL, 0);
+		gridTotais.getProxy().setFiltroPadrao(fn);
+		gridTotais.getStore().removeAll();
 	}
 
 	public void mostrarDados() {
@@ -127,10 +181,13 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 	}
 
 	private void mostrar() {
-		MessageBox.hide();
 		Record rec = lista.getPanel().getSelectionModel().getSelected();
 		if (rec != null) {
 			getForm().loadRecord(rec);
+			classe.setComEcfZId(Integer.valueOf(hdnCod.getValueAsString()));
+			FiltroObjeto fo = new FiltroObjeto("comEcfZ", ECompara.IGUAL, classe);
+			gridTotais.getProxy().setFiltroPadrao(fo);
+			gridTotais.getStore().reload();
 		}
 
 		if (duplicar) {
@@ -140,14 +197,39 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 	}
 
 	public void gerarListas() {
-	}
+		// produtos
+		List<ExpMeta> metadados = new ArrayList<ExpMeta>();
+		for (int i = 0; i < gridTotais.getModelos().getColumnCount(); i++) {
+			if (gridTotais.getModelos().isHidden(i)) {
+				metadados.add(null);
+			} else {
+				ExpMeta meta = new ExpMeta(gridTotais.getModelos().getColumnHeader(i), gridTotais.getModelos().getColumnWidth(i), null);
+				if (gridTotais.getModelos().getColumnConfigs()[i] instanceof SummaryColumnConfig) {
+					SummaryColumnConfig col = (SummaryColumnConfig) gridTotais.getModelos().getColumnConfigs()[i];
+					String tp = col.getSummaryType().equals("average") ? "AVG" : col.getSummaryType().toUpperCase();
+					meta.setGrupo(EBusca.getBusca(tp));
+				}
+				metadados.add(meta);
+			}
+		}
 
-	public Hidden getHdnCod() {
-		return hdnCod;
-	}
+		SortState ordem = gridTotais.getStore().getSortState();
+		ComEcfZTotais zTotal = new ComEcfZTotais();
+		zTotal.setCampoOrdem(ordem.getField());
+		zTotal.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
+		// filtro
+		int id = UtilClient.getSelecionado(lista.getPanel());
+		FiltroObjeto filtro = new FiltroObjeto("comEcfZ", ECompara.IGUAL, new ComEcfZ(id));
+		
+		ExpListagem<ComEcfZTotais> totais = new ExpListagem<ComEcfZTotais>();
+		totais.setClasse(zTotal);
+		totais.setMetadados(metadados);
+		totais.setNome(gridTotais.getTitle());
+		totais.setFiltro(filtro);
 
-	public void setHdnCod(Hidden hdnCod) {
-		this.hdnCod = hdnCod;
+		// sub listagens
+		expLista = new ArrayList<ExpListagem>();
+		expLista.add(totais);
 	}
 
 	private ComboBox getEcf() {
@@ -186,6 +268,14 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 		return cmbEcf;
 	}
 
+	public Hidden getHdnCod() {
+		return hdnCod;
+	}
+
+	public void setHdnCod(Hidden hdnCod) {
+		this.hdnCod = hdnCod;
+	}
+	
 	public ComboBox getCmbEcf() {
 		return cmbEcf;
 	}

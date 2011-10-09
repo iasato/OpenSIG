@@ -15,6 +15,7 @@
 		<class>br.com.opensig.comercial.shared.modelo.ComNatureza</class>
 		<class>br.com.opensig.comercial.shared.modelo.ComEcf</class>
 		<class>br.com.opensig.comercial.shared.modelo.ComEcfZ</class>
+		<class>br.com.opensig.comercial.shared.modelo.ComEcfZTotais</class>
 		<class>br.com.opensig.comercial.shared.modelo.ComEcfVenda</class>
 		<class>br.com.opensig.comercial.shared.modelo.ComEcfVendaProduto</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdProduto</class>

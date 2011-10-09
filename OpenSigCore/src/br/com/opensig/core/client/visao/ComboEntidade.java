@@ -13,6 +13,7 @@ import br.com.opensig.core.shared.modelo.EDirecao;
 import br.com.opensig.core.shared.modelo.Lista;
 
 import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.core.UrlParam;
 import com.gwtext.client.widgets.MessageBox;
@@ -65,9 +66,8 @@ public class ComboEntidade<E extends Dados> extends CoreProxy<E> {
 					new ToastWindow(OpenSigCore.i18n.txtAtencao(), OpenSigCore.i18n.errListagem());
 				} else {
 					MessageBox.alert(OpenSigCore.i18n.txtAtencao(), OpenSigCore.i18n.errSessao(), new AlertCallback() {
-
 						public void execute() {
-							UtilClient.atualizar();
+							Window.Location.reload();
 						}
 					});
 				}

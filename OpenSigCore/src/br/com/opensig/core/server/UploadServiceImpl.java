@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -86,12 +87,13 @@ public class UploadServiceImpl extends HttpServlet {
 				}
 			}
 
-			nomeArquivo = params.get("nome") != null ? params.get("nome") : nomeArquivo;
-			pathArquivo = params.get("path") != null ? params.get("path") : "/upload/temp/";
-			pathArquivo = params.get("real") != null ? pathArquivo + nomeArquivo: UtilServer.getRealPath(pathArquivo) + nomeArquivo;
+			// defino o nome e path do arquivo
+			nomeArquivo = params.get("nomeArquivo") != null ? params.get("nomeArquivo") : nomeArquivo;
+			pathArquivo = params.get("pathRelativo") != null ? params.get("pathRelativo") : "/upload/temp/";
+			pathArquivo = params.get("pathReal") != null ? params.get("pathReal") + nomeArquivo : UtilServer.getRealPath(pathArquivo) + nomeArquivo;
 
-			if (params.get("acao") != null && params.get("acao").equals("salvar")) {
-				if (params.get("local") != null && params.get("local").equals("sessao")) {
+			if ("salvar".equals(params.get("acao"))) {
+				if ("sessao".equals(params.get("local"))) {
 					req.getSession().setAttribute(nomeArquivo, baos.toByteArray());
 				} else {
 					File arquivo = new File(pathArquivo);
@@ -105,16 +107,32 @@ public class UploadServiceImpl extends HttpServlet {
 				}
 				json.put("dados", nomeArquivo);
 			} else {
-				json.put("dados", baos.toString("UTF-8"));
+				// valida o tipo do arquivo
+				Map<String, byte[]> arquivos = new HashMap<String, byte[]>();
+				if (nomeArquivo.endsWith(".zip")) {
+					arquivos = UtilServer.getArquivos(baos.toByteArray());
+				} else {
+					arquivos.put(nomeArquivo, baos.toByteArray());
+				}
+				
+				// gera a string contendo os dados dos arquivos
+				StringBuffer sb = new StringBuffer();
+				String sep = params.get("separador") != null ? params.get("separador") : "";
+				for (Entry<String, byte[]> arquivo : arquivos.entrySet()) {
+					sb.append(new String(arquivo.getValue()));
+					sb.append(sep);
+				}
+				
+				json.put("dados", sb.toString());
 			}
 
 			json.put("success", true);
-			json.put("error", "ok");
+			json.put("error", "OK");
 			resp.setStatus(HttpServletResponse.SC_OK);
 		} catch (Exception ex) {
 			try {
 				json.put("success", false);
-				json.put("error", "erro");
+				json.put("error", "ERRO");
 				json.put("dados", ex.getMessage());
 				resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 				UtilServer.LOG.debug("Nao teve sucesso na subida do arquivo.", ex);

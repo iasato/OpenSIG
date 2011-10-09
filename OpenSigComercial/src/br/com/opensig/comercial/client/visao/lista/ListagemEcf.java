@@ -85,7 +85,7 @@ public class ListagemEcf extends AListagem<ComEcf> {
 				fEmpresa.setLoadingText(OpenSigCore.i18n.txtAguarde());
 				entry.setValue(fEmpresa);
 			}
-		} 
+		}
 	}
 
 	public void setFavorito(IFavorito favorito) {

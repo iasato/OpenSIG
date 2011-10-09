@@ -32,14 +32,26 @@ public class ComEcfVendaProduto extends Dados implements Serializable {
 	@Column(name = "com_ecf_venda_produto_ordem")
 	private int comEcfVendaProdutoOrdem;
 
+	@Column(name = "com_ecf_venda_produto_codigo")
+	private String comEcfVendaProdutoCodigo;
+
+	@Column(name = "com_ecf_venda_produto_descricao")
+	private String comEcfVendaProdutoDescricao;
+
 	@Column(name = "com_ecf_venda_produto_quantidade")
 	private Double comEcfVendaProdutoQuantidade;
 
 	@Column(name = "com_ecf_venda_produto_total")
 	private Double comEcfVendaProdutoTotal;
 
-	@Column(name = "com_ecf_venda_produto_valor")
-	private Double comEcfVendaProdutoValor;
+	@Column(name = "com_ecf_venda_produto_bruto")
+	private Double comEcfVendaProdutoBruto;
+
+	@Column(name = "com_ecf_venda_produto_desconto")
+	private Double comEcfVendaProdutoDesconto;
+
+	@Column(name = "com_ecf_venda_produto_liquido")
+	private Double comEcfVendaProdutoLiquido;
 
 	@JoinColumn(name = "prod_produto_id")
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -102,12 +114,44 @@ public class ComEcfVendaProduto extends Dados implements Serializable {
 		this.comEcfVendaProdutoTotal = comEcfVendaProdutoTotal;
 	}
 
-	public Double getComEcfVendaProdutoValor() {
-		return this.comEcfVendaProdutoValor;
+	public Double getComEcfVendaProdutoBruto() {
+		return this.comEcfVendaProdutoBruto;
 	}
 
-	public void setComEcfVendaProdutoValor(Double comEcfVendaProdutoValor) {
-		this.comEcfVendaProdutoValor = comEcfVendaProdutoValor;
+	public String getComEcfVendaProdutoCodigo() {
+		return comEcfVendaProdutoCodigo;
+	}
+
+	public void setComEcfVendaProdutoCodigo(String comEcfVendaProdutoCodigo) {
+		this.comEcfVendaProdutoCodigo = comEcfVendaProdutoCodigo;
+	}
+
+	public String getComEcfVendaProdutoDescricao() {
+		return comEcfVendaProdutoDescricao;
+	}
+
+	public void setComEcfVendaProdutoDescricao(String comEcfVendaProdutoDescricao) {
+		this.comEcfVendaProdutoDescricao = comEcfVendaProdutoDescricao;
+	}
+
+	public Double getComEcfVendaProdutoDesconto() {
+		return comEcfVendaProdutoDesconto;
+	}
+
+	public void setComEcfVendaProdutoDesconto(Double comEcfVendaProdutoDesconto) {
+		this.comEcfVendaProdutoDesconto = comEcfVendaProdutoDesconto;
+	}
+
+	public Double getComEcfVendaProdutoLiquido() {
+		return comEcfVendaProdutoLiquido;
+	}
+
+	public void setComEcfVendaProdutoLiquido(Double comEcfVendaProdutoLiquido) {
+		this.comEcfVendaProdutoLiquido = comEcfVendaProdutoLiquido;
+	}
+
+	public void setComEcfVendaProdutoBruto(Double comEcfVendaProdutoBruto) {
+		this.comEcfVendaProdutoBruto = comEcfVendaProdutoBruto;
 	}
 
 	public ProdProduto getProdProduto() {
@@ -143,13 +187,25 @@ public class ComEcfVendaProduto extends Dados implements Serializable {
 	}
 
 	public String[] toArray() {
-		String barra = prodProduto.getProdProdutoBarra() == null || prodProduto.getProdProdutoBarra() == 0L ? null : prodProduto.getProdProdutoBarra() + "";
+		String fornecedor = "";
+		String prodId = "0";
+		String barra = comEcfVendaProdutoCodigo;
+		String desc = comEcfVendaProdutoDescricao;
+		String ref = "";
+
+		if (prodProduto != null) {
+			fornecedor = prodProduto.getEmpFornecedor().getEmpEntidade().getEmpEntidadeNome1();
+			prodId = prodProduto.getProdProdutoId() + "";
+			barra = prodProduto.getProdProdutoBarra() == null || prodProduto.getProdProdutoBarra() == 0L ? null : prodProduto.getProdProdutoBarra() + "";
+			desc = prodProduto.getProdProdutoDescricao();
+			ref = prodProduto.getProdProdutoReferencia();
+		}
+
 		return new String[] { comEcfVendaProdutoId + "", comEcfVenda.getComEcfVendaId() + "", comEcfVenda.getComEcf().getComEcfId() + "", comEcfVenda.getComEcf().getComEcfSerie(),
 				comEcfVenda.getComEcf().getEmpEmpresa().getEmpEmpresaId() + "", comEcfVenda.getComEcf().getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(),
-				comEcfVenda.getEmpCliente().getEmpEntidade().getEmpEntidadeNome1(), prodProduto.getEmpFornecedor().getEmpEntidade().getEmpEntidadeNome1(), prodProduto.getProdProdutoId() + "", barra,
-				prodProduto.getProdProdutoDescricao(), prodProduto.getProdProdutoReferencia(), UtilClient.getDataGrid(comEcfVenda.getComEcfVendaData()), comEcfVendaProdutoQuantidade + "",
-				prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), comEcfVendaProdutoValor.toString(), comEcfVendaProdutoTotal.toString(),
-				getComEcfVendaProdutoCancelado() + "", comEcfVendaProdutoOrdem + "" };
+				comEcfVenda.getEmpCliente().getEmpEntidade().getEmpEntidadeNome1(), fornecedor, prodId, barra, desc, ref, UtilClient.getDataGrid(comEcfVenda.getComEcfVendaData()),
+				comEcfVendaProdutoQuantidade + "", prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), comEcfVendaProdutoBruto.toString(),
+				comEcfVendaProdutoDesconto.toString(), comEcfVendaProdutoLiquido.toString(), comEcfVendaProdutoTotal.toString(), getComEcfVendaProdutoCancelado() + "", comEcfVendaProdutoOrdem + "" };
 	}
 
 }

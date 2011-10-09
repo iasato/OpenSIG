@@ -313,6 +313,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String msgComparaSenha();
 
   /**
+   * Translated "Clique com o botão direito em um item para abrir a pesquisa de produtos.".
+   * 
+   * @return translated "Clique com o botão direito em um item para abrir a pesquisa de produtos."
+   */
+  @DefaultMessage("Clique com o botão direito em um item para abrir a pesquisa de produtos.")
+  @Key("msgCompraProduto")
+  String msgCompraProduto();
+
+  /**
    * Translated "Para aplicar as configurações após salvar, deve-se fazer login no sistema!".
    * 
    * @return translated "Para aplicar as configurações após salvar, deve-se fazer login no sistema!"
@@ -475,11 +484,11 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String msgImagem();
 
   /**
-   * Translated "Não foi possível executar a importação, pois o CNPJ de destino da NFe é diferente da empresa ativa!".
+   * Translated "Não existe um modelo de importação para esta listagem cadastrado.".
    * 
-   * @return translated "Não foi possível executar a importação, pois o CNPJ de destino da NFe é diferente da empresa ativa!"
+   * @return translated "Não existe um modelo de importação para esta listagem cadastrado."
    */
-  @DefaultMessage("Não foi possível executar a importação, pois o CNPJ de destino da NFe é diferente da empresa ativa!")
+  @DefaultMessage("Não existe um modelo de importação para esta listagem cadastrado.")
   @Key("msgImportar")
   String msgImportar();
 
@@ -1132,6 +1141,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtCheque();
 
   /**
+   * Translated "Classe".
+   * 
+   * @return translated "Classe"
+   */
+  @DefaultMessage("Classe")
+  @Key("txtClasse")
+  String txtClasse();
+
+  /**
    * Translated "Cliente".
    * 
    * @return translated "Cliente"
@@ -1735,6 +1753,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtExportar();
 
   /**
+   * Translated "Extensão".
+   * 
+   * @return translated "Extensão"
+   */
+  @DefaultMessage("Extensão")
+  @Key("txtExtensao")
+  String txtExtensao();
+
+  /**
    * Translated "Fabricante".
    * 
    * @return translated "Fabricante"
@@ -1922,6 +1949,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Frete")
   @Key("txtFrete")
   String txtFrete();
+
+  /**
+   * Translated "Função".
+   * 
+   * @return translated "Função"
+   */
+  @DefaultMessage("Função")
+  @Key("txtFuncao")
+  String txtFuncao();
 
   /**
    * Translated "Gráfico".

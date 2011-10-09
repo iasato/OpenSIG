@@ -98,4 +98,27 @@ public class SalvarPagar extends Chain {
 		}
 	}
 
+	public CoreServiceImpl getServico() {
+		return servico;
+	}
+
+	public void setServico(CoreServiceImpl servico) {
+		this.servico = servico;
+	}
+
+	public FinPagar getPagar() {
+		return pagar;
+	}
+
+	public void setPagar(FinPagar pagar) {
+		this.pagar = pagar;
+	}
+
+	public List<FinCategoria> getCategorias() {
+		return categorias;
+	}
+
+	public void setCategorias(List<FinCategoria> categorias) {
+		this.categorias = categorias;
+	}
 }

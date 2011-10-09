@@ -2,7 +2,7 @@ package br.com.opensig.core.shared.modelo;
 
 import java.util.List;
 
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
 /**
  * Interface que generaliza o favorito de listagens.

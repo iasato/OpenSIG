@@ -3,7 +3,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%
-	boolean logado = request.getSession(true).getAttribute("Autenticacao") != null;
 	String idioma = getServletContext().getInitParameter("login.idioma");
 	String tema = getServletContext().getInitParameter("login.tema");
 	String captcha = getServletContext().getInitParameter("login.captcha");
@@ -28,7 +27,6 @@
 <title>OpenSIG - Sistemas Integrados Gerenciáveis Open Source</title>
 
 <script type="text/javascript">
-
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-25564325-1']);
   _gaq.push(['_trackPageview']);
@@ -38,13 +36,11 @@
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
-
 </script>
 
 </head>
 <body>
 
-	<div id="logado" style="display: none"><%=logado%></div>
 	<div id="idioma" style="display: none"><%=idioma%></div>
 	<div id="tema" style="display: none"><%=tema%></div>
 	<div id="captcha" style="display: none"><%=captcha%></div>

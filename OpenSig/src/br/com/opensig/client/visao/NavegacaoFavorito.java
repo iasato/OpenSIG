@@ -13,7 +13,7 @@ import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.client.visao.Arvore;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.shared.modelo.IFavorito;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.permissao.shared.modelo.SisFavorito;
 import br.com.opensig.permissao.shared.modelo.SisFavoritoPortal;
 import br.com.opensig.permissao.shared.modelo.SisUsuario;

@@ -89,7 +89,7 @@ public class EntrarSistema {
 		frmAcesso.add(linha1);
 
 		String captcha = RootPanel.get("captcha").getElement().getInnerText();
-		imgCaptcha = new Image("imgCaptcha", GWT.getHostPageBaseURL() + "CoreService?data=" + UtilClient.DATA.getTime());
+		imgCaptcha = new Image("imgCaptcha", GWT.getHostPageBaseURL() + "PermissaoService?data=" + UtilClient.DATA.getTime());
 
 		txtCaptcha = new TextField(OpenSigCore.i18n.txtImagem(), "captcha", 50);
 		txtCaptcha.setAllowBlank(false);
@@ -187,7 +187,7 @@ public class EntrarSistema {
 							MessageBox.hide();
 							MessageBox.alert(OpenSigCore.i18n.txtAutenticao(), caught.getMessage());
 							txtCaptcha.setValue("");
-							imgCaptcha.setSrc(GWT.getHostPageBaseURL() + "CoreService?data=" + UtilClient.DATA.getTime());
+							imgCaptcha.setSrc(GWT.getHostPageBaseURL() + "PermissaoService?data=" + UtilClient.DATA.getTime());
 						}
 
 						public void onSuccess(Autenticacao result) {

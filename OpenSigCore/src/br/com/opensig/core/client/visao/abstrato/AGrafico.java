@@ -25,7 +25,7 @@ import br.com.opensig.core.shared.modelo.EData;
 import br.com.opensig.core.shared.modelo.EDirecao;
 import br.com.opensig.core.shared.modelo.EGrafico;
 import br.com.opensig.core.shared.modelo.IFavoritoGrafico;
-import br.com.opensig.core.shared.modelo.permissao.SisAcao;
+import br.com.opensig.core.shared.modelo.sistema.SisAcao;
 
 import com.google.gwt.user.client.Timer;
 import com.gwtext.client.core.EventObject;
@@ -197,8 +197,7 @@ public abstract class AGrafico<E extends Dados> extends Panel implements IGrafic
 	 * @param classe
 	 *            a classe do mesmo tipo setado com os dados.
 	 * @param lista
-	 *            a listagem vinculada ao grafico, usado para pegar os dados
-	 *            filtrados.
+	 *            a listagem vinculada ao grafico, usado para pegar os dados filtrados.
 	 */
 	public AGrafico(E classe, final IListagem<E> lista) {
 		this.classe = classe;
@@ -741,6 +740,10 @@ public abstract class AGrafico<E extends Dados> extends Panel implements IGrafic
 						permite = true;
 					}
 
+					if (campo.getName().startsWith("Cod")) {
+						permite = false;
+					}
+
 					if (permite) {
 						String[] valor = new String[2];
 						valor[0] = lista.getModelos().getColumnHeader(i);
@@ -813,7 +816,7 @@ public abstract class AGrafico<E extends Dados> extends Panel implements IGrafic
 	}
 
 	// Gets e Seteres
-	
+
 	@Override
 	public Panel getPanel() {
 		return this;

@@ -14,8 +14,10 @@ import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.js.OpenSigCoreJS;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.EDirecao;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpMeta;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.client.js.OpenSigEmpresaJS;
 import br.com.opensig.empresa.client.servico.EmpresaProxy;
 import br.com.opensig.empresa.client.visao.lista.ListagemContato;
@@ -27,6 +29,7 @@ import br.com.opensig.empresa.shared.modelo.EmpEntidade;
 import com.gwtext.client.core.Ext;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.SimpleStore;
+import com.gwtext.client.data.SortState;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.Panel;
@@ -173,65 +176,64 @@ public abstract class FormularioEntidade<E extends Dados> extends AFormulario<E>
 	}
 
 	public void gerarListas() {
-		// selecionado e filtro
-		Record rec = lista.getPanel().getSelectionModel().getSelected();
-		entidade.setEmpEntidadeId(rec.getAsInteger(prefixo + ".empEntidadeId"));
-		FiltroObjeto fo = new FiltroObjeto("empEntidade", ECompara.IGUAL, entidade);
-
 		// contatos
-		Integer[] tamContatos = new Integer[gridContatos.getModelos().getColumnCount()];
-		String[] rotContatos = new String[gridContatos.getModelos().getColumnCount()];
-
+		List<ExpMeta> metaCont = new ArrayList<ExpMeta>();
 		for (int i = 0; i < gridContatos.getModelos().getColumnCount(); i++) {
-			if (!gridContatos.getModelos().isHidden(i)) {
-				tamContatos[i] = gridContatos.getModelos().getColumnWidth(i);
-				rotContatos[i] = gridContatos.getModelos().getColumnHeader(i);
+			if (gridContatos.getModelos().isHidden(i)) {
+				metaCont.add(null);
+			} else {
+				metaCont.add(new ExpMeta(gridContatos.getModelos().getColumnHeader(i), gridContatos.getModelos().getColumnWidth(i), null));
 			}
 		}
 
-		// altera os tipos visiveis
-		tamContatos[2] = tamContatos[1];
-		rotContatos[2] = rotContatos[1];
-		tamContatos[1] = null;
-		rotContatos[1] = null;
+		// trocando campos visiveis
+		metaCont.set(2, metaCont.get(1));
+		metaCont.set(1, null);
 
-		ExportacaoListagem<EmpContato> contatos = new ExportacaoListagem<EmpContato>();
-		contatos.setUnidade(new EmpContato());
-		contatos.setFiltro(fo);
-		contatos.setTamanhos(tamContatos);
-		contatos.setRotulos(rotContatos);
+		SortState ordem = gridContatos.getStore().getSortState();
+		EmpContato cont = new EmpContato();
+		cont.setCampoOrdem(ordem.getField());
+		cont.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
+		// filtro
+		Record rec = lista.getPanel().getSelectionModel().getSelected();
+		int id = rec.getAsInteger("empEntidade.empEntidadeId");
+		FiltroObjeto filtro = new FiltroObjeto("empEntidade", ECompara.IGUAL, new EmpEntidade(id));
+		
+		ExpListagem<EmpContato> contatos = new ExpListagem<EmpContato>();
+		contatos.setClasse(cont);
+		contatos.setMetadados(metaCont);
 		contatos.setNome(gridContatos.getTitle());
+		contatos.setFiltro(filtro);
 
 		// enderecos
-		Integer[] tamEnderecos = new Integer[gridEnderecos.getModelos().getColumnCount()];
-		String[] rotEnderecos = new String[gridEnderecos.getModelos().getColumnCount()];
-
+		List<ExpMeta> metaEnde = new ArrayList<ExpMeta>();
 		for (int i = 0; i < gridEnderecos.getModelos().getColumnCount(); i++) {
-			if (!gridEnderecos.getModelos().isHidden(i)) {
-				tamEnderecos[i] = gridEnderecos.getModelos().getColumnWidth(i);
-				rotEnderecos[i] = gridEnderecos.getModelos().getColumnHeader(i);
+			if (gridEnderecos.getModelos().isHidden(i)) {
+				metaEnde.add(null);
+			} else {
+				metaEnde.add(new ExpMeta(gridEnderecos.getModelos().getColumnHeader(i), gridEnderecos.getModelos().getColumnWidth(i), null));
 			}
 		}
 
-		// altera os tipos visiveis
-		tamEnderecos[2] = tamEnderecos[1];
-		rotEnderecos[2] = rotEnderecos[1];
-		tamEnderecos[6] = tamEnderecos[5];
-		rotEnderecos[6] = rotEnderecos[5];
-		tamEnderecos[1] = null;
-		rotEnderecos[1] = null;
-		tamEnderecos[5] = null;
-		rotEnderecos[5] = null;
+		// trocando campos visiveis
+		metaEnde.set(2, metaEnde.get(1));
+		metaEnde.set(6, metaEnde.get(5));
+		metaEnde.set(1, null);
+		metaEnde.set(5, null);
 
-		ExportacaoListagem<EmpEndereco> enderecos = new ExportacaoListagem<EmpEndereco>();
-		enderecos.setUnidade(new EmpEndereco());
-		enderecos.setFiltro(fo);
-		enderecos.setTamanhos(tamEnderecos);
-		enderecos.setRotulos(rotEnderecos);
+		ordem = gridEnderecos.getStore().getSortState();
+		EmpEndereco ende = new EmpEndereco();
+		ende.setCampoOrdem(ordem.getField());
+		ende.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
+		
+		ExpListagem<EmpEndereco> enderecos = new ExpListagem<EmpEndereco>();
+		enderecos.setClasse(ende);
+		enderecos.setMetadados(metaEnde);
 		enderecos.setNome(gridEnderecos.getTitle());
+		enderecos.setFiltro(filtro);
 
 		// sub listagens
-		expLista = new ArrayList<ExportacaoListagem>();
+		expLista = new ArrayList<ExpListagem>();
 		expLista.add(contatos);
 		expLista.add(enderecos);
 	}
@@ -248,10 +250,10 @@ public abstract class FormularioEntidade<E extends Dados> extends AFormulario<E>
 				}
 			};
 		}
-		
+
 		return comando;
 	}
-	
+
 	public void limparDados() {
 		getForm().reset();
 		FiltroObjeto fo = new FiltroObjeto("empEntidade", ECompara.IGUAL, null);
@@ -260,7 +262,7 @@ public abstract class FormularioEntidade<E extends Dados> extends AFormulario<E>
 		gridEnderecos.getProxy().setFiltroPadrao(fo);
 		gridEnderecos.getStore().removeAll();
 	}
-	
+
 	public boolean setDados() {
 		boolean retorno = true;
 		List<EmpContato> contatos = new ArrayList<EmpContato>();
@@ -318,7 +320,7 @@ public abstract class FormularioEntidade<E extends Dados> extends AFormulario<E>
 			hdnId.setValue("0");
 			duplicar = false;
 		}
-		
+
 		txtNome1.focus(true);
 		tabDados.setActiveTab(0);
 		mudarPessoa(cmbPessoa.getValue());

@@ -8,9 +8,9 @@ import br.com.opensig.core.client.visao.PermitirSistema;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.ILogin;
-import br.com.opensig.core.shared.modelo.permissao.SisAcao;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
-import br.com.opensig.core.shared.modelo.permissao.SisModulo;
+import br.com.opensig.core.shared.modelo.sistema.SisAcao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisModulo;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;

@@ -2,7 +2,7 @@ package br.com.opensig.core.client.visao;
 
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
 import com.gwtext.client.widgets.form.Hidden;
 

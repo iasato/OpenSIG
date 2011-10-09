@@ -19,7 +19,7 @@ import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.visao.abstrato.ANavegacao;
 import br.com.opensig.core.client.visao.abstrato.IListagem;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.permissao.SisAcao;
+import br.com.opensig.core.shared.modelo.sistema.SisAcao;
 
 import com.google.gwt.i18n.client.NumberFormat;
 import com.gwtext.client.core.EventObject;

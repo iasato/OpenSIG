@@ -6,7 +6,7 @@ import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.AComando;
 import br.com.opensig.core.client.controlador.comando.FabricaComando;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluirFinal;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.financeiro.client.controlador.comando.ComandoPagamento;
 import br.com.opensig.financeiro.client.servico.FinanceiroProxy;
 import br.com.opensig.financeiro.client.visao.form.AFormularioFinanceiro;

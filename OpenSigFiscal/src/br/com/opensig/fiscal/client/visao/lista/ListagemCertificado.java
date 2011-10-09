@@ -9,6 +9,7 @@ import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.servico.CoreProxy;
+import br.com.opensig.core.client.visao.JanelaUpload;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AListagem;
 import br.com.opensig.core.client.visao.abstrato.IFormulario;
@@ -16,7 +17,6 @@ import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.shared.modelo.FisCertificado;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.gwtext.client.core.UrlParam;
 import com.gwtext.client.data.ArrayReader;
@@ -45,6 +45,9 @@ import com.gwtextux.client.widgets.window.ToastWindow;
 
 public class ListagemCertificado extends AListagem<FisCertificado> {
 
+	private String cnpj;
+	private JanelaUpload janela;
+	
 	public ListagemCertificado(IFormulario formulario) {
 		super(formulario);
 		inicializar();
@@ -67,10 +70,10 @@ public class ListagemCertificado extends AListagem<FisCertificado> {
 
 		GridCellAction cellImagem = new GridCellAction("icon-imagem", OpenSigCore.i18n.txtImagem(), new GridCellActionListener() {
 			public boolean execute(GridPanel grid, final Record record, String action, Object value, String dataIndex, int rowIndex, int colIndex) {
-				String cnpj = record.getAsString("empEmpresa.empEntidade.empEntidadeDocumento1");
+				cnpj = record.getAsString("empEmpresa.empEntidade.empEntidadeDocumento1");
 				if (cnpj != null) {
 					cnpj = cnpj.replaceAll("\\D", "");
-					abrirUpload(cnpj);
+					abrirArquivo();
 					return true;
 				} else {
 					return false;
@@ -122,29 +125,32 @@ public class ListagemCertificado extends AListagem<FisCertificado> {
 		filtros.get("empEmpresa.empEmpresaId").setActive(false, true);
 		super.setFavorito(favorito);
 	}
+	
+	private void abrirArquivo() {
+		UrlParam[] params = new UrlParam[] { JanelaUpload.ACAO_SALVAR, JanelaUpload.LOCAL_FISICO, JanelaUpload.PATH_REAL(UtilClient.CONF.get("sistema.empresas") + cnpj + "/"), JanelaUpload.NOME_ARQUIVO("logo.png") };
 
-	private void abrirUpload(String cnpj) {
-		UploadDialog uplArquivo = new UploadDialog();
-		uplArquivo.setModal(true);
-		uplArquivo.setUrl(GWT.getHostPageBaseURL() + "UploadService");
-		uplArquivo.setAllowCloseOnUpload(false);
-		uplArquivo.setPermittedExtensions(new String[] { "png" });
-		uplArquivo.setBaseParams(new UrlParam[] { new UrlParam("acao", "salvar"), new UrlParam("real", "sim"), new UrlParam("path", UtilClient.CONF.get("sistema.empresas") + cnpj + "/"), new UrlParam("nome", "logo.png") });
-		uplArquivo.addListener(new UploadDialogListenerAdapter() {
+		janela = new JanelaUpload("png");
+		janela.setParams(params);
+		janela.inicializar();
+		
+		janela.getUplArquivo().purgeListeners();
+		janela.getUplArquivo().addListener(new UploadDialogListenerAdapter() {
 			public void onUploadSuccess(UploadDialog source, String filename, JavaScriptObject data) {
 				new ToastWindow(OpenSigCore.i18n.txtImagem(), OpenSigCore.i18n.msgSalvarOK()).show();
 				source.close();
+			}
+
+			public void onUploadError(UploadDialog source, String filename, JavaScriptObject data) {
+				new ToastWindow(OpenSigCore.i18n.txtErro(), JavaScriptObjectHelper.getAttribute(data, "dados")).show();
 			}
 
 			public boolean onBeforeAdd(UploadDialog source, String filename) {
 				return source.getQueuedCount() == 0;
 			}
 			
-			public void onUploadError(UploadDialog source, String filename, JavaScriptObject data) {
-				new ToastWindow(OpenSigCore.i18n.txtErro(), JavaScriptObjectHelper.getAttribute(data, "dados")).show();
+			public void onFileAdd(UploadDialog source, String filename) {
+				source.startUpload();
 			}
-
 		});
-		uplArquivo.show();
 	}
 }

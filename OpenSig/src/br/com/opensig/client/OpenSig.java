@@ -8,6 +8,7 @@ import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.ANavegacao;
 import br.com.opensig.permissao.client.controlador.comando.ComandoBloquear;
+import br.com.opensig.permissao.client.servico.PermissaoProxy;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
@@ -18,6 +19,9 @@ import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.Window.ClosingEvent;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.gwtext.client.core.EventCallback;
 import com.gwtext.client.core.EventManager;
@@ -51,6 +55,19 @@ public class OpenSig implements EntryPoint {
 	 * Metodo que é disparado ao iniciar o projeto.
 	 */
 	public void onModuleLoad() {
+		// captura o fechamento da pagina
+		Window.addWindowClosingHandler(new Window.ClosingHandler() {
+			public void onWindowClosing(ClosingEvent event) {
+				PermissaoProxy login = new PermissaoProxy();
+				login.sair(new AsyncCallback() {
+					public void onFailure(final Throwable caught) {
+					}
+					public void onSuccess(Object result) {
+					}
+				});
+			}
+		});
+
 		// pega a hora do servidor
 		UtilClient.DATA = new Date(Long.valueOf(RootPanel.get("serverTime").getElement().getInnerText()));
 

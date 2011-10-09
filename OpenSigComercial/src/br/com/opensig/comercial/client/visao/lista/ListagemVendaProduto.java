@@ -19,7 +19,7 @@ import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AListagem;
 import br.com.opensig.core.client.visao.abstrato.IFormulario;
 import br.com.opensig.core.shared.modelo.IFavorito;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.permissao.shared.modelo.SisUsuario;
 import br.com.opensig.produto.client.controlador.comando.ComandoProduto;
@@ -187,7 +187,7 @@ public class ListagemVendaProduto extends AListagem<ComVendaProduto> {
 			mnuContexto.addItem(itemVenda);
 		}
 		
-		// pagar
+		// produto
 		SisFuncao produto = UtilClient.getFuncaoPermitida(ComandoProduto.class);
 		MenuItem itemProduto = gerarFuncao(produto, "prodProdutoId", "prodProduto.prodProdutoId");
 		if (itemProduto != null) {

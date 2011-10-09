@@ -118,13 +118,13 @@ public class GerarPreco {
 					ipi = comProd.getComCompraProdutoIpi();
 					despesa = recProd.getAsString("comValorProdutoDespesa");
 					markup = recProd.getAsString("comValorProdutoMarkup");
-					icmsMaior = recInc.getAsDouble("fisIncentivoEstadoIcms1");
-					icmsMenor = recInc.getAsDouble("fisIncentivoEstadoIcms2");
+					icmsMaior = recInc != null ? recInc.getAsDouble("fisIncentivoEstadoIcms1") : 0.00;
+					icmsMenor = recInc != null ? recInc.getAsDouble("fisIncentivoEstadoIcms2") : 0.00;
 
 					vars.put("BRUTO", valor);
 					vars.put("IPI", ipi >= 10 ? String.valueOf(ipi).replace(".", "") : "0" + String.valueOf(ipi).replace(".", ""));
-					vars.put("DESPESA", despesa.length() == 1 ? "0" + despesa : despesa);
-					vars.put("MARKUP", markup.length() == 1 ? "0" + markup : markup);
+					vars.put("DESPESA", despesa.length() == 1 ? "0" + despesa.replace(".", "") : despesa.replace(".", ""));
+					vars.put("MARKUP", markup.length() == 1 ? "0" + markup.replace(".", "") : markup.replace(".", ""));
 
 					// verifica a tributacao pelo cst
 					if (cst.equals("00")) { // tributado integral
@@ -139,12 +139,12 @@ public class GerarPreco {
 							} else {
 								icmsInc = icmsMaior >= 10 ? "" + icmsMaior : "0" + icmsMaior;
 							}
-							vars.put("ICMS", icmsInc.replace(".", ""));
+							vars.put("ICMS", icmsInc);
 						}
 					} else if (cst.equals("10") || cst.equals("30") || cst.equals("40") || cst.equals("41") || cst.equals("60")) { // isento-substituicao
-						vars.put("ICMS", icms >= 10 ? String.valueOf(icms).replace(".", "") : "0" + String.valueOf(icms).replace(".", ""));
+						vars.put("ICMS", icms >= 10 ? String.valueOf(icms) : "0" + String.valueOf(icms));
 					}
-
+					vars.put("ICMS", vars.get("ICMS").replace(".", ""));
 					// utiliza a formula
 					double preco = executarFormula(recProd.getAsString("comValorProdutoFormula"), vars);
 					// arredonda

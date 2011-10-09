@@ -6,7 +6,7 @@ import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.AComando;
 import br.com.opensig.core.client.controlador.comando.FabricaComando;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluirFinal;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.financeiro.client.controlador.comando.ComandoRecebimento;
 import br.com.opensig.financeiro.client.servico.FinanceiroProxy;
 import br.com.opensig.financeiro.client.visao.form.AFormularioFinanceiro;
@@ -47,6 +47,14 @@ public class ListagemReceber extends AListagemFinanceiro<FinReceber, FinRecebime
 			mnuContexto.addItem(itemVenda);
 		}
 
+		// ecf
+		String strEcf = FabricaComando.getInstancia().getComandoCompleto("ComandoEcfVenda");
+		SisFuncao ecf = UtilClient.getFuncaoPermitida(strEcf);
+		MenuItem itemEcf = gerarFuncao(ecf, "finReceber.finReceberId", "finReceberId");
+		if (itemEcf != null) {
+			mnuContexto.addItem(itemEcf);
+		}
+		
 		// recebimentos
 		SisFuncao recebimentos = UtilClient.getFuncaoPermitida(ComandoRecebimento.class);
 		MenuItem itemRecebimentos = gerarFuncao(recebimentos, "finReceber.finReceberId", "finReceberId");

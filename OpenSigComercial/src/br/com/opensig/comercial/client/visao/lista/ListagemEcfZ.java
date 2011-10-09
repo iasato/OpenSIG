@@ -2,6 +2,7 @@ package br.com.opensig.comercial.client.visao.lista;
 
 import java.util.Map.Entry;
 
+import br.com.opensig.comercial.shared.modelo.ComEcf;
 import br.com.opensig.comercial.shared.modelo.ComEcfZ;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
@@ -93,6 +94,18 @@ public class ListagemEcfZ extends AListagem<ComEcfZ> {
 				fEmpresa.setLabelValue("empEntidade.empEntidadeNome1");
 				fEmpresa.setLoadingText(OpenSigCore.i18n.txtAguarde());
 				entry.setValue(fEmpresa);
+			} else if (entry.getKey().equals("comEcf.comEcfSerie")) {
+				// ecf
+				FieldDef[] fdEcf = new FieldDef[] { new IntegerFieldDef("comEcfId"), new IntegerFieldDef("empEmpresa.empEmpresaId"), new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"),
+						new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa") };
+				CoreProxy<ComEcf> proxy = new CoreProxy<ComEcf>(new ComEcf());
+				Store storeEcf = new Store(proxy, new ArrayReader(new RecordDef(fdEcf)), true);
+
+				GridListFilter fEcf = new GridListFilter("comEcf.comEcfSerie", storeEcf);
+				fEcf.setLabelField("comEcfSerie");
+				fEcf.setLabelValue("comEcfSerie");
+				fEcf.setLoadingText(OpenSigCore.i18n.txtAguarde());
+				entry.setValue(fEcf);
 			}
 		}
 	}

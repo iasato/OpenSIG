@@ -1,8 +1,8 @@
 package br.com.opensig.core.client.visao.abstrato;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -25,18 +25,18 @@ import br.com.opensig.core.client.visao.NavegacaoLista;
 import br.com.opensig.core.client.visao.Paginador;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpMeta;
 import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.core.shared.modelo.IFavoritoCampo;
-import br.com.opensig.core.shared.modelo.permissao.SisAcao;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisAcao;
+import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.core.EventObject;
 import com.gwtext.client.core.SortDir;
 import com.gwtext.client.data.ArrayReader;
@@ -394,47 +394,41 @@ public abstract class AListagem<E extends Dados> extends GridPanel implements IL
 	}
 
 	@Override
-	public void setExportacao(EArquivo tipo, int inicio, int limite, AsyncCallback<String> asyncCallback) {
-		Collection<String> rotulos = new ArrayList<String>();
-		Collection<Integer> tamanhos = new ArrayList<Integer>();
-		Collection<EBusca> agrupamentos = new ArrayList<EBusca>();
+	public ExpListagem<E> getExportacao() {
+		List<ExpMeta> metadados = new ArrayList<ExpMeta>();
 
 		for (int i = 0; i < modelos.getColumnCount(); i++) {
 			if (modelos.isHidden(i)) {
-				rotulos.add(null);
-				tamanhos.add(0);
-				agrupamentos.add(null);
+				metadados.add(null);
 			} else if (!modelos.getColumnHeader(i).startsWith("<div")) {
-				tamanhos.add(modelos.getColumnWidth(i));
-				rotulos.add(modelos.getColumnHeader(i));
+				ExpMeta meta = new ExpMeta(modelos.getColumnHeader(i), modelos.getColumnWidth(i), null);
 				if (modelos.getColumnConfigs()[i] instanceof SummaryColumnConfig) {
 					SummaryColumnConfig col = (SummaryColumnConfig) modelos.getColumnConfigs()[i];
 					String tp = col.getSummaryType().equals("average") ? "AVG" : col.getSummaryType().toUpperCase();
-					agrupamentos.add(EBusca.getBusca(tp));
-				} else {
-					agrupamentos.add(null);
+					meta.setGrupo(EBusca.getBusca(tp));
 				}
+				metadados.add(meta);
 			}
 		}
 
 		SortState ordem = getStore().getSortState();
 		Record rec = UtilClient.getRegistro(ANavegacao.FUNCOES, "classe", funcao.getSisFuncaoClasse());
-
-		ExportacaoListagem<E> expLista = new ExportacaoListagem<E>();
-		expLista.setInicio(inicio);
-		expLista.setLimite(limite);
-		expLista.setUnidade(classe);
-		expLista.setCampoOrdem(ordem.getField());
-		expLista.setDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
-		expLista.setFiltro(proxy.getFiltroTotal());
-		expLista.setTamanhos(tamanhos.toArray(new Integer[] {}));
-		expLista.setRotulos(rotulos.toArray(new String[] {}));
-		expLista.setAgrupamentos(agrupamentos.toArray(new EBusca[] {}));
+		classe.setCampoOrdem(ordem.getField());
+		classe.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
+		
+		ExpListagem<E> expLista = new ExpListagem<E>();
+		expLista.setClasse(classe);
+		expLista.setMetadados(metadados);
 		expLista.setNome(rec.getAsString("nome"));
+		expLista.setFiltro(proxy.getFiltroTotal());
 
-		proxy.exportar(expLista, tipo, asyncCallback);
+		return expLista;
 	}
 
+	@Override
+	public void setImportacao(SisExpImp modo) {
+	}
+	
 	private void setFiltro(IFiltro filtro, String campo, String compara, String valor) {
 		MatchResult mat = RegExp.compile("^t\\d+\\.").exec(campo);
 		if (mat != null) {

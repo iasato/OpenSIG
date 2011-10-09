@@ -47,7 +47,7 @@ public class ExcluirCompra extends Chain {
 		// atauliza estoque
 		AtualizarEstoque atuEst = new AtualizarEstoque(atuConta);
 		// seleciona os produtos
-		this.setNext(atuEst);
+		this.next = atuEst;
 	}
 
 	public void execute() throws OpenSigException {

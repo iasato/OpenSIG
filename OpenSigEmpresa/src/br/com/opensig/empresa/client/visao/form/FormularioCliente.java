@@ -1,6 +1,6 @@
 package br.com.opensig.empresa.client.visao.form;
 
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpCliente;
 
 import com.gwtext.client.widgets.form.Hidden;

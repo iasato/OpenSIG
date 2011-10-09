@@ -26,7 +26,7 @@ public class ListagemEmpresa extends AListagemEntidade<EmpEmpresa> {
 	public void inicializar() {
 		listaCampos.add(new IntegerFieldDef("empEmpresaId"));
 		listaColunas.add(new ColumnConfig(OpenSigCore.i18n.txtCod(), "empEmpresaId", 50, true));
-		super.configurar("empEntidade");
+		super.configurar();
 
 		campos = new RecordDef(listaCampos.toArray(new FieldDef[] {}));
 		modelos = new ColumnModel(listaColunas.toArray(new BaseColumnConfig[] {}));

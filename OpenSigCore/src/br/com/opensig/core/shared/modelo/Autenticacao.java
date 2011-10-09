@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import br.com.opensig.core.shared.modelo.permissao.SisModulo;
+import br.com.opensig.core.shared.modelo.sistema.SisModulo;
 
 /**
  * Classe que representa a autenticacao realizada no sistema.
@@ -66,6 +66,20 @@ public class Autenticacao implements Serializable {
 
 	public void setConf(Map<String, String> conf) {
 		this.conf = conf;
+	}
+
+	@Override
+	public int hashCode() {
+		if (usuario != null && usuario.length > 0) {
+			return Integer.valueOf(usuario[0]);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj != null && hashCode() == obj.hashCode();
 	}
 
 }

@@ -16,7 +16,7 @@ import br.com.opensig.core.shared.modelo.Colecao;
 import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.core.shared.modelo.ILogin;
 import br.com.opensig.core.shared.modelo.Lista;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.permissao.shared.modelo.SisFavorito;
 import br.com.opensig.permissao.shared.modelo.SisFavoritoGrafico;
 import br.com.opensig.permissao.shared.modelo.SisUsuario;

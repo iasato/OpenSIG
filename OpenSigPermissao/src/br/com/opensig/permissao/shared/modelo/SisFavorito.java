@@ -24,7 +24,7 @@ import br.com.opensig.core.shared.modelo.ELetra;
 import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.core.shared.modelo.IFavoritoCampo;
 import br.com.opensig.core.shared.modelo.IFavoritoGrafico;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
 /**
  * Classe que representa um favorito no sistema.

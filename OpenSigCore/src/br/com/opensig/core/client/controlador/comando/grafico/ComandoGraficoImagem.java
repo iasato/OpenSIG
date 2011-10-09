@@ -5,7 +5,7 @@ import java.util.Map;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.AComando;
-import br.com.opensig.core.client.servico.CoreProxy;
+import br.com.opensig.core.client.servico.ExportacaoProxy;
 import br.com.opensig.core.shared.modelo.Dados;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -23,9 +23,8 @@ public class ComandoGraficoImagem<E extends Dados> extends AComando<E> {
 	public void execute(final Map contexto) {
 		super.execute(contexto);
 		String imagem = contexto.get("imagem").toString();
-		CoreProxy<E> core = new CoreProxy<E>();
-
-		core.exportar(imagem, "grafico", "png", new AsyncCallback<String>() {
+		ExportacaoProxy proxy = new ExportacaoProxy();
+		proxy.exportar(imagem, "grafico.png", new AsyncCallback<String>() {
 			public void onSuccess(String result) {
 				UtilClient.exportar("CoreService?id=" + result);
 			}

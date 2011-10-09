@@ -2,7 +2,7 @@ package br.com.opensig.financeiro.client.visao.form;
 
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.financeiro.shared.modelo.FinBanco;
 
 import com.gwtext.client.data.Record;

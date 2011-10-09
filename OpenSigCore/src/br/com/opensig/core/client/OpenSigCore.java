@@ -1,23 +1,16 @@
 package br.com.opensig.core.client;
 
 import br.com.opensig.core.client.controlador.comando.ComandoAcao;
+import br.com.opensig.core.client.controlador.comando.ComandoExpImp;
 import br.com.opensig.core.client.controlador.comando.ComandoFuncao;
 import br.com.opensig.core.client.controlador.comando.FabricaComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportar;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarCsv;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarHtml;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarPdf;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarXls;
-import br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarXml;
-import br.com.opensig.core.client.controlador.comando.importar.ComandoImportar;
-import br.com.opensig.core.client.controlador.comando.importar.ComandoImportarCsv;
-import br.com.opensig.core.client.controlador.comando.importar.ComandoImportarXls;
-import br.com.opensig.core.client.controlador.comando.importar.ComandoImportarXml;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoEditar;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoEditarFiltrados;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluir;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluirFiltrados;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoExportar;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoImportar;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoImprimir;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovo;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovoDuplicar;
@@ -44,6 +37,7 @@ public class OpenSigCore implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		FabricaComando fc = FabricaComando.getInstancia();
+		fc.addComando(ComandoExpImp.class.getName(), (IComando) GWT.create(ComandoExpImp.class));
 		// visao
 		fc.addComando(ComandoVisualizar.class.getName(), (IComando) GWT.create(ComandoVisualizar.class));
 		fc.addComando(ComandoPermiteUsuario.class.getName(), (IComando) GWT.create(ComandoPermiteUsuario.class));
@@ -57,18 +51,9 @@ public class OpenSigCore implements EntryPoint {
 		fc.addComando(ComandoEditarFiltrados.class.getName(), (IComando) GWT.create(ComandoEditarFiltrados.class));
 		fc.addComando(ComandoExcluir.class.getName(), (IComando) GWT.create(ComandoExcluir.class));
 		fc.addComando(ComandoExcluirFiltrados.class.getName(), (IComando) GWT.create(ComandoExcluirFiltrados.class));
-		// exportar
+		// exportar / importar
 		fc.addComando(ComandoImprimir.class.getName(), (IComando) GWT.create(ComandoImprimir.class));
-		fc.addComando(ComandoExportar.class.getName(), (IComando) GWT.create(ComandoExportarPdf.class));
-		fc.addComando(ComandoExportarPdf.class.getName(), (IComando) GWT.create(ComandoExportarPdf.class));
-		fc.addComando(ComandoExportarXls.class.getName(), (IComando) GWT.create(ComandoExportarXls.class));
-		fc.addComando(ComandoExportarCsv.class.getName(), (IComando) GWT.create(ComandoExportarCsv.class));
-		fc.addComando(ComandoExportarXml.class.getName(), (IComando) GWT.create(ComandoExportarXml.class));
-		fc.addComando(ComandoExportarHtml.class.getName(), (IComando) GWT.create(ComandoExportarHtml.class));
-		// importar
-		fc.addComando(ComandoImportar.class.getName(), (IComando) GWT.create(ComandoImportarXls.class));
-		fc.addComando(ComandoImportarXls.class.getName(), (IComando) GWT.create(ComandoImportarXls.class));
-		fc.addComando(ComandoImportarCsv.class.getName(), (IComando) GWT.create(ComandoImportarCsv.class));
-		fc.addComando(ComandoImportarXml.class.getName(), (IComando) GWT.create(ComandoImportarXml.class));
+		fc.addComando(ComandoExportar.class.getName(), (IComando) GWT.create(ComandoExportar.class));
+		fc.addComando(ComandoImportar.class.getName(), (IComando) GWT.create(ComandoImportar.class));
 	}
 }

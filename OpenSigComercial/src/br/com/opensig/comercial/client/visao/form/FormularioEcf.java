@@ -4,7 +4,7 @@ import br.com.opensig.comercial.shared.modelo.ComEcf;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 
 import com.gwtext.client.data.Record;
@@ -42,10 +42,12 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 		
 		txtModelo = new TextField(OpenSigCore.i18n.txtModelo(), "comEcfModelo", 200);
 		txtModelo.setAllowBlank(false);
+		txtModelo.setMinLength(20);
 		txtModelo.setMaxLength(20);
 
 		txtSerie = new TextField(OpenSigCore.i18n.txtSerie(), "comEcfSerie", 200);
 		txtSerie.setAllowBlank(false);
+		txtSerie.setMinLength(20);
 		txtSerie.setMaxLength(20);
 
 		txtCaixa = new NumberField(OpenSigCore.i18n.txtCaixa(), "comEcfCaixa", 50);

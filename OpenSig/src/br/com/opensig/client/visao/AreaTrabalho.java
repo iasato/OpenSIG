@@ -6,10 +6,11 @@ import br.com.opensig.client.visao.layout.Esquerda;
 import br.com.opensig.client.visao.layout.Favoritos;
 import br.com.opensig.client.visao.layout.Info;
 import br.com.opensig.client.visao.layout.Modulos;
-import br.com.opensig.core.client.padroes.Visitable;
-import br.com.opensig.core.client.padroes.Visitor;
+import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.padroes.Observable;
 import br.com.opensig.core.client.padroes.Observer;
+import br.com.opensig.core.client.padroes.Visitable;
+import br.com.opensig.core.client.padroes.Visitor;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.ILogin;
@@ -17,6 +18,9 @@ import br.com.opensig.permissao.client.controlador.comando.ComandoBloquear;
 import br.com.opensig.permissao.client.servico.PermissaoProxy;
 import br.com.opensig.permissao.client.visao.EntrarSistema;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.RepeatingCommand;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.gwtext.client.util.CSS;
@@ -24,7 +28,8 @@ import com.gwtext.client.widgets.Panel;
 import com.gwtext.client.widgets.layout.BorderLayout;
 
 /**
- * Classe que representa a Area principal de trabalho, contendo todas as funcoes e painel de controle principal.
+ * Classe que representa a Area principal de trabalho, contendo todas as funcoes
+ * e painel de controle principal.
  * 
  * @author Pedro H. Lira
  * @version 1.0
@@ -59,23 +64,19 @@ public class AreaTrabalho extends Panel implements Observer, Visitable {
 		// Centro
 		add(Centro.getInstancia(), Centro.getData());
 		Ponte.setCentro(Centro.getInstancia());
-		// verifica se ja esta logado
-		String logado = RootPanel.get("logado").getElement().getInnerText();
-		if (logado.equalsIgnoreCase("false")) {
-			new EntrarSistema();
-		} else {
-			final PermissaoProxy login = new PermissaoProxy();
-			login.entrar(null, null, null, 0, false, new AsyncCallback<Autenticacao>() {
 
-				public void onFailure(Throwable caught) {
-					new EntrarSistema();
-				}
+		final PermissaoProxy login = new PermissaoProxy();
+		login.entrar(null, null, null, 0, false, new AsyncCallback<Autenticacao>() {
 
-				public void onSuccess(Autenticacao result) {
-					Ponte.setLogin(login);
-				}
-			});
-		}
+			public void onFailure(Throwable caught) {
+				new EntrarSistema();
+			}
+
+			public void onSuccess(Autenticacao result) {
+				Ponte.setLogin(login);
+			}
+		});
+
 		// seta o tema definido
 		String tema = RootPanel.get("tema").getElement().getInnerText();
 		CSS.swapStyleSheet("estilo", tema);
@@ -85,8 +86,20 @@ public class AreaTrabalho extends Panel implements Observer, Visitable {
 	public void update(Observable o, Object arg) {
 		if (arg instanceof ILogin) {
 			ILogin login = (ILogin) arg;
-			if (login.isBloqueado()) {
-				new ComandoBloquear().execute(null);
+
+			if (login != null) {
+				if (login.isBloqueado()) {
+					new ComandoBloquear().execute(null);
+				}
+
+				// repete a cada X minuto
+				int ping = 1000 * Integer.valueOf(UtilClient.CONF.get("sessao.ping"));
+				Scheduler.get().scheduleFixedPeriod(new RepeatingCommand() {
+					public boolean execute() {
+						ativo();
+						return true;
+					}
+				}, ping);
 			}
 			doLayout();
 		}
@@ -94,5 +107,22 @@ public class AreaTrabalho extends Panel implements Observer, Visitable {
 
 	@Override
 	public void accept(Visitor visitor) {
+	}
+
+	// mantenhem a sessao ativa
+	private void ativo() {
+		PermissaoProxy proxy = new PermissaoProxy();
+		proxy.isLogado(new AsyncCallback<Boolean>() {
+			public void onSuccess(Boolean result) {
+				if (!result) {
+					// caso a sessao tenha morrido
+					Window.Location.reload();
+				}
+			}
+
+			public void onFailure(Throwable caught) {
+				onSuccess(false);
+			}
+		});
 	}
 }

@@ -3,7 +3,6 @@ package br.com.opensig.financeiro.client.servico;
 import java.util.List;
 
 import br.com.opensig.core.client.servico.CoreServiceAsync;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.financeiro.shared.modelo.FinCategoria;
 import br.com.opensig.financeiro.shared.modelo.FinPagar;
 import br.com.opensig.financeiro.shared.modelo.FinReceber;
@@ -15,7 +14,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface FinanceiroServiceAsync extends CoreServiceAsync {
 
-	public abstract void gerar(int boletoId, EArquivo tipo, boolean recibo, AsyncCallback<String> asyncCallback);
+	public abstract void gerar(int boletoId, String tipo, boolean recibo, AsyncCallback<String> asyncCallback);
 
 	public abstract void remessa(FinRemessa remessa, AsyncCallback<Boolean> asyncCallback);
 

@@ -24,43 +24,40 @@ public abstract class AListagemEntidade<E extends Dados> extends AListagem<E> {
 	protected Collection<FieldDef> listaCampos = new ArrayList<FieldDef>();
 	protected Collection<BaseColumnConfig> listaColunas = new ArrayList<BaseColumnConfig>();
 	protected Collection<GridFilter> listaFiltros = new ArrayList<GridFilter>();
-
 	protected ColumnConfig ccEntidade;
-	protected String prefixo;
 
 	public AListagemEntidade(IFormulario<E> formulario) {
 		super(formulario);
 	}
 
-	protected void configurar(String prefixo) {
-		this.prefixo = prefixo;
+	protected void configurar() {
 		// campos
-		listaCampos.add(new IntegerFieldDef(prefixo + ".empEntidadeId"));
-		listaCampos.add(new StringFieldDef(prefixo + ".empEntidadeNome1"));
-		listaCampos.add(new StringFieldDef(prefixo + ".empEntidadeNome2"));
-		listaCampos.add(new StringFieldDef(prefixo + ".empEntidadePessoa"));
-		listaCampos.add(new StringFieldDef(prefixo + ".empEntidadeDocumento1"));
-		listaCampos.add(new StringFieldDef(prefixo + ".empEntidadeDocumento2"));
-		listaCampos.add(new BooleanFieldDef(prefixo + ".empEntidadeAtivo"));
-		listaCampos.add(new StringFieldDef(prefixo + ".empEntidadeObservacao"));
+		listaCampos.add(new IntegerFieldDef("empEntidade.empEntidadeId"));
+		listaCampos.add(new StringFieldDef("empEntidade.empEntidadeNome1"));
+		listaCampos.add(new StringFieldDef("empEntidade.empEntidadeNome2"));
+		listaCampos.add(new StringFieldDef("empEntidade.empEntidadePessoa"));
+		listaCampos.add(new StringFieldDef("empEntidade.empEntidadeDocumento1"));
+		listaCampos.add(new StringFieldDef("empEntidade.empEntidadeDocumento2"));
+		listaCampos.add(new BooleanFieldDef("empEntidade.empEntidadeAtivo"));
+		listaCampos.add(new StringFieldDef("empEntidade.empEntidadeObservacao"));
 
 		// colunas
-		ccEntidade = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtEntidade(), prefixo + ".empEntidadeId", 100, true);
+		ccEntidade = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtEntidade(), "empEntidade.empEntidadeId", 100, true);
 		ccEntidade.setHidden(true);
 		listaColunas.add(ccEntidade);
-		ColumnConfig ccNome1 = new ColumnConfig(OpenSigCore.i18n.txtEntidadeNome1(), prefixo + ".empEntidadeNome1", 250, true);
+		ColumnConfig ccNome1 = new ColumnConfig(OpenSigCore.i18n.txtEntidadeNome1(), "empEntidade.empEntidadeNome1", 250, true);
 		listaColunas.add(ccNome1);
-		ColumnConfig ccNome2 = new ColumnConfig(OpenSigCore.i18n.txtEntidadeNome2(), prefixo + ".empEntidadeNome2", 250, true);
+		ColumnConfig ccNome2 = new ColumnConfig(OpenSigCore.i18n.txtEntidadeNome2(), "empEntidade.empEntidadeNome2", 250, true);
 		listaColunas.add(ccNome2);
-		ColumnConfig ccPessoa = new ColumnConfig(OpenSigCore.i18n.txtPessoa(), prefixo + ".empEntidadePessoa", 75, true);
+		ColumnConfig ccPessoa = new ColumnConfig(OpenSigCore.i18n.txtPessoa(), "empEntidade.empEntidadePessoa", 75, true);
 		listaColunas.add(ccPessoa);
-		ColumnConfig ccDoc1 = new ColumnConfig(OpenSigCore.i18n.txtEntidadeDoc1(), prefixo + ".empEntidadeDocumento1", 100, true);
+		ColumnConfig ccDoc1 = new ColumnConfig(OpenSigCore.i18n.txtEntidadeDoc1(), "empEntidade.empEntidadeDocumento1", 100, true);
 		listaColunas.add(ccDoc1);
-		ColumnConfig ccDoc2 = new ColumnConfig(OpenSigCore.i18n.txtEntidadeDoc2(), prefixo + ".empEntidadeDocumento2", 100, true);
+		ColumnConfig ccDoc2 = new ColumnConfig(OpenSigCore.i18n.txtEntidadeDoc2(), "empEntidade.empEntidadeDocumento2", 100, true);
 		listaColunas.add(ccDoc2);
-		ColumnConfig ccAtivo = new ColumnConfig(OpenSigCore.i18n.txtAtivo(), prefixo + ".empEntidadeAtivo", 50, true, BOLEANO);
+		ColumnConfig ccAtivo = new ColumnConfig(OpenSigCore.i18n.txtAtivo(), "empEntidade.empEntidadeAtivo", 50, true, BOLEANO);
 		listaColunas.add(ccAtivo);
-		ColumnConfig ccObservacao = new ColumnConfig(OpenSigCore.i18n.txtObservacao(), prefixo + ".empEntidadeObservacao", 200, true);
+		ColumnConfig ccObservacao = new ColumnConfig(OpenSigCore.i18n.txtObservacao(), "empEntidade.empEntidadeObservacao", 200, true);
 		listaColunas.add(ccObservacao);
 		
 	}
@@ -68,7 +65,7 @@ public abstract class AListagemEntidade<E extends Dados> extends AListagem<E> {
 	public void setGridFiltro() {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
-			if (entry.getKey().equals(prefixo + ".empEntidadeAtivo")) {
+			if (entry.getKey().equals("empEntidade.empEntidadeAtivo")) {
 				((GridBooleanFilter) entry.getValue()).setValue(true);
 				break;
 			}
@@ -76,7 +73,7 @@ public abstract class AListagemEntidade<E extends Dados> extends AListagem<E> {
 	}
 
 	public void setFavorito(IFavorito favorito) {
-		filtros.get(prefixo + ".empEntidadeAtivo").setActive(false, true);
+		filtros.get("empEntidade.empEntidadeAtivo").setActive(false, true);
 		super.setFavorito(favorito);
 	}
 
@@ -111,13 +108,4 @@ public abstract class AListagemEntidade<E extends Dados> extends AListagem<E> {
 	public void setCcEntidade(ColumnConfig ccEntidade) {
 		this.ccEntidade = ccEntidade;
 	}
-
-	public String getPrefixo() {
-		return prefixo;
-	}
-
-	public void setPrefixo(String prefixo) {
-		this.prefixo = prefixo;
-	}
-
 }

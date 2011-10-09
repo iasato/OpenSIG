@@ -7,9 +7,9 @@ import javax.servlet.http.HttpSession;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.server.CoreServiceImpl;
+import br.com.opensig.core.server.SessionManager;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.financeiro.client.servico.FinanceiroException;
 import br.com.opensig.financeiro.client.servico.FinanceiroService;
 import br.com.opensig.financeiro.server.acao.ExcluirPagar;
@@ -32,10 +32,10 @@ import br.com.opensig.financeiro.shared.modelo.FinRetorno;
 
 public class FinanceiroServiceImpl extends CoreServiceImpl implements FinanceiroService {
 
-	public String gerar(int boletoId, EArquivo tipo, boolean recibo) throws FinanceiroException {
+	public String gerar(int boletoId, String tipo, boolean recibo) throws FinanceiroException {
 		String retorno = "";
 		HttpSession sessao = getThreadLocalRequest().getSession();
-		Autenticacao autenticacao = (Autenticacao) sessao.getAttribute("Autenticacao");
+		Autenticacao autenticacao = SessionManager.LOGIN.get(sessao);
 
 		try {
 			FiltroNumero fn = new FiltroNumero("finRecebimentoId", ECompara.IGUAL, boletoId);
@@ -55,8 +55,7 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 
 			retorno = sessao.getId() + UtilServer.getData().getTime();
 			sessao.setAttribute(retorno, obj);
-			sessao.setAttribute(retorno + "arquivo", nome);
-			sessao.setAttribute(retorno + "tipo", tipo);
+			sessao.setAttribute(retorno + "arquivo", nome + "." + tipo);
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro ao gerar boleto ou recibo", e);
 			throw new FinanceiroException(e.getMessage());

@@ -46,11 +46,11 @@ public class ListagemConta extends AListagem<FinConta> {
 
 		// colunas
 		ColumnConfig ccId = new ColumnConfig(OpenSigCore.i18n.txtCod(), "finContaId", 50, true);
-		ColumnConfig ccEmpresaId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtEmpresa(), "empEmpresa.empEmpresaId", 10, false);
+		ColumnConfig ccEmpresaId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtEmpresa(), "empEmpresa.empEmpresaId", 100, true);
 		ccEmpresaId.setHidden(true);
 		ColumnConfig ccEmpresa = new ColumnConfig(OpenSigCore.i18n.txtEmpresa(), "empEmpresa.empEntidade.empEntidadeNome1", 200, true);
 		ccEmpresa.setHidden(true);
-		ColumnConfig ccBancoId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtBanco(), "finBanco.finBancoId", 10, false);
+		ColumnConfig ccBancoId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtBanco(), "finBanco.finBancoId", 100, true);
 		ccBancoId.setHidden(true);
 		ColumnConfig ccDescricao = new ColumnConfig(OpenSigCore.i18n.txtBanco(), "finBanco.finBancoDescricao", 200, true);
 		ColumnConfig ccNome = new ColumnConfig(OpenSigCore.i18n.txtNome(), "finContaNome", 100, true);

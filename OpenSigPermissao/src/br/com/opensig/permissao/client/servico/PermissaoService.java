@@ -40,12 +40,19 @@ public interface PermissaoService extends CoreService {
 	public void sair();
 
 	/**
+	 * Metodo que retorna se o usuario esta logado.
+	 * 
+	 * @return verdadeiro se a sessao esta ativa, falso caso contrario.
+	 */
+	public boolean isLogado();
+
+	/**
 	 * Metodo que bloqueia a sessão atual com o usuário logao.
 	 * 
 	 * @param bloqueio
 	 *            verdadeiro para bloquear, falso para desbloquear.
 	 */
-	public void bloquear(boolean bloqueio);
+	public void bloquear(boolean bloqueio) throws PermissaoException;
 
 	/**
 	 * Metodo que envia um email para recuperação de senha

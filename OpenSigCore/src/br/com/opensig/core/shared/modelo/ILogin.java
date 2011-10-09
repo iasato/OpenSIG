@@ -3,9 +3,9 @@ package br.com.opensig.core.shared.modelo;
 import java.io.Serializable;
 import java.util.List;
 
-import br.com.opensig.core.shared.modelo.permissao.SisAcao;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
-import br.com.opensig.core.shared.modelo.permissao.SisModulo;
+import br.com.opensig.core.shared.modelo.sistema.SisAcao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisModulo;
 
 /**
  * Interface que define o acesso dos usuários ao sistema e o controle de

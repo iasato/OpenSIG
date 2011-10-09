@@ -1,8 +1,7 @@
 package br.com.opensig.financeiro.client.visao.lista;
 
 import br.com.opensig.core.client.UtilClient;
-import br.com.opensig.core.client.controlador.comando.FabricaComando;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.financeiro.client.controlador.comando.ComandoReceber;
 import br.com.opensig.financeiro.client.visao.form.AFormularioFinanciado;
 import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
@@ -20,14 +19,6 @@ public class ListagemRecebimento extends AListagemFinanciado<FinRecebimento> {
 	@Override
 	public void irPara() {
 		Menu mnuContexto = new Menu();
-
-		// venda
-		String strVenda = FabricaComando.getInstancia().getComandoCompleto("ComandoVenda");
-		SisFuncao venda = UtilClient.getFuncaoPermitida(strVenda);
-		MenuItem itemVenda = gerarFuncao(venda, "finReceber.finReceberId", "finReceber.finReceberId");
-		if (itemVenda != null) {
-			mnuContexto.addItem(itemVenda);
-		}
 
 		// receber
 		SisFuncao receber = UtilClient.getFuncaoPermitida(ComandoReceber.class);

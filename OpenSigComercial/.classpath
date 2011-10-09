@@ -21,5 +21,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/log4j-1.2.14.jar"/>
 	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/nfexml2.jar"/>
+	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/beanio.jar" sourcepath="/Users/pedrohenriquelira/.m2/repository/org/beanio/beanio/1.2.0/beanio-1.2.0-sources.jar"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>

@@ -22,10 +22,11 @@ public class ExcluirVenda extends Chain {
 		super(null);
 		this.servico = servico;
 		this.venda = venda;
+		
 		// atualiza venda
 		DeletarVenda delVen = new DeletarVenda(next);
 		// seleciona os produtos
-		this.setNext(delVen);
+		this.next = delVen;
 	}
 
 	@Override

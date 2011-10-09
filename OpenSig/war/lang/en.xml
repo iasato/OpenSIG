@@ -4,6 +4,13 @@
 <opensig>
 	<!-- Módulos -->
 	<modulo>
+		<classe>br.com.opensig.core.client.OpenSigCore</classe>
+		<nome>System</nome>
+		<descricao>Module that allows you to manage configs, exports e
+			plugins.</descricao>
+		<imagem>icon-core</imagem>
+	</modulo>
+	<modulo>
 		<classe>br.com.opensig.permissao.client.OpenSigPermissao</classe>
 		<nome>Permissions</nome>
 		<descricao>Module that allows you to manage users, groups and
@@ -46,6 +53,14 @@
 		<imagem>icon-financeiro</imagem>
 	</modulo>
 	<!-- Funções -->
+	<funcao>
+		<classe>br.com.opensig.core.client.controlador.comando.ComandoExpImp
+		</classe>
+		<nome>Exp / Imp</nome>
+		<descricao>Administer exports and imports types of the system.
+		</descricao>
+		<imagem>icon-expimp</imagem>
+	</funcao>
 	<funcao>
 		<classe>br.com.opensig.permissao.client.controlador.comando.ComandoUsuario
 		</classe>
@@ -336,7 +351,8 @@
 		<classe>br.com.opensig.fiscal.client.controlador.comando.ComandoCertificado
 		</classe>
 		<nome>Certificate</nome>
-		<descricao>Administer the issuance of certificates for NFe.</descricao>
+		<descricao>Administer the issuance of certificates for NFe.
+		</descricao>
 		<imagem>icon-chave</imagem>
 	</funcao>
 	<funcao>
@@ -432,49 +448,14 @@
 		<imagem>icon-imprimir</imagem>
 	</acao>
 	<acao>
-		<classe>br.com.opensig.core.client.controlador.comando.exportar.ComandoExportar
+		<classe>br.com.opensig.core.client.controlador.comando.lista.ComandoExportar
 		</classe>
 		<nome>Export</nome>
 		<descricao>Export data of list.</descricao>
 		<imagem>icon-exportar</imagem>
 	</acao>
 	<acao>
-		<classe>br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarPdf
-		</classe>
-		<nome>PDF</nome>
-		<descricao>Export data of list in format PDF.</descricao>
-		<imagem>icon-pdf</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarXls
-		</classe>
-		<nome>XLS</nome>
-		<descricao>Export data of list in format Excel.</descricao>
-		<imagem>icon-xls</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarCsv
-		</classe>
-		<nome>CSV</nome>
-		<descricao>Export data of list in format CSV.</descricao>
-		<imagem>icon-csv</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarXml
-		</classe>
-		<nome>XML</nome>
-		<descricao>Export data of list in format XML.</descricao>
-		<imagem>icon-xml</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarHtml
-		</classe>
-		<nome>HTML</nome>
-		<descricao>Export data of list in format HTML.</descricao>
-		<imagem>icon-html</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.core.client.controlador.comando.importar.ComandoImportar
+		<classe>br.com.opensig.core.client.controlador.comando.lista.ComandoImportar
 		</classe>
 		<nome>Importar</nome>
 		<descricao>Import data for list.</descricao>
@@ -486,27 +467,6 @@
 		<nome>XLS</nome>
 		<descricao>Import data for list of format Excel.</descricao>
 		<imagem>icon-xls</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.core.client.controlador.comando.importar.ComandoImportarCsv
-		</classe>
-		<nome>CSV</nome>
-		<descricao>Import data for list of format CSV.</descricao>
-		<imagem>icon-csv</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.core.client.controlador.comando.importar.ComandoImportarXml
-		</classe>
-		<nome>XML</nome>
-		<descricao>Import data for list of format XML.</descricao>
-		<imagem>icon-xml</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.permissao.client.controlador.comando.ComandoFavoritoImpl
-		</classe>
-		<nome>Favorites</nome>
-		<descricao>Add to current list of favorites in the system.</descricao>
-		<imagem>icon-favorito</imagem>
 	</acao>
 	<acao>
 		<classe>br.com.opensig.permissao.client.controlador.comando.ComandoPermiteWS
@@ -652,7 +612,14 @@
 		<classe>br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharVenda
 		</classe>
 		<nome>Close</nome>
-		<descricao>Fechar sale.</descricao>
+		<descricao>Close sale.</descricao>
+		<imagem>icon-fechar</imagem>
+	</acao>
+	<acao>
+		<classe>br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharEcfVenda
+		</classe>
+		<nome>Close</nome>
+		<descricao>Close sale.</descricao>
 		<imagem>icon-fechar</imagem>
 	</acao>
 	<acao>
@@ -668,27 +635,6 @@
 		<nome>NFe</nome>
 		<descricao>Make NFe.</descricao>
 		<imagem>icon-nfe</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.comercial.client.controlador.comando.acao.ComandoRecuperarCompra
-		</classe>
-		<nome>NFe</nome>
-		<descricao>Import NFe.</descricao>
-		<imagem>icon-nfe</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.fiscal.client.controlador.comando.acao.ComandoRecuperarSaida
-		</classe>
-		<nome>Retrieve</nome>
-		<descricao>Retrieve NFe.</descricao>
-		<imagem>icon-xml</imagem>
-	</acao>
-	<acao>
-		<classe>br.com.opensig.fiscal.client.controlador.comando.acao.ComandoRecuperarEntrada
-		</classe>
-		<nome>Retrieve</nome>
-		<descricao>Retrieve NFe.</descricao>
-		<imagem>icon-xml</imagem>
 	</acao>
 	<acao>
 		<classe>br.com.opensig.fiscal.client.controlador.comando.acao.ComandoBackupSaida

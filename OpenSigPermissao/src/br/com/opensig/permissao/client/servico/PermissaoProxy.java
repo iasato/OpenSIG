@@ -6,9 +6,9 @@ import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.ILogin;
-import br.com.opensig.core.shared.modelo.permissao.SisAcao;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
-import br.com.opensig.core.shared.modelo.permissao.SisModulo;
+import br.com.opensig.core.shared.modelo.sistema.SisAcao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisModulo;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -138,6 +138,10 @@ public class PermissaoProxy extends CoreProxy implements PermissaoServiceAsync, 
 	 */
 	public void sair(AsyncCallback asyncCallback) {
 		async.sair(asyncCallback);
+	}
+	
+	public void isLogado(AsyncCallback<Boolean> asyncCallback) {
+		async.isLogado(asyncCallback);
 	}
 	
 	public void bloquear(boolean bloqueio, AsyncCallback asyncCallback) {

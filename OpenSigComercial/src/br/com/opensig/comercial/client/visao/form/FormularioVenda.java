@@ -25,9 +25,10 @@ import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
+import br.com.opensig.core.shared.modelo.ExpListagem;
+import br.com.opensig.core.shared.modelo.ExpMeta;
 import br.com.opensig.core.shared.modelo.ILogin;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpCliente;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.permissao.shared.modelo.SisUsuario;
@@ -464,42 +465,38 @@ public class FormularioVenda extends AFormulario<ComVenda> {
 	}
 
 	public void gerarListas() {
-		// selecionado e filtro
-		Record rec = lista.getPanel().getSelectionModel().getSelected();
-		classe.setComVendaId(rec.getAsInteger("comVendaId"));
-		FiltroObjeto fo = new FiltroObjeto("comVenda", ECompara.IGUAL, classe);
-
 		// produtos
-		Integer[] tamanhos = new Integer[gridProdutos.getModelos().getColumnCount()];
-		String[] rotulos = new String[gridProdutos.getModelos().getColumnCount()];
-		EBusca[] agrupamentos = new EBusca[gridProdutos.getModelos().getColumnCount()];
-
+		List<ExpMeta> metadados = new ArrayList<ExpMeta>();
 		for (int i = 0; i < gridProdutos.getModelos().getColumnCount(); i++) {
-			if (!gridProdutos.getModelos().isHidden(i)) {
-				tamanhos[i] = gridProdutos.getModelos().getColumnWidth(i);
-				rotulos[i] = gridProdutos.getModelos().getColumnHeader(i);
-
+			if (gridProdutos.getModelos().isHidden(i)) {
+				metadados.add(null);
+			} else {
+				ExpMeta meta = new ExpMeta(gridProdutos.getModelos().getColumnHeader(i), gridProdutos.getModelos().getColumnWidth(i), null);
 				if (gridProdutos.getModelos().getColumnConfigs()[i] instanceof SummaryColumnConfig) {
 					SummaryColumnConfig col = (SummaryColumnConfig) gridProdutos.getModelos().getColumnConfigs()[i];
 					String tp = col.getSummaryType().equals("average") ? "AVG" : col.getSummaryType().toUpperCase();
-					agrupamentos[i] = EBusca.getBusca(tp);
+					meta.setGrupo(EBusca.getBusca(tp));
 				}
+				metadados.add(meta);
 			}
 		}
 
 		SortState ordem = gridProdutos.getStore().getSortState();
-		ExportacaoListagem<ComVendaProduto> produtos = new ExportacaoListagem<ComVendaProduto>();
-		produtos.setUnidade(new ComVendaProduto());
-		produtos.setFiltro(fo);
-		produtos.setCampoOrdem(ordem.getField());
-		produtos.setDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
-		produtos.setTamanhos(tamanhos);
-		produtos.setRotulos(rotulos);
-		produtos.setAgrupamentos(agrupamentos);
+		ComVendaProduto venProd = new ComVendaProduto();
+		venProd.setCampoOrdem(ordem.getField());
+		venProd.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
+		// filtro
+		int id = UtilClient.getSelecionado(lista.getPanel());
+		FiltroObjeto filtro = new FiltroObjeto("comVenda", ECompara.IGUAL, new ComVenda(id));
+		
+		ExpListagem<ComVendaProduto> produtos = new ExpListagem<ComVendaProduto>();
+		produtos.setClasse(venProd);
+		produtos.setMetadados(metadados);
 		produtos.setNome(gridProdutos.getTitle());
+		produtos.setFiltro(filtro);
 
 		// sub listagens
-		expLista = new ArrayList<ExportacaoListagem>();
+		expLista = new ArrayList<ExpListagem>();
 		expLista.add(produtos);
 	}
 

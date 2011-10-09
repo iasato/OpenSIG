@@ -18,7 +18,7 @@ public interface FiscalService<E extends Dados> extends CoreService<E> {
 	public String backup(E classe, IFiltro filtro) throws ExportacaoException;
 
 	public String exportar(String arquivo, String nome, String tipo) throws ExportacaoException;
-
+	
 	public String status(int ambiente, int uf, int empresa) throws FiscalException;
 
 	public String validar(int ambiente, IFiltro filtro, int empresa) throws FiscalException;

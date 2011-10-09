@@ -6,7 +6,7 @@ import br.com.opensig.comercial.client.visao.form.FormularioCompra;
 import br.com.opensig.comercial.client.visao.grafico.GraficoCompra;
 import br.com.opensig.comercial.client.visao.lista.ListagemCompra;
 import br.com.opensig.core.client.controlador.comando.ComandoFuncao;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
 public class ComandoCompra extends ComandoFuncao {
 

@@ -104,14 +104,6 @@ public class ComValorArredonda extends Dados implements Serializable {
 		return new String[] { comValorProduto.getComValorProdutoId() + "", comValorArredondaId + "", comValorArredondaMin.toString(), comValorArredondaMax.toString(), comValorArredondaFixo.toString() };
 	}
 
-	public Dados getObjeto(String campo) {
-		if(campo.startsWith("comValorProduto")){
-			return new ComValorProduto();
-		}else{
-			return null;
-		}
-	}
-	
 	public void anularDependencia() {
 		comValorProduto = null;
 	}

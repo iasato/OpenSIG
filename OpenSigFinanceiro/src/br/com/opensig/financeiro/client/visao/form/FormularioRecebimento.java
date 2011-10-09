@@ -1,7 +1,7 @@
 package br.com.opensig.financeiro.client.visao.form;
 
 import br.com.opensig.core.client.UtilClient;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.financeiro.shared.modelo.FinForma;
 import br.com.opensig.financeiro.shared.modelo.FinReceber;
 import br.com.opensig.financeiro.shared.modelo.FinRecebimento;

@@ -8,7 +8,7 @@ import br.com.opensig.core.client.padroes.Observable;
 import br.com.opensig.core.client.padroes.Observer;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.shared.modelo.ILogin;
-import br.com.opensig.core.shared.modelo.permissao.SisModulo;
+import br.com.opensig.core.shared.modelo.sistema.SisModulo;
 
 import com.gwtext.client.widgets.Panel;
 import com.gwtext.client.widgets.layout.FitLayout;

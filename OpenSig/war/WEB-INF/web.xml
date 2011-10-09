@@ -6,7 +6,7 @@
 	<description>Plataforma modular, expansível e acessível.</description>
 	<!-- Listener -->
 	<listener>
-		<display-name>Gerencia de Sessao</display-name>
+		<display-name>Gerencia as Sessoes</display-name>
 		<listener-class>br.com.opensig.core.server.SessionManager</listener-class>
 	</listener>
 	<!-- Servlets -->
@@ -225,6 +225,16 @@
 		<servlet-class>br.com.opensig.core.server.UploadServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
+		<description>Servico de exportacao de arquivos</description>
+		<servlet-name>ExportacaoService</servlet-name>
+		<servlet-class>br.com.opensig.core.server.ExportacaoServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
+		<description>Servico de importacao de arquivos</description>
+		<servlet-name>ImportacaoService</servlet-name>
+		<servlet-class>br.com.opensig.core.server.ImportacaoServiceImpl</servlet-class>
+	</servlet>
+	<servlet>
 		<description>Servico de permissao</description>
 		<servlet-name>PermissaoService</servlet-name>
 		<servlet-class>br.com.opensig.permissao.server.PermissaoServiceImpl</servlet-class>
@@ -250,11 +260,6 @@
 		<servlet-class>br.com.opensig.fiscal.server.FiscalServiceImpl</servlet-class>
 	</servlet>
 	<servlet>
-		<description>Servico de upload de arquivos especificos para NFe</description>
-		<servlet-name>UploadNfe</servlet-name>
-		<servlet-class>br.com.opensig.fiscal.server.UploadNfeImpl</servlet-class>
-	</servlet>
-	<servlet>
 		<description>Servico para acoes do modulo Produto</description>
 		<servlet-name>ProdutoService</servlet-name>
 		<servlet-class>br.com.opensig.produto.server.ProdutoServiceImpl</servlet-class>
@@ -266,6 +271,14 @@
 	<servlet-mapping>
 		<servlet-name>UploadService</servlet-name>
 		<url-pattern>/UploadService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ExportacaoService</servlet-name>
+		<url-pattern>/ExportacaoService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ImportacaoService</servlet-name>
+		<url-pattern>/ImportacaoService</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>MailService</servlet-name>
@@ -290,10 +303,6 @@
 	<servlet-mapping>
 		<servlet-name>FiscalService</servlet-name>
 		<url-pattern>/FiscalService</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>UploadNfe</servlet-name>
-		<url-pattern>/UploadNfe</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ProdutoService</servlet-name>

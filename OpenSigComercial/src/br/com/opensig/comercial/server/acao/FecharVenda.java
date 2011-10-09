@@ -45,9 +45,9 @@ public class FecharVenda extends Chain {
 		// valida o estoque
 		ValidarEstoque valEst = new ValidarEstoque(atuEst);
 		if (UtilServer.CONF.get("estoque.ativo").equalsIgnoreCase("sim")) {
-			this.setNext(valEst);
+			this.next = valEst;
 		} else {
-			this.setNext(atuVen);
+			this.next = atuVen;
 		}
 	}
 

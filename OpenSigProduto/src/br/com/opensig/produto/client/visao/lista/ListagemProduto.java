@@ -3,6 +3,8 @@ package br.com.opensig.produto.client.visao.lista;
 import java.util.Map.Entry;
 
 import br.com.opensig.core.client.OpenSigCore;
+import br.com.opensig.core.client.UtilClient;
+import br.com.opensig.core.client.controlador.comando.FabricaComando;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.servico.CoreProxy;
@@ -10,6 +12,8 @@ import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AListagem;
 import br.com.opensig.core.client.visao.abstrato.IFormulario;
 import br.com.opensig.core.shared.modelo.IFavorito;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
+import br.com.opensig.empresa.client.controlador.comando.ComandoFornecedor;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.produto.shared.modelo.ProdCategoria;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
@@ -29,6 +33,8 @@ import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.widgets.grid.BaseColumnConfig;
 import com.gwtext.client.widgets.grid.ColumnConfig;
 import com.gwtext.client.widgets.grid.ColumnModel;
+import com.gwtext.client.widgets.menu.Menu;
+import com.gwtext.client.widgets.menu.MenuItem;
 import com.gwtextux.client.widgets.grid.plugins.GridBooleanFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridListFilter;
@@ -181,4 +187,47 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 		super.setFavorito(favorito);
 	}
 
+	@Override
+	public void irPara() {
+		Menu mnuContexto = new Menu();
+		
+		// fornecedor
+		SisFuncao fornecedor = UtilClient.getFuncaoPermitida(ComandoFornecedor.class);
+		MenuItem itemFornecedor = gerarFuncao(fornecedor, "empFornecedorId", "empFornecedor.empFornecedorId");
+		if (itemFornecedor != null) {
+			mnuContexto.addItem(itemFornecedor);
+		}
+		
+		// compra produtos
+		String strCompras = FabricaComando.getInstancia().getComandoCompleto("ComandoCompraProduto");
+		SisFuncao compras = UtilClient.getFuncaoPermitida(strCompras);
+		MenuItem itemCompras = gerarFuncao(compras, "prodProduto.prodProdutoId", "prodProdutoId");
+		if (itemCompras != null) {
+			mnuContexto.addItem(itemCompras);
+		}
+		
+		// venda produtos
+		String strVendas = FabricaComando.getInstancia().getComandoCompleto("ComandoVendaProduto");
+		SisFuncao vendas = UtilClient.getFuncaoPermitida(strVendas);
+		MenuItem itemVendas = gerarFuncao(vendas, "prodProduto.prodProdutoId", "prodProdutoId");
+		if (itemVendas != null) {
+			mnuContexto.addItem(itemVendas);
+		}
+		
+		// venda ecf produtos
+		String strEcfs = FabricaComando.getInstancia().getComandoCompleto("ComandoEcfVendaProduto");
+		SisFuncao ecf = UtilClient.getFuncaoPermitida(strEcfs);
+		MenuItem itemEcf = gerarFuncao(ecf, "prodProduto.prodProdutoId", "prodProdutoId");
+		if (itemEcf != null) {
+			mnuContexto.addItem(itemEcf);
+		}
+		
+		if (mnuContexto.getItems().length > 0) {
+			MenuItem mnuItem = getIrPara();
+			mnuItem.setMenu(mnuContexto);
+
+			getMenu().addSeparator();
+			getMenu().addItem(mnuItem);
+		}
+	}
 }

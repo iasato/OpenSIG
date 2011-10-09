@@ -8,15 +8,15 @@ import br.com.opensig.core.client.controlador.comando.AComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvar;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvarFinal;
+import br.com.opensig.core.client.visao.JanelaUpload;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.empresa.shared.modelo.EmpEntidade;
 import br.com.opensig.fiscal.client.servico.FiscalProxy;
 import br.com.opensig.fiscal.shared.modelo.FisCertificado;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.gwtext.client.core.EventObject;
 import com.gwtext.client.core.UrlParam;
@@ -43,6 +43,7 @@ public class FormularioCertificado extends AFormulario<FisCertificado> {
 	private DateField dfInicio;
 	private DateField dfFim;
 	private ToolbarButton btnArquivo;
+	private JanelaUpload janela;
 
 	public FormularioCertificado(SisFuncao funcao) {
 		super(new FisCertificado(), funcao);
@@ -51,7 +52,7 @@ public class FormularioCertificado extends AFormulario<FisCertificado> {
 
 	public void inicializar() {
 		super.inicializar();
-		
+
 		hdnCod = new Hidden("fisCertificadoId", "0");
 		add(hdnCod);
 		hdnEmpresa = new Hidden("empEmpresa.empEmpresaId", "0");
@@ -66,7 +67,7 @@ public class FormularioCertificado extends AFormulario<FisCertificado> {
 
 		dfInicio = new DateField(OpenSigCore.i18n.txtInicio(), "fisCertificadoInicio", 80);
 		dfInicio.setReadOnly(true);
-		
+
 		dfFim = new DateField(OpenSigCore.i18n.txtFim(), "fisCertificadoFim", 80);
 		dfFim.setReadOnly(true);
 
@@ -78,8 +79,7 @@ public class FormularioCertificado extends AFormulario<FisCertificado> {
 		btnArquivo.setIconCls("icon-chave");
 		btnArquivo.addListener(new ButtonListenerAdapter() {
 			public void onClick(Button button, EventObject e) {
-				String cnpj = hdnCnpj.getValueAsString().replaceAll("\\D", "");
-				abrirUpload(cnpj);
+				abrirArquivo();
 			}
 		});
 
@@ -90,9 +90,44 @@ public class FormularioCertificado extends AFormulario<FisCertificado> {
 		linha.addToRow(dfFim, 120);
 		linha.addToRow(txtArquivo, 230);
 		add(linha);
-		
+
 		getTopToolbar().addSeparator();
 		getTopToolbar().addButton(btnArquivo);
+	}
+
+	private void abrirArquivo() {
+		String cnpj = hdnCnpj.getValueAsString().replaceAll("\\D", "");
+		UrlParam[] params = new UrlParam[] { JanelaUpload.ACAO_SALVAR, JanelaUpload.LOCAL_FISICO, JanelaUpload.PATH_REAL(UtilClient.CONF.get("sistema.empresas") + cnpj + "/"),
+				JanelaUpload.NOME_ARQUIVO("certificado.pfx") };
+
+		janela = new JanelaUpload("pfx");
+		janela.setParams(params);
+		janela.inicializar();
+		
+		janela.getUplArquivo().purgeListeners();
+		janela.getUplArquivo().addListener(new UploadDialogListenerAdapter() {
+			public void onUploadSuccess(UploadDialog source, String filename, JavaScriptObject data) {
+				txtArquivo.setValue(filename);
+				source.close();
+			}
+
+			public void onUploadError(UploadDialog source, String filename, JavaScriptObject data) {
+				txtArquivo.setValue(null);
+				new ToastWindow(OpenSigCore.i18n.txtErro(), JavaScriptObjectHelper.getAttribute(data, "dados")).show();
+			}
+
+			public void onUploadFailed(UploadDialog source, String filename) {
+				txtArquivo.setValue(null);
+			}
+
+			public boolean onBeforeAdd(UploadDialog source, String filename) {
+				return source.getQueuedCount() == 0;
+			}
+			
+			public void onFileAdd(UploadDialog source, String filename) {
+				source.startUpload();
+			}
+		});
 	}
 
 	@Override
@@ -107,17 +142,17 @@ public class FormularioCertificado extends AFormulario<FisCertificado> {
 				}
 			};
 		}
-		
+
 		return comando;
 	}
-	
+
 	@Override
 	public boolean setDados() {
 		EmpEntidade ent = new EmpEntidade();
 		ent.setEmpEntidadeDocumento1(Ponte.getLogin().getEmpresa()[5]);
 		EmpEmpresa emp = new EmpEmpresa(Ponte.getLogin().getEmpresaId());
 		emp.setEmpEntidade(ent);
-		
+
 		classe.setFisCertificadoId(Integer.valueOf(hdnCod.getValueAsString()));
 		classe.setEmpEmpresa(emp);
 		if (!txtSenha.getValueAsString().equals("")) {
@@ -146,35 +181,5 @@ public class FormularioCertificado extends AFormulario<FisCertificado> {
 
 	@Override
 	public void gerarListas() {
-	}
-
-	private void abrirUpload(String cnpj) {
-		UploadDialog uplArquivo = new UploadDialog();
-		uplArquivo.setModal(true);
-		uplArquivo.setUrl(GWT.getHostPageBaseURL() + "UploadService");
-		uplArquivo.setAllowCloseOnUpload(false);
-		uplArquivo.setPermittedExtensions(new String[] { "pfx" });
-		uplArquivo.setBaseParams(new UrlParam[] { new UrlParam("acao", "salvar"), new UrlParam("real", "sim"), new UrlParam("path", UtilClient.CONF.get("sistema.empresas") + cnpj + "/"), new UrlParam("nome", "certificado.pfx") });
-		uplArquivo.addListener(new UploadDialogListenerAdapter() {
-			public void onUploadSuccess(UploadDialog source, String filename, JavaScriptObject data) {
-				txtArquivo.setValue(filename);
-				new ToastWindow(OpenSigCore.i18n.txtImagem(), OpenSigCore.i18n.msgSalvarOK()).show();
-				source.close();
-			}
-
-			public void onUploadError(UploadDialog source, String filename, JavaScriptObject data) {
-				txtArquivo.setValue(null);
-				new ToastWindow(OpenSigCore.i18n.txtErro(), JavaScriptObjectHelper.getAttribute(data, "dados")).show();
-			}
-
-			public void onUploadFailed(UploadDialog source, String filename) {
-				txtArquivo.setValue(null);
-			}
-
-			public boolean onBeforeAdd(UploadDialog source, String filename) {
-				return source.getQueuedCount() == 0;
-			}
-		});
-		uplArquivo.show();
 	}
 }

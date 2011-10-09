@@ -6,7 +6,7 @@ import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.visao.ComboEntidade;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.empresa.shared.modelo.EmpFornecedor;
 import br.com.opensig.empresa.shared.modelo.EmpTransportadora;

@@ -49,7 +49,6 @@ import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
@@ -224,8 +223,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 				HttpSession sessao = getThreadLocalRequest().getSession();
 				String retorno = sessao.getId() + UtilServer.getData().getTime();
 				sessao.setAttribute(retorno, obj);
-				sessao.setAttribute(retorno + "arquivo", "backup_notas");
-				sessao.setAttribute(retorno + "tipo", EArquivo.ZIP);
+				sessao.setAttribute(retorno + "arquivo", "backup_notas.zip");
 				return retorno;
 			} else {
 				UtilServer.LOG.debug("Sem registros.");

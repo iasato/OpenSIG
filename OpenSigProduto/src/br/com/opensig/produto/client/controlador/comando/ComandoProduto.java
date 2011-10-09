@@ -3,7 +3,7 @@ package br.com.opensig.produto.client.controlador.comando;
 import java.util.Map;
 
 import br.com.opensig.core.client.controlador.comando.ComandoFuncao;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.produto.client.visao.form.FormularioProduto;
 import br.com.opensig.produto.client.visao.grafico.GraficoProduto;
 import br.com.opensig.produto.client.visao.lista.ListagemProduto;

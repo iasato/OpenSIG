@@ -4,9 +4,9 @@ import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.visao.Arvore;
 import br.com.opensig.core.client.visao.abstrato.ANavegacao;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.permissao.SisAcao;
-import br.com.opensig.core.shared.modelo.permissao.SisFuncao;
-import br.com.opensig.core.shared.modelo.permissao.SisModulo;
+import br.com.opensig.core.shared.modelo.sistema.SisAcao;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
+import br.com.opensig.core.shared.modelo.sistema.SisModulo;
 
 import com.gwtext.client.core.EventObject;
 import com.gwtext.client.data.Node;

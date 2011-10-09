@@ -30,11 +30,18 @@ public interface PermissaoServiceAsync extends CoreServiceAsync {
 
 	/**
 	 * @param asyncCallback
+	 *            um objeto assincrono boolean.
+	 * @see PermissaoService#isLogado()
+	 */
+	public abstract void isLogado(AsyncCallback<Boolean> asyncCallback);
+
+	/**
+	 * @param asyncCallback
 	 *            um objeto assincrono nulo.
 	 * @see PermissaoService#bloquear(boolean)
 	 */
 	public abstract void bloquear(boolean bloqueio, AsyncCallback asyncCallback);
-	
+
 	/**
 	 * @param asyncCallback
 	 *            um objeto assincrono nulo.

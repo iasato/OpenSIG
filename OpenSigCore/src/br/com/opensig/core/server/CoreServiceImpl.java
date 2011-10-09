@@ -1,9 +1,5 @@
 package br.com.opensig.core.server;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,37 +15,21 @@ import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import nl.captcha.Captcha;
-import nl.captcha.backgrounds.GradiatedBackgroundProducer;
-import nl.captcha.servlet.CaptchaServletUtil;
-import sun.misc.BASE64Decoder;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroCampo;
-import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.controlador.parametro.IParametro;
 import br.com.opensig.core.client.controlador.parametro.ParametroException;
 import br.com.opensig.core.client.servico.CoreException;
 import br.com.opensig.core.client.servico.CoreService;
-import br.com.opensig.core.client.servico.ExportacaoException;
-import br.com.opensig.core.server.exportar.FabricaExportacao;
-import br.com.opensig.core.server.exportar.IExportacao;
-import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Colecao;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.core.shared.modelo.EArquivo;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.EData;
 import br.com.opensig.core.shared.modelo.EDirecao;
 import br.com.opensig.core.shared.modelo.ELetra;
-import br.com.opensig.core.shared.modelo.ExportacaoListagem;
-import br.com.opensig.core.shared.modelo.ExportacaoRegistro;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.Sql;
 
@@ -985,260 +965,6 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public String exportar(ExportacaoListagem expLista, EArquivo tipo) throws ExportacaoException {
-		String retorno = "";
-
-		try {
-			Dados d = expLista.getUnidade();
-			d.setCampoOrdem(expLista.getCampoOrdem());
-			d.setOrdemDirecao(expLista.getDirecao());
-
-			Lista<E> lista = selecionar(d, expLista.getInicio(), expLista.getLimite(), expLista.getFiltro(), true);
-			expLista.setDados(lista.getDados());
-			retorno = exportar(null, expLista, tipo, expLista.getNome());
-		} catch (Exception e) {
-			UtilServer.LOG.error("Erro ao exportar", e);
-			throw new ExportacaoException(e.getMessage());
-		}
-
-		return retorno;
-	}
-
-	@Override
-	public String exportar(ExportacaoRegistro expRegistro, EArquivo tipo) throws ExportacaoException {
-		String retorno = "";
-
-		try {
-			if (expRegistro.getExpLista() != null) {
-				Collection<ExportacaoListagem> aux = new ArrayList<ExportacaoListagem>();
-				for (ExportacaoListagem exp : expRegistro.getExpLista()) {
-					Dados d = exp.getUnidade();
-					d.setCampoOrdem(exp.getCampoOrdem());
-					d.setOrdemDirecao(exp.getDirecao());
-					Lista<E> lista = selecionar(d, 0, 0, exp.getFiltro(), true);
-					exp.setDados(lista.getDados());
-					if (lista.getDados().length > 0) {
-						aux.add(exp);
-					}
-				}
-				expRegistro.setExpLista(aux);
-			}
-			retorno = exportar(expRegistro, null, tipo, expRegistro.getNome());
-		} catch (Exception e) {
-			UtilServer.LOG.error("Erro ao exportar", e);
-			throw new ExportacaoException(e.getMessage());
-		}
-
-		return retorno;
-	}
-
-	@Override
-	public String exportar(String arquivo, String nome, String tipo) throws ExportacaoException {
-		String retorno = "";
-		HttpSession sessao = getThreadLocalRequest().getSession();
-		byte[] obj = null;
-
-		// se nao enteden-se como base 64
-		try {
-			File arq = new File(arquivo + "." + tipo.toLowerCase());
-			if (arq.exists()) {
-				InputStream is = new FileInputStream(arq);
-				obj = new byte[is.available()];
-				is.read(obj);
-				is.close();
-			} else if (arquivo.startsWith(System.getProperty("file.separator")) || arquivo.substring(1, 2).equals(":")) {
-				throw new Exception(UtilServer.CONF.get("errRegistro"));
-			} else {
-				obj = new BASE64Decoder().decodeBuffer(arquivo);
-			}
-		} catch (Exception ex) {
-			UtilServer.LOG.error("Erro ao exportar", ex);
-			throw new ExportacaoException(ex.getMessage());
-		}
-
-		retorno = sessao.getId() + UtilServer.getData().getTime();
-		sessao.setAttribute(retorno, obj);
-		sessao.setAttribute(retorno + "arquivo", nome);
-		sessao.setAttribute(retorno + "tipo", tipo);
-		return retorno;
-	}
-
-	/**
-	 * Metodo que padrozina a exportacao das listagens e registros.
-	 * 
-	 * @param expRegistro
-	 *            um objeto de exportacao de registro.
-	 * @param expLista
-	 *            um objeto de expotaco de listagem.
-	 * @param tipo
-	 *            o formato do arquivo a ser exportado.
-	 * @param nome
-	 *            o nome do arquivo.
-	 * @return o id para ser usado no download.
-	 * @throws ExportacaoException
-	 *             caso ocorra um erro dispara a excecao.
-	 */
-	protected String exportar(ExportacaoRegistro expRegistro, ExportacaoListagem expLista, EArquivo tipo, String nome) throws ExportacaoException {
-		HttpSession sessao = getThreadLocalRequest().getSession();
-		Autenticacao autenticacao = (Autenticacao) sessao.getAttribute("Autenticacao");
-		String retorno = sessao.getId() + UtilServer.getData().getTime();
-
-		try {
-			String[] empresa = autenticacao.getEmpresa();
-			String[][] enderecos = getEnderecos(empresa[1]);
-			String[][] contatos = getContatos(empresa[1]);
-
-			UtilServer.CONF.put("usuario", autenticacao.getUsuario()[1]);
-			IExportacao exporta = FabricaExportacao.getInstancia().getExpotacao(tipo);
-			byte[] obj = null;
-
-			if (expRegistro != null) {
-				obj = exporta.getArquivo(expRegistro, expRegistro.getExpLista(), empresa, enderecos, contatos);
-			} else {
-				obj = exporta.getArquivo(expLista, empresa, enderecos, contatos);
-			}
-
-			if (UtilServer.CONF.get("nome") != null) {
-				nome = UtilServer.CONF.get("nome");
-			}
-
-			sessao.setAttribute(retorno, obj);
-			sessao.setAttribute(retorno + "arquivo", nome);
-			sessao.setAttribute(retorno + "tipo", tipo);
-		} catch (Exception e) {
-			UtilServer.LOG.error("Erro ao exportar", e);
-			throw new ExportacaoException(e.getMessage());
-		}
-
-		return retorno;
-	}
-
-	/**
-	 * Metodo que recupera os enderecos da entidade.
-	 * 
-	 * @param idEntidade
-	 *            o identificado.
-	 * @return uma matriz com os dados dos enderecos.
-	 */
-	protected String[][] getEnderecos(String idEntidade) {
-		try {
-			@SuppressWarnings("serial")
-			Dados d = new Dados("pu_empresa", "EmpEndereco", "empEnderecoId") {
-				@Override
-				public String[] toArray() {
-					return null;
-				}
-
-				@Override
-				public void setId(Number id) {
-				}
-
-				@Override
-				public Number getId() {
-					return null;
-				}
-			};
-
-			FiltroNumero filtro = new FiltroNumero("empEntidade.empEntidadeId", ECompara.IGUAL, idEntidade);
-			Lista enderecos = selecionar(d, 0, 0, filtro, true);
-			return enderecos.getDados();
-		} catch (Exception e) {
-			UtilServer.LOG.error("Erro ao pegar endereco", e);
-			return null;
-		}
-	}
-
-	/**
-	 * Metodo que recupera os contatos da entidade.
-	 * 
-	 * @param idEntidade
-	 *            o identificado.
-	 * @return uma matriz com os dados dos contatos.
-	 */
-	protected String[][] getContatos(String idEntidade) {
-		try {
-			@SuppressWarnings("serial")
-			Dados d = new Dados("pu_empresa", "EmpContato", "empContatoId") {
-				@Override
-				public String[] toArray() {
-					return null;
-				}
-
-				@Override
-				public void setId(Number id) {
-				}
-
-				@Override
-				public Number getId() {
-					return null;
-				}
-			};
-
-			FiltroNumero filtro = new FiltroNumero("empEntidade.empEntidadeId", ECompara.IGUAL, idEntidade);
-			Lista enderecos = selecionar(d, 0, 0, filtro, true);
-			return enderecos.getDados();
-		} catch (Exception e) {
-			UtilServer.LOG.error("Erro ao pegar contatos", e);
-			return null;
-		}
-	}
-
-	/**
-	 * Metodo que recupera que interage com o envio do navegador.
-	 */
-	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String id = req.getParameter("id");
-		String modo = req.getParameter("modo");
-		String data = req.getParameter("data");
-
-		try {
-			if (id != null) {
-				// pegando os dados e normalizando
-				HttpSession sessao = req.getSession();
-				byte[] obj = (byte[]) sessao.getAttribute(id);
-				String arquivo = sessao.getAttribute(id + "arquivo").toString();
-				arquivo = UtilServer.normaliza(arquivo).replace(" ", "_");
-				String tipo;
-
-				// definindo o tipo
-				try {
-					EArquivo arqTipo = (EArquivo) sessao.getAttribute(id + "tipo");
-					tipo = arqTipo.toString();
-				} catch (Exception ex) {
-					tipo = sessao.getAttribute(id + "tipo").toString();
-				}
-
-				// setando os cabecalhos
-				if (modo == null) {
-					resp.addHeader("Content-Disposition", "attachment; filename=" + arquivo.toLowerCase() + "." + tipo.toLowerCase());
-					resp.addHeader("Pragma", "no-cache");
-					resp.addIntHeader("Expires", 0);
-					resp.addHeader("Content-Type", "application/octet-stream");
-				} else {
-					String html = new String(obj).replace("<body>", "<body onload='this.focus(); this.print();'>");
-					html = UtilServer.normaliza(html);
-					obj = html.getBytes();
-					resp.addHeader("Content-Type", modo);
-					UtilServer.LOG.debug("Html formadado: " + html);
-				}
-
-				// codificando e enviando
-				resp.setCharacterEncoding("utf-8");
-				resp.getOutputStream().write(obj);
-				resp.flushBuffer();
-			} else if (data != null) {
-				HttpSession session = req.getSession();
-				Captcha captcha = new Captcha.Builder(150, 50).addText().addBackground(new GradiatedBackgroundProducer()).gimp().addNoise().addBorder().build();
-				session.setAttribute(Captcha.NAME, captcha);
-				CaptchaServletUtil.writeImage(resp, captcha.getImage());
-			}
-		} catch (Exception ex) {
-			UtilServer.LOG.error("Erro ao chamada", ex);
-		}
 	}
 
 }

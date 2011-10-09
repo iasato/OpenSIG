@@ -5,10 +5,8 @@ package br.com.opensig.core.client.servico;
  * 
  * @author Pedro H. Lira
  * @version 1.0
- * 
  */
 public class ExportacaoException extends CoreException {
-	private static final long serialVersionUID = -5203345892627186453L;
 
 	/**
 	 * @see CoreException#CoreException
