@@ -25,6 +25,7 @@ import br.com.opensig.core.client.padroes.Chain;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
@@ -41,22 +42,23 @@ public class SalvarEntrada extends Chain {
 	private Document doc;
 	private String xml;
 	private FisNotaStatus status;
-	private EmpEmpresa empresa;
 	private FisNotaEntrada nota;
 	private FiscalServiceImpl<FisNotaEntrada> servico;
+	private Autenticacao auth;
+	private EmpEmpresa empresa;
 
-	public SalvarEntrada(Chain next, String xml, FisNotaStatus status, EmpEmpresa empresa) throws OpenSigException {
+	public SalvarEntrada(Chain next, String xml, FisNotaStatus status, Autenticacao auth) throws OpenSigException {
 		super(next);
 		this.xml = xml;
 		this.status = status;
-		this.empresa = empresa;
 		this.servico = new FiscalServiceImpl<FisNotaEntrada>();
+		this.auth = auth;
+		this.empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
 	}
 
 	@Override
 	public void execute() throws OpenSigException {
 		// valida o plano
-		new ValidarPlano(null, servico, status, empresa).execute();
 		
 		doc = UtilServer.getXml(xml);
 		if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
@@ -89,7 +91,7 @@ public class SalvarEntrada extends Chain {
 				cnpj = UtilServer.formataTexto(cnpj, "##.###.###/####-##");
 			} catch (ParseException e) {
 				UtilServer.LOG.debug("Cnpj invalido.");
-				throw new FiscalException(UtilServer.CONF.get("errInvalido") + " -> CNPJ");
+				throw new FiscalException(auth.getConf().get("errInvalido") + " -> CNPJ");
 			}
 			// recupera a data
 			String data = UtilServer.getValorTag(doc.getDocumentElement(), "dEmi", true);
@@ -98,7 +100,7 @@ public class SalvarEntrada extends Chain {
 				dtData = new SimpleDateFormat("yyyy-MM-dd").parse(data);
 			} catch (ParseException e) {
 				UtilServer.LOG.debug("Data invalida.");
-				throw new FiscalException(UtilServer.CONF.get("errInvalido") + " -> dEmi");
+				throw new FiscalException(auth.getConf().get("errInvalido") + " -> dEmi");
 			}
 			// recupera os totais
 			Element total = (Element) doc.getElementsByTagName("total").item(0);
@@ -146,16 +148,15 @@ public class SalvarEntrada extends Chain {
 
 			try {
 				// valida na sefaz
-				FiscalServiceImpl<FisNotaEntrada> fiscal = new FiscalServiceImpl<FisNotaEntrada>();
-				int amb = Integer.valueOf(UtilServer.CONF.get("nfe.tipoamb"));
-				String resp = fiscal.situacao(amb, chave, empresa.getEmpEmpresaId());
+				int amb = Integer.valueOf(auth.getConf().get("nfe.tipoamb"));
+				String resp = servico.situacao(amb, chave, empresa.getEmpEmpresaId());
 				TRetConsSitNFe situacao = UtilServer.xmlToObj(resp, "br.com.opensig.retconssitnfe");
 
 				// verifica se o status na sefaz é igual ao informado
 				if (situacao.getCStat().equals("100")) {
 					if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId() && situacao.getProtNFe() != null) {
 						// valida se a data da nota ainda pode ser cancelada
-						int dias = Integer.valueOf(UtilServer.CONF.get("nfe.tempo_cancela"));
+						int dias = Integer.valueOf(auth.getConf().get("nfe.tempo_cancela"));
 						Calendar cal = Calendar.getInstance();
 						cal.setTime(nota.getFisNotaEntradaData());
 						cal.add(Calendar.DATE, dias);
@@ -177,7 +178,7 @@ public class SalvarEntrada extends Chain {
 					nota.setFisNotaEntradaErro("Nao achou a nota na sefaz ou problemas na hora do acesso ao servidor.");
 				}
 				// salva a entrada
-				nota = fiscal.salvar(nota, false);
+				nota = servico.salvar(nota, false);
 
 				// integracao com OpenSIG
 				try {

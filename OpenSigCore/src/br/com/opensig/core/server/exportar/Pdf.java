@@ -16,14 +16,14 @@ import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 public class Pdf<E extends Dados> extends Html<E> {
 
 	@Override
-	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpListagem<E> exp, String[] empresa, String[][] enderecos, String[][] contatos) {
-		byte[] obj = super.getArquivo(service, modo, exp, empresa, enderecos, contatos);
+	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpListagem<E> exp, String[][] enderecos, String[][] contatos) {
+		byte[] obj = super.getArquivo(service, modo, exp, enderecos, contatos);
 		return UtilServer.getPDF(obj);
 	}
 
 	@Override
-	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpRegistro<E> exp, String[] empresa, String[][] enderecos, String[][] contatos) {
-		byte[] obj = super.getArquivo(service, modo, exp, empresa, enderecos, contatos);
+	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpRegistro<E> exp, String[][] enderecos, String[][] contatos) {
+		byte[] obj = super.getArquivo(service, modo, exp, enderecos, contatos);
 		return UtilServer.getPDF(obj);
 	}
 }

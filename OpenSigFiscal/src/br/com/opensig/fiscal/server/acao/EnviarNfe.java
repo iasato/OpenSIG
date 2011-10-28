@@ -7,6 +7,7 @@ import org.w3c.dom.Document;
 import br.com.opensig.core.client.padroes.Chain;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.fiscal.server.FiscalServiceImpl;
 import br.com.opensig.fiscal.server.NFe;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
@@ -18,11 +19,13 @@ public class EnviarNfe extends Chain {
 
 	private FiscalServiceImpl servico;
 	private FisNotaSaida saida;
+	private Autenticacao auth;
 
-	public EnviarNfe(Chain next, FiscalServiceImpl servico, FisNotaSaida saida) throws OpenSigException {
+	public EnviarNfe(Chain next, FiscalServiceImpl servico, FisNotaSaida saida, Autenticacao auth) throws OpenSigException {
 		super(next);
 		this.servico = servico;
 		this.saida = saida;
+		this.auth = auth;
 	}
 
 	@Override
@@ -35,15 +38,15 @@ public class EnviarNfe extends Chain {
 			// adicionando dados ao xml
 			int nfeINI = xml.indexOf("<NFe");
 			int nfeFIM = xml.indexOf("</NFe>");
-			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + UtilServer.CONF.get("nfe.versao") + "\"><idLote>" + id + "</idLote>"
+			xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><enviNFe xmlns=\"http://www.portalfiscal.inf.br/nfe\" versao=\"" + auth.getConf().get("nfe.versao") + "\"><idLote>" + id + "</idLote>"
 					+ xml.substring(nfeINI, nfeFIM) + "</NFe></enviNFe>";
 			// assina
 			Document doc = UtilServer.getXml(xml);
 			if (doc.getElementsByTagName("Signature").item(0) == null) {
-				xml = NFe.assinarXML(doc, ENotaStatus.AUTORIZANDO, saida.getEmpEmpresa());
+				xml = NFe.assinarXML(doc, ENotaStatus.AUTORIZANDO, auth);
 			}
 			// valida
-			String xsd = UtilServer.getRealPath(UtilServer.CONF.get("nfe.xsd_enviando"));
+			String xsd = UtilServer.getRealPath(auth.getConf().get("nfe.xsd_enviando"));
 			NFe.validarXML(xml, xsd);
 			// envia para sefaz
 			String recibo = servico.enviarNFe(xml, saida.getEmpEmpresa().getEmpEmpresaId());
@@ -58,8 +61,8 @@ public class EnviarNfe extends Chain {
 				saida.setFisNotaSaidaErro(ret.getXMotivo());
 			}
 			// solicita o retorno 
-			int espera = Integer.valueOf(UtilServer.CONF.get("nfe.tempo_retorno"));
-			RetornarNfe retorno = new RetornarNfe(servico, saida, espera);
+			int espera = Integer.valueOf(auth.getConf().get("nfe.tempo_retorno"));
+			RetornarNfe retorno = new RetornarNfe(servico, saida, espera, auth);
 			Thread retornar = new Thread(retorno);
 			retornar.start();
 		} catch (Exception e) {

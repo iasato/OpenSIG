@@ -529,6 +529,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String msgLimite();
 
   /**
+   * Translated "\"O limite maximo de {0} registros desta funcao foi alcancado!\"".
+   * 
+   * @return translated "\"O limite maximo de {0} registros desta funcao foi alcancado!\""
+   */
+  @DefaultMessage("\"O limite maximo de {0} registros desta funcao foi alcancado!\"")
+  @Key("msgLimiteMaximo")
+  String msgLimiteMaximo(String arg0);
+
+  /**
    * Translated "Gráfico ideal para ver a evolução dos valores no tempo por item.".
    * 
    * @return translated "Gráfico ideal para ver a evolução dos valores no tempo por item."
@@ -682,11 +691,11 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String msgSkype();
 
   /**
-   * Translated "Veja aqui os contatos e versões do sistema.".
+   * Translated "Veja aqui os contatos e vers��es do sistema.".
    * 
-   * @return translated "Veja aqui os contatos e versões do sistema."
+   * @return translated "Veja aqui os contatos e vers��es do sistema."
    */
-  @DefaultMessage("Veja aqui os contatos e versões do sistema.")
+  @DefaultMessage("Veja aqui os contatos e vers��es do sistema.")
   @Key("msgSobre")
   String msgSobre();
 

@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Dados;
@@ -53,6 +54,12 @@ public class ComEcfVendaProduto extends Dados implements Serializable {
 	@Column(name = "com_ecf_venda_produto_liquido")
 	private Double comEcfVendaProdutoLiquido;
 
+	@Transient
+	private int comEcfVendaProdutoCoo;
+	
+	@Transient
+	private String comEcfVendaProdutoUnd;
+	
 	@JoinColumn(name = "prod_produto_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ProdProduto prodProduto;
@@ -176,6 +183,22 @@ public class ComEcfVendaProduto extends Dados implements Serializable {
 
 	public void setComEcfVenda(ComEcfVenda comEcfVenda) {
 		this.comEcfVenda = comEcfVenda;
+	}
+
+	public int getComEcfVendaProdutoCoo() {
+		return comEcfVendaProdutoCoo;
+	}
+
+	public void setComEcfVendaProdutoCoo(int comEcfVendaProdutoCoo) {
+		this.comEcfVendaProdutoCoo = comEcfVendaProdutoCoo;
+	}
+
+	public String getComEcfVendaProdutoUnd() {
+		return comEcfVendaProdutoUnd;
+	}
+
+	public void setComEcfVendaProdutoUnd(String comEcfVendaProdutoUnd) {
+		this.comEcfVendaProdutoUnd = comEcfVendaProdutoUnd;
 	}
 
 	public Number getId() {

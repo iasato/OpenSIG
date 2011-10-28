@@ -356,7 +356,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 			String[] objs = rec.getAsString("prodProdutoCategoria").split("::");
 			treeCategoria.selecionar(objs);
 		} else {
-			cmbOrigem.setValue("0");
+			cmbOrigem.setValue("1");
 			cmbTributacao.setValue("1");
 			cmbEmbalagem.setValue("1");
 		}

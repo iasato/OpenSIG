@@ -109,7 +109,7 @@ public class BancoBrasil extends ACobranca {
 		// caso nenhum seja valido
 		if (validos.isEmpty()) {
 			UtilServer.LOG.debug("Erro ao gerar o retorno");
-			throw new FinanceiroException(UtilServer.CONF.get("errRegistro"));
+			throw new FinanceiroException("Erro ao gerar o retorno");
 		}
 
 		return validos.toArray(new String[][] {});
@@ -224,9 +224,9 @@ public class BancoBrasil extends ACobranca {
 			// NOME DA EMPRESA
 			sb.append(limitaTamanho(conta.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(), 30));
 			// MENSAGEM 1
-			sb.append(limitaTamanho(UtilServer.CONF.get("boleto.instrucao1"), 40));
+			sb.append(limitaTamanho(auth.getConf().get("boleto.instrucao1"), 40));
 			// MENSAGEM 2
-			sb.append(limitaTamanho(UtilServer.CONF.get("boleto.instrucao2"), 40));
+			sb.append(limitaTamanho(auth.getConf().get("boleto.instrucao2"), 40));
 			// NUMERO REMESSA/RETORNO
 			sb.append(UtilServer.formataTexto("", "0", 8, true));
 			// DATA DE GRAVACAO REMESSA/RETORNO

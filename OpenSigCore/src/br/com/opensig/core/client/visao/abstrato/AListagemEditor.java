@@ -163,7 +163,9 @@ public abstract class AListagemEditor<E extends Dados> extends EditorGridPanel i
 		addGridRowListener(new GridRowListenerAdapter() {
 			public void onRowContextMenu(GridPanel grid, int rowIndex, EventObject e) {
 				grid.getSelectionModel().selectRow(rowIndex);
-				menu.showAt(e.getXY());
+				if (grid.getTopToolbar().isVisible()) {
+					menu.showAt(e.getXY());
+				}
 			}
 		});
 

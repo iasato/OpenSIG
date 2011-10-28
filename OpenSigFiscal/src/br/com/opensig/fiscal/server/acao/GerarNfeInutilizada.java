@@ -8,6 +8,7 @@ import br.com.opensig.core.client.padroes.Chain;
 import br.com.opensig.core.client.servico.CoreService;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
@@ -21,14 +22,16 @@ public class GerarNfeInutilizada extends Chain {
 	private String motivo;
 	private int ini;
 	private int fim;
+	private Autenticacao auth;
 	
-	public GerarNfeInutilizada(Chain next, CoreService servico, FisNotaSaida saida, String motivo, int ini, int fim) throws OpenSigException {
+	public GerarNfeInutilizada(Chain next, CoreService servico, FisNotaSaida saida, String motivo, int ini, int fim, Autenticacao auth) throws OpenSigException {
 		super(next);
 		this.servico = servico;
 		this.saida = saida;
 		this.motivo = motivo;
 		this.ini = ini;
 		this.fim = fim;
+		this.auth = auth;
 	}
 
 	@Override
@@ -39,7 +42,7 @@ public class GerarNfeInutilizada extends Chain {
 		// cria o xml
 		String xml = getXml(saida, motivo, ini, fim);
 		// salva o registro
-		SalvarSaida salvar = new SalvarSaida(next, xml, new FisNotaStatus(ENotaStatus.INUTILIZANDO), saida.getEmpEmpresa());
+		SalvarSaida salvar = new SalvarSaida(next, xml, new FisNotaStatus(ENotaStatus.INUTILIZANDO), auth);
 		salvar.execute();
 		saida = salvar.getNota();
 	}
@@ -63,7 +66,7 @@ public class GerarNfeInutilizada extends Chain {
 
 			// gerar o objeto
 			InfInut infInut = new InfInut();
-			infInut.setTpAmb(UtilServer.CONF.get("nfe.tipoamb"));
+			infInut.setTpAmb(auth.getConf().get("nfe.tipoamb"));
 			infInut.setId(id);
 			infInut.setCUF(uf);
 			infInut.setAno(ano);
@@ -76,7 +79,7 @@ public class GerarNfeInutilizada extends Chain {
 			infInut.setXServ("INUTILIZAR");
 			TInutNFe inutNfe = new TInutNFe();
 			inutNfe.setInfInut(infInut);
-			inutNfe.setVersao(UtilServer.CONF.get("nfe.versao"));
+			inutNfe.setVersao(auth.getConf().get("nfe.versao"));
 			// transforma em string o xml e salva
 			JAXBElement<TInutNFe> element = new br.com.opensig.inutnfe.ObjectFactory().createInutNFe(inutNfe);
 			return UtilServer.objToXml(element, "br.com.opensig.inutnfe");

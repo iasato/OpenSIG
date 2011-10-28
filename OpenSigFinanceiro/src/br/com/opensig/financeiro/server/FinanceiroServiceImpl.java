@@ -35,7 +35,7 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 	public String gerar(int boletoId, String tipo, boolean recibo) throws FinanceiroException {
 		String retorno = "";
 		HttpSession sessao = getThreadLocalRequest().getSession();
-		Autenticacao autenticacao = SessionManager.LOGIN.get(sessao);
+		Autenticacao auth = SessionManager.LOGIN.get(sessao);
 
 		try {
 			FiltroNumero fn = new FiltroNumero("finRecebimentoId", ECompara.IGUAL, boletoId);
@@ -47,10 +47,13 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 			if (recibo) {
 				nome = "recibo";
 				IRecibo rec = FabricaRecibo.getInstancia().getRecibo(tipo);
-				obj = rec.getRecibo(autenticacao.getEmpresa(), finBoleto);
+				rec.setAuth(auth);
+				obj = rec.getRecibo(finBoleto);
 			} else {
 				nome = "boleto";
-				obj = getCobranca(finBoleto.getFinReceber().getFinConta()).boleto(tipo, autenticacao.getEmpresa(), finBoleto);
+				ICobranca cob  = getCobranca(finBoleto.getFinReceber().getFinConta());
+				cob.setAuth(auth);
+				obj = cob.boleto(tipo, finBoleto);
 			}
 
 			retorno = sessao.getId() + UtilServer.getData().getTime();
@@ -64,11 +67,11 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 		return retorno;
 	}
 
-	public Boolean remessa(FinRemessa remessa) throws  FinanceiroException {
+	public Boolean remessa(FinRemessa remessa) throws FinanceiroException {
 		return getCobranca(remessa.getFinConta()).remessa(remessa);
 	}
 
-	public String[][] retorno(FinRetorno retorno) throws  FinanceiroException {
+	public String[][] retorno(FinRetorno retorno) throws FinanceiroException {
 		return getCobranca(retorno.getFinConta()).retorno(retorno);
 	}
 
@@ -79,7 +82,7 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 			return FabricaCobranca.getInstancia().getCobranca(conta);
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro ao gerar cobranca", e);
-			throw new FinanceiroException(UtilServer.CONF.get("errInvalido"));
+			throw new FinanceiroException(e.getMessage());
 		}
 	}
 

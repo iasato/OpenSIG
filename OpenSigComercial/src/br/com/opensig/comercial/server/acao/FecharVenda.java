@@ -20,6 +20,7 @@ import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.Conexao;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
@@ -31,12 +32,14 @@ public class FecharVenda extends Chain {
 	private CoreServiceImpl servico;
 	private ComVenda venda;
 	private List<String[]> invalidos;
+	private Autenticacao auth;
 
-	public FecharVenda(Chain next, CoreServiceImpl servico, ComVenda venda, List<String[]> invalidos) throws OpenSigException {
+	public FecharVenda(Chain next, CoreServiceImpl servico, ComVenda venda, List<String[]> invalidos, Autenticacao auth) throws OpenSigException {
 		super(null);
 		this.servico = servico;
 		this.venda = venda;
 		this.invalidos = invalidos;
+		this.auth = auth;
 
 		// atualiza venda
 		AtualizarVenda atuVen = new AtualizarVenda(next);
@@ -44,7 +47,7 @@ public class FecharVenda extends Chain {
 		AtualizarEstoque atuEst = new AtualizarEstoque(atuVen);
 		// valida o estoque
 		ValidarEstoque valEst = new ValidarEstoque(atuEst);
-		if (UtilServer.CONF.get("estoque.ativo").equalsIgnoreCase("sim")) {
+		if (auth.getConf().get("estoque.ativo").equalsIgnoreCase("sim")) {
 			this.next = valEst;
 		} else {
 			this.next = atuVen;

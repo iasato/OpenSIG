@@ -24,6 +24,7 @@ import br.com.opensig.core.client.padroes.Chain;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Lista;
@@ -89,6 +90,7 @@ public class GerarNfe extends Chain {
 	private ComFrete frete;
 	private Date data;
 	private FisNotaSaida nota;
+	private Autenticacao auth;
 
 	private EmpEmpresa empEmissao;
 	private EmpEndereco endeEmissao;
@@ -118,13 +120,14 @@ public class GerarNfe extends Chain {
 	private double valorPis;
 	private double valorCofins;
 
-	public GerarNfe(Chain next, CoreServiceImpl servico, ComVenda venda, ComFrete frete) throws OpenSigException {
+	public GerarNfe(Chain next, CoreServiceImpl servico, ComVenda venda, ComFrete frete, Autenticacao auth) throws OpenSigException {
 		super(next);
 		this.servico = servico;
 		this.venda = venda;
 		this.frete = frete;
 		this.data = UtilServer.getData();
 		this.infos = new ArrayList<String>();
+		this.auth = auth;
 	}
 
 	@Override
@@ -144,7 +147,7 @@ public class GerarNfe extends Chain {
 			// informacoes da NFe
 			InfNFe infNFe = new InfNFe();
 			infNFe.setId("NFe" + chave);
-			infNFe.setVersao(UtilServer.CONF.get("nfe.versao"));
+			infNFe.setVersao(auth.getConf().get("nfe.versao"));
 			// no do ide
 			infNFe.setIde(getIde());
 			// no do emissor
@@ -172,7 +175,7 @@ public class GerarNfe extends Chain {
 			String xml = UtilServer.objToXml(element, "br.com.opensig.nfe");
 
 			// Monta a NF de saida
-			SalvarSaida ss = new SalvarSaida(null, xml, new FisNotaStatus(ENotaStatus.AUTORIZANDO), empEmissao);
+			SalvarSaida ss = new SalvarSaida(null, xml, new FisNotaStatus(ENotaStatus.AUTORIZANDO), auth);
 			ss.execute();
 			nota = ss.getNota();
 
@@ -213,20 +216,20 @@ public class GerarNfe extends Chain {
 			for (EmpEndereco ende : empEmissao.getEmpEntidade().getEmpEnderecos()) {
 				endeEmissao = ende;
 				if (empEmissao.getEmpEntidade().getEmpEntidadePessoa().equalsIgnoreCase("jurídica")
-						&& ende.getEmpEnderecoTipo().getEmpEnderecoTipoId() == Integer.valueOf(UtilServer.CONF.get("nfe.tipoendecom"))) {
+						&& ende.getEmpEnderecoTipo().getEmpEnderecoTipoId() == Integer.valueOf(auth.getConf().get("nfe.tipoendecom"))) {
 					break;
 				} else if (empEmissao.getEmpEntidade().getEmpEntidadePessoa().equalsIgnoreCase("física")
-						&& ende.getEmpEnderecoTipo().getEmpEnderecoTipoId() == Integer.valueOf(UtilServer.CONF.get("nfe.tipoenderes"))) {
+						&& ende.getEmpEnderecoTipo().getEmpEnderecoTipoId() == Integer.valueOf(auth.getConf().get("nfe.tipoenderes"))) {
 					break;
 				}
 			}
 
 			// pega o telefone e o email
 			for (EmpContato cont : empEmissao.getEmpEntidade().getEmpContatos()) {
-				if (cont.getEmpContatoTipo().getEmpContatoTipoId() == Integer.valueOf(UtilServer.CONF.get("nfe.tipoconttel")) && telEmissao == null) {
+				if (cont.getEmpContatoTipo().getEmpContatoTipoId() == Integer.valueOf(auth.getConf().get("nfe.tipoconttel")) && telEmissao == null) {
 					telEmissao = cont.getEmpContatoDescricao();
 				}
-				if (cont.getEmpContatoTipo().getEmpContatoTipoId() == Integer.valueOf(UtilServer.CONF.get("nfe.tipocontemail")) && emailEmissao == null) {
+				if (cont.getEmpContatoTipo().getEmpContatoTipoId() == Integer.valueOf(auth.getConf().get("nfe.tipocontemail")) && emailEmissao == null) {
 					emailEmissao = cont.getEmpContatoDescricao();
 				}
 			}
@@ -250,10 +253,10 @@ public class GerarNfe extends Chain {
 
 			// pega o telefone e o email
 			for (EmpContato cont : empDestino.getEmpEntidade().getEmpContatos()) {
-				if (cont.getEmpContatoTipo().getEmpContatoTipoId() == Integer.valueOf(UtilServer.CONF.get("nfe.tipoconttel")) && telDestino == null) {
+				if (cont.getEmpContatoTipo().getEmpContatoTipoId() == Integer.valueOf(auth.getConf().get("nfe.tipoconttel")) && telDestino == null) {
 					telDestino = cont.getEmpContatoDescricao();
 				}
-				if (cont.getEmpContatoTipo().getEmpContatoTipoId() == Integer.valueOf(UtilServer.CONF.get("nfe.tipocontemail")) && emailDestino == null) {
+				if (cont.getEmpContatoTipo().getEmpContatoTipoId() == Integer.valueOf(auth.getConf().get("nfe.tipocontemail")) && emailDestino == null) {
 					emailDestino = cont.getEmpContatoDescricao();
 				}
 			}
@@ -296,13 +299,13 @@ public class GerarNfe extends Chain {
 		// cnpj
 		sb.append(empEmissao.getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", ""));
 		// / modo
-		sb.append(UtilServer.CONF.get("nfe.modo"));
+		sb.append(auth.getConf().get("nfe.modo"));
 		// serie
-		sb.append(UtilServer.formataNumero(UtilServer.CONF.get("nfe.serie"), 3, 0, false));
+		sb.append(UtilServer.formataNumero(auth.getConf().get("nfe.serie"), 3, 0, false));
 		// numero nf
 		sb.append(nNF);
 		// tipo emissao
-		sb.append(UtilServer.CONF.get("nfe.tipoemi"));
+		sb.append(auth.getConf().get("nfe.tipoemi"));
 		// codigo nfe
 		cNF = (data.getTime() + "").substring(0, 8);
 		sb.append(cNF);
@@ -324,31 +327,31 @@ public class GerarNfe extends Chain {
 		// forma pagamento
 		ide.setIndPag((venda.getFinReceber() != null ? "1" : "2"));
 		// modo
-		ide.setMod(UtilServer.CONF.get("nfe.modo"));
+		ide.setMod(auth.getConf().get("nfe.modo"));
 		// serie
-		ide.setSerie(UtilServer.CONF.get("nfe.serie"));
+		ide.setSerie(auth.getConf().get("nfe.serie"));
 		// numero nf
 		ide.setNNF(Integer.valueOf(nNF) + "");
 		// data emissao
 		ide.setDEmi(UtilServer.formataData(data, "yyyy-MM-dd"));
 		// operacao
-		ide.setTpNF(UtilServer.CONF.get("nfe.tipooper"));
+		ide.setTpNF(auth.getConf().get("nfe.tipooper"));
 		// municipio
 		ide.setCMunFG(endeEmissao.getEmpMunicipio().getEmpMunicipioIbge() + "");
 		// impressao
-		ide.setTpImp(UtilServer.CONF.get("nfe.tipoimp"));
+		ide.setTpImp(auth.getConf().get("nfe.tipoimp"));
 		// emissao
-		ide.setTpEmis(UtilServer.CONF.get("nfe.tipoemi"));
+		ide.setTpEmis(auth.getConf().get("nfe.tipoemi"));
 		// verificador
 		ide.setCDV(cDV);
 		// ambiente
-		ide.setTpAmb(UtilServer.CONF.get("nfe.tipoamb"));
+		ide.setTpAmb(auth.getConf().get("nfe.tipoamb"));
 		// finalidade
-		ide.setFinNFe(UtilServer.CONF.get("nfe.finalidade"));
+		ide.setFinNFe(auth.getConf().get("nfe.finalidade"));
 		// processo emissao
-		ide.setProcEmi(UtilServer.CONF.get("nfe.procemi"));
+		ide.setProcEmi(auth.getConf().get("nfe.procemi"));
 		// versao processo
-		ide.setVerProc(UtilServer.CONF.get("nfe.procver"));
+		ide.setVerProc(auth.getConf().get("nfe.procver"));
 
 		return ide;
 	}
@@ -356,10 +359,12 @@ public class GerarNfe extends Chain {
 	public Emit getEmissor() {
 		Emit emit = new Emit();
 		// crt
-		emit.setCRT(UtilServer.CONF.get("nfe.crt"));
+		emit.setCRT(auth.getConf().get("nfe.crt"));
 		// empresa
 		emit.setCNPJ(empEmissao.getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", "").trim());
-		emit.setXNome(empEmissao.getEmpEntidade().getEmpEntidadeNome1().trim());
+		String razao = empEmissao.getEmpEntidade().getEmpEntidadeNome1().trim();
+		razao = razao.length() > 60 ? razao.substring(0, 60) : razao;
+		emit.setXNome(razao);
 		emit.setXFant(empEmissao.getEmpEntidade().getEmpEntidadeNome2().trim());
 		emit.setIE(empEmissao.getEmpEntidade().getEmpEntidadeDocumento2().replaceAll("\\D", "").trim());
 		// endereco
@@ -390,18 +395,21 @@ public class GerarNfe extends Chain {
 	public Dest getDestinatario() {
 		dentro = endeEmissao.getEmpMunicipio().getEmpEstado().getEmpEstadoIbge() == endeDestino.getEmpMunicipio().getEmpEstado().getEmpEstadoIbge();
 		Dest dest = new Dest();
+		String razao = empDestino.getEmpEntidade().getEmpEntidadeNome1().trim();
+		razao = razao.length() > 60 ? razao.substring(0, 60) : razao;
+		
 		// empresa
-		if (UtilServer.CONF.get("nfe.tipoamb").equals("2")) {
+		if (auth.getConf().get("nfe.tipoamb").equals("2")) {
 			dest.setCNPJ("99999999000191");
 			dest.setXNome("NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
 			dest.setIE("");
 		} else if (empDestino.getEmpEntidade().getEmpEntidadePessoa().equalsIgnoreCase("jurídica")) {
 			dest.setCNPJ(empDestino.getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", "").trim());
-			dest.setXNome(empDestino.getEmpEntidade().getEmpEntidadeNome1().trim());
+			dest.setXNome(razao);
 			dest.setIE(empDestino.getEmpEntidade().getEmpEntidadeDocumento2().replaceAll("\\D", "").trim());
 		} else {
 			dest.setCPF(empDestino.getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", "").trim());
-			dest.setXNome(empDestino.getEmpEntidade().getEmpEntidadeNome1().trim());
+			dest.setXNome(razao);
 			dest.setIE("");
 		}
 		// endereco
@@ -529,7 +537,7 @@ public class GerarNfe extends Chain {
 		Imposto imposto = new Imposto();
 
 		// icms
-		if (UtilServer.CONF.get("nfe.crt").equals("1")) {
+		if (auth.getConf().get("nfe.crt").equals("1")) {
 			imposto.setICMS(getSimples(venProd, prod));
 		} else {
 			imposto.setICMS(getNormal(venProd, prod));
@@ -553,7 +561,7 @@ public class GerarNfe extends Chain {
 			ICMSSN101 icmssn101 = new ICMSSN101();
 			icmssn101.setOrig(origem);
 			icmssn101.setCSOSN(cson);
-			double porcento = Double.valueOf(UtilServer.CONF.get("nfe.cson"));
+			double porcento = Double.valueOf(auth.getConf().get("nfe.cson"));
 			icmssn101.setPCredSN(getValorNfe(porcento));
 			double valor = venProd.getComVendaProdutoTotalLiquido() * porcento / 100;
 			icmssn101.setVCredICMSSN(getValorNfe(valor));
@@ -567,7 +575,7 @@ public class GerarNfe extends Chain {
 			ICMSSN201 icmssn201 = new ICMSSN201();
 			icmssn201.setOrig(origem);
 			icmssn201.setCSOSN(cson);
-			icmssn201.setModBCST(UtilServer.CONF.get("nfe.modocalcst"));
+			icmssn201.setModBCST(auth.getConf().get("nfe.modocalcst"));
 			icmssn201.setVBCST("0.00");
 			icmssn201.setPICMSST("0.00");
 			icmssn201.setVICMSST("0.00");
@@ -578,7 +586,7 @@ public class GerarNfe extends Chain {
 			ICMSSN202 icmssn202 = new ICMSSN202();
 			icmssn202.setOrig(origem);
 			icmssn202.setCSOSN(cson);
-			icmssn202.setModBCST(UtilServer.CONF.get("nfe.modocalcst"));
+			icmssn202.setModBCST(auth.getConf().get("nfe.modocalcst"));
 			icmssn202.setVBCST("0.00");
 			icmssn202.setPICMSST("0.00");
 			icmssn202.setVICMSST("0.00");
@@ -618,7 +626,7 @@ public class GerarNfe extends Chain {
 			ICMS00 icms00 = new ICMS00();
 			icms00.setOrig(origem);
 			icms00.setCST(cst);
-			icms00.setModBC(UtilServer.CONF.get("nfe.modocalc"));
+			icms00.setModBC(auth.getConf().get("nfe.modocalc"));
 			// valor da base de calculo
 			String strBase = getValorNfe(venProd.getComVendaProdutoTotalLiquido());
 			double base = Double.valueOf(strBase);
@@ -645,7 +653,7 @@ public class GerarNfe extends Chain {
 			ICMS30 icms30 = new ICMS30();
 			icms30.setOrig(origem);
 			icms30.setCST(cst);
-			icms30.setModBCST(UtilServer.CONF.get("nfe.modocalcst"));
+			icms30.setModBCST(auth.getConf().get("nfe.modocalcst"));
 			icms30.setVBCST("0.00");
 			icms30.setPICMSST("0.00");
 			icms30.setVICMSST("0.00");
@@ -681,7 +689,7 @@ public class GerarNfe extends Chain {
 			if (venProd.getComVendaProdutoIpi() > 0) {
 				por = venProd.getComVendaProdutoIpi();
 			} else {
-				por = Double.valueOf(UtilServer.CONF.get("nfe.ipi"));
+				por = Double.valueOf(auth.getConf().get("nfe.ipi"));
 			}
 		}
 
@@ -692,7 +700,7 @@ public class GerarNfe extends Chain {
 		String cst = por == 0.00 ? "99" : "50";
 
 		// enquadramento
-		ipi.setCEnq(UtilServer.CONF.get("nfe.ipi_enq"));
+		ipi.setCEnq(auth.getConf().get("nfe.ipi_enq"));
 		IPITrib trib = new IPITrib();
 		trib.setCST(cst);
 		trib.setVBC(getValorNfe(venProd.getComVendaProdutoTotalLiquido()));
@@ -709,7 +717,7 @@ public class GerarNfe extends Chain {
 		// identifica pela natureza se cobra PIS
 		String porcento = "0.00";
 		if (comNatureza.getComNaturezaPis()) {
-			porcento = UtilServer.CONF.get("nfe.pis");
+			porcento = auth.getConf().get("nfe.pis");
 		}
 
 		// faz o calculo do valor e define
@@ -743,7 +751,7 @@ public class GerarNfe extends Chain {
 		// identifica pela natureza se cobra COFINS
 		String porcento = "0.00";
 		if (comNatureza.getComNaturezaCofins()) {
-			porcento = UtilServer.CONF.get("nfe.cofins");
+			porcento = auth.getConf().get("nfe.cofins");
 		}
 
 		// faz o calculo do valor e define
@@ -884,8 +892,8 @@ public class GerarNfe extends Chain {
 			sb.append("#" + venda.getComVendaObservacao());
 		}
 		// uma mensagem padrao se precisar
-		if (UtilServer.CONF.get("nfe.info") != null) {
-			sb.append("#" + UtilServer.CONF.get("nfe.info"));
+		if (auth.getConf().get("nfe.info") != null) {
+			sb.append("#" + auth.getConf().get("nfe.info"));
 		}
 
 		InfAdic inf = new InfAdic();

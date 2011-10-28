@@ -4,6 +4,7 @@ import org.w3c.dom.Document;
 
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.server.FiscalServiceImpl;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
@@ -17,11 +18,13 @@ public class RetornarNfe implements Runnable {
 	private FiscalServiceImpl servico;
 	private FisNotaSaida saida;
 	private int espera;
+	private Autenticacao auth;
 
-	public RetornarNfe(FiscalServiceImpl servico, FisNotaSaida saida, int espera) throws OpenSigException {
+	public RetornarNfe(FiscalServiceImpl servico, FisNotaSaida saida, int espera, Autenticacao auth) throws OpenSigException {
 		this.servico = servico;
 		this.saida = saida;
 		this.espera = espera * 1000;
+		this.auth = auth;
 	}
 
 	@Override
@@ -43,7 +46,7 @@ public class RetornarNfe implements Runnable {
 			} else {
 				if (ret.getProtNFe().get(0).getInfProt().getCStat().equals("100")) {
 					InfProt prot = ret.getProtNFe().get(0).getInfProt();
-					saida.setFisNotaSaidaXml(montaProcNfe(saida.getFisNotaSaidaXml(), proc));
+					saida.setFisNotaSaidaXml(montaProcNfe(saida.getFisNotaSaidaXml(), proc, auth.getConf().get("nfe.versao")));
 					saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.AUTORIZADO));
 					saida.setFisNotaSaidaProtocolo(prot.getNProt());
 
@@ -62,7 +65,7 @@ public class RetornarNfe implements Runnable {
 				saida.setEmpEmpresa(empresa);
 				servico.salvar(saida, false);
 				if (para != null) {
-					EnviarEmail email = new EnviarEmail(servico, saida);
+					EnviarEmail email = new EnviarEmail(servico, saida, auth);
 					Thread enviar = new Thread(email);
 					enviar.start();
 				}
@@ -72,7 +75,7 @@ public class RetornarNfe implements Runnable {
 		}
 	}
 
-	public static String montaProcNfe(String nfe, String proc) throws OpenSigException {
+	public static String montaProcNfe(String nfe, String proc, String versao) throws OpenSigException {
 		// transforma em doc
 		Document doc1 = UtilServer.getXml(nfe);
 		Document doc2 = UtilServer.getXml(proc);
@@ -84,7 +87,7 @@ public class RetornarNfe implements Runnable {
 		// unifica
 		StringBuilder sb = new StringBuilder();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		sb.append("<nfeProc versao=\"" + UtilServer.CONF.get("nfe.versao") + "\" xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
+		sb.append("<nfeProc versao=\"" + versao + "\" xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
 		sb.append(nfe.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", ""));
 		sb.append(proc.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", ""));
 		sb.append("</nfeProc>");

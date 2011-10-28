@@ -16,6 +16,7 @@ import br.com.opensig.core.client.servico.CoreService;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.MailServiceImpl;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.empresa.client.servico.EmpresaService;
 import br.com.opensig.empresa.server.EmpresaServiceImpl;
@@ -30,23 +31,24 @@ import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
 
 public class ValidarPlano extends Chain {
 
-	private EmpEmpresa empresa;
+	private Autenticacao auth;
 	private CoreService servico;
 	private FisNotaStatus status;
 
-	public ValidarPlano(Chain next, CoreService servico, FisNotaStatus status, EmpEmpresa empresa) throws OpenSigException {
+	public ValidarPlano(Chain next, CoreService servico, FisNotaStatus status, Autenticacao auth) throws OpenSigException {
 		super(next);
 		this.servico = servico;
-		this.empresa = empresa;
+		this.auth = auth;
 		this.status = status;
 	}
 
 	@Override
 	public void execute() throws OpenSigException {
 		// recupera o plano da empresa
-		EmpPlano plano = new EmpPlano();
+		EmpEmpresa empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
 		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
 		EmpresaService<EmpPlano> service = new EmpresaServiceImpl<EmpPlano>();
+		EmpPlano plano = new EmpPlano();
 		plano = service.selecionar(plano, fo, false);
 
 		// valida a data
@@ -72,11 +74,11 @@ public class ValidarPlano extends Chain {
 			Date fim = cal.getTime();
 
 			// totais
-			if (plano.getEmpPlanoLimite() < Integer.valueOf(UtilServer.CONF.get("nfe.plano")) || status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
+			if (plano.getEmpPlanoLimite() < Integer.valueOf(auth.getConf().get("nfe.plano")) || status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
 				int total = getTotalSaida(plano.getEmpPlanoLimite(), inicio, fim);
 				total += getTotalEntrada(plano.getEmpPlanoLimite(), inicio, fim);
 				int usado = total / plano.getEmpPlanoLimite() * 100;
-				int aviso = UtilServer.CONF.get("nfe.aviso") == null ? 90 : Integer.valueOf(UtilServer.CONF.get("nfe.aviso"));
+				int aviso = auth.getConf().get("nfe.aviso") == null ? 90 : Integer.valueOf(auth.getConf().get("nfe.aviso"));
 				
 				if (usado >= 100) {
 					throw new FiscalException("Aumente o limite do seu plano, pois ja usou a quantidade maxima deste mes.");
@@ -85,7 +87,7 @@ public class ValidarPlano extends Chain {
 						// enviando, caso nao ache manda para o sistema
 						String para = null;
 						for (EmpContato cont : plano.getEmpEmpresa().getEmpEntidade().getEmpContatos()) {
-							if (cont.getEmpContatoTipo().getEmpContatoTipoId() == Integer.valueOf(UtilServer.CONF.get("nfe.tipocontemail"))) {
+							if (cont.getEmpContatoTipo().getEmpContatoTipoId() == Integer.valueOf(auth.getConf().get("nfe.tipocontemail"))) {
 								para = cont.getEmpContatoDescricao();
 								break;
 							}
@@ -108,7 +110,7 @@ public class ValidarPlano extends Chain {
 
 	private int getTotalSaida(int limite, Date inicio, Date fim) throws ParametroException, CoreException {
 		GrupoFiltro gf = new GrupoFiltro();
-		if (limite >= Integer.valueOf(UtilServer.CONF.get("nfe.plano"))) {
+		if (limite >= Integer.valueOf(auth.getConf().get("nfe.plano"))) {
 			FiltroObjeto fo1 = new FiltroObjeto("fisNotaStatus", ECompara.IGUAL, new FisNotaStatus(ENotaStatus.AUTORIZADO));
 			gf.add(fo1, EJuncao.E);
 		}
@@ -123,7 +125,7 @@ public class ValidarPlano extends Chain {
 
 	private int getTotalEntrada(int limite, Date inicio, Date fim) throws ParametroException, CoreException {
 		GrupoFiltro gf = new GrupoFiltro();
-		if (limite >= Integer.valueOf(UtilServer.CONF.get("nfe.plano"))) {
+		if (limite >= Integer.valueOf(auth.getConf().get("nfe.plano"))) {
 			FiltroObjeto fo1 = new FiltroObjeto("fisNotaStatus", ECompara.IGUAL, new FisNotaStatus(ENotaStatus.AUTORIZADO));
 			gf.add(fo1, EJuncao.E);
 		}

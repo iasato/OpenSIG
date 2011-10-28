@@ -20,7 +20,7 @@ import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 public class Html<E extends Dados> extends AExportacao<E> {
 
 	@Override
-	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpListagem<E> exp, String[] empresa, String[][] enderecos, String[][] contatos) {
+	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpListagem<E> exp, String[][] enderecos, String[][] contatos) {
 		// seleciona os dados
 		try {
 			lista = service.selecionar(exp.getClasse(), modo.getInicio(), modo.getLimite(), exp.getFiltro(), true);
@@ -37,7 +37,7 @@ public class Html<E extends Dados> extends AExportacao<E> {
 		// estilo do arquivo
 		sb.append(getEstilo("landscape", exp.getNome()));
 		// cabecalho da empresa
-		sb.append(getCabecalhoEmpresa(empresa));
+		sb.append(getCabecalhoEmpresa());
 		// inicio da listagem
 		sb.append("<table>");
 		// cabeçalho da listagem
@@ -57,7 +57,7 @@ public class Html<E extends Dados> extends AExportacao<E> {
 	}
 
 	@Override
-	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpRegistro<E> exp, String[] empresa, String[][] enderecos, String[][] contatos) {
+	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpRegistro<E> exp, String[][] enderecos, String[][] contatos) {
 		// seleciona os dados
 		try {
 			this.lista = service.selecionar(exp.getClasse(), 0, 1, exp.getFiltro(), true);
@@ -73,7 +73,7 @@ public class Html<E extends Dados> extends AExportacao<E> {
 		// estilo do arquivo
 		sb.append(getEstilo(exp.getExpLista() == null ? "portrait" : "landscape", exp.getNome()));
 		// cabecalho da empresa
-		sb.append(getCabecalhoEmpresa(empresa));
+		sb.append(getCabecalhoEmpresa());
 		// inicio do registro
 		sb.append("<table>");
 		// cabeçalho do registro
@@ -159,16 +159,18 @@ public class Html<E extends Dados> extends AExportacao<E> {
 	 * 
 	 * @param empresa
 	 *            o array de dados da empresa.
+	 * @param usuario
+	 *            o nome do usuario logado.
 	 * @return o cabecalho da exportacao.
 	 */
-	public String getCabecalhoEmpresa(String[] empresa) {
+	public String getCabecalhoEmpresa() {
 		// dados da empresa
 		StringBuffer sb = new StringBuffer("<table><tbody><tr style='height: 10px;'>");
-		sb.append("<td>" + empresa[2] + "</td>");
-		sb.append("<td align='right'>" + UtilServer.CONF.get("txtData") + " :: " + UtilServer.formataData(UtilServer.getData(), DateFormat.MEDIUM) + " "
+		sb.append("<td>" + auth.getEmpresa()[2] + "</td>");
+		sb.append("<td align='right'>" + auth.getConf().get("txtData") + " :: " + UtilServer.formataData(UtilServer.getData(), DateFormat.MEDIUM) + " "
 				+ UtilServer.formataHora(UtilServer.getData(), DateFormat.MEDIUM) + "</td></tr>");
-		sb.append("<tr style='height: 10px;'><td>" + UtilServer.CONF.get("txtEntidadeDoc1") + ": " + empresa[5] + " " + UtilServer.CONF.get("txtEntidadeDoc2") + ": " + empresa[6] + "</td>");
-		sb.append("<td align='right'>" + UtilServer.CONF.get("txtUsuario") + " :: " + UtilServer.CONF.get("usuario") + "</td></tr>");
+		sb.append("<tr style='height: 10px;'><td>" + auth.getConf().get("txtEntidadeDoc1") + ": " + auth.getEmpresa()[5] + " " + auth.getConf().get("txtEntidadeDoc2") + ": " + auth.getEmpresa()[6] + "</td>");
+		sb.append("<td align='right'>" + auth.getConf().get("txtUsuario") + " :: " + auth.getUsuario()[1] + "</td></tr>");
 		// finalizando
 		sb.append("</tbody></table><hr />");
 		return sb.toString();
@@ -325,10 +327,10 @@ public class Html<E extends Dados> extends AExportacao<E> {
 
 		StringBuffer sb = new StringBuffer("<tfoot>");
 		if (!semGrupo) {
-			sb.append("<tr><td colspan='" + agrupados.length + "'>" + UtilServer.CONF.get("txtTotal") + "<hr /></td></tr>");
+			sb.append("<tr><td colspan='" + agrupados.length + "'>" + auth.getConf().get("txtTotal") + "<hr /></td></tr>");
 			sb.append("<tr>" + rodape + "<tr>");
 		}
-		sb.append("<tr><td colspan='" + agrupados.length + "'>" + UtilServer.CONF.get("txtRegistro") + " :: " + reg + "</td></tr></tfoot>");
+		sb.append("<tr><td colspan='" + agrupados.length + "'>" + auth.getConf().get("txtRegistro") + " :: " + reg + "</td></tr></tfoot>");
 
 		return sb.toString();
 	}

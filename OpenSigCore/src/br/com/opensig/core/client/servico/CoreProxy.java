@@ -289,6 +289,8 @@ public class CoreProxy<E extends Dados> extends GWTProxy implements CoreServiceA
 	private synchronized void carregar(final int start, final int limit, final String sort, final String dir, final JavaScriptObject o) {
 		classe.setCampoOrdem(sort);
 		classe.setOrdemDirecao(EDirecao.valueOf(dir));
+		classe.setEmpresa(Integer.valueOf(UtilClient.CONF.get("login.empresa")));
+		
 		selecionar(classe, start, limit, filtroTotal, true, new AsyncCallback<Lista<E>>() {
 			public void onFailure(Throwable caught) {
 				if (caught instanceof ParametroException) {

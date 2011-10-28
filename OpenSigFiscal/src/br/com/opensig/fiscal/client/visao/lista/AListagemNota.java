@@ -296,7 +296,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 		if (janela.getOks().size() > 0) {
 			MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtNfe());
 			ImportacaoProxy<E> proxy = new ImportacaoProxy<E>();
-			proxy.importar(classe, modo, janela.getOks(), new AsyncCallback<Map<String, List<E>>>() {
+			proxy.importar(modo, janela.getOks(), new AsyncCallback<Map<String, List<E>>>() {
 
 				public void onSuccess(Map<String, List<E>> result) {
 					janela.getOks().clear();

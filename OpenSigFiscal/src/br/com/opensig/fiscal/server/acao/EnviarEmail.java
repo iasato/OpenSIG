@@ -6,6 +6,7 @@ import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.MailServiceImpl;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Anexo;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.empresa.shared.modelo.EmpContato;
 import br.com.opensig.fiscal.server.FiscalServiceImpl;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
@@ -15,10 +16,12 @@ public class EnviarEmail implements Runnable {
 
 	private FiscalServiceImpl servico;
 	private FisNotaSaida saida;
+	private Autenticacao auth;
 
-	public EnviarEmail(FiscalServiceImpl servico, FisNotaSaida saida) throws OpenSigException {
+	public EnviarEmail(FiscalServiceImpl servico, FisNotaSaida saida, Autenticacao auth) throws OpenSigException {
 		this.servico = servico;
 		this.saida = saida;
+		this.auth = auth;
 	}
 
 	@Override
@@ -27,7 +30,7 @@ public class EnviarEmail implements Runnable {
 			// de
 			String de = null;
 			for (EmpContato cont : saida.getEmpEmpresa().getEmpEntidade().getEmpContatos()) {
-				if (UtilServer.CONF.get("nfe.tipocontemail").equals(cont.getEmpContatoTipo().getEmpContatoTipoId() + "")) {
+				if (auth.getConf().get("nfe.tipocontemail").equals(cont.getEmpContatoTipo().getEmpContatoTipoId() + "")) {
 					de = cont.getEmpContatoDescricao();
 					break;
 				}

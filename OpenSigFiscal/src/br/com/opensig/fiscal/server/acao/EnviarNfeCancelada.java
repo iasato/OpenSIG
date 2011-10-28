@@ -5,6 +5,7 @@ import org.w3c.dom.Document;
 import br.com.opensig.core.client.padroes.Chain;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.fiscal.server.FiscalServiceImpl;
 import br.com.opensig.fiscal.server.NFe;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
@@ -16,11 +17,13 @@ public class EnviarNfeCancelada extends Chain {
 
 	private FiscalServiceImpl servico;
 	private FisNotaSaida saida;
+	private Autenticacao auth;
 	
-	public EnviarNfeCancelada(Chain next, FiscalServiceImpl servico, FisNotaSaida saida) throws OpenSigException {
+	public EnviarNfeCancelada(Chain next, FiscalServiceImpl servico, FisNotaSaida saida, Autenticacao auth) throws OpenSigException {
 		super(next);
 		this.servico = servico;
 		this.saida = saida;
+		this.auth = auth;
 	}
 
 	@Override
@@ -32,10 +35,10 @@ public class EnviarNfeCancelada extends Chain {
 			Document doc = UtilServer.getXml(xml);
 			if (doc.getElementsByTagName("Signature").item(0) == null) {
 				// assina
-				xml = NFe.assinarXML(doc, ENotaStatus.CANCELANDO, saida.getEmpEmpresa());
+				xml = NFe.assinarXML(doc, ENotaStatus.CANCELANDO, auth);
 			}
 			// valida
-			String xsd = UtilServer.getRealPath(UtilServer.CONF.get("nfe.xsd_cancelando"));
+			String xsd = UtilServer.getRealPath(auth.getConf().get("nfe.xsd_cancelando"));
 			NFe.validarXML(xml, xsd);
 			// envia para sefaz
 			String canc = servico.cancelar(xml, saida.getEmpEmpresa().getEmpEmpresaId());
@@ -45,7 +48,7 @@ public class EnviarNfeCancelada extends Chain {
 			if (ret.getInfCanc().getCStat().equals("101")) {
 				saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.CANCELADO));
 				saida.setFisNotaSaidaProtocoloCancelado(ret.getInfCanc().getNProt());
-				saida.setFisNotaSaidaXmlCancelado(montaProcCancNfe(saida.getFisNotaSaidaXmlCancelado(), canc));
+				saida.setFisNotaSaidaXmlCancelado(montaProcCancNfe(saida.getFisNotaSaidaXmlCancelado(), canc, auth.getConf().get("nfe.versao")));
 
 				Document doc1 = UtilServer.getXml(saida.getFisNotaSaidaXml());
 				para = UtilServer.getValorTag(doc1.getDocumentElement(), "email", false);
@@ -59,7 +62,7 @@ public class EnviarNfeCancelada extends Chain {
 		} finally {
 			servico.salvar(saida, false);
 			if (para != null) {
-				EnviarEmail email = new EnviarEmail(servico, saida);
+				EnviarEmail email = new EnviarEmail(servico, saida, auth);
 				Thread enviar = new Thread(email);
 				enviar.start();
 			}
@@ -70,7 +73,7 @@ public class EnviarNfeCancelada extends Chain {
 		}
 	}
 	
-	public static String montaProcCancNfe(String canc, String proc) throws OpenSigException {
+	public static String montaProcCancNfe(String canc, String proc, String versao) throws OpenSigException {
 		// transforma em doc
 		Document doc1 = UtilServer.getXml(canc);
 		Document doc2 = UtilServer.getXml(proc);
@@ -82,7 +85,7 @@ public class EnviarNfeCancelada extends Chain {
 		// unifica
 		StringBuilder sb = new StringBuilder();
 		sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		sb.append("<procCancNFe versao=\"" + UtilServer.CONF.get("nfe.versao") + "\" xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
+		sb.append("<procCancNFe versao=\"" + versao + "\" xmlns=\"http://www.portalfiscal.inf.br/nfe\">");
 		sb.append(canc.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", ""));
 		sb.append(proc.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", ""));
 		sb.append("</procCancNFe>");

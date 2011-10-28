@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Dados;
@@ -59,6 +60,12 @@ public class ComEcfVenda extends Dados implements Serializable {
 	@Column(name = "com_ecf_venda_observacao")
 	private String comEcfVendaObservacao;
 
+	@Transient
+	private String comEcfVendaNome;
+	
+	@Transient 
+	private String comEcfVendaCpf;
+	
 	@JoinColumn(name = "sis_usuario_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private SisUsuario sisUsuario;
@@ -191,6 +198,22 @@ public class ComEcfVenda extends Dados implements Serializable {
 		this.comEcf = comEcf;
 	}
 
+	public String getComEcfVendaNome() {
+		return comEcfVendaNome;
+	}
+
+	public void setComEcfVendaNome(String comEcfVendaNome) {
+		this.comEcfVendaNome = comEcfVendaNome;
+	}
+
+	public String getComEcfVendaCpf() {
+		return comEcfVendaCpf;
+	}
+
+	public void setComEcfVendaCpf(String comEcfVendaCpf) {
+		this.comEcfVendaCpf = comEcfVendaCpf;
+	}
+
 	public List<ComEcfVendaProduto> getComEcfVendaProdutos() {
 		return this.comEcfVendaProdutos;
 	}
@@ -213,7 +236,7 @@ public class ComEcfVenda extends Dados implements Serializable {
 
 		return new String[] { comEcfVendaId + "", comEcf.getEmpEmpresa().getEmpEmpresaId() + "", comEcf.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(), sisUsuario.getSisUsuarioId() + "",
 				sisUsuario.getSisUsuarioLogin(), empCliente.getEmpClienteId() + "", empCliente.getEmpEntidade().getEmpEntidadeId() + "", empCliente.getEmpEntidade().getEmpEntidadeNome1(),
-				comEcf.getComEcfId() + "", comEcf.getComEcfSerie(), comEcfVendaCoo + "", UtilClient.getDataHoraGrid(comEcfVendaData), comEcfVendaBruto.toString(), comEcfVendaDesconto.toString(),
+				comEcf.getComEcfId() + "", comEcf.getComEcfSerie(), comEcfVendaCoo + "", UtilClient.getDataGrid(comEcfVendaData), comEcfVendaBruto.toString(), comEcfVendaDesconto.toString(),
 				comEcfVendaLiquido.toString(), getComEcfVendaFechada() + "", contaId + "", receberId + "", getComEcfVendaCancelada() + "", comEcfVendaObservacao };
 	}
 

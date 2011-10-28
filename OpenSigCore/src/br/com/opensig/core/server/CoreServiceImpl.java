@@ -36,9 +36,7 @@ import br.com.opensig.core.shared.modelo.Sql;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 /**
- * Classe que implementa na parte do servidor a resposta a chamada de
- * procedimento do cliente, executando os comandos de persistencia no banco de
- * dados.
+ * Classe que implementa na parte do servidor a resposta a chamada de procedimento do cliente, executando os comandos de persistencia no banco de dados.
  * 
  * @param <E>
  * @author Pedro H. Lira
@@ -48,7 +46,6 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 
 	@Override
 	public Lista<E> selecionar(Dados classe, int inicio, int limite, IFiltro filtro, boolean removeDependencia) throws CoreException, ParametroException {
-
 		// mosta a instrução padrão
 		String sql = String.format("SELECT DISTINCT t FROM %s t ", classe.getTabela());
 		sql += getColecao(classe.getColecao());
@@ -123,9 +120,7 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 				// transformando o resultado numa matrix de Strings
 				String[][] dados = new String[total][];
 				for (int i = 0; i < lista.size(); i++) {
-					if (UtilServer.CONF.get("empresa") != null) {
-						lista.get(i).setEmpresa(Integer.valueOf(UtilServer.CONF.get("empresa")));
-					}
+					lista.get(i).setEmpresa(classe.getEmpresa());
 					dados[i] = lista.get(i).toArray();
 				}
 
@@ -454,21 +449,6 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 	 */
 	public E salvar(EntityManager em, E unidade) throws CoreException {
 		if (unidade.getId().intValue() == 0) {
-			// verifica se tem limite para esta funcao
-			int limite;
-			try {
-				limite = Integer.valueOf(UtilServer.CONF.get(unidade.getClass().getName().toLowerCase()));
-			} catch (Exception e) {
-				limite = 0;
-			}
-
-			// verifica se o limite é infinito=0 ou restrito
-			if (limite > 0) {
-				Number total = buscar(unidade, unidade.getCampoId(), EBusca.CONTAGEM, null);
-				if (total.intValue() >= limite) {
-					throw new CoreException("O limite maximo de registros desta funcao foi alcancado!");
-				}
-			}
 			padronizaLetras(unidade, unidade.getTipoLetra(), unidade.isLimpaBranco());
 			em.persist(unidade);
 		} else {
@@ -678,8 +658,7 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 	}
 
 	/**
-	 * Metodo para executar instruções de atualizacao diretas no BD com a mesma
-	 * transacao.
+	 * Metodo para executar instruções de atualizacao diretas no BD com a mesma transacao.
 	 * 
 	 * @param em
 	 *            o gerenciador de entidades.
@@ -744,8 +723,7 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 	}
 
 	/**
-	 * Metodo para executar instruções de exclusoes diretas no BD com a mesma
-	 * transacao.
+	 * Metodo para executar instruções de exclusoes diretas no BD com a mesma transacao.
 	 * 
 	 * @param em
 	 *            o gerenciador de entidades.
@@ -966,5 +944,4 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 		}
 		return true;
 	}
-
 }

@@ -64,7 +64,7 @@ public class SalvarRetorno extends Chain {
 				ParametroNumero pn = new ParametroNumero("finRecebimentoValor", fin.getFinRecebimentoValor());
 				ParametroData pd = new ParametroData("finRecebimentoRealizado", fin.getFinRecebimentoRealizado());
 				ParametroBinario pb = new ParametroBinario("finRecebimentoQuitado", 1);
-				ParametroTexto pt = new ParametroTexto("finRecebimentoObservacao", UtilServer.CONF.get("txtAuto"));
+				ParametroTexto pt = new ParametroTexto("finRecebimentoObservacao", "Auto");
 				GrupoParametro gp = new GrupoParametro(new IParametro[] { pn, pd, pb, pt });
 
 				Sql sql = new Sql(fin, EComando.ATUALIZAR, fn, gp);

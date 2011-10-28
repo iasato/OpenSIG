@@ -11,6 +11,7 @@ import java.util.Map;
 import org.w3c.dom.Document;
 
 import br.com.opensig.comercial.client.servico.ComercialException;
+import br.com.opensig.comercial.server.ComercialServiceImpl;
 import br.com.opensig.comercial.shared.modelo.ComCompra;
 import br.com.opensig.comercial.shared.modelo.ComCompraProduto;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
@@ -24,6 +25,7 @@ import br.com.opensig.core.client.servico.CoreService;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.server.importar.IImportacao;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 import br.com.opensig.empresa.server.EmpresaServiceImpl;
@@ -65,14 +67,16 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 	private EmpEmpresa empresa;
 	private EmpFornecedor fornecedor;
 	private TNFe nfe;
+	private Autenticacao auth;
 
 	public ImportarNfe() {
 	}
 
 	@Override
-	public Map<String, List<ComCompra>> setArquivo(CoreService<ComCompra> service, String[] sEmpresa, List<byte[]> arquivos, ComCompra classe, SisExpImp modo) throws OpenSigException {
-		this.servico = service;
+	public Map<String, List<ComCompra>> setArquivo(Autenticacao auth, Map<String, byte[]> arquivos, SisExpImp modo) throws OpenSigException {
+		this.servico = new ComercialServiceImpl();
 		this.fornecedor = new EmpFornecedor();
+		this.auth = auth;
 		String xml = new String(arquivos.get(0));
 
 		// valida se é NFe
@@ -95,7 +99,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		}
 
 		// valida a empresa
-		validarEmpresa(sEmpresa);
+		validarEmpresa();
 		// valida a compra
 		validarCompra();
 		// valida o fornecedor
@@ -116,15 +120,15 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		return resp;
 	}
 
-	private void validarEmpresa(String[] sEmpresa) throws OpenSigException {
-		if (nfe.getInfNFe().getDest().getCNPJ().equals(sEmpresa[5].replaceAll("\\W", ""))) {
-			EmpEntidade ent = new EmpEntidade(Integer.valueOf(sEmpresa[1]));
-			ent.setEmpEntidadeNome1(sEmpresa[2]);
-			ent.setEmpEntidadeNome2(sEmpresa[3]);
-			ent.setEmpEntidadePessoa(sEmpresa[4]);
-			ent.setEmpEntidadeDocumento1(sEmpresa[5]);
-			ent.setEmpEntidadeDocumento2(sEmpresa[6]);
-			empresa = new EmpEmpresa(Integer.valueOf(sEmpresa[0]));
+	private void validarEmpresa() throws OpenSigException {
+		if (nfe.getInfNFe().getDest().getCNPJ().equals(auth.getEmpresa()[5].replaceAll("\\W", ""))) {
+			EmpEntidade ent = new EmpEntidade(Integer.valueOf(auth.getEmpresa()[1]));
+			ent.setEmpEntidadeNome1(auth.getEmpresa()[2]);
+			ent.setEmpEntidadeNome2(auth.getEmpresa()[3]);
+			ent.setEmpEntidadePessoa(auth.getEmpresa()[4]);
+			ent.setEmpEntidadeDocumento1(auth.getEmpresa()[5]);
+			ent.setEmpEntidadeDocumento2(auth.getEmpresa()[6]);
+			empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
 			empresa.setEmpEntidade(ent);
 		} else {
 			throw new ComercialException("O destinatário não é a empresa logada!");
@@ -153,7 +157,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 				dtData = new SimpleDateFormat("yyyy-MM-dd").parse(ide.getDEmi());
 			} catch (ParseException e) {
 				UtilServer.LOG.debug("Data invalida.");
-				throw new ComercialException(UtilServer.CONF.get("errInvalido") + " -> dEmi");
+				throw new ComercialException(auth.getConf().get("errInvalido") + " -> dEmi");
 			}
 
 			compra = new ComCompra();
@@ -188,7 +192,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		// pagar
 		FinPagar pagar = new FinPagar();
 		List<FinPagamento> pagamentos = new ArrayList<FinPagamento>();
-		pagar.setFinConta(new FinConta(Integer.valueOf(UtilServer.CONF.get("conta.padrao"))));
+		pagar.setFinConta(new FinConta(Integer.valueOf(auth.getConf().get("conta.padrao"))));
 		pagar.setFinPagamentos(pagamentos);
 
 		if (nfe.getInfNFe().getCobr() != null) {
@@ -210,7 +214,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 				// pagamentos
 				FinPagamento pag = new FinPagamento();
 				FinForma forma = new FinForma(4);
-				forma.setFinFormaDescricao(UtilServer.CONF.get("txtboleto"));
+				forma.setFinFormaDescricao(auth.getConf().get("txtboleto"));
 				pag.setFinForma(forma);
 				pag.setFinPagamentoDocumento(dup.getNDup());
 				pag.setFinPagamentoValor(Double.valueOf(dup.getVDup()));
@@ -261,11 +265,11 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			enti.setEmpEntidadeDocumento1(cnpj);
 			enti.setEmpEntidadeDocumento2(emit.getIE());
 			enti.setEmpEntidadeAtivo(true);
-			enti.setEmpEntidadePessoa(UtilServer.CONF.get("txtJuridica"));
+			enti.setEmpEntidadePessoa(auth.getConf().get("txtJuridica"));
 
 			// seta o endereco
 			EmpEndereco endereco = new EmpEndereco();
-			endereco.setEmpEnderecoTipo(new EmpEnderecoTipo(Integer.valueOf(UtilServer.CONF.get("nfe.tipoendecom"))));
+			endereco.setEmpEnderecoTipo(new EmpEnderecoTipo(Integer.valueOf(auth.getConf().get("nfe.tipoendecom"))));
 			endereco.setEmpEnderecoLogradouro(ende.getXLgr());
 			endereco.setEmpEnderecoNumero(Integer.valueOf(ende.getNro().replaceAll("\\D", "")));
 			if (ende.getXCpl() != null) {
@@ -290,7 +294,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 
 				EmpContato contato = new EmpContato();
 				contato.setEmpContatoDescricao(fone);
-				contato.setEmpContatoTipo(new EmpContatoTipo(Integer.valueOf(UtilServer.CONF.get("nfe.tipoconttel"))));
+				contato.setEmpContatoTipo(new EmpContatoTipo(Integer.valueOf(auth.getConf().get("nfe.tipoconttel"))));
 				conts.add(contato);
 				enti.setEmpContatos(conts);
 			}
@@ -450,7 +454,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			produto.setEmpFabricante(fornecedor);
 			produto.setProdTributacao(getTributacao(icms.getCst()));
 			produto.setProdProdutoAtivo(true);
-			produto.setProdProdutoCategoria(UtilServer.CONF.get("categoria.padrao") + "::");
+			produto.setProdProdutoCategoria(auth.getConf().get("categoria.padrao") + "::");
 			produto.setProdProdutoCadastrado(UtilServer.getData());
 			produto.setProdProdutoCusto(Double.valueOf(prod.getVUnCom()));
 			produto.setProdProdutoPreco(0.00);

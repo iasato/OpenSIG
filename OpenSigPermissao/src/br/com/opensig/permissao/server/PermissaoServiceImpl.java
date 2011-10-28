@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -54,8 +55,7 @@ import br.com.opensig.permissao.shared.modelo.SisPermissao;
 import br.com.opensig.permissao.shared.modelo.SisUsuario;
 
 /**
- * Classe que implementa a chamada no servidor da função de entrar no sistema,
- * acessando os dados para autenticar o usuário junto ao servidor.
+ * Classe que implementa a chamada no servidor da função de entrar no sistema, acessando os dados para autenticar o usuário junto ao servidor.
  * 
  * @author Pedro H. Lira
  * @since 14/04/2009
@@ -86,6 +86,8 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 				if (!cap.isCorrect(captcha)) {
 					UtilServer.LOG.debug("cod de imagem invalido");
 					throw new PermissaoException("Codigo da imagem invalido!");
+				} else {
+					sessao.setAttribute(Captcha.NAME, null);
 				}
 			}
 
@@ -116,6 +118,7 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 
 				auth = new Autenticacao();
 				auth.setUsuario(sisUsuario.toArray());
+				auth.setConf(getConfig(empresa));
 				auth.setModulos(gerarPermissoes(sisUsuario));
 				for (EmpEmpresa emp : sisUsuario.getEmpEmpresas()) {
 					if (emp.getEmpEmpresaId() == empresa) {
@@ -142,18 +145,6 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 				UtilServer.LOG.error("Erro ao pegar as permissoes", ex);
 				throw new PermissaoException(ex.getMessage());
 			}
-		} else {
-			// caso já esteja logado só recupera da sessão
-			sessao.setAttribute(Captcha.NAME, null);
-			usuario = auth.getUsuario()[1];
-			empresa = Integer.valueOf(auth.getEmpresa()[0]);
-		}
-
-		try {
-			auth.setConf(getConfig(empresa, usuario));
-		} catch (OpenSigException e) {
-			UtilServer.LOG.error("Erro no login", e);
-			throw new PermissaoException(e.getMessage());
 		}
 
 		return auth;
@@ -329,10 +320,11 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 		return acoesAux;
 	}
 
-	private Map<String, String> getConfig(int empresa, String usuario) throws OpenSigException {
+	private Map<String, String> getConfig(int empresa) throws OpenSigException {
 		// adicionando os dados do idioma
 		String idioma = "";
 		Locale locale;
+		Map<String, String> mapa = new HashMap<String, String>();
 
 		try {
 			idioma = getServletContext().getInitParameter("login.idioma");
@@ -345,6 +337,7 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 			} else {
 				locale = new Locale(idioma);
 			}
+			UtilServer.LOCAL = locale;
 			idioma = idioma.equals("pt_BR") ? "" : "_" + idioma;
 		}
 
@@ -359,7 +352,7 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 		} finally {
 			// adicionando os valores
 			for (Entry<Object, Object> entry : prop.entrySet()) {
-				UtilServer.CONF.put(entry.getKey().toString(), entry.getValue().toString());
+				mapa.put(entry.getKey().toString(), entry.getValue().toString());
 			}
 		}
 
@@ -367,18 +360,16 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 		FiltroBinario fb = new FiltroBinario("sisConfiguracaoAtivo", ECompara.IGUAL, 1);
 		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, new EmpEmpresa(empresa));
 		GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fb, fo });
-		Lista<SisConfiguracao> lista = selecionar(new SisConfiguracao(), 0, 0, gf, false);
 
+		Lista<SisConfiguracao> lista = selecionar(new SisConfiguracao(), 0, 0, gf, false);
 		for (SisConfiguracao conf : lista.getLista()) {
-			UtilServer.CONF.put(conf.getSisConfiguracaoChave().toLowerCase(), conf.getSisConfiguracaoValor());
+			mapa.put(conf.getSisConfiguracaoChave().toLowerCase(), conf.getSisConfiguracaoValor());
 		}
 
-		// adicionando extras
-		UtilServer.CONF.put("usuario", usuario);
-		UtilServer.CONF.put("empresa", empresa + "");
-		UtilServer.LOCAL = locale;
-
-		return UtilServer.CONF;
+		// lidos dos arquivos
+		mapa.putAll(UtilServer.getConf());
+		mapa.put("login.empresa", empresa + "");
+		return mapa;
 	}
 
 	/**

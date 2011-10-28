@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.ExpListagem;
 import br.com.opensig.core.shared.modelo.ExpRegistro;
@@ -20,6 +21,10 @@ import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
  */
 public abstract class AExportacao<E extends Dados> implements IExportacao<E> {
 
+	/**
+	 * Autenticacao do usuario.
+	 */
+	protected Autenticacao auth;
 	/**
 	 * Dados recuperados do banco.
 	 */
@@ -40,7 +45,12 @@ public abstract class AExportacao<E extends Dados> implements IExportacao<E> {
 	 * tipo de exportacao em registro.
 	 */
 	protected ExpRegistro<E> expReg;
-
+ 
+	@Override
+	public void setAuth(Autenticacao auth) {
+		this.auth = auth;
+	}
+	
 	/**
 	 * Metodo que identifica o tipo de valor e formata de acordo com a
 	 * localizacao.
@@ -69,9 +79,9 @@ public abstract class AExportacao<E extends Dados> implements IExportacao<E> {
 					}
 				} catch (Exception e4) {
 					if (valor.equalsIgnoreCase("true")) {
-						retorno = UtilServer.CONF.get("txtSim");
+						retorno = auth.getConf().get("txtSim");
 					} else if (valor.equalsIgnoreCase("false")) {
-						retorno = UtilServer.CONF.get("txtNao");
+						retorno = auth.getConf().get("txtNao");
 					}
 				}
 			}

@@ -81,12 +81,12 @@ public class Xls<E extends Dados> extends AExportacao<E> {
 	}
 
 	@Override
-	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpListagem<E> exp, String[] empresa, String[][] enderecos, String[][] contatos) {
+	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpListagem<E> exp, String[][] enderecos, String[][] contatos) {
 		return null;
 	}
 
 	@Override
-	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpRegistro<E> exp, String[] empresa, String[][] enderecos, String[][] contatos) {
+	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpRegistro<E> exp, String[][] enderecos, String[][] contatos) {
 		// seleciona os dados
 		try {
 			this.lista = service.selecionar(exp.getClasse(), modo.getInicio(), modo.getLimite(), exp.getFiltro(), true);

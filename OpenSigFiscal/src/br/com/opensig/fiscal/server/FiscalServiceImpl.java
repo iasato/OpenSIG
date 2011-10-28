@@ -47,7 +47,9 @@ import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.servico.ExportacaoException;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.CoreServiceImpl;
+import br.com.opensig.core.server.SessionManager;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.Lista;
@@ -106,13 +108,13 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
 			// local do relatorio jasper
 			String tipoImp = UtilServer.getValorTag(doc.getDocumentElement(), "tpImp", true);
-			String jasper = UtilServer.CONF.get("sistema.empresas") + "danfe/danfe" + tipoImp + ".jasper";
+			String jasper = getAuth().getConf().get("sistema.empresas") + "danfe/danfe" + tipoImp + ".jasper";
 			// fonte de dados
 			String xpath = UtilServer.getValorTag(doc.getDocumentElement(), "nProt", false);
 			xpath = xpath == null ? "/nfe/infNFe/det" : "/nfeProc/NFe/infNFe/det";
 			JRXmlDataSource ds = new JRXmlDataSource(doc, xpath);
 			// parametros
-			Map<String, Object> param = NFe.getFaturas(doc);
+			Map<String, Object> param = new HashMap<String, Object>();
 			Element ele = (Element) doc.getElementsByTagName("infNFe").item(0);
 			String chave = ele.getAttribute("Id");
 			param.put("Logo", "../" + chave.substring(9, 23) + "/logo.png");
@@ -227,7 +229,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 				return retorno;
 			} else {
 				UtilServer.LOG.debug("Sem registros.");
-				throw new FiscalException(UtilServer.CONF.get("msgRegistro"));
+				throw new FiscalException(getAuth().getConf().get("msgRegistro"));
 			}
 		} catch (Exception ex) {
 			UtilServer.LOG.error("Erro ao zipar", ex);
@@ -240,7 +242,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		TConsStatServ consStatServ = new TConsStatServ();
 		consStatServ.setTpAmb(ambiente + "");
 		consStatServ.setCUF(uf + "");
-		consStatServ.setVersao(UtilServer.CONF.get("nfe.versao"));
+		consStatServ.setVersao(getAuth().getConf().get("nfe.versao"));
 		consStatServ.setXServ("STATUS");
 		return status(consStatServ, empresa);
 	}
@@ -251,7 +253,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			JAXBElement<TConsStatServ> element = new br.com.opensig.consstatserv.ObjectFactory().createConsStatServ(consStatServ);
 			String xml = UtilServer.objToXml(element, "br.com.opensig.consstatserv");
 
-			return Sefaz.getInstancia(empresa).status(xml);
+			return Sefaz.getInstancia(getAuth()).status(xml);
 		} catch (Exception e) {
 			throw new FiscalException(e.getMessage());
 		}
@@ -274,7 +276,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 				if (situacao.getCStat().equals("100")) {
 					if (nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId() && situacao.getProtNFe() != null) {
 						// valida se a data da nota ainda pode ser cancelada
-						int dias = Integer.valueOf(UtilServer.CONF.get("nfe.tempo_cancela"));
+						int dias = Integer.valueOf(getAuth().getConf().get("nfe.tempo_cancela"));
 						Calendar cal = Calendar.getInstance();
 						cal.setTime(nota.getFisNotaEntradaData());
 						cal.add(Calendar.DATE, dias);
@@ -313,7 +315,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		TConsSitNFe consSitNfe = new TConsSitNFe();
 		consSitNfe.setTpAmb(ambiente + "");
 		consSitNfe.setChNFe(chave);
-		consSitNfe.setVersao(UtilServer.CONF.get("nfe.versao"));
+		consSitNfe.setVersao(getAuth().getConf().get("nfe.versao"));
 		consSitNfe.setXServ("CONSULTAR");
 		return situacao(consSitNfe, empresa);
 	}
@@ -324,7 +326,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			JAXBElement<TConsSitNFe> element = new br.com.opensig.conssitnfe.ObjectFactory().createConsSitNFe(consSitNfe);
 			String xml = UtilServer.objToXml(element, "br.com.opensig.conssitnfe");
 
-			return Sefaz.getInstancia(empresa).situacao(xml);
+			return Sefaz.getInstancia(getAuth()).situacao(xml);
 		} catch (Exception e) {
 			throw new FiscalException(e.getMessage());
 		}
@@ -344,7 +346,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		}
 
 		TConsCad consCad = new TConsCad();
-		consCad.setVersao(UtilServer.CONF.get("nfe.versao"));
+		consCad.setVersao(getAuth().getConf().get("nfe.versao"));
 		consCad.setInfCons(infCons);
 		return cadastro(consCad, empresa, ambiente, ibge);
 	}
@@ -355,7 +357,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			JAXBElement<TConsCad> element = new br.com.opensig.conscad.ObjectFactory().createConsCad(consCad);
 			String xml = UtilServer.objToXml(element, "br.com.opensig.conscad");
 
-			return Sefaz.getInstancia(empresa).cadastro(xml, ibge, ambiente);
+			return Sefaz.getInstancia(getAuth()).cadastro(xml, ibge, ambiente);
 		} catch (Exception e) {
 			throw new FiscalException(e.getMessage());
 		}
@@ -364,7 +366,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 	public String enviarNFe(String xml, int empresa) throws FiscalException {
 		// gerar o objeto
 		try {
-			return Sefaz.getInstancia(empresa).enviarNFe(xml);
+			return Sefaz.getInstancia(getAuth()).enviarNFe(xml);
 		} catch (Exception e) {
 			throw new FiscalException(e.getMessage());
 		}
@@ -376,14 +378,14 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 
 		// gerar o objeto
 		try {
-			String proc = situacao(Integer.valueOf(UtilServer.CONF.get("nfe.tipoamb")), saida.getFisNotaSaidaChave(), saida.getEmpEmpresa().getEmpEmpresaId());
+			String proc = situacao(Integer.valueOf(getAuth().getConf().get("nfe.tipoamb")), saida.getFisNotaSaidaChave(), saida.getEmpEmpresa().getEmpEmpresaId());
 			TRetConsSitNFe sit = UtilServer.xmlToObj(proc, "br.com.opensig.retconssitnfe");
 
 			// verifica se sucesso
 			if (sit.getProtNFe() != null) {
 				InfProt inf = sit.getProtNFe().getInfProt();
 				if (inf.getCStat().equals("100")) {
-					saida.setFisNotaSaidaXml(RetornarNfe.montaProcNfe(saida.getFisNotaSaidaXml(), proc));
+					saida.setFisNotaSaidaXml(RetornarNfe.montaProcNfe(saida.getFisNotaSaidaXml(), proc, getAuth().getConf().get("nfe.versao")));
 					saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.AUTORIZADO));
 					saida.setFisNotaSaidaProtocolo(inf.getNProt());
 
@@ -396,7 +398,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			} else if (sit.getRetCancNFe() != null) {
 				InfCanc inf = sit.getRetCancNFe().getInfCanc();
 				if (inf.getCStat().equals("100")) {
-					saida.setFisNotaSaidaXml(EnviarNfeCancelada.montaProcCancNfe(saida.getFisNotaSaidaXml(), proc));
+					saida.setFisNotaSaidaXml(EnviarNfeCancelada.montaProcCancNfe(saida.getFisNotaSaidaXml(), proc, getAuth().getConf().get("nfe.versao")));
 					saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.CANCELADO));
 					saida.setFisNotaSaidaProtocoloCancelado(inf.getNProt());
 
@@ -426,7 +428,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			try {
 				salvar((E) saida, false);
 				if (para != null) {
-					EnviarEmail email = new EnviarEmail(this, saida);
+					EnviarEmail email = new EnviarEmail(this, saida, getAuth());
 					Thread enviar = new Thread(email);
 					enviar.start();
 				}
@@ -448,14 +450,14 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 
 			// adicionando dados ao xml
 			TConsReciNFe reci = new TConsReciNFe();
-			reci.setVersao(UtilServer.CONF.get("nfe.versao"));
+			reci.setVersao(getAuth().getConf().get("nfe.versao"));
 			reci.setTpAmb(ambiente);
 			reci.setNRec(recibo);
 
 			JAXBElement<TConsReciNFe> element = new br.com.opensig.consrecinfe.ObjectFactory().createConsReciNFe(reci);
 			xml = UtilServer.objToXml(element, "br.com.opensig.consrecinfe");
 
-			return Sefaz.getInstancia(empresa).retornoNFe(xml, uf, ambiente, serie);
+			return Sefaz.getInstancia(getAuth()).retornoNFe(xml, uf, ambiente, serie);
 		} catch (Exception e) {
 			throw new FiscalException(e.getMessage());
 		}
@@ -463,7 +465,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 
 	public Map<String, String> cancelar(FisNotaSaida saida, String motivo) throws FiscalException {
 		try {
-			GerarNfeCancelada gerar = new GerarNfeCancelada(null, this, saida, motivo);
+			GerarNfeCancelada gerar = new GerarNfeCancelada(null, this, saida, motivo, getAuth());
 			gerar.execute();
 			saida = gerar.getSaida();
 
@@ -484,7 +486,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 	public String cancelar(String xml, int empresa) throws FiscalException {
 		// gerar o objeto
 		try {
-			return Sefaz.getInstancia(empresa).cancelar(xml);
+			return Sefaz.getInstancia(getAuth()).cancelar(xml);
 		} catch (Exception e) {
 			throw new FiscalException(e.getMessage());
 		}
@@ -503,7 +505,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 				saida = (FisNotaSaida) selecionar(saida, fn, false);
 			}
 
-			GerarNfeInutilizada gerar = new GerarNfeInutilizada(null, this, saida, motivo, ini, fim);
+			GerarNfeInutilizada gerar = new GerarNfeInutilizada(null, this, saida, motivo, ini, fim, getAuth());
 			gerar.execute();
 			saida = gerar.getSaida();
 
@@ -524,7 +526,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 	public String inutilizar(String xml, int empresa) throws FiscalException {
 		// gerar o objeto
 		try {
-			return Sefaz.getInstancia(empresa).inutilizar(xml);
+			return Sefaz.getInstancia(getAuth()).inutilizar(xml);
 		} catch (Exception e) {
 			throw new FiscalException(e.getMessage());
 		}
@@ -532,7 +534,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 
 	public Map<String, String> salvarSaida(String xml, FisNotaStatus status, EmpEmpresa empresa) throws FiscalException {
 		try {
-			SalvarSaida salvarSaida = new SalvarSaida(null, xml, status, empresa);
+			SalvarSaida salvarSaida = new SalvarSaida(null, xml, status, getAuth());
 			salvarSaida.execute();
 			FisNotaSaida saida = salvarSaida.getNota();
 
@@ -550,7 +552,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		try {
 			// pega o certificado
 			String cnpj = certificado.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", "");
-			String pfx = UtilServer.CONF.get("sistema.empresas") + cnpj + "/certificado.pfx";
+			String pfx = getAuth().getConf().get("sistema.empresas") + cnpj + "/certificado.pfx";
 			// seta o tipo
 			KeyStore keystore = KeyStore.getInstance(("PKCS12"));
 			keystore.load(new FileInputStream(pfx), certificado.getFisCertificadoSenha().toCharArray());
@@ -580,5 +582,10 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		} catch (Exception e) {
 			throw new FiscalException(e.getMessage());
 		}
+	}
+	
+	private Autenticacao getAuth(){
+		HttpSession sessao = getThreadLocalRequest().getSession();
+		return SessionManager.LOGIN.get(sessao);
 	}
 }

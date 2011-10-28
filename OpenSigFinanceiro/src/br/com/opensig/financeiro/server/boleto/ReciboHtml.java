@@ -8,13 +8,13 @@ import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
 
 public class ReciboHtml extends Html implements IRecibo {
 
-	public byte[] getRecibo(String[] empresa, FinRecebimento boleto) {
+	public byte[] getRecibo(FinRecebimento boleto) {
 		// inicio do arquivo
 		StringBuffer sb = new StringBuffer("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><html xmlns='http://www.w3.org/1999/xhtml'>");
 		// estilo do arquivo
 		sb.append(getEstilo("portrait", "recibo"));
 		// cabecalho da empresa
-		sb.append(getCabecalhoEmpresa(empresa));
+		sb.append(getCabecalhoEmpresa());
 		// inicio do registro
 		sb.append("<table>");
 		// cabeçalho do registro

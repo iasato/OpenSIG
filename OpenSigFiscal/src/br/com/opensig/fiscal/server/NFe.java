@@ -40,6 +40,7 @@ import org.xml.sax.SAXParseException;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.client.servico.FiscalException;
 import br.com.opensig.fiscal.shared.modelo.ENotaOriem;
@@ -51,12 +52,13 @@ public class NFe {
 	private NFe() {
 	}
 
-	public static String assinarXML(Document doc, ENotaStatus status, EmpEmpresa empresa) throws FiscalException {
+	public static String assinarXML(Document doc, ENotaStatus status, Autenticacao auth) throws FiscalException {
 		try {
 			// monta o arquivo
-			String cnpj = empresa.getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", "");
-			String pfx = UtilServer.CONF.get("sistema.empresas") + cnpj + "/certificado.pfx";
+			String cnpj = auth.getEmpresa()[5].replaceAll("\\D", "");
+			String pfx = auth.getConf().get("sistema.empresas") + cnpj + "/certificado.pfx";
 			// faz a busca pela senha
+			EmpEmpresa empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
 			FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
 			FiscalServiceImpl<FisCertificado> service = new FiscalServiceImpl<FisCertificado>();
 			FisCertificado cert = new FisCertificado();
@@ -161,33 +163,6 @@ public class NFe {
 		}
 
 		return status;
-	}
-
-	public static Map<String, Object> getFaturas(Document doc) {
-		Map<String, Object> map = new HashMap<String, Object>();
-
-		for (int i = 0; i < doc.getElementsByTagName("dup").getLength(); i++) {
-			// seta uma duplicata
-			Node dup = doc.getElementsByTagName("dup").item(i);
-			// seta o numero
-			Node nDoc = dup.getChildNodes().item(0);
-			String numero = nDoc.getFirstChild().getNodeValue();
-			map.put("FAT_NUMERO" + (i + 1), numero);
-			// seta a data
-			Node nData = dup.getChildNodes().item(1);
-			String data = nData.getFirstChild().getNodeValue();
-			try {
-				map.put("FAT_VENCIMENTO" + (i + 1), new SimpleDateFormat("yyyy-MM-dd").parse(data));
-			} catch (Exception e) {
-				map.put("FAT_VENCIMENTO" + (i + 1), null);
-			}
-			// seta o valor
-			Node nValor = dup.getChildNodes().item(2);
-			String valor = nValor.getFirstChild().getNodeValue();
-			map.put("FAT_VALOR" + (i + 1), Double.parseDouble(valor));
-		}
-
-		return map;
 	}
 
 	private static ENotaStatus validarStatus(Document doc) {

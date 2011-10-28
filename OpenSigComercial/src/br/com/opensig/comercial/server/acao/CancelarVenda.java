@@ -22,6 +22,7 @@ import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.Conexao;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.financeiro.shared.modelo.FinConta;
@@ -38,11 +39,13 @@ public class CancelarVenda extends Chain {
 
 	private CoreServiceImpl servico;
 	private ComVenda venda;
+	private Autenticacao auth;
 
-	public CancelarVenda(Chain next, CoreServiceImpl servico, ComVenda venda) throws OpenSigException {
+	public CancelarVenda(Chain next, CoreServiceImpl servico, ComVenda venda, Autenticacao auth) throws OpenSigException {
 		super(null);
 		this.servico = servico;
 		this.venda = venda;
+		this.auth = auth;
 
 		FiltroNumero fn = new FiltroNumero("fisNotaSaidaId", ECompara.IGUAL, venda.getFisNotaSaida().getId());
 		FisNotaSaida saida = (FisNotaSaida) servico.selecionar(venda.getFisNotaSaida(), fn, false);
@@ -52,7 +55,7 @@ public class CancelarVenda extends Chain {
 		if (saida != null) {
 			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
 				// valida se a data da nota ainda pode ser cancelada
-				int dias = Integer.valueOf(UtilServer.CONF.get("nfe.tempo_cancela"));
+				int dias = Integer.valueOf(auth.getConf().get("nfe.tempo_cancela"));
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(saida.getFisNotaSaidaData());
 				cal.add(Calendar.DATE, dias);
@@ -63,12 +66,12 @@ public class CancelarVenda extends Chain {
 				}
 
 				// cancela nota
-				GerarNfeCancelada canNota = new GerarNfeCancelada(next, servico, saida, venda.getComVendaObservacao());
+				GerarNfeCancelada canNota = new GerarNfeCancelada(next, servico, saida, venda.getComVendaObservacao(), auth);
 				atuVenda.setNext(canNota);
 			} else {
 				// inutiliza nota
 				int num = venda.getFisNotaSaida().getFisNotaSaidaNumero();
-				GerarNfeInutilizada inuNota = new GerarNfeInutilizada(next, servico, saida, venda.getComVendaObservacao(), num, num);
+				GerarNfeInutilizada inuNota = new GerarNfeInutilizada(next, servico, saida, venda.getComVendaObservacao(), num, num, auth);
 				atuVenda.setNext(inuNota);
 			}
 		}
@@ -76,7 +79,7 @@ public class CancelarVenda extends Chain {
 		AtualizarConta atuConta = new AtualizarConta(atuVenda);
 		// valida o estoque
 		AtualizarEstoque atuEst = new AtualizarEstoque(atuConta);
-		if (UtilServer.CONF.get("estoque.ativo").equalsIgnoreCase("sim")) {
+		if (auth.getConf().get("estoque.ativo").equalsIgnoreCase("sim")) {
 			this.setNext(atuEst);
 		} else {
 			this.setNext(atuConta);
@@ -115,7 +118,7 @@ public class CancelarVenda extends Chain {
 				em = emf.createEntityManager();
 				em.getTransaction().begin();
 
-				if (UtilServer.CONF.get("estoque.ativo").equalsIgnoreCase("sim")) {
+				if (auth.getConf().get("estoque.ativo").equalsIgnoreCase("sim")) {
 					for (ComVendaProduto comVen : venda.getComVendaProdutos()) {
 						// fatorando a quantida no estoque
 						double qtd = comVen.getComVendaProdutoQuantidade();

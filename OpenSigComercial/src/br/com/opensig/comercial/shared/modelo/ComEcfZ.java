@@ -56,7 +56,7 @@ public class ComEcfZ extends Dados implements Serializable {
 
 	@OneToMany(mappedBy = "comEcfZ", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<ComEcfZTotais> comZTotais;
-	
+
 	public ComEcfZ() {
 		this(0);
 	}

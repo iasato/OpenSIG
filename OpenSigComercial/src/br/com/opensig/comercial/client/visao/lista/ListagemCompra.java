@@ -270,7 +270,7 @@ public class ListagemCompra extends AListagem<ComCompra> {
 	private void analisarNfe(SisExpImp modo, List<String> arquivos) {
 		getEl().mask(OpenSigCore.i18n.txtAguarde());
 		ImportacaoProxy<ComCompra> proxy = new ImportacaoProxy<ComCompra>();
-		proxy.importar(classe, modo, arquivos, new AsyncCallback<Map<String, List<ComCompra>>>() {
+		proxy.importar(modo, arquivos, new AsyncCallback<Map<String, List<ComCompra>>>() {
 
 			public void onSuccess(Map<String, List<ComCompra>> result) {
 				getEl().unmask();

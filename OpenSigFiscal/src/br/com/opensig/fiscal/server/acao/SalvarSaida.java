@@ -22,6 +22,7 @@ import br.com.opensig.core.client.controlador.parametro.ParametroTexto;
 import br.com.opensig.core.client.padroes.Chain;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
@@ -39,19 +40,21 @@ public class SalvarSaida extends Chain {
 	private EmpEmpresa empresa;
 	private FisNotaSaida nota;
 	private FiscalServiceImpl<FisNotaSaida> servico;
+	private Autenticacao auth;
 
-	public SalvarSaida(Chain next, String xml, FisNotaStatus status, EmpEmpresa empresa) throws OpenSigException {
+	public SalvarSaida(Chain next, String xml, FisNotaStatus status, Autenticacao auth) throws OpenSigException {
 		super(next);
 		this.xml = xml;
 		this.status = status;
-		this.empresa = empresa;
+		this.auth = auth;
+		this.empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
 		this.servico = new FiscalServiceImpl<FisNotaSaida>();
 	}
 
 	@Override
 	public void execute() throws OpenSigException {
 		// valida o plano
-		new ValidarPlano(null, servico, status, empresa).execute();
+		new ValidarPlano(null, servico, status, auth).execute();
 		
 		doc = UtilServer.getXml(xml);
 		IFiltro filtro;
@@ -90,11 +93,11 @@ public class SalvarSaida extends Chain {
 
 		// enviando para sefaz
 		if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.getId()) {
-			next = new EnviarNfeCancelada(next, servico, nota);
+			next = new EnviarNfeCancelada(next, servico, nota, auth);
 		} else if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.getId()) {
-			next = new EnviarNfeInutilizada(next, servico, nota);
+			next = new EnviarNfeInutilizada(next, servico, nota, auth);
 		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.getId()) {
-			next = new EnviarNfe(next, servico, nota);
+			next = new EnviarNfe(next, servico, nota, auth);
 		}
 
 		if (next != null) {
@@ -112,7 +115,7 @@ public class SalvarSaida extends Chain {
 			String chave = doc.getElementsByTagName("infNFe").item(0).getAttributes().item(0).getNodeValue().replace("NFe", "");
 			if (chave == null) {
 				UtilServer.LOG.debug("Nao achou a tag -> chNFe.");
-				throw new FiscalException(UtilServer.CONF.get("errInvalido") + " -> chNFe");
+				throw new FiscalException(auth.getConf().get("errInvalido") + " -> chNFe");
 			}
 			// recupera o protocolo
 			String prot = UtilServer.getValorTag(doc.getDocumentElement(), "nProt", false);
@@ -128,7 +131,7 @@ public class SalvarSaida extends Chain {
 				dtData = new SimpleDateFormat("yyyy-MM-dd").parse(data);
 			} catch (ParseException e) {
 				UtilServer.LOG.debug("Data invalida.");
-				throw new FiscalException(UtilServer.CONF.get("errInvalido") + " -> dEmi");
+				throw new FiscalException(auth.getConf().get("errInvalido") + " -> dEmi");
 			}
 			// recupera os totais
 			Element total = (Element) doc.getElementsByTagName("total").item(0);
@@ -157,7 +160,7 @@ public class SalvarSaida extends Chain {
 			// valida a autorizada com protocolo
 			if (prot.equals("") && status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
 				UtilServer.LOG.debug("Nao achou o protocolo.");
-				throw new FiscalException(UtilServer.CONF.get("errInvalido") + " -> nProt");
+				throw new FiscalException(auth.getConf().get("errInvalido") + " -> nProt");
 			}
 			// em caso de contigencia com FS-DA
 			String tipoEmissao = UtilServer.getValorTag(doc.getDocumentElement(), "tpEmis", true);
@@ -205,7 +208,7 @@ public class SalvarSaida extends Chain {
 			}
 			if (prot.equals("") && status.getFisNotaStatusId() == ENotaStatus.INUTILIZADO.getId()) {
 				UtilServer.LOG.debug("Nao achou o protocolo.");
-				throw new FiscalException(UtilServer.CONF.get("errInvalido") + " -> nProt");
+				throw new FiscalException(auth.getConf().get("errInvalido") + " -> nProt");
 			}
 
 			// recupera o numero inicial
@@ -256,7 +259,7 @@ public class SalvarSaida extends Chain {
 
 		if (prot.equals("") && status.getFisNotaStatusId() != ENotaStatus.INUTILIZANDO.getId() && status.getFisNotaStatusId() != ENotaStatus.AUTORIZANDO.getId()) {
 			UtilServer.LOG.debug("Nao achou o protocolo.");
-			throw new FiscalException(UtilServer.CONF.get("errInvalido") + " -> nProt");
+			throw new FiscalException(auth.getConf().get("errInvalido") + " -> nProt");
 		}
 
 		// cria o sql

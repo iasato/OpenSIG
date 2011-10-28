@@ -66,7 +66,7 @@ public class UtilServer extends HttpServlet {
 	/**
 	 * Dados de configuracao do sistema.
 	 */
-	public static Map<String, String> CONF = new HashMap<String, String>();
+	private static Map<String, String> CONF = new HashMap<String, String>();
 	/**
 	 * Localizacao para formatacao de lingua.
 	 */
@@ -76,8 +76,11 @@ public class UtilServer extends HttpServlet {
 	 */
 	public static String CHAVE;
 
-	// setando a tabela de letras
-	static {
+	/**
+	 * Metodo que inicializa variazeis globais
+	 */
+	public void init() {
+		// setando a tabela de letras
 		String acentuado = "çÇáéíóúýÁÉÍÓÚÝàèìòùÀÈÌÒÙãõñäëïöüÿÄËÏÖÜÃÕÑâêîôûÂÊÎÔÛ";
 		String semAcento = "cCaeiouyAEIOUYaeiouAEIOUaonaeiouyAEIOUAONaeiouAEIOU";
 
@@ -87,12 +90,7 @@ public class UtilServer extends HttpServlet {
 		for (int i = 0; i < acentuado.length(); ++i) {
 			tabela[acentuado.charAt(i)] = semAcento.charAt(i);
 		}
-	}
 
-	/**
-	 * Metodo que inicializa variazeis globais
-	 */
-	public void init() {
 		// pegando os dados de log
 		Properties log4j = new Properties();
 		Enumeration<String> param = getInitParameterNames();
@@ -136,6 +134,15 @@ public class UtilServer extends HttpServlet {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Retorna o conf com os dados padroes lidos.
+	 * 
+	 * @return um mapa de configuracoes.
+	 */
+	public static Map<String, String> getConf() {
+		return CONF;
 	}
 
 	/**

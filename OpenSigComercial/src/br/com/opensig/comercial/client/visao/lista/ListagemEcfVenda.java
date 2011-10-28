@@ -5,7 +5,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import br.com.opensig.comercial.client.controlador.comando.ComandoEcfVendaProduto;
+import br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharEcfVenda;
 import br.com.opensig.comercial.client.servico.ComercialProxy;
+import br.com.opensig.comercial.shared.modelo.Cat52;
 import br.com.opensig.comercial.shared.modelo.ComEcf;
 import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
 import br.com.opensig.core.client.OpenSigCore;
@@ -102,7 +104,7 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 		ccEcfId.setHidden(true);
 		ColumnConfig ccEcf = new ColumnConfig(OpenSigCore.i18n.txtEcf(), "comEcf.comEcfSerie", 200, true);
 		ColumnConfig ccCoo = new ColumnConfig(OpenSigCore.i18n.txtCoo(), "comEcfVendaCoo", 75, true);
-		ColumnConfig ccData = new ColumnConfig(OpenSigCore.i18n.txtData(), "comEcfVendaData", 120, true, DATAHORA);
+		ColumnConfig ccData = new ColumnConfig(OpenSigCore.i18n.txtData(), "comEcfVendaData", 75, true, DATA);
 		ColumnConfig ccFechada = new ColumnConfig(OpenSigCore.i18n.txtFechada(), "comEcfVendaFechada", 75, true, BOLEANO);
 		ColumnConfig ccContaId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtConta(), "finReceber.finConta.finContaId", 100, true);
 		ccContaId.setHidden(true);
@@ -158,7 +160,7 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 				comando = null;
 			}
 		}
-		// valida se pode excluir ou cancelar
+		// valida se pode excluir
 		else if (comando instanceof ComandoExcluir) {
 			comando = null;
 			if (rec != null) {
@@ -238,18 +240,55 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 	}
 
 	private void analisarCat52(SisExpImp modo, List<String> arquivos) {
-		getEl().mask(OpenSigCore.i18n.txtAguarde());
-		ImportacaoProxy<ComEcfVenda> proxy = new ImportacaoProxy<ComEcfVenda>();
-		proxy.importar(classe, modo, arquivos, new AsyncCallback<Map<String, List<ComEcfVenda>>>() {
+		MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtEcf());
+		ImportacaoProxy<Cat52> proxy = new ImportacaoProxy<Cat52>();
+		proxy.importar(modo, arquivos, new AsyncCallback<Map<String, List<Cat52>>>() {
 
-			public void onSuccess(Map<String, List<ComEcfVenda>> result) {
-				getEl().unmask();
+			public void onSuccess(Map<String, List<Cat52>> result) {
+				janela.getOks().clear();
+				janela.getErros().clear();
+				MessageBox.hide();
+
+				// oks
+				List<Cat52> oks = result.get("ok");
+				if (oks.size() > 0) {
+					int vendas = 0;
+					int naoFechadas = 0;
+					int naoAchados = 0;
+					for (Cat52 cat52 : oks) {
+						vendas += cat52.getVendas();
+						naoFechadas += cat52.getVendaNfechadas();
+						naoAchados += cat52.getProdNachados();
+
+						String ok = cat52.getArquivo() + "\n";
+						ok += "\t-- Vendas = " + cat52.getVendas() + "\n";
+						ok += "\t-- Vendas Nao Fechadas = " + cat52.getVendaNfechadas() + "\n";
+						ok += "\t-- Produtos Nao Achados = " + cat52.getProdNachados();
+						janela.getOks().add(ok);
+					}
+
+					String texto = "Total Arquivos = " + oks.size() + "\n";
+					texto += "Total Vendas = " + vendas + "\n";
+					texto += "Total de Vendas Nao Fechadas = " + naoFechadas + "\n";
+					texto += "Total de Produtos Nao Achados = " + naoAchados;
+					janela.getOks().add(texto);
+				}
+
+				// erros
+				List<Cat52> erros = result.get("erro");
+				for (Cat52 cat52 : erros) {
+					String err = cat52.getArquivo() + "\n";
+					err += "\t-- Erro :: " + cat52.getErro() + "\n";
+					janela.getErros().add(err);
+				}
+
+				janela.resultado();
 			}
 
 			public void onFailure(Throwable caught) {
-				getEl().unmask();
-				MessageBox.alert(OpenSigCore.i18n.txtImportar(), OpenSigCore.i18n.errImportar());
-				new ToastWindow(OpenSigCore.i18n.txtImportar(), caught.getMessage()).show();
+				MessageBox.hide();
+				MessageBox.alert(OpenSigCore.i18n.txtEcf(), caught.toString());
+				new ToastWindow(OpenSigCore.i18n.txtImportar(), OpenSigCore.i18n.errImportar()).show();
 			}
 		});
 	}

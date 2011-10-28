@@ -19,6 +19,7 @@ import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.fiscal.client.servico.FiscalException;
 import br.com.opensig.fiscal.shared.modelo.FisCertificado;
 import br.inf.portalfiscal.www.nfe.wsdl.cadconsultacadastro2.CadConsultaCadastro2Stub;
@@ -46,7 +47,9 @@ public class Sefaz {
 	private static Collection<String> SVAN = new ArrayList<String>();
 	// colecao de estados do ambiente virual do RS
 	private static Collection<String> SVRS = new ArrayList<String>();
-
+	// Autenticacao do usuario
+	private Autenticacao auth;
+	
 	// setando os configs da sefaz
 	static {
 		try {
@@ -74,22 +77,23 @@ public class Sefaz {
 	/**
 	 * Contrutor da classe.
 	 */
-	private Sefaz() throws Exception {
+	private Sefaz(Autenticacao auth) throws Exception {
+		this.auth = auth;
 	}
 
 	/**
 	 * Metodo que retorna um objeto Sefaz com dados da empresa passada.
 	 * 
-	 * @param empresaId
-	 *            o id da empresa atual.
+	 * @param auth
+	 *            a autenticacao do usuario.
 	 * @return um objeto Sefaz desta empresa.
 	 * @throws FiscalException
 	 *             caso ocorra uma excecao.
 	 */
-	public static Sefaz getInstancia(int empresaId) throws FiscalException {
+	public static Sefaz getInstancia(Autenticacao auth) throws FiscalException {
 		try {
 			// faz a busca pela senha
-			FiltroNumero fn = new FiltroNumero("empEmpresa.empEmpresaId", ECompara.IGUAL, empresaId);
+			FiltroNumero fn = new FiltroNumero("empEmpresa.empEmpresaId", ECompara.IGUAL, auth.getEmpresa()[0]);
 			FiscalServiceImpl<FisCertificado> service = new FiscalServiceImpl<FisCertificado>();
 			FisCertificado cert = new FisCertificado();
 			cert = service.selecionar(cert, fn, false);
@@ -97,7 +101,7 @@ public class Sefaz {
 			// monta o arquivo
 			String cnpj = UtilServer.normaliza(cert.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento1());
 			cnpj = cnpj.replaceAll("\\D", "");
-			String pfx = UtilServer.CONF.get("sistema.empresas") + cnpj + "/certificado.pfx";
+			String pfx = auth.getConf().get("sistema.empresas") + cnpj + "/certificado.pfx";
 			
 			// descriptografa a senha
 			BasicTextEncryptor seguranca = new BasicTextEncryptor();
@@ -109,14 +113,14 @@ public class Sefaz {
 			Object[] chaves = NFe.lerCertificado(pfx, senha, fac);
 			PrivateKey pk = (PrivateKey) chaves[0];
 			X509Certificate x509 = (X509Certificate) chaves[2];
-			String cacerts = UtilServer.CONF.get("sistema.empresas") + "NFeCacerts";
+			String cacerts = auth.getConf().get("sistema.empresas") + "NFeCacerts";
 			SocketFactoryDinamico sfd = new SocketFactoryDinamico(x509, pk, cacerts);
 			
 			// ativando o protocolo
 			Protocol protocol = new Protocol("https", sfd, 443);
 			Protocol.registerProtocol("https", protocol);
 
-			return new Sefaz();
+			return new Sefaz(auth);
 		} catch (Exception e) {
 			throw new FiscalException("Problemas com o certificado.");
 		}
@@ -185,7 +189,7 @@ public class Sefaz {
 
 			NfeStatusServico2Stub.NfeCabecMsg nfeCabecMsg = new NfeStatusServico2Stub.NfeCabecMsg();
 			nfeCabecMsg.setCUF(uf);
-			nfeCabecMsg.setVersaoDados(UtilServer.CONF.get("nfe.versao"));
+			nfeCabecMsg.setVersaoDados(auth.getConf().get("nfe.versao"));
 
 			NfeStatusServico2Stub.NfeCabecMsgE nfeCabecMsgE = new NfeStatusServico2Stub.NfeCabecMsgE();
 			nfeCabecMsgE.setNfeCabecMsg(nfeCabecMsg);
@@ -222,7 +226,7 @@ public class Sefaz {
 
 			NfeConsulta2Stub.NfeCabecMsg nfeCabecMsg = new NfeConsulta2Stub.NfeCabecMsg();
 			nfeCabecMsg.setCUF(uf);
-			nfeCabecMsg.setVersaoDados(UtilServer.CONF.get("nfe.versao"));
+			nfeCabecMsg.setVersaoDados(auth.getConf().get("nfe.versao"));
 
 			NfeConsulta2Stub.NfeCabecMsgE nfeCabecMsgE = new NfeConsulta2Stub.NfeCabecMsgE();
 			nfeCabecMsgE.setNfeCabecMsg(nfeCabecMsg);
@@ -260,7 +264,7 @@ public class Sefaz {
 
 			CadConsultaCadastro2Stub.NfeCabecMsg cabecMsg = new CadConsultaCadastro2Stub.NfeCabecMsg();
 			cabecMsg.setCUF(ibge + "");
-			cabecMsg.setVersaoDados(UtilServer.CONF.get("nfe.versao"));
+			cabecMsg.setVersaoDados(auth.getConf().get("nfe.versao"));
 
 			CadConsultaCadastro2Stub.NfeCabecMsgE cabecMsgE = new CadConsultaCadastro2Stub.NfeCabecMsgE();
 			cabecMsgE.setNfeCabecMsg(cabecMsg);
@@ -290,7 +294,7 @@ public class Sefaz {
 
 			NfeRecepcao2Stub.NfeCabecMsg nfeCabecMsg = new NfeRecepcao2Stub.NfeCabecMsg();
 			nfeCabecMsg.setCUF(uf);
-			nfeCabecMsg.setVersaoDados(UtilServer.CONF.get("nfe.versao"));
+			nfeCabecMsg.setVersaoDados(auth.getConf().get("nfe.versao"));
 
 			NfeRecepcao2Stub.NfeCabecMsgE nfeCabecMsgE = new NfeRecepcao2Stub.NfeCabecMsgE();
 			nfeCabecMsgE.setNfeCabecMsg(nfeCabecMsg);
@@ -316,7 +320,7 @@ public class Sefaz {
 
 			NfeRetRecepcao2Stub.NfeCabecMsg nfeCabecMsg = new NfeRetRecepcao2Stub.NfeCabecMsg();
 			nfeCabecMsg.setCUF(uf);
-			nfeCabecMsg.setVersaoDados(UtilServer.CONF.get("nfe.versao"));
+			nfeCabecMsg.setVersaoDados(auth.getConf().get("nfe.versao"));
 
 			NfeRetRecepcao2Stub.NfeCabecMsgE nfeCabecMsgE = new NfeRetRecepcao2Stub.NfeCabecMsgE();
 			nfeCabecMsgE.setNfeCabecMsg(nfeCabecMsg);
@@ -344,7 +348,7 @@ public class Sefaz {
 
 			NfeCancelamento2Stub.NfeCabecMsg nfeCabecMsg = new NfeCancelamento2Stub.NfeCabecMsg();
 			nfeCabecMsg.setCUF(uf);
-			nfeCabecMsg.setVersaoDados(UtilServer.CONF.get("nfe.versao"));
+			nfeCabecMsg.setVersaoDados(auth.getConf().get("nfe.versao"));
 
 			NfeCancelamento2Stub.NfeCabecMsgE nfeCabecMsgE = new NfeCancelamento2Stub.NfeCabecMsgE();
 			nfeCabecMsgE.setNfeCabecMsg(nfeCabecMsg);
@@ -372,7 +376,7 @@ public class Sefaz {
 
 			NfeInutilizacao2Stub.NfeCabecMsg nfeCabecMsg = new NfeInutilizacao2Stub.NfeCabecMsg();
 			nfeCabecMsg.setCUF(uf);
-			nfeCabecMsg.setVersaoDados(UtilServer.CONF.get("nfe.versao"));
+			nfeCabecMsg.setVersaoDados(auth.getConf().get("nfe.versao"));
 
 			NfeInutilizacao2Stub.NfeCabecMsgE nfeCabecMsgE = new NfeInutilizacao2Stub.NfeCabecMsgE();
 			nfeCabecMsgE.setNfeCabecMsg(nfeCabecMsg);

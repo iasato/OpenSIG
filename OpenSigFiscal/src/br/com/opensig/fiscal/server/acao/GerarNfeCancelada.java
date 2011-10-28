@@ -10,6 +10,7 @@ import br.com.opensig.core.client.padroes.Chain;
 import br.com.opensig.core.client.servico.CoreService;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
@@ -19,12 +20,14 @@ public class GerarNfeCancelada extends Chain {
 	private CoreService servico;
 	private FisNotaSaida saida;
 	private String obs;
+	private Autenticacao auth;
 	
-	public GerarNfeCancelada(Chain next, CoreService servico, FisNotaSaida saida, String obs) throws OpenSigException {
+	public GerarNfeCancelada(Chain next, CoreService servico, FisNotaSaida saida, String obs, Autenticacao auth) throws OpenSigException {
 		super(next);
 		this.servico = servico;
 		this.saida = saida;
 		this.obs = obs;
+		this.auth = auth;
 	}
 
 	@Override
@@ -35,7 +38,7 @@ public class GerarNfeCancelada extends Chain {
 		// cria o xml
 		String xml = getXml(saida, obs);
 		// salva o registro
-		SalvarSaida salvar = new SalvarSaida(next, xml, new FisNotaStatus(ENotaStatus.CANCELANDO), saida.getEmpEmpresa());
+		SalvarSaida salvar = new SalvarSaida(next, xml, new FisNotaStatus(ENotaStatus.CANCELANDO), auth);
 		salvar.execute();
 		saida = salvar.getNota();
 	}
@@ -48,14 +51,14 @@ public class GerarNfeCancelada extends Chain {
 		try {
 			InfCanc infCanc = new InfCanc();
 			infCanc.setId("ID" + saida.getFisNotaSaidaChave());
-			infCanc.setTpAmb(UtilServer.CONF.get("nfe.tipoamb"));
+			infCanc.setTpAmb(auth.getConf().get("nfe.tipoamb"));
 			infCanc.setChNFe(saida.getFisNotaSaidaChave());
 			infCanc.setNProt(saida.getFisNotaSaidaProtocolo());
 			infCanc.setXJust(UtilServer.normaliza(obs));
 			infCanc.setXServ("CANCELAR");
 			TCancNFe cancNfe = new TCancNFe();
 			cancNfe.setInfCanc(infCanc);
-			cancNfe.setVersao(UtilServer.CONF.get("nfe.versao"));
+			cancNfe.setVersao(auth.getConf().get("nfe.versao"));
 			// transforma em string o xml e salva
 			JAXBElement<TCancNFe> element = new br.com.opensig.cancnfe.ObjectFactory().createCancNFe(cancNfe);
 			return UtilServer.objToXml(element, "br.com.opensig.cancnfe");
