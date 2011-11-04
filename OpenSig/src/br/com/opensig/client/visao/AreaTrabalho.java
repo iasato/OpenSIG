@@ -12,7 +12,6 @@ import br.com.opensig.core.client.padroes.Observer;
 import br.com.opensig.core.client.padroes.Visitable;
 import br.com.opensig.core.client.padroes.Visitor;
 import br.com.opensig.core.client.visao.Ponte;
-import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.ILogin;
 import br.com.opensig.permissao.client.controlador.comando.ComandoBloquear;
 import br.com.opensig.permissao.client.servico.PermissaoProxy;
@@ -28,8 +27,7 @@ import com.gwtext.client.widgets.Panel;
 import com.gwtext.client.widgets.layout.BorderLayout;
 
 /**
- * Classe que representa a Area principal de trabalho, contendo todas as funcoes
- * e painel de controle principal.
+ * Classe que representa a Area principal de trabalho, contendo todas as funcoes e painel de controle principal.
  * 
  * @author Pedro H. Lira
  * @version 1.0
@@ -65,21 +63,10 @@ public class AreaTrabalho extends Panel implements Observer, Visitable {
 		add(Centro.getInstancia(), Centro.getData());
 		Ponte.setCentro(Centro.getInstancia());
 
-		final PermissaoProxy login = new PermissaoProxy();
-		login.entrar(null, null, null, 0, false, new AsyncCallback<Autenticacao>() {
-
-			public void onFailure(Throwable caught) {
-				new EntrarSistema();
-			}
-
-			public void onSuccess(Autenticacao result) {
-				Ponte.setLogin(login);
-			}
-		});
-
 		// seta o tema definido
 		String tema = RootPanel.get("tema").getElement().getInnerText();
 		CSS.swapStyleSheet("estilo", tema);
+		new EntrarSistema();
 	}
 
 	@Override
