@@ -171,7 +171,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 						public void onSuccess(E result) {
 							MessageBox.hide();
 							classe = result;
-							getErro(result);
+							mostrarErro(result);
 						}
 					});
 				} else {
@@ -219,7 +219,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 				fiscal.exportar(arquivo, getChave(result), extensao, new AsyncCallback<String>() {
 					public void onSuccess(String result) {
 						MessageBox.hide();
-						UtilClient.exportar("CoreService?id=" + result);
+						UtilClient.exportar("ExportacaoService?id=" + result);
 					}
 
 					public void onFailure(Throwable caught) {

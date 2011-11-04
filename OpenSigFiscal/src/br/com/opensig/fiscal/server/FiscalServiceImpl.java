@@ -47,7 +47,6 @@ import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.servico.ExportacaoException;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.CoreServiceImpl;
-import br.com.opensig.core.server.SessionManager;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Dados;
@@ -74,6 +73,13 @@ import br.com.opensig.retconssitnfe.TRetConsSitNFe;
 @SuppressWarnings("restriction")
 public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> implements FiscalService<E> {
 
+	public FiscalServiceImpl(){
+	}
+	
+	public FiscalServiceImpl(Autenticacao auth){
+		super(auth);
+	}
+	
 	public String exportar(String arquivo, String nome, String tipo) throws ExportacaoException {
 		// valida sessao
 		String retorno = "";
@@ -95,8 +101,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 
 		retorno = sessao.getId() + UtilServer.getData().getTime();
 		sessao.setAttribute(retorno, obj);
-		sessao.setAttribute(retorno + "arquivo", nome);
-		sessao.setAttribute(retorno + "tipo", tipo);
+		sessao.setAttribute(retorno + "arquivo", nome + "." + tipo);
 		return retorno;
 	}
 
@@ -108,7 +113,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes()));
 			// local do relatorio jasper
 			String tipoImp = UtilServer.getValorTag(doc.getDocumentElement(), "tpImp", true);
-			String jasper = getAuth().getConf().get("sistema.empresas") + "danfe/danfe" + tipoImp + ".jasper";
+			String jasper = UtilServer.PATH_EMPRESA + "danfe/danfe" + tipoImp + ".jasper";
 			// fonte de dados
 			String xpath = UtilServer.getValorTag(doc.getDocumentElement(), "nProt", false);
 			xpath = xpath == null ? "/nfe/infNFe/det" : "/nfeProc/NFe/infNFe/det";
@@ -552,7 +557,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		try {
 			// pega o certificado
 			String cnpj = certificado.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", "");
-			String pfx = getAuth().getConf().get("sistema.empresas") + cnpj + "/certificado.pfx";
+			String pfx = UtilServer.PATH_EMPRESA + cnpj + "/certificado.pfx";
 			// seta o tipo
 			KeyStore keystore = KeyStore.getInstance(("PKCS12"));
 			keystore.load(new FileInputStream(pfx), certificado.getFisCertificadoSenha().toCharArray());
@@ -582,10 +587,5 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		} catch (Exception e) {
 			throw new FiscalException(e.getMessage());
 		}
-	}
-	
-	private Autenticacao getAuth(){
-		HttpSession sessao = getThreadLocalRequest().getSession();
-		return SessionManager.LOGIN.get(sessao);
 	}
 }

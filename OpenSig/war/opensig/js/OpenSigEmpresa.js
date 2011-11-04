@@ -4,6 +4,8 @@
 		validarCPF : function(cpf) {
 			try {
 				var numeros, digitos, soma, i, resultado, digitos_iguais;
+				exp = /\.|\-|\//g;
+				cpf = cpf.toString().replace(exp, "");
 				digitos_iguais = 1;
 				if (cpf.length != 11){
 					return false;

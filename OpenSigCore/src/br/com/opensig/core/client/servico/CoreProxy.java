@@ -14,6 +14,7 @@ import br.com.opensig.core.client.controlador.filtro.FiltroTexto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.controlador.parametro.ParametroException;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
@@ -353,6 +354,11 @@ public class CoreProxy<E extends Dados> extends GWTProxy implements CoreServiceA
 	@Override
 	public void executar(Sql[] sqls, AsyncCallback<Integer[]> asyncCallback) {
 		async.executar(sqls, asyncCallback);
+	}
+
+	@Override
+	public void getAuth(AsyncCallback<Autenticacao> asyncCallback) {
+		async.getAuth(asyncCallback);
 	}
 
 	// Gets e Seteres

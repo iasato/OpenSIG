@@ -31,6 +31,13 @@ import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
  */
 public class ExportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> implements ExportacaoService<E> {
 
+	public ExportacaoServiceImpl(){
+	}
+	
+	public ExportacaoServiceImpl(Autenticacao auth){
+		super(auth);
+	}
+	
 	@Override
 	public String exportar(SisExpImp modo, ExpListagem<E> expLista) throws ExportacaoException {
 		return exportar(modo, null, expLista, expLista.getNome());
@@ -81,8 +88,6 @@ public class ExportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> i
 	 *            um objeto de exportacao de registro.
 	 * @param expLista
 	 *            um objeto de expotaco de listagem.
-	 * @param modo
-	 *            o modo de exportacao selecionado.
 	 * @param nome
 	 *            o nome do arquivo.
 	 * @return o id para ser usado no download.

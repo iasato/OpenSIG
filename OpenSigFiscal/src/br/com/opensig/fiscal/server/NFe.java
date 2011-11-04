@@ -6,13 +6,10 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
@@ -56,11 +53,11 @@ public class NFe {
 		try {
 			// monta o arquivo
 			String cnpj = auth.getEmpresa()[5].replaceAll("\\D", "");
-			String pfx = auth.getConf().get("sistema.empresas") + cnpj + "/certificado.pfx";
+			String pfx = UtilServer.PATH_EMPRESA + cnpj + "/certificado.pfx";
 			// faz a busca pela senha
 			EmpEmpresa empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
 			FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
-			FiscalServiceImpl<FisCertificado> service = new FiscalServiceImpl<FisCertificado>();
+			FiscalServiceImpl<FisCertificado> service = new FiscalServiceImpl<FisCertificado>(auth);
 			FisCertificado cert = new FisCertificado();
 			cert = service.selecionar(cert, fo, false);
 

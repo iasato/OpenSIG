@@ -95,7 +95,7 @@ public class ListagemRetorno extends AListagem<FinRetorno> {
 						ExportacaoProxy proxy = new ExportacaoProxy();
 						proxy.exportar(arquivo, OpenSigCore.i18n.txtArquivo() + "_" + result.getFinRetornoId() + ".ret", new AsyncCallback<String>() {
 							public void onSuccess(String result) {
-								UtilClient.exportar("CoreService?id=" + result);
+								UtilClient.exportar("ExportacaoService?id=" + result);
 							}
 
 							public void onFailure(Throwable caught) {

@@ -84,8 +84,8 @@ public class Sefaz {
 	/**
 	 * Metodo que retorna um objeto Sefaz com dados da empresa passada.
 	 * 
-	 * @param auth
-	 *            a autenticacao do usuario.
+	 * @param empresa
+	 *            o id da empresa logada.
 	 * @return um objeto Sefaz desta empresa.
 	 * @throws FiscalException
 	 *             caso ocorra uma excecao.
@@ -94,14 +94,14 @@ public class Sefaz {
 		try {
 			// faz a busca pela senha
 			FiltroNumero fn = new FiltroNumero("empEmpresa.empEmpresaId", ECompara.IGUAL, auth.getEmpresa()[0]);
-			FiscalServiceImpl<FisCertificado> service = new FiscalServiceImpl<FisCertificado>();
+			FiscalServiceImpl<FisCertificado> service = new FiscalServiceImpl<FisCertificado>(auth);
 			FisCertificado cert = new FisCertificado();
 			cert = service.selecionar(cert, fn, false);
 			
 			// monta o arquivo
 			String cnpj = UtilServer.normaliza(cert.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento1());
 			cnpj = cnpj.replaceAll("\\D", "");
-			String pfx = auth.getConf().get("sistema.empresas") + cnpj + "/certificado.pfx";
+			String pfx = UtilServer.PATH_EMPRESA + cnpj + "/certificado.pfx";
 			
 			// descriptografa a senha
 			BasicTextEncryptor seguranca = new BasicTextEncryptor();
@@ -113,7 +113,7 @@ public class Sefaz {
 			Object[] chaves = NFe.lerCertificado(pfx, senha, fac);
 			PrivateKey pk = (PrivateKey) chaves[0];
 			X509Certificate x509 = (X509Certificate) chaves[2];
-			String cacerts = auth.getConf().get("sistema.empresas") + "NFeCacerts";
+			String cacerts = UtilServer.PATH_EMPRESA + "NFeCacerts";
 			SocketFactoryDinamico sfd = new SocketFactoryDinamico(x509, pk, cacerts);
 			
 			// ativando o protocolo

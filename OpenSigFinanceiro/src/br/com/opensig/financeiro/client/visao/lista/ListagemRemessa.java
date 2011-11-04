@@ -89,7 +89,7 @@ public class ListagemRemessa extends AListagem<FinRemessa> {
 						ExportacaoProxy proxy = new ExportacaoProxy();
 						proxy.exportar(arquivo, OpenSigCore.i18n.txtArquivo() + "_" + result.getFinRemessaId() + ".rem", new AsyncCallback<String>() {
 							public void onSuccess(String result) {
-								UtilClient.exportar("CoreService?id=" + result);
+								UtilClient.exportar("ExportacaoService?id=" + result);
 							}
 
 							public void onFailure(Throwable caught) {

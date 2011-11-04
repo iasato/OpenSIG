@@ -4,6 +4,7 @@ import java.util.List;
 
 import br.com.opensig.comercial.shared.modelo.ComCompraProduto;
 import br.com.opensig.core.client.OpenSigCore;
+import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.servico.CoreProxy;
@@ -53,13 +54,13 @@ public class ListagemCompraProdutos extends AListagemEditor<ComCompraProduto> {
 
 	public void inicializar() {
 		// campos
-		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comCompraProdutoId"), new IntegerFieldDef("comCompra.comCompraId"), new IntegerFieldDef("empEmpresaId"), new StringFieldDef("empEmpresa"), new StringFieldDef("empFornecedor"),
-				new IntegerFieldDef("prodProdutoId"), new IntegerFieldDef("prodProduto.prodProdutoBarra"), new StringFieldDef("prodProduto.prodProdutoDescricao"),
-				new StringFieldDef("prodProduto.prodProdutoReferencia"), new FloatFieldDef("prodTributacaoDentro"), new StringFieldDef("prodTributacaoCst"),
-				new DateFieldDef("comCompra.comCompraRecebimento"), new FloatFieldDef("comCompraProdutoQuantidade"), new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"),
-				new StringFieldDef("prodEmbalagem.prodEmbalagemNome"), new FloatFieldDef("comCompraProdutoValor"), new FloatFieldDef("comCompraProdutoTotal"),
-				new IntegerFieldDef("comCompraProdutoCfop"), new FloatFieldDef("comCompraProdutoIcms"), new FloatFieldDef("comCompraProdutoIpi"), new FloatFieldDef("comCompraProdutoPreco"),
-				new BooleanFieldDef("prodProduto.prodProdutoIncentivo"), new IntegerFieldDef("comCompraProdutoOrdem") };
+		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comCompraProdutoId"), new IntegerFieldDef("comCompra.comCompraId"), new IntegerFieldDef("empEmpresaId"),
+				new StringFieldDef("empEmpresa"), new StringFieldDef("empFornecedor"), new IntegerFieldDef("prodProdutoId"), new IntegerFieldDef("prodProduto.prodProdutoBarra"),
+				new StringFieldDef("prodProduto.prodProdutoDescricao"), new StringFieldDef("prodProduto.prodProdutoReferencia"), new FloatFieldDef("prodTributacaoDentro"),
+				new StringFieldDef("prodTributacaoCst"), new DateFieldDef("comCompra.comCompraRecebimento"), new FloatFieldDef("comCompraProdutoQuantidade"),
+				new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"), new FloatFieldDef("comCompraProdutoValor"),
+				new FloatFieldDef("comCompraProdutoTotal"), new IntegerFieldDef("comCompraProdutoCfop"), new FloatFieldDef("comCompraProdutoIcms"), new FloatFieldDef("comCompraProdutoIpi"),
+				new FloatFieldDef("comCompraProdutoPreco"), new BooleanFieldDef("prodProduto.prodProdutoIncentivo"), new IntegerFieldDef("comCompraProdutoOrdem") };
 		campos = new RecordDef(fd);
 
 		FieldDef[] fdEmbalagem = new FieldDef[] { new IntegerFieldDef("prodEmbalagemId"), new StringFieldDef("prodEmbalagemNome"), new IntegerFieldDef("prodEmbalagemUnidade"),
@@ -113,11 +114,11 @@ public class ListagemCompraProdutos extends AListagemEditor<ComCompraProduto> {
 		ColumnConfig ccId = new ColumnConfig("", "comCompraProdutoId", 10, true);
 		ccId.setHidden(true);
 		ccId.setFixed(true);
-		
+
 		ColumnConfig ccCompraId = new ColumnConfig("", "empCompraId", 10, true);
 		ccCompraId.setHidden(true);
 		ccCompraId.setFixed(true);
-		
+
 		ColumnConfig ccEmpresaId = new ColumnConfig("", "empEmpresaId", 10, true);
 		ccEmpresaId.setHidden(true);
 		ccEmpresaId.setFixed(true);
@@ -158,9 +159,7 @@ public class ListagemCompraProdutos extends AListagemEditor<ComCompraProduto> {
 		ColumnConfig ccEmbalagemId = new ColumnConfig(OpenSigCore.i18n.txtEmbalagem(), "prodEmbalagem.prodEmbalagemId", 75, true, new Renderer() {
 			public String render(Object value, CellMetadata cellMetadata, Record record, int rowIndex, int colNum, Store store) {
 				if (value != null) {
-					storeEmbalagem.filter("prodEmbalagemId", value.toString());
-					Record reg = storeEmbalagem.getAt(0);
-					storeEmbalagem.clearFilter();
+					Record reg = UtilClient.getRegistro(storeEmbalagem, "prodEmbalagemId", value.toString());
 					return reg.getAsString("prodEmbalagemNome");
 				} else {
 					return "";
@@ -192,13 +191,13 @@ public class ListagemCompraProdutos extends AListagemEditor<ComCompraProduto> {
 
 		ColumnConfig ccOrdem = new ColumnConfig(OpenSigCore.i18n.txtOrdem(), "comCompraProdutoOrdem", 100, true);
 		ccOrdem.setHidden(true);
-		
+
 		// sumarios
 		ColumnConfig ccTotal = new ColumnConfig(OpenSigCore.i18n.txtTotal(), "comCompraProdutoTotal", 75, true, IListagem.DINHEIRO);
 		SummaryColumnConfig sumTotal = new SummaryColumnConfig(SummaryColumnConfig.SUM, ccTotal, IListagem.DINHEIRO);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccCompraId, ccEmpresaId, ccEmpresa, ccFornecedor, ccProdId, ccBarra, ccProduto, ccReferencia, ccTributacao, ccTributacaoCst, ccRecebimento,
-				ccQuantidade, ccEmbalagemId, ccEmbalagem, ccValor, sumTotal, ccCfop, ccIcms, ccIpi, ccPreco, ccIncentivo, ccOrdem };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccCompraId, ccEmpresaId, ccEmpresa, ccFornecedor, ccProdId, ccBarra, ccProduto, ccReferencia, ccTributacao, ccTributacaoCst,
+				ccRecebimento, ccQuantidade, ccEmbalagemId, ccEmbalagem, ccValor, sumTotal, ccCfop, ccIcms, ccIpi, ccPreco, ccIncentivo, ccOrdem };
 		modelos = new ColumnModel(bcc);
 
 		filtroPadrao = new FiltroNumero("comCompraProdutoId", ECompara.IGUAL, 0);

@@ -60,15 +60,20 @@ public class UtilClient {
 	 * @return o registro encontrado após o filtro usado.
 	 */
 	public static Record getRegistro(Store store, String campoFiltro, String valorFiltro) {
+		Record ret = null;
 		try {
-			store.clearFilter();
-			store.filter(campoFiltro, valorFiltro);
-			return store.getAt(0);
+			for (Record rec : store.getRecords()) {
+				String valor = rec.getAsString(campoFiltro).trim();
+				valor = valor.replaceAll("\\s", "");
+				if (valor.equals(valorFiltro)) {
+					ret = rec;
+					break;
+				}
+			}
 		} catch (Exception ex) {
-			return null;
-		} finally {
-			store.clearFilter();
+			ret = null;
 		}
+		return ret;
 	}
 
 	/**
@@ -119,8 +124,7 @@ public class UtilClient {
 	}
 
 	/**
-	 * Metodo que verifica se a ação solicitada está entre as permitidas do
-	 * função.
+	 * Metodo que verifica se a ação solicitada está entre as permitidas do função.
 	 * 
 	 * @param funcao
 	 *            objeto de função a ser verificado a permissão.
@@ -144,8 +148,7 @@ public class UtilClient {
 	}
 
 	/**
-	 * Metodoque verifica se a função solicitada está entre as permitidas do
-	 * usuário.
+	 * Metodoque verifica se a função solicitada está entre as permitidas do usuário.
 	 * 
 	 * @param funcao
 	 *            classe de comando que executa a funcao.
@@ -156,8 +159,7 @@ public class UtilClient {
 	}
 
 	/**
-	 * Metodoque verifica se a função solicitada está entre as permitidas do
-	 * usuário.
+	 * Metodoque verifica se a função solicitada está entre as permitidas do usuário.
 	 * 
 	 * @param funcao
 	 *            o nome da classe de comando que executa a funcao.
@@ -191,11 +193,9 @@ public class UtilClient {
 	 * @param valor
 	 *            o valor a ser formatado
 	 * @param inteiros
-	 *            o minimo de inteiros, que serao completados com ZEROS se
-	 *            preciso
+	 *            o minimo de inteiros, que serao completados com ZEROS se preciso
 	 * @param decimal
-	 *            o minimo de decimais, que serao completados com ZEROS se
-	 *            preciso
+	 *            o minimo de decimais, que serao completados com ZEROS se preciso
 	 * @param grupo
 	 *            se sera colocado separador de grupo de milhar
 	 * @return uma String com o numero formatado
@@ -280,8 +280,7 @@ public class UtilClient {
 	 * 
 	 * @param grid
 	 *            o grid a ser utilizado.
-	 * @return 0 se nao tem ninguem selecionado ou um numero maior que 0 quando
-	 *         selecionado
+	 * @return 0 se nao tem ninguem selecionado ou um numero maior que 0 quando selecionado
 	 */
 	public static int getSelecionado(GridPanel grid) {
 		if (grid.getSelectionModel().hasSelection() && !grid.getSelectionModel().getSelected().isEmpty(grid.getSelectionModel().getSelected().getFields()[0])) {
@@ -293,8 +292,7 @@ public class UtilClient {
 	}
 
 	/**
-	 * Metodo que percorre os comando ate achar o ultimo para adicionar ao final
-	 * da fila
+	 * Metodo que percorre os comando ate achar o ultimo para adicionar ao final da fila
 	 * 
 	 * @param comando
 	 *            o IComando que será executado.
@@ -317,8 +315,7 @@ public class UtilClient {
 	 * @param tag
 	 *            nome da tag que deseja recuperar o valor.
 	 * @param excecao
-	 *            se passado true dispara a exception se ocorrer erro, se false
-	 *            retorna null
+	 *            se passado true dispara a exception se ocorrer erro, se false retorna null
 	 * @return valor da tag encontrada ou NULL se nao achada.
 	 * @exception NullPointerException
 	 *                exceção disparada em caso de erro.

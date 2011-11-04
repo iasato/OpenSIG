@@ -26,7 +26,7 @@ public class ComandoGraficoImagem<E extends Dados> extends AComando<E> {
 		ExportacaoProxy proxy = new ExportacaoProxy();
 		proxy.exportar(imagem, "grafico.png", new AsyncCallback<String>() {
 			public void onSuccess(String result) {
-				UtilClient.exportar("CoreService?id=" + result);
+				UtilClient.exportar("ExportacaoService?id=" + result);
 			}
 
 			public void onFailure(Throwable caught) {

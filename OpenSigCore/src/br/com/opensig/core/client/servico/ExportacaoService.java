@@ -20,7 +20,7 @@ public interface ExportacaoService<E extends Dados> extends CoreService<E> {
 	 *            as configuracoes da exportacao.
 	 * @param expLista
 	 *            os detalhes visuais da exportacao.
-	 * @return
+	 * @return O identificador para realizar o download.
 	 * @throws ExportacaoException
 	 *             ocorre caso tenha erro na geracao do arquivo.
 	 */
@@ -33,7 +33,7 @@ public interface ExportacaoService<E extends Dados> extends CoreService<E> {
 	 *            as configuracoes da exportacao.
 	 * @param expRegistro
 	 *            os detalhes visuais da exportacao.
-	 * @return
+	 * @return O identificador para realizar o download.
 	 * @throws ExportacaoException
 	 *             ocorre caso tenha erro na geracao do arquivo.
 	 */
@@ -45,6 +45,7 @@ public interface ExportacaoService<E extends Dados> extends CoreService<E> {
 	 *            o conteudo do arquivo a ser gerado.
 	 * @param nome
 	 *            o nome do arquivo a ser gerado.
+	 * @return O identificador para realizar o download.
 	 * @throws ExportacaoException
 	 *             ocorre caso tenha erro na geracao do arquivo.
 	 */

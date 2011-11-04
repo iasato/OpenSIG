@@ -199,6 +199,33 @@ LOCK TABLES `prod_produto` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `com_ecf_z_totais`
+--
+
+DROP TABLE IF EXISTS `com_ecf_z_totais`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `com_ecf_z_totais` (
+  `com_ecf_z_totais_id` int(11) NOT NULL AUTO_INCREMENT,
+  `com_ecf_z_id` int(11) NOT NULL,
+  `com_ecf_z_totais_codigo` varchar(7) NOT NULL,
+  `com_ecf_z_totais_valor` decimal(13,2) NOT NULL,
+  PRIMARY KEY (`com_ecf_z_totais_id`),
+  KEY `FK_com_ecf_z_totais_1` (`com_ecf_z_id`) USING BTREE,
+  CONSTRAINT `FK_com_ecf_z_totais_1` FOREIGN KEY (`com_ecf_z_id`) REFERENCES `com_ecf_z` (`com_ecf_z_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `com_ecf_z_totais`
+--
+
+LOCK TABLES `com_ecf_z_totais` WRITE;
+/*!40000 ALTER TABLE `com_ecf_z_totais` DISABLE KEYS */;
+/*!40000 ALTER TABLE `com_ecf_z_totais` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `fin_receber`
 --
 
@@ -305,7 +332,7 @@ CREATE TABLE `fis_nota_status` (
   `fis_nota_status_descricao` varchar(20) NOT NULL,
   PRIMARY KEY (`fis_nota_status_id`),
   UNIQUE KEY `UNIQUE` (`fis_nota_status_descricao`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -405,7 +432,7 @@ CREATE TABLE `fin_categoria` (
   `fin_categoria_descricao` varchar(20) NOT NULL,
   PRIMARY KEY (`fin_categoria_id`),
   UNIQUE KEY `UNIQUE` (`fin_categoria_descricao`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -528,7 +555,7 @@ CREATE TABLE `sis_funcao` (
   KEY `SEARCH_2` (`sis_funcao_ativo`) USING BTREE,
   KEY `FK_sis_funcao_1` (`sis_modulo_id`) USING BTREE,
   CONSTRAINT `FK_sis_funcao_1` FOREIGN KEY (`sis_modulo_id`) REFERENCES `sis_modulo` (`sis_modulo_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=75 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -537,7 +564,7 @@ CREATE TABLE `sis_funcao` (
 
 LOCK TABLES `sis_funcao` WRITE;
 /*!40000 ALTER TABLE `sis_funcao` DISABLE KEYS */;
-INSERT INTO `sis_funcao` VALUES (0,0,'',0,0,1),(1,1,'br.com.opensig.permissao.client.controlador.comando.ComandoUsuario',1,0,1),(2,1,'br.com.opensig.permissao.client.controlador.comando.ComandoGrupo',2,0,1),(3,1,'br.com.opensig.permissao.client.controlador.comando.ComandoAcesso',3,0,1),(4,3,'br.com.opensig.empresa.client.controlador.comando.ComandoMunicipio',12,0,1),(5,3,'br.com.opensig.empresa.client.controlador.comando.ComandoEstado',11,0,1),(6,3,'br.com.opensig.empresa.client.controlador.comando.ComandoPais',10,0,1),(7,3,'br.com.opensig.empresa.client.controlador.comando.ComandoEnderecoTipo',8,0,1),(8,3,'br.com.opensig.empresa.client.controlador.comando.ComandoContatoTipo',7,0,1),(9,3,'br.com.opensig.empresa.client.controlador.comando.ComandoFornecedor',4,0,1),(10,3,'br.com.opensig.empresa.client.controlador.comando.ComandoCliente',3,0,1),(11,3,'Separador',6,0,1),(12,4,'br.com.opensig.produto.client.controlador.comando.ComandoProduto',1,0,1),(13,4,'br.com.opensig.produto.client.controlador.comando.ComandoTributacao',2,0,1),(14,4,'br.com.opensig.produto.client.controlador.comando.ComandoPesquisa',4,0,1),(15,4,'Separador',5,0,1),(17,4,'br.com.opensig.produto.client.controlador.comando.ComandoEmbalagem',7,0,1),(18,3,'br.com.opensig.empresa.client.controlador.comando.ComandoEmpresa',1,0,1),(19,3,'br.com.opensig.empresa.client.controlador.comando.ComandoFuncionario',2,0,1),(20,5,'br.com.opensig.comercial.client.controlador.comando.ComandoCompra',1,1,1),(21,5,'br.com.opensig.comercial.client.controlador.comando.ComandoVenda',2,1,1),(23,5,'br.com.opensig.comercial.client.controlador.comando.ComandoValorProduto',6,0,1),(24,3,'br.com.opensig.empresa.client.controlador.comando.ComandoTransportadora',5,0,1),(25,5,'br.com.opensig.comercial.client.controlador.comando.ComandoFrete',4,0,1),(27,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoReceber',1,1,1),(28,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoPagar',2,1,1),(30,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoPagamento',2,2,1),(33,7,'Separador',7,0,1),(34,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoBanco',8,0,1),(35,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoConta',9,0,1),(36,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoBandeira',10,0,1),(37,5,'br.com.opensig.comercial.client.controlador.comando.ComandoCompraProduto',1,2,1),(38,5,'br.com.opensig.comercial.client.controlador.comando.ComandoVendaProduto',2,2,1),(40,3,'Separador',9,0,1),(46,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoRecebimento',1,2,1),(49,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoSaida',1,0,1),(50,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoEntrada',2,0,1),(55,6,'Separador',5,0,1),(56,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoIncentivo',4,0,1),(60,1,'br.com.opensig.permissao.client.controlador.comando.ComandoConfiguracao',4,0,1),(61,7,'Separador',3,0,1),(62,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoRemessa',4,0,1),(63,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoRetorno',5,0,1),(64,5,'br.com.opensig.comercial.client.controlador.comando.ComandoNatureza',7,0,1),(65,5,'Separador',4,0,1),(66,5,'br.com.opensig.comercial.client.controlador.comando.ComandoEcfZ',3,2,1),(67,5,'br.com.opensig.comercial.client.controlador.comando.ComandoEcfVenda',3,3,1),(68,5,'br.com.opensig.comercial.client.controlador.comando.ComandoEcfVendaProduto',3,4,1),(69,5,'br.com.opensig.comercial.client.controlador.comando.ComandoEcf',3,1,1),(70,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoCertificado',3,0,1),(71,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoSefaz',6,1,1),(72,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoStatus',6,2,1),(73,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoSituacao',6,3,1),(74,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoCadastro',6,4,1);
+INSERT INTO `sis_funcao` VALUES (0,0,'',0,0,1),(1,1,'br.com.opensig.permissao.client.controlador.comando.ComandoUsuario',1,0,1),(2,1,'br.com.opensig.permissao.client.controlador.comando.ComandoGrupo',2,0,1),(3,1,'br.com.opensig.permissao.client.controlador.comando.ComandoAcesso',3,0,1),(4,3,'br.com.opensig.empresa.client.controlador.comando.ComandoMunicipio',12,0,1),(5,3,'br.com.opensig.empresa.client.controlador.comando.ComandoEstado',11,0,1),(6,3,'br.com.opensig.empresa.client.controlador.comando.ComandoPais',10,0,1),(7,3,'br.com.opensig.empresa.client.controlador.comando.ComandoEnderecoTipo',8,0,1),(8,3,'br.com.opensig.empresa.client.controlador.comando.ComandoContatoTipo',7,0,1),(9,3,'br.com.opensig.empresa.client.controlador.comando.ComandoFornecedor',4,0,1),(10,3,'br.com.opensig.empresa.client.controlador.comando.ComandoCliente',3,0,1),(11,3,'Separador',6,0,1),(12,4,'br.com.opensig.produto.client.controlador.comando.ComandoProduto',1,0,1),(13,4,'br.com.opensig.produto.client.controlador.comando.ComandoTributacao',2,0,1),(14,4,'br.com.opensig.produto.client.controlador.comando.ComandoPesquisa',4,0,1),(15,4,'Separador',5,0,1),(17,4,'br.com.opensig.produto.client.controlador.comando.ComandoEmbalagem',7,0,1),(18,3,'br.com.opensig.empresa.client.controlador.comando.ComandoEmpresa',1,0,1),(19,3,'br.com.opensig.empresa.client.controlador.comando.ComandoFuncionario',2,0,1),(20,5,'br.com.opensig.comercial.client.controlador.comando.ComandoCompra',1,1,1),(21,5,'br.com.opensig.comercial.client.controlador.comando.ComandoVenda',2,1,1),(23,5,'br.com.opensig.comercial.client.controlador.comando.ComandoValorProduto',6,0,1),(24,3,'br.com.opensig.empresa.client.controlador.comando.ComandoTransportadora',5,0,1),(25,5,'br.com.opensig.comercial.client.controlador.comando.ComandoFrete',4,0,1),(27,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoReceber',1,1,1),(28,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoPagar',2,1,1),(30,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoPagamento',2,2,1),(33,7,'Separador',7,0,1),(34,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoBanco',8,0,1),(35,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoConta',9,0,1),(36,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoBandeira',10,0,1),(37,5,'br.com.opensig.comercial.client.controlador.comando.ComandoCompraProduto',1,2,1),(38,5,'br.com.opensig.comercial.client.controlador.comando.ComandoVendaProduto',2,2,1),(40,3,'Separador',9,0,1),(46,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoRecebimento',1,2,1),(49,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoSaida',1,0,1),(50,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoEntrada',2,0,1),(55,6,'Separador',5,0,1),(56,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoIncentivo',4,0,1),(60,2,'br.com.opensig.permissao.client.controlador.comando.ComandoConfiguracao',1,0,1),(61,7,'Separador',3,0,1),(62,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoRemessa',4,0,1),(63,7,'br.com.opensig.financeiro.client.controlador.comando.ComandoRetorno',5,0,1),(64,5,'br.com.opensig.comercial.client.controlador.comando.ComandoNatureza',7,0,1),(65,5,'Separador',4,0,1),(66,5,'br.com.opensig.comercial.client.controlador.comando.ComandoEcfZ',3,2,1),(67,5,'br.com.opensig.comercial.client.controlador.comando.ComandoEcfVenda',3,3,1),(68,5,'br.com.opensig.comercial.client.controlador.comando.ComandoEcfVendaProduto',3,4,1),(69,5,'br.com.opensig.comercial.client.controlador.comando.ComandoEcf',3,1,1),(70,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoCertificado',3,0,1),(71,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoSefaz',6,1,1),(72,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoStatus',6,2,1),(73,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoSituacao',6,3,1),(74,6,'br.com.opensig.fiscal.client.controlador.comando.ComandoCadastro',6,4,1),(75,2,'br.com.opensig.core.client.controlador.comando.ComandoExpImp',1,0,1);
 /*!40000 ALTER TABLE `sis_funcao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -643,24 +670,29 @@ DROP TABLE IF EXISTS `com_ecf_venda`;
 CREATE TABLE `com_ecf_venda` (
   `com_ecf_venda_id` int(11) NOT NULL AUTO_INCREMENT,
   `com_ecf_id` int(11) NOT NULL,
+  `sis_usuario_id` int(11) NOT NULL,
   `emp_cliente_id` int(11) NOT NULL,
-  `fin_receber_id` int(11) NOT NULL,
+  `fin_receber_id` int(11) DEFAULT NULL,
   `com_ecf_venda_coo` int(6) NOT NULL,
-  `com_ecf_venda_data` datetime NOT NULL,
+  `com_ecf_venda_data` date NOT NULL,
   `com_ecf_venda_bruto` decimal(10,2) NOT NULL,
   `com_ecf_venda_desconto` decimal(10,2) NOT NULL,
   `com_ecf_venda_liquido` decimal(10,2) NOT NULL,
+  `com_ecf_venda_fechada` tinyint(1) NOT NULL,
   `com_ecf_venda_cancelada` tinyint(1) NOT NULL,
   `com_ecf_venda_observacao` varchar(255) NOT NULL,
   PRIMARY KEY (`com_ecf_venda_id`),
+  UNIQUE KEY `UNIQUE` (`com_ecf_id`,`com_ecf_venda_coo`) USING BTREE,
   KEY `SEARCH_1` (`com_ecf_venda_cancelada`) USING BTREE,
   KEY `SEARCH_2` (`com_ecf_venda_data`) USING BTREE,
   KEY `FK_com_ecf_venda_2` (`emp_cliente_id`) USING BTREE,
   KEY `FK_com_ecf_venda_3` (`fin_receber_id`) USING BTREE,
   KEY `FK_com_ecf_venda_1` (`com_ecf_id`) USING BTREE,
+  KEY `FK_com_ecf_venda_4` (`sis_usuario_id`) USING BTREE,
   CONSTRAINT `FK_com_ecf_venda_1` FOREIGN KEY (`com_ecf_id`) REFERENCES `com_ecf` (`com_ecf_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `FK_com_ecf_venda_2` FOREIGN KEY (`emp_cliente_id`) REFERENCES `emp_cliente` (`emp_cliente_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK_com_ecf_venda_3` FOREIGN KEY (`fin_receber_id`) REFERENCES `fin_receber` (`fin_receber_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK_com_ecf_venda_3` FOREIGN KEY (`fin_receber_id`) REFERENCES `fin_receber` (`fin_receber_id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_com_ecf_venda_4` FOREIGN KEY (`sis_usuario_id`) REFERENCES `sis_usuario` (`sis_usuario_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -763,7 +795,7 @@ CREATE TABLE `sis_modulo` (
 
 LOCK TABLES `sis_modulo` WRITE;
 /*!40000 ALTER TABLE `sis_modulo` DISABLE KEYS */;
-INSERT INTO `sis_modulo` VALUES (0,'',0,1),(1,'br.com.opensig.permissao.client.OpenSigPermissao',99,1),(3,'br.com.opensig.empresa.client.OpenSigEmpresa',1,1),(4,'br.com.opensig.produto.client.OpenSigProduto',2,1),(5,'br.com.opensig.comercial.client.OpenSigComercial',3,1),(6,'br.com.opensig.fiscal.client.OpenSigFiscal',4,1),(7,'br.com.opensig.financeiro.client.OpenSigFinanceiro',5,1);
+INSERT INTO `sis_modulo` VALUES (0,'',0,1),(1,'br.com.opensig.permissao.client.OpenSigPermissao',99,1),(2,'br.com.opensig.core.client.OpenSigCore',100,1),(3,'br.com.opensig.empresa.client.OpenSigEmpresa',1,1),(4,'br.com.opensig.produto.client.OpenSigProduto',2,1),(5,'br.com.opensig.comercial.client.OpenSigComercial',3,1),(6,'br.com.opensig.fiscal.client.OpenSigFiscal',4,1),(7,'br.com.opensig.financeiro.client.OpenSigFinanceiro',5,1);
 /*!40000 ALTER TABLE `sis_modulo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -782,6 +814,7 @@ CREATE TABLE `com_ecf` (
   `com_ecf_serie` varchar(20) NOT NULL,
   `com_ecf_caixa` int(3) NOT NULL,
   PRIMARY KEY (`com_ecf_id`),
+  UNIQUE KEY `UNIQUE` (`com_ecf_serie`) USING BTREE,
   KEY `FK_com_ecf_1` (`emp_empresa_id`) USING BTREE,
   CONSTRAINT `FK_com_ecf_1` FOREIGN KEY (`emp_empresa_id`) REFERENCES `emp_empresa` (`emp_empresa_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -914,10 +947,14 @@ DROP TABLE IF EXISTS `com_ecf_venda_produto`;
 CREATE TABLE `com_ecf_venda_produto` (
   `com_ecf_venda_produto_id` int(11) NOT NULL AUTO_INCREMENT,
   `com_ecf_venda_id` int(11) NOT NULL,
-  `prod_produto_id` int(11) NOT NULL,
+  `prod_produto_id` int(11) DEFAULT NULL,
   `prod_embalagem_id` int(11) NOT NULL,
+  `com_ecf_venda_produto_codigo` varchar(14) NOT NULL,
+  `com_ecf_venda_produto_descricao` varchar(100) NOT NULL,
   `com_ecf_venda_produto_quantidade` decimal(10,4) NOT NULL,
-  `com_ecf_venda_produto_valor` decimal(10,2) NOT NULL,
+  `com_ecf_venda_produto_bruto` decimal(10,2) NOT NULL,
+  `com_ecf_venda_produto_desconto` decimal(10,2) NOT NULL,
+  `com_ecf_venda_produto_liquido` decimal(10,2) NOT NULL,
   `com_ecf_venda_produto_total` decimal(10,2) NOT NULL,
   `com_ecf_venda_produto_cancelado` tinyint(1) NOT NULL,
   `com_ecf_venda_produto_ordem` int(11) NOT NULL,
@@ -996,7 +1033,7 @@ CREATE TABLE `sis_acao` (
   KEY `FK_sis_acao_3` (`sis_acao_ativo`) USING BTREE,
   KEY `FK_sis_acao_1` (`sis_funcao_id`) USING BTREE,
   CONSTRAINT `FK_sis_acao_1` FOREIGN KEY (`sis_funcao_id`) REFERENCES `sis_funcao` (`sis_funcao_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=80 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1005,7 +1042,7 @@ CREATE TABLE `sis_acao` (
 
 LOCK TABLES `sis_acao` WRITE;
 /*!40000 ALTER TABLE `sis_acao` DISABLE KEYS */;
-INSERT INTO `sis_acao` VALUES (0,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoVisualizar',0,0,1,0),(1,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoNovo',1,1,1,1),(2,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoEditar',2,1,1,1),(3,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoExcluir',3,1,1,1),(4,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoNovoDuplicar',1,2,1,1),(5,0,'Separador',5,0,1,1),(6,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoImprimir',6,0,1,1),(7,0,'br.com.opensig.core.client.controlador.comando.exportar.ComandoExportar',7,1,1,1),(8,0,'br.com.opensig.core.client.controlador.comando.importar.ComandoImportar',8,1,1,1),(9,0,'Separador',9,0,1,1),(10,0,'br.com.opensig.permissao.client.controlador.comando.ComandoFavoritoImpl',10,0,1,1),(11,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteUsuario',11,0,1,0),(12,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteEmpresa',12,0,1,0),(13,21,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoReceber',12,0,1,1),(14,20,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoPagar',12,0,1,1),(15,25,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoPagarFrete',12,0,1,1),(20,0,'br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarPdf',7,2,1,1),(21,0,'br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarXls',7,3,1,1),(23,0,'br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarCsv',7,4,1,1),(24,0,'br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarXml',7,5,1,1),(25,0,'br.com.opensig.core.client.controlador.comando.exportar.ComandoExportarHtml',7,6,1,1),(27,0,'br.com.opensig.core.client.controlador.comando.importar.ComandoImportarXls',8,2,1,1),(28,0,'br.com.opensig.core.client.controlador.comando.importar.ComandoImportarCsv',8,3,1,1),(29,0,'br.com.opensig.core.client.controlador.comando.importar.ComandoImportarXml',8,4,1,1),(31,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoGerar',13,1,1,1),(32,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoGerarImprimir',13,2,1,1),(33,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoGerarPdf',13,3,1,1),(34,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoGerarHtml',13,4,1,1),(35,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoRecibo',14,1,1,1),(36,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoReciboImprimir',14,2,1,1),(37,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoReciboPdf',14,3,1,1),(38,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoReciboHtml',14,4,1,1),(42,30,'br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoQuitarPagamento',11,0,1,1),(47,21,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharVenda',11,0,1,1),(48,20,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharCompra',11,0,1,1),(49,25,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharFrete',11,0,1,1),(50,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoExcluirFiltrados',3,2,1,1),(51,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoEditarFiltrados',2,2,1,1),(52,30,'br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoEstornarPagamento',12,0,1,1),(55,46,'br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoQuitarRecebimento',11,0,1,1),(58,46,'br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoEstornarRecebimento',12,0,1,1),(61,21,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoGerarNfe',13,0,1,1),(62,20,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoRecuperarCompra',8,5,1,1),(73,49,'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoRecuperarSaida',2,0,1,1),(74,50,'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoRecuperarEntrada',2,0,1,1),(75,1,'br.com.opensig.permissao.client.controlador.comando.ComandoPermiteWS',15,0,1,0),(76,49,'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoBackupSaida',15,0,1,1),(77,50,'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoBackupEntrada',15,0,1,1),(78,49,'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoInutilizar',4,0,1,1),(79,50,'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoValidar',1,0,1,1);
+INSERT INTO `sis_acao` VALUES (0,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoVisualizar',0,0,1,0),(1,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoNovo',1,1,1,1),(2,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoEditar',2,1,1,1),(3,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoExcluir',3,1,1,1),(4,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoNovoDuplicar',1,2,1,1),(5,0,'Separador',5,0,1,1),(6,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoImprimir',6,0,1,1),(7,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoExportar',7,0,1,1),(8,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoImportar',8,0,1,1),(9,0,'Separador',9,0,1,1),(10,0,'br.com.opensig.permissao.client.controlador.comando.ComandoFavoritoImpl',10,0,1,1),(11,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteUsuario',11,0,1,0),(12,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteEmpresa',12,0,1,0),(13,21,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoReceber',12,0,1,1),(14,20,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoPagar',12,0,1,1),(15,25,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoPagarFrete',12,0,1,1),(31,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoGerar',13,1,1,1),(32,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoGerarImprimir',13,2,1,1),(33,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoGerarPdf',13,3,1,1),(34,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoGerarHtml',13,4,1,1),(35,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoRecibo',14,1,1,1),(36,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoReciboImprimir',14,2,1,1),(37,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoReciboPdf',14,3,1,1),(38,46,'br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoReciboHtml',14,4,1,1),(42,30,'br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoQuitarPagamento',11,0,1,1),(47,21,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharVenda',11,0,1,1),(48,20,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharCompra',11,0,1,1),(49,25,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharFrete',11,0,1,1),(50,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoExcluirFiltrados',3,2,1,1),(51,0,'br.com.opensig.core.client.controlador.comando.lista.ComandoEditarFiltrados',2,2,1,1),(52,30,'br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoEstornarPagamento',12,0,1,1),(55,46,'br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoQuitarRecebimento',11,0,1,1),(58,46,'br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoEstornarRecebimento',12,0,1,1),(61,21,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoGerarNfe',13,0,1,1),(75,1,'br.com.opensig.permissao.client.controlador.comando.ComandoPermiteWS',15,0,1,0),(76,49,'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoBackupSaida',15,0,1,1),(77,50,'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoBackupEntrada',15,0,1,1),(78,49,'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoInutilizar',1,0,1,1),(79,50,'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoValidar',1,0,1,1),(80,67,'br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharEcfVenda',11,0,1,1);
 /*!40000 ALTER TABLE `sis_acao` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1423,6 +1460,37 @@ LOCK TABLES `prod_preco` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `sis_exp_imp`
+--
+
+DROP TABLE IF EXISTS `sis_exp_imp`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `sis_exp_imp` (
+  `sis_exp_imp_id` int(11) NOT NULL AUTO_INCREMENT,
+  `sis_exp_imp_nome` varchar(10) NOT NULL,
+  `sis_exp_imp_extensoes` varchar(100) NOT NULL,
+  `sis_exp_imp_descricao` varchar(100) NOT NULL,
+  `sis_exp_imp_imagem` varchar(20) NOT NULL,
+  `sis_exp_imp_classe` varchar(255) NOT NULL,
+  `sis_exp_imp_funcao` varchar(255) NOT NULL,
+  `sis_exp_imp_tipo` varchar(1) NOT NULL,
+  `sis_exp_imp_modelo` text NOT NULL,
+  PRIMARY KEY (`sis_exp_imp_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `sis_exp_imp`
+--
+
+LOCK TABLES `sis_exp_imp` WRITE;
+/*!40000 ALTER TABLE `sis_exp_imp` DISABLE KEYS */;
+INSERT INTO `sis_exp_imp` VALUES (1,'NFe','xml','Importação da compra diretamente pelo NFe emitida.','nfe.png','br.com.opensig.comercial.server.acao.ImportarNfe','br.com.opensig.comercial.client.controlador.comando.ComandoCompra','I',''),(2,'NFe','xml zip','Importação da NFe emitidas em qualquer status.','xml.png','br.com.opensig.fiscal.server.acao.RecuperarSaida','br.com.opensig.fiscal.client.controlador.comando.ComandoSaida','I',''),(3,'NFe','xml zip','Importação da NFe recebidas em qualquer status.','xml.png','br.com.opensig.fiscal.server.acao.RecuperarEntrada','br.com.opensig.fiscal.client.controlador.comando.ComandoEntrada','I',''),(4,'CAT-52','','Importação do padrão cat52 que é utilizado pelas ECF','txt.png','br.com.opensig.comercial.server.acao.ImportarCat52','br.com.opensig.comercial.client.controlador.comando.ComandoEcfVenda','I','<beanio xmlns=\"http://www.beanio.org/2011/01\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd\">\n\n	<typeHandler name=\"TipoBooleano\" class=\"br.com.opensig.comercial.server.TipoBooleano\" />\n        <typeHandler name=\"TipoDouble\" class=\"br.com.opensig.comercial.server.TipoDouble\" />\n\n	<stream name=\"cat52\" format=\"fixedlength\">\n		<record name=\"ecf\" minOccurs=\"1\" maxOccurs=\"1\" class=\"br.com.opensig.comercial.shared.modelo.ComEcf\">\n			<field name=\"tipo\" rid=\"true\" literal=\"E01\" length=\"3\" ignore=\"true\" />\n			<field name=\"comEcfSerie\" length=\"20\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"f1\" length=\"28\" ignore=\"true\" />\n			<field name=\"comEcfModelo\" length=\"20\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"f4\" length=\"24\" ignore=\"true\" />\n			<field name=\"comEcfCaixa\" length=\"3\" type=\"int\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"f6\" length=\"68\" ignore=\"true\" />\n		</record>\n		<record name=\"z\" minOccurs=\"1\" maxOccurs=\"1\" class=\"br.com.opensig.comercial.shared.modelo.ComEcfZ\">\n			<field name=\"tipo\" rid=\"true\" literal=\"E02\" length=\"3\" ignore=\"true\" />\n			<field name=\"f1\" length=\"249\" ignore=\"true\" />\n			<field name=\"comEcfZTotal\" length=\"18\" type=\"double\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoDouble\" />\n			<field name=\"f2\" length=\"2\" ignore=\"true\" />\n		</record>\n		<record name=\"z2\" minOccurs=\"1\" maxOccurs=\"1\" class=\"br.com.opensig.comercial.shared.modelo.ComEcfZ\">\n			<field name=\"tipo\" rid=\"true\" literal=\"E12\" length=\"3\" ignore=\"true\" />\n			<field name=\"f1\" length=\"43\" ignore=\"true\" />\n			<field name=\"comEcfZCrz\" length=\"6\" type=\"int\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"comEcfZCoo\" length=\"6\" type=\"int\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"comEcfZCro\" length=\"6\" type=\"int\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"comEcfZData\" length=\"8\" type=\"datetime\" minOccurs=\"1\" maxOccurs=\"1\" format=\"yyyyMMdd\" />\n			<field name=\"f2\" length=\"14\" ignore=\"true\" />\n			<field name=\"comEcfZBruto\" length=\"14\" type=\"double\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoDouble\" />\n			<field name=\"f3\" length=\"1\" ignore=\"true\" />\n		</record>\n		<record name=\"zt\" minOccurs=\"0\" maxOccurs=\"unbounded\" class=\"br.com.opensig.comercial.shared.modelo.ComEcfZTotais\">\n			<field name=\"tipo\" rid=\"true\" literal=\"E13\" length=\"3\" ignore=\"true\" />\n			<field name=\"f1\" length=\"49\" ignore=\"true\" />\n			<field name=\"comEcfZTotaisCodigo\" length=\"7\" minOccurs=\"1\" maxOccurs=\"1\" trim=\"true\" />\n			<field name=\"comEcfZTotaisValor\" length=\"13\" type=\"double\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoDouble\" />\n		</record>\n		<record name=\"venda\" minOccurs=\"0\" maxOccurs=\"unbounded\" class=\"br.com.opensig.comercial.shared.modelo.ComEcfVenda\">\n			<field name=\"tipo\" rid=\"true\" literal=\"E14\" length=\"3\" ignore=\"true\" />\n			<field name=\"f1\" length=\"49\" ignore=\"true\" />\n			<field name=\"comEcfVendaCoo\" length=\"6\" type=\"int\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"comEcfVendaData\" length=\"8\" type=\"date\" minOccurs=\"1\" maxOccurs=\"1\" format=\"yyyymmdd\" />\n			<field name=\"comEcfVendaBruto\" length=\"14\" type=\"double\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoDouble\" />\n                            <field name=\"comEcfVendaDesconto\" length=\"13\" type=\"double\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoDouble\" />\n			<field name=\"f2\" length=\"15\" ignore=\"true\" />\n			<field name=\"comEcfVendaLiquido\" length=\"14\" type=\"double\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoDouble\" />\n			<field name=\"comEcfVendaCancelada\" length=\"1\" type=\"boolean\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoBooleano\" />\n			<field name=\"f2\" length=\"14\" ignore=\"true\" />\n			<field name=\"comEcfVendaNome\" length=\"40\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"comEcfVendaCpf\" length=\"14\" minOccurs=\"1\" maxOccurs=\"1\" />\n		</record>\n		<record name=\"produto\" minOccurs=\"0\" maxOccurs=\"unbounded\" class=\"br.com.opensig.comercial.shared.modelo.ComEcfVendaProduto\">\n			<field name=\"tipo\" rid=\"true\" literal=\"E15\" length=\"3\" ignore=\"true\" />\n			<field name=\"f1\" length=\"43\" ignore=\"true\" />\n			<field name=\"comEcfVendaProdutoCoo\" length=\"6\" type=\"int\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"f2\" length=\"6\" ignore=\"true\" />\n			<field name=\"comEcfVendaProdutoOrdem\" length=\"3\" type=\"int\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"comEcfVendaProdutoCodigo\" length=\"14\" minOccurs=\"1\" maxOccurs=\"1\" trim=\"true\" />\n			<field name=\"comEcfVendaProdutoDescricao\" length=\"100\" minOccurs=\"1\" maxOccurs=\"1\" trim=\"true\" />\n			<field name=\"comEcfVendaProdutoQuantidade\" length=\"7\" type=\"double\" minOccurs=\"1\" maxOccurs=\"1\" />\n			<field name=\"comEcfVendaProdutoUnd\" length=\"3\" minOccurs=\"1\" maxOccurs=\"1\" trim=\"true\"/>\n			<field name=\"comEcfVendaProdutoBruto\" length=\"8\" type=\"double\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoDouble\" />\n			<field name=\"comEcfVendaProdutoDesconto\" length=\"8\" type=\"double\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoDouble\" />\n			<field name=\"f3\" length=\"8\" ignore=\"true\" />\n			<field name=\"comEcfVendaProdutoTotal\" length=\"14\" type=\"double\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoDouble\" />\n			<field name=\"f4\" length=\"7\" ignore=\"true\" />\n			<field name=\"comEcfVendaProdutoCancelado\" length=\"1\" type=\"boolean\" minOccurs=\"1\" maxOccurs=\"1\" typeHandler=\"TipoBooleano\" />\n			<field name=\"f5\" length=\"36\" ignore=\"true\" />\n		</record>\n	</stream>\n</beanio>');
+/*!40000 ALTER TABLE `sis_exp_imp` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `sis_grupo_usuario`
 --
 
@@ -1675,7 +1743,7 @@ CREATE TABLE `com_ecf_z` (
   `com_ecf_z_coo` int(6) NOT NULL,
   `com_ecf_z_cro` int(3) NOT NULL,
   `com_ecf_z_crz` int(6) NOT NULL,
-  `com_ecf_z_data` datetime NOT NULL,
+  `com_ecf_z_data` date NOT NULL,
   `com_ecf_z_bruto` decimal(14,2) NOT NULL,
   `com_ecf_z_total` decimal(14,2) NOT NULL,
   PRIMARY KEY (`com_ecf_z_id`),
@@ -2119,4 +2187,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-09-16  0:52:29
+-- Dump completed on 2011-11-01 14:44:27

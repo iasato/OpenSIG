@@ -30,7 +30,7 @@ public interface ExportacaoServiceAsync<E extends Dados> extends CoreServiceAsyn
 	public abstract void exportar(SisExpImp modo, ExpRegistro<E> expRegistro, AsyncCallback<String> asyncCallback);
 
 	/**
-	 * @see ExportacaoService#exportar(String, String, String)
+	 * @see ExportacaoService#exportar(String, String)
 	 * @param asyncCallback
 	 *            um objeto assincrono com strings.
 	 */

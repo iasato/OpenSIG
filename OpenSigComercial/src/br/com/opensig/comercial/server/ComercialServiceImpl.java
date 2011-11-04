@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import br.com.opensig.comercial.client.servico.ComercialException;
 import br.com.opensig.comercial.client.servico.ComercialService;
 import br.com.opensig.comercial.server.acao.CancelarVenda;
@@ -30,7 +28,6 @@ import br.com.opensig.comercial.shared.modelo.ComFrete;
 import br.com.opensig.comercial.shared.modelo.ComValorProduto;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.server.CoreServiceImpl;
-import br.com.opensig.core.server.SessionManager;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.financeiro.server.acao.SalvarPagar;
@@ -41,6 +38,13 @@ import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
 
 public class ComercialServiceImpl extends CoreServiceImpl implements ComercialService {
+
+	public ComercialServiceImpl() {
+	}
+	
+	public ComercialServiceImpl(Autenticacao auth) {
+		super(auth);
+	}
 
 	@Override
 	public FisNotaSaida gerarNfe(ComVenda venda, ComFrete frete) throws ComercialException {
@@ -151,7 +155,7 @@ public class ComercialServiceImpl extends CoreServiceImpl implements ComercialSe
 			throw new ComercialException(e.getMessage());
 		}
 	}
-	
+
 	@Override
 	public void excluirCompra(ComCompra compra) throws ComercialException {
 		try {
@@ -228,10 +232,5 @@ public class ComercialServiceImpl extends CoreServiceImpl implements ComercialSe
 			UtilServer.LOG.error("Erro no comando excluirEcfVenda.", e);
 			throw new ComercialException(e.getMessage());
 		}
-	}
-	
-	private Autenticacao getAuth(){
-		HttpSession sessao = getThreadLocalRequest().getSession();
-		return SessionManager.LOGIN.get(sessao);
 	}
 }

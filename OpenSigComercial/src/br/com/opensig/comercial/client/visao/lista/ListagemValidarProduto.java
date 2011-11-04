@@ -127,6 +127,7 @@ public class ListagemValidarProduto {
 		};
 
 		gridProdutos = new ListagemCompraProdutos(false);
+		gridProdutos.purgeListeners();
 		gridProdutos.setTitle(OpenSigCore.i18n.txtProduto(), "icon-produtocompra");
 		gridProdutos.setStore(getDadosProdutos());
 		gridProdutos.getStoreEmbalagem().addStoreListener(new StoreListenerAdapter() {
@@ -134,19 +135,19 @@ public class ListagemValidarProduto {
 				gridProdutos.getStore().load();
 			};
 		});
+		gridProdutos.addEditorGridListener(new EditorGridListenerAdapter() {
+			public boolean doBeforeEdit(GridPanel grid, Record record, String field, Object value, int rowIndex, int colIndex) {
+				return record.getAsInteger("prodProdutoId") == 0 || field.equals("prodEmbalagem.prodEmbalagemId") || field.equals("comCompraProdutoPreco");
+			}
+		});
 		gridProdutos.addGridRowListener(new GridRowListenerAdapter() {
 			public void onRowContextMenu(GridPanel grid, int rowIndex, EventObject e) {
+				gridProdutos.getSelectionModel().selectRow(rowIndex);
 				ComandoPesquisa cmdPesquisa = new ComandoPesquisa(asyncPesquisa);
 				cmdPesquisa.execute(contexto);
 			}
 		});
-		gridProdutos.addEditorGridListener(new EditorGridListenerAdapter() {
-			public boolean doBeforeEdit(GridPanel grid, Record record, String field, Object value, int rowIndex, int colIndex) {
-				return record.getAsInteger("prodProdutoId") == 0 || field.equals("prodEmbalagem.prodEmbalagemId") || field.equals("comCompraProdutoPreco")
-						|| field.equals("prodProduto.prodProdutoIncentivo");
-			}
-		});
-
+		
 		ToolTip tip = new ToolTip(OpenSigCore.i18n.msgCompraProduto());
 		tip.applyTo(gridProdutos);
 

@@ -17,7 +17,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface ImportacaoServiceAsync<E extends Dados> extends CoreServiceAsync<E> {
 
 	/**
-	 * @see ImportacaoService#importar(Dados, SisExpImp, List)
+	 * @see ImportacaoService#importar(SisExpImp, List)
 	 * @param asyncCallback
 	 *            um objeto assincrono com strings.
 	 */

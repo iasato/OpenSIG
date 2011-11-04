@@ -32,6 +32,13 @@ import br.com.opensig.financeiro.shared.modelo.FinRetorno;
 
 public class FinanceiroServiceImpl extends CoreServiceImpl implements FinanceiroService {
 
+	public FinanceiroServiceImpl(){
+	}
+	
+	public FinanceiroServiceImpl(Autenticacao auth){
+		super(auth);
+	}
+	
 	public String gerar(int boletoId, String tipo, boolean recibo) throws FinanceiroException {
 		String retorno = "";
 		HttpSession sessao = getThreadLocalRequest().getSession();

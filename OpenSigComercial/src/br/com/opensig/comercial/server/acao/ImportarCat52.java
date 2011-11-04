@@ -44,7 +44,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 
 	@Override
 	public Map<String, List<Cat52>> setArquivo(Autenticacao auth, Map<String, byte[]> arquivos, SisExpImp modo) throws OpenSigException {
-		this.service = new ComercialServiceImpl();
+		this.service = new ComercialServiceImpl(auth);
 		List<Cat52> oks = new ArrayList<Cat52>();
 		List<Cat52> err = new ArrayList<Cat52>();
 

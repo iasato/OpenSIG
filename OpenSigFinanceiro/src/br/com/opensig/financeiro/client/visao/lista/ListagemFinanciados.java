@@ -98,9 +98,7 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 		ColumnConfig ccTipoId = new ColumnConfig(OpenSigCore.i18n.txtTipo(), "finFormaId", 150, false, new Renderer() {
 			public String render(Object value, CellMetadata cellMetadata, Record record, int rowIndex, int colNum, Store store) {
 				if (value != null) {
-				    storeForma.filter("finFormaId", value.toString());
-					Record reg = storeForma.getAt(0);
-					storeForma.clearFilter();
+					Record reg = UtilClient.getRegistro(storeForma, "finFormaId", value.toString());
 					return reg.getAsString("finFormaDescricao");
 				} else {
 					return "";

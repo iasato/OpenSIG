@@ -32,11 +32,7 @@ public class ComandoImprimir extends ComandoAcao {
 		async = new AsyncCallback<String>() {
 			public void onSuccess(String arg0) {
 				LISTA.getPanel().getEl().unmask();
-				if (Ext.isOpera()) {
-					Window.open(GWT.getHostPageBaseURL() + "ExportacaoService?modo=text/html&id=" + arg0, "", "");
-				} else {
-					UtilClient.exportar(GWT.getHostPageBaseURL() + "ExportacaoService?modo=text/html&id=" + arg0);
-				}
+				UtilClient.exportar("ExportacaoService?modo=text/html&id=" + arg0);
 			}
 
 			public void onFailure(Throwable arg0) {

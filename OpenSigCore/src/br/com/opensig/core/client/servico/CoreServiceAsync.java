@@ -3,6 +3,7 @@ package br.com.opensig.core.client.servico;
 import java.util.Collection;
 
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
@@ -44,8 +45,7 @@ public interface CoreServiceAsync<E extends Dados> {
 	public abstract void buscar(Dados classe, String campo, EBusca busca, IFiltro filtro, AsyncCallback<Number> asyncCallback);
 
 	/**
-	 * @see CoreService#buscar(Dados, String, String, String, String, EBusca,
-	 *      EDirecao, IFiltro)
+	 * @see CoreService#buscar(Dados, String, String, String, String, EBusca, EDirecao, IFiltro)
 	 * @param asyncCallback
 	 *            um objeto assincrono do mesmo tipo do POJO.
 	 */
@@ -86,4 +86,11 @@ public interface CoreServiceAsync<E extends Dados> {
 	 *            um objeto assincrono com inteiros.
 	 */
 	public abstract void executar(Sql[] sqls, AsyncCallback<Integer[]> asyncCallback);
+
+	/**
+	 * @see CoreService#getAuth()
+	 * @param asyncCallback
+	 *            um objeto assincrono da autenticacao.
+	 */
+	public abstract void getAuth(AsyncCallback<Autenticacao> asyncCallback);
 }

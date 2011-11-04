@@ -16,6 +16,7 @@ import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.controlador.parametro.GrupoParametro;
 import br.com.opensig.core.client.controlador.parametro.IParametro;
+import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.client.controlador.parametro.ParametroData;
 import br.com.opensig.core.client.controlador.parametro.ParametroFormula;
 import br.com.opensig.core.client.controlador.parametro.ParametroNumero;

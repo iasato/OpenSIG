@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+import javax.servlet.http.HttpSession;
 
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroCampo;
@@ -23,6 +24,7 @@ import br.com.opensig.core.client.controlador.parametro.IParametro;
 import br.com.opensig.core.client.controlador.parametro.ParametroException;
 import br.com.opensig.core.client.servico.CoreException;
 import br.com.opensig.core.client.servico.CoreService;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Colecao;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EBusca;
@@ -43,6 +45,15 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  * @version 1.0
  */
 public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet implements CoreService<E> {
+
+	private Autenticacao auth;
+
+	public CoreServiceImpl(){
+	}
+	
+	public CoreServiceImpl(Autenticacao auth) {
+		this.auth = auth;
+	}
 
 	@Override
 	public Lista<E> selecionar(Dados classe, int inicio, int limite, IFiltro filtro, boolean removeDependencia) throws CoreException, ParametroException {
@@ -943,5 +954,14 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			return false;
 		}
 		return true;
+	}
+	
+	@Override
+	public Autenticacao getAuth() {
+		if(auth == null){
+			HttpSession sessao = getThreadLocalRequest().getSession();
+			auth = SessionManager.LOGIN.get(sessao);
+		}
+		return auth;
 	}
 }

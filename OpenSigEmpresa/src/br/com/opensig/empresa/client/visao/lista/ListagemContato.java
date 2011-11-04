@@ -3,6 +3,7 @@ package br.com.opensig.empresa.client.visao.lista;
 import java.util.List;
 
 import br.com.opensig.core.client.OpenSigCore;
+import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.servico.CoreProxy;
@@ -72,9 +73,7 @@ public class ListagemContato extends AListagemEditor<EmpContato> {
 
 			public String render(Object value, CellMetadata cellMetadata, Record record, int rowIndex, int colNum, Store store) {
 				if (value != null) {
-					storeTipo.filter("empContatoTipoId", value.toString());
-					Record reg = storeTipo.getAt(0);
-					storeTipo.clearFilter();
+					Record reg = UtilClient.getRegistro(storeTipo, "empContatoTipoId", value.toString());
 					return reg.getAsString("empContatoTipoDescricao");
 				} else {
 					return "";

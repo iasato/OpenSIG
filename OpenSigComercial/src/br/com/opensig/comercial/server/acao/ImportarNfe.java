@@ -74,10 +74,15 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 
 	@Override
 	public Map<String, List<ComCompra>> setArquivo(Autenticacao auth, Map<String, byte[]> arquivos, SisExpImp modo) throws OpenSigException {
-		this.servico = new ComercialServiceImpl();
+		this.servico = new ComercialServiceImpl(auth);
 		this.fornecedor = new EmpFornecedor();
 		this.auth = auth;
-		String xml = new String(arquivos.get(0));
+		String xml = "";
+
+		for (byte[] valor : arquivos.values()) {
+			xml = new String(valor);
+			break;
+		}
 
 		// valida se é NFe
 		try {
@@ -112,11 +117,11 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		compra.setFisNotaEntrada(nota);
 		compra.setComCompraNfe(true);
 
-		 Map<String, List<ComCompra>> resp = new HashMap<String, List<ComCompra>>();
-		 List<ComCompra> lista = new ArrayList<ComCompra>();
-		 lista.add(getCompra());
-		 resp.put("ok", lista);
-		
+		Map<String, List<ComCompra>> resp = new HashMap<String, List<ComCompra>>();
+		List<ComCompra> lista = new ArrayList<ComCompra>();
+		lista.add(getCompra());
+		resp.put("ok", lista);
+
 		return resp;
 	}
 
@@ -236,7 +241,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		fornecedor = getFornecedor(nfe.getInfNFe().getEmit().getCNPJ());
 		// caso seje um novo
 		if (fornecedor.getEmpFornecedorId() == 0) {
-			EmpresaServiceImpl<EmpFornecedor> servico = new EmpresaServiceImpl<EmpFornecedor>();
+			EmpresaServiceImpl<EmpFornecedor> servico = new EmpresaServiceImpl<EmpFornecedor>(auth);
 			servico.salvar(fornecedor);
 		}
 		fornecedor.anularDependencia();
@@ -244,7 +249,8 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 
 	private EmpFornecedor getFornecedor(String cnpj) throws OpenSigException {
 		try {
-			FiltroTexto ft = new FiltroTexto("empEntidade.empEntidadeDocumento1", ECompara.IGUAL, UtilServer.formataTexto(cnpj, "##.###.###/####-##"));
+			cnpj = UtilServer.formataTexto(cnpj, "##.###.###/####-##");
+			FiltroTexto ft = new FiltroTexto("empEntidade.empEntidadeDocumento1", ECompara.IGUAL, cnpj);
 			fornecedor = (EmpFornecedor) servico.selecionar(fornecedor, ft, false);
 		} catch (Exception e) {
 			fornecedor = null;
@@ -258,8 +264,8 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			EmpEntidade enti = new EmpEntidade();
 			enti.setEmpEntidadeNome1(emit.getXNome());
 			String fantasia = emit.getXFant() != null ? emit.getXFant() : emit.getXNome();
-			if (fantasia.length() > 20) {
-				fantasia = fantasia.substring(0, 20);
+			if (fantasia.length() > 15) {
+				fantasia = fantasia.substring(0, 15);
 			}
 			enti.setEmpEntidadeNome2(fantasia);
 			enti.setEmpEntidadeDocumento1(cnpj);

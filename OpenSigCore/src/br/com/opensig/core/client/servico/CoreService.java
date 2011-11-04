@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.controlador.parametro.ParametroException;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
@@ -23,8 +24,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 public interface CoreService<E extends Dados> extends RemoteService {
 
 	/**
-	 * Metodo que recupera todos os objetos no banco de dados da entidade
-	 * tipada.
+	 * Metodo que recupera todos os objetos no banco de dados da entidade tipada.
 	 * 
 	 * @param classe
 	 *            um objeto com os dados da entidade.
@@ -40,14 +40,12 @@ public interface CoreService<E extends Dados> extends RemoteService {
 	 * @throws CoreException
 	 *             dispara uma exceção caso ocorra erro na pesquisa dos dados.
 	 * @throws ParametroException
-	 *             dispara uma exceção caso ocorra erro nos filtros da pesquisa
-	 *             dos dados.
+	 *             dispara uma exceção caso ocorra erro nos filtros da pesquisa dos dados.
 	 */
 	public Lista<E> selecionar(Dados classe, int inicio, int limite, IFiltro filtro, boolean removeDepedencia) throws CoreException, ParametroException;
 
 	/**
-	 * Metodo que recupera o objeto no banco de dados da entidade tipada
-	 * referenciada pelo Id.
+	 * Metodo que recupera o objeto no banco de dados da entidade tipada referenciada pelo Id.
 	 * 
 	 * @param classe
 	 *            um objeto com os dados da entidade.
@@ -59,8 +57,7 @@ public interface CoreService<E extends Dados> extends RemoteService {
 	 * @throws CoreException
 	 *             dispara uma exceção caso ocorra erro na pesquisa dos dados.
 	 * @throws ParametroException
-	 *             dispara uma exceção caso ocorra erro nos filtros da pesquisa
-	 *             dos dados.
+	 *             dispara uma exceção caso ocorra erro nos filtros da pesquisa dos dados.
 	 */
 	public E selecionar(Dados classe, IFiltro filtro, boolean removeDepedencia) throws CoreException, ParametroException;
 
@@ -79,14 +76,12 @@ public interface CoreService<E extends Dados> extends RemoteService {
 	 * @throws CoreException
 	 *             dispara uma exceção caso ocorra erro na pesquisa dos dados.
 	 * @throws ParametroException
-	 *             dispara uma exceção caso ocorra erro nos filtros da pesquisa
-	 *             dos dados.
+	 *             dispara uma exceção caso ocorra erro nos filtros da pesquisa dos dados.
 	 */
 	public Number buscar(Dados classe, String campo, EBusca busca, IFiltro filtro) throws CoreException, ParametroException;
 
 	/**
-	 * Metodo que retorna uma lista de valores agrupados por campoX e de acordo
-	 * com a operação solicitada no campoY.
+	 * Metodo que retorna uma lista de valores agrupados por campoX e de acordo com a operação solicitada no campoY.
 	 * 
 	 * @param classe
 	 *            um objeto com os dados da entidade.
@@ -104,13 +99,11 @@ public interface CoreService<E extends Dados> extends RemoteService {
 	 *            a direção da ordenação (CRESCENTE ou DECRESCENTE).
 	 * @param filtro
 	 *            os filtros a serem usados na seleção dos registros.
-	 * @return uma colecao de array de Strings com os dados agrupados,
-	 *         normalmente o par de chaves String e Numeric.
+	 * @return uma colecao de array de Strings com os dados agrupados, normalmente o par de chaves String e Numeric.
 	 * @throws CoreException
 	 *             dispara uma exceção caso ocorra erro na pesquisa dos dados.
 	 * @throws ParametroException
-	 *             dispara uma exceção caso ocorra erro nos filtros da pesquisa
-	 *             dos dados.
+	 *             dispara uma exceção caso ocorra erro nos filtros da pesquisa dos dados.
 	 */
 	public Collection<String[]> buscar(Dados classe, String campoX, String campoSubX, String grupoX, String campoY, EBusca busca, EDirecao direcao, IFiltro filtro) throws CoreException,
 			ParametroException;
@@ -167,4 +160,11 @@ public interface CoreService<E extends Dados> extends RemoteService {
 	 *             dispara uma exceção caso ocorra erro na execução do comando.
 	 */
 	public Integer[] executar(Sql[] sqls) throws CoreException;
+
+	/**
+	 * Metodo que recupera a autenticacao atual.
+	 * 
+	 * @return o objeto de autenticacao.
+	 */
+	public Autenticacao getAuth();
 }

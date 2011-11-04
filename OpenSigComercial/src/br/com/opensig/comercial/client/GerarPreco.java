@@ -108,7 +108,7 @@ public class GerarPreco {
 			if (comProd.getComCompraProdutoPreco() == 0.00) {
 				try {
 					recProd = getValorProduto(comProd.getComCompraProdutoId(), compra.getEmpFornecedor().getEmpFornecedorId());
-					recInc = getIncentivo(compra.getEmpEstado().getEmpEstadoId());
+					recInc = UtilClient.getRegistro(storeIncentivo, "empEstadoId", compra.getEmpEstado().getEmpEstadoId() + "");
 
 					// recupera os valores individuais de cada produto
 					valor = comProd.getComCompraProdutoValor() + "";
@@ -161,32 +161,19 @@ public class GerarPreco {
 	}
 
 	private Record getValorProduto(int produtoId, int fornecedorId) {
-		Record recProd = storeValor.getAt(0);
-		storeValor.filter("prodProdutoId", produtoId + "");
-
-		if (storeValor.getRecords().length > 0) {
+		// verifica se tem preco por produto
+		Record recProd = UtilClient.getRegistro(storeValor, "prodProdutoId", produtoId + "");
+		// case nao ache, procura pelo fornecedor
+		if (recProd == null) {
+			recProd = UtilClient.getRegistro(storeValor, "empFornecedorId", fornecedorId + "");
+		}
+		// caso nao ache pega o primeiro que e o geral
+		if (recProd == null) {
 			recProd = storeValor.getAt(0);
-		} else {
-			storeValor.clearFilter();
-			storeValor.filter("empFornecedorId", fornecedorId + "");
-			if (storeValor.getRecords().length > 0) {
-				recProd = storeValor.getAt(0);
-			}
 		}
 
 		storeArredonda.filter("comValorProdutoId", recProd.getAsString("comValorProdutoId"));
-		storeValor.clearFilter();
 		return recProd;
-	}
-
-	private Record getIncentivo(int estadoId) {
-		Record rec = null;
-		storeIncentivo.filter("empEstadoId", estadoId + "");
-		if (storeIncentivo.getRecords().length > 0) {
-			rec = storeIncentivo.getAt(0);
-			storeIncentivo.clearFilter();
-		}
-		return rec;
 	}
 
 	public static double executarFormula(String formula, Map<String, String> vars) throws Exception {

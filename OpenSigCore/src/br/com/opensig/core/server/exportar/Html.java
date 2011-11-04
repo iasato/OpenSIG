@@ -157,10 +157,6 @@ public class Html<E extends Dados> extends AExportacao<E> {
 	/**
 	 * Metodo que gera o cabecalho da exportacao com os dados da empresa.
 	 * 
-	 * @param empresa
-	 *            o array de dados da empresa.
-	 * @param usuario
-	 *            o nome do usuario logado.
 	 * @return o cabecalho da exportacao.
 	 */
 	public String getCabecalhoEmpresa() {

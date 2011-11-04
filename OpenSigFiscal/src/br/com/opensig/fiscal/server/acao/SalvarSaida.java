@@ -48,7 +48,7 @@ public class SalvarSaida extends Chain {
 		this.status = status;
 		this.auth = auth;
 		this.empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
-		this.servico = new FiscalServiceImpl<FisNotaSaida>();
+		this.servico = new FiscalServiceImpl<FisNotaSaida>(auth);
 	}
 
 	@Override

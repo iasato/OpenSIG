@@ -66,6 +66,13 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 
 	private List<SisAcao> acoesPadroes = null;
 
+	public PermissaoServiceImpl(){
+	}
+	
+	public PermissaoServiceImpl(Autenticacao auth){
+		super(auth);
+	}
+	
 	public Autenticacao entrar(String usuario, String senha, String captcha, int empresa, boolean permissao) throws PermissaoException {
 		// recupera a sessão atual
 		HttpSession sessao = getThreadLocalRequest().getSession();

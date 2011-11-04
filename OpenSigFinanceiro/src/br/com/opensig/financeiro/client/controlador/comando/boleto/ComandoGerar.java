@@ -30,7 +30,7 @@ public class ComandoGerar extends AComando {
 
 			public void onSuccess(String arg0) {
 				MessageBox.hide();
-				UtilClient.exportar("FinanceiroService?id=" + arg0);
+				UtilClient.exportar("ExportacaoService?id=" + arg0);
 				if (comando != null) {
 					comando.execute(contexto);
 				}

@@ -1,0 +1,2 @@
+serviceClass: br.com.opensig.permissao.client.servico.PermissaoService
+path: 9EE8548BAC77B61DD01DC47CE2401D2E.gwt.rpc

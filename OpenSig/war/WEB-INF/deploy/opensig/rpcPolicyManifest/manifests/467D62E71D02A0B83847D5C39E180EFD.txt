@@ -1,0 +1,2 @@
+serviceClass: br.com.opensig.core.client.servico.ExportacaoService
+path: 2F17D0B5899E76EB0A0FDC64B9E9DAE0.gwt.rpc

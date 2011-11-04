@@ -3,6 +3,7 @@ package br.com.opensig.produto.client.visao.lista;
 import java.util.List;
 
 import br.com.opensig.core.client.OpenSigCore;
+import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.servico.CoreProxy;
@@ -61,9 +62,7 @@ public class ListagemPreco extends AListagemEditor<ProdPreco> {
 		ColumnConfig ccEmbalagemId = new ColumnConfig(OpenSigCore.i18n.txtEmbalagem(), "prodEmbalagem.prodEmbalagemId", 100, false, new Renderer() {
 			public String render(Object value, CellMetadata cellMetadata, Record record, int rowIndex, int colNum, Store store) {
 				if (value != null) {
-					storeEmbalagem.filter("prodEmbalagemId", value.toString());
-					Record reg = storeEmbalagem.getAt(0);
-					storeEmbalagem.clearFilter();
+					Record reg = UtilClient.getRegistro(storeEmbalagem, "prodEmbalagemId", value.toString());
 					return reg.getAsString("prodEmbalagemNome");
 				} else {
 					return "";

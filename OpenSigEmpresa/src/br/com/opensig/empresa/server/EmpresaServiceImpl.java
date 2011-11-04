@@ -11,6 +11,7 @@ import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.Conexao;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
@@ -26,6 +27,13 @@ import br.com.opensig.empresa.shared.modelo.EmpTransportadora;
 
 public class EmpresaServiceImpl<E extends Dados> extends CoreServiceImpl<E> implements EmpresaService<E> {
 
+	public EmpresaServiceImpl(){
+	}
+	
+	public EmpresaServiceImpl(Autenticacao auth){
+		super(auth);
+	}
+	
 	public E salvar(E dados) throws EmpresaException {
 		if (dados instanceof EmpEmpresa) {
 			return (E) salvarEmpresa((EmpEmpresa) dados);
@@ -63,7 +71,7 @@ public class EmpresaServiceImpl<E extends Dados> extends CoreServiceImpl<E> impl
 	public EmpEmpresa salvarEmpresa(EmpEmpresa empresa) throws EmpresaException {
 		EntityManagerFactory emf = null;
 		EntityManager em = null;
-		EmpresaServiceImpl servico = new EmpresaServiceImpl();
+		EmpresaServiceImpl servico = new EmpresaServiceImpl(null);
 		
 		try {
 			// recupera uma instância do gerenciador de entidades

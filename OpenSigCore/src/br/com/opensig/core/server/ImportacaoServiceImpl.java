@@ -21,6 +21,13 @@ import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
  */
 public class ImportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> implements ImportacaoService<E> {
 
+	public ImportacaoServiceImpl() {
+	}
+	
+	public ImportacaoServiceImpl(Autenticacao auth) {
+		super(auth);
+	}
+
 	@Override
 	public Map<String, List<E>> importar(SisExpImp modo, List<String> arquivos) throws ImportacaoException {
 		HttpSession sessao = getThreadLocalRequest().getSession();

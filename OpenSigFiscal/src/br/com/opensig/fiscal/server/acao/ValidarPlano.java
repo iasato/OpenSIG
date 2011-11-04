@@ -47,7 +47,7 @@ public class ValidarPlano extends Chain {
 		// recupera o plano da empresa
 		EmpEmpresa empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
 		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
-		EmpresaService<EmpPlano> service = new EmpresaServiceImpl<EmpPlano>();
+		EmpresaService<EmpPlano> service = new EmpresaServiceImpl<EmpPlano>(auth);
 		EmpPlano plano = new EmpPlano();
 		plano = service.selecionar(plano, fo, false);
 

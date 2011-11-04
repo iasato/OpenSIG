@@ -51,7 +51,7 @@ public class SalvarEntrada extends Chain {
 		super(next);
 		this.xml = xml;
 		this.status = status;
-		this.servico = new FiscalServiceImpl<FisNotaEntrada>();
+		this.servico = new FiscalServiceImpl<FisNotaEntrada>(auth);
 		this.auth = auth;
 		this.empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
 	}
@@ -235,7 +235,7 @@ public class SalvarEntrada extends Chain {
 			// atualiza a entrada
 			try {
 				Sql sql = new Sql(new FisNotaEntrada(), EComando.ATUALIZAR, gf, gp);
-				FiscalServiceImpl<FisNotaEntrada> service = new FiscalServiceImpl<FisNotaEntrada>();
+				FiscalServiceImpl<FisNotaEntrada> service = new FiscalServiceImpl<FisNotaEntrada>(auth);
 				service.executar(new Sql[] { sql });
 			} catch (Exception e) {
 				UtilServer.LOG.error("Erro ao atualizar a entrada com chave " + chave, e);

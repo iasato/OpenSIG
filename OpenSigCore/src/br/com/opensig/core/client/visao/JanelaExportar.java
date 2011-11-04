@@ -71,7 +71,7 @@ public class JanelaExportar extends Window {
 		this(form, modo, new AsyncCallback<String>() {
 			public void onSuccess(String arg0) {
 				form.getLista().getPanel().getEl().unmask();
-				UtilClient.exportar(GWT.getHostPageBaseURL() + "ExportacaoService?id=" + arg0);
+				UtilClient.exportar("ExportacaoService?id=" + arg0);
 			}
 
 			public void onFailure(Throwable arg0) {

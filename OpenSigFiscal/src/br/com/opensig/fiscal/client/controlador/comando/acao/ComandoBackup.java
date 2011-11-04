@@ -16,7 +16,7 @@ public class ComandoBackup<E extends Dados> extends ComandoAcao<E> {
 	AsyncCallback<String> donwload = new AsyncCallback<String>() {
 		public void onSuccess(String result) {
 			MessageBox.hide();
-			UtilClient.exportar("CoreService?id=" + result);
+			UtilClient.exportar("ExportacaoService?id=" + result);
 		}
 		
 		public void onFailure(Throwable caught) {

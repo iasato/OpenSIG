@@ -75,6 +75,10 @@ public class UtilServer extends HttpServlet {
 	 * Chave mestre para criptografar
 	 */
 	public static String CHAVE;
+	/**
+	 * Path das empresas
+	 */
+	public static String PATH_EMPRESA;
 
 	/**
 	 * Metodo que inicializa variazeis globais
@@ -113,10 +117,10 @@ public class UtilServer extends HttpServlet {
 		PATH = getServletContext().getRealPath("/");
 
 		// configurando o as opcoes do app
-		String pathEmpresas = getServletContext().getInitParameter("sistema.empresas");
-		CONF.put("sistema.empresas", pathEmpresas);
+		PATH_EMPRESA = getServletContext().getInitParameter("sistema.empresas");
+		CONF.put("sistema.empresas", PATH_EMPRESA);
 
-		File dir = new File(pathEmpresas + "conf/");
+		File dir = new File(PATH_EMPRESA + "conf/");
 		for (File conf : dir.listFiles()) {
 			if (conf.isFile() && conf.getName().endsWith(".conf")) {
 				Properties prop = new Properties();
