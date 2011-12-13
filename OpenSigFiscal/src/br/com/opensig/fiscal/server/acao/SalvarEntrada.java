@@ -10,7 +10,6 @@ import org.w3c.dom.Element;
 
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
-import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.controlador.filtro.FiltroTexto;
@@ -186,8 +185,7 @@ public class SalvarEntrada extends Chain {
 					FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
 					FiltroTexto ft = new FiltroTexto("empFornecedor.empEntidade.empEntidadeDocumento1", ECompara.IGUAL, cnpj);
 					FiltroNumero fn = new FiltroNumero("comCompraNumero", ECompara.IGUAL, numero);
-					FiltroBinario fb = new FiltroBinario("comCompraNfe", ECompara.IGUAL, 0);
-					GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, ft, fn, fb });
+					GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, ft, fn });
 					CoreServiceImpl<Dados> core = new CoreServiceImpl<Dados>();
 					Dados compra = (Dados) core.getResultado("pu_comercial", "SELECT t FROM ComCompra t", gf);
 

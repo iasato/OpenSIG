@@ -334,6 +334,8 @@ public class GerarNfe extends Chain {
 		ide.setNNF(Integer.valueOf(nNF) + "");
 		// data emissao
 		ide.setDEmi(UtilServer.formataData(data, "yyyy-MM-dd"));
+		// data saida
+		ide.setDSaiEnt(UtilServer.formataData(data, "yyyy-MM-dd"));
 		// operacao
 		ide.setTpNF(auth.getConf().get("nfe.tipooper"));
 		// municipio

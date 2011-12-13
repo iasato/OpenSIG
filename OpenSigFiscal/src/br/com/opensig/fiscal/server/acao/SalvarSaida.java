@@ -272,6 +272,7 @@ public class SalvarSaida extends Chain {
 		} else {
 			pt = new ParametroTexto("fisNotaSaidaProtocolo", prot);
 			pt1 = new ParametroTexto("fisNotaSaidaXml", xml);
+			nota.setFisNotaSaidaXml(xml);
 		}
 		ParametroObjeto po = new ParametroObjeto("fisNotaStatus", status);
 		GrupoParametro gp = new GrupoParametro(new IParametro[] { pt, pt1, po });

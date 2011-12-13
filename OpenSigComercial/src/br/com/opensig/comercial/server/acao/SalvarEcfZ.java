@@ -42,15 +42,17 @@ public class SalvarEcfZ extends Chain {
 			em = emf.createEntityManager();
 			em.getTransaction().begin();
 
-			// salva
 			List<ComEcfZTotais> totais = z.getComZTotais();
+			// deleta
+			if (z.getComEcfZId() > 0) {
+				FiltroObjeto fo = new FiltroObjeto("comEcfZ", ECompara.IGUAL, z);
+				Sql sql = new Sql(new ComEcfZTotais(), EComando.EXCLUIR, fo);
+				servico.executar(em, sql);
+			}
+
+			// salva
 			z.setComZTotais(null);
 			servico.salvar(em, z);
-
-			// deleta
-			FiltroObjeto fo = new FiltroObjeto("comEcfZ", ECompara.IGUAL, z);
-			Sql sql = new Sql(new ComEcfZTotais(), EComando.EXCLUIR, fo);
-			servico.executar(em, sql);
 
 			// insere
 			for (ComEcfZTotais tot : totais) {

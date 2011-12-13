@@ -41,19 +41,21 @@ public class SalvarEntidade extends Chain {
 			em = emf.createEntityManager();
 			em.getTransaction().begin();
 
-			// salva
 			List<EmpContato> contatos = entidade.getEmpContatos();
 			List<EmpEndereco> enderecos = entidade.getEmpEnderecos();
+			// deleta
+			if (entidade.getEmpEntidadeId() > 0) {
+				FiltroObjeto fo = new FiltroObjeto("empEntidade", ECompara.IGUAL, entidade);
+				Sql sql = new Sql(new EmpContato(), EComando.EXCLUIR, fo);
+				servico.executar(em, sql);
+				Sql sql1 = new Sql(new EmpEndereco(), EComando.EXCLUIR, fo);
+				servico.executar(em, sql1);
+			}
+
+			// salva
 			entidade.setEmpContatos(null);
 			entidade.setEmpEnderecos(null);
 			servico.salvar(em, entidade);
-
-			// deleta
-			FiltroObjeto fo = new FiltroObjeto("empEntidade", ECompara.IGUAL, entidade);
-			Sql sql = new Sql(new EmpContato(), EComando.EXCLUIR, fo);
-			servico.executar(em, sql);
-			Sql sql1 = new Sql(new EmpEndereco(), EComando.EXCLUIR, fo);
-			servico.executar(em, sql1);
 
 			// insere
 			for (EmpContato cont : contatos) {

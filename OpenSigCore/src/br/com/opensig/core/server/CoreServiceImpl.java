@@ -48,9 +48,9 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 
 	private Autenticacao auth;
 
-	public CoreServiceImpl(){
+	public CoreServiceImpl() {
 	}
-	
+
 	public CoreServiceImpl(Autenticacao auth) {
 		this.auth = auth;
 	}
@@ -955,12 +955,14 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 		}
 		return true;
 	}
-	
+
 	@Override
 	public Autenticacao getAuth() {
-		if(auth == null){
+		try {
 			HttpSession sessao = getThreadLocalRequest().getSession();
 			auth = SessionManager.LOGIN.get(sessao);
+		} catch (Exception e) {
+			// caso nao consiga, nao altera o valor atual, que pode ser null ou nao.
 		}
 		return auth;
 	}

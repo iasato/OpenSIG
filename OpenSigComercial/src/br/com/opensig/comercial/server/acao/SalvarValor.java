@@ -40,15 +40,17 @@ public class SalvarValor extends Chain {
 			em = emf.createEntityManager();
 			em.getTransaction().begin();
 
-			// salva
 			List<ComValorArredonda> arredonda = valor.getComValorArredondas();
+			// deleta
+			if (valor.getComValorProdutoId() > 0) {
+				FiltroObjeto fo = new FiltroObjeto("comValorProduto", ECompara.IGUAL, valor);
+				Sql sql = new Sql(new ComValorArredonda(), EComando.EXCLUIR, fo);
+				servico.executar(em, sql);
+			}
+
+			// salva
 			valor.setComValorArredondas(null);
 			servico.salvar(em, valor);
-
-			// deleta
-			FiltroObjeto fo = new FiltroObjeto("comValorProduto", ECompara.IGUAL, valor);
-			Sql sql = new Sql(new ComValorArredonda(), EComando.EXCLUIR, fo);
-			servico.executar(em, sql);
 
 			// insere
 			for (ComValorArredonda valArre : arredonda) {

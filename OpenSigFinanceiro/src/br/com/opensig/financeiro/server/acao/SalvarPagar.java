@@ -46,15 +46,17 @@ public class SalvarPagar extends Chain {
 			em = emf.createEntityManager();
 			em.getTransaction().begin();
 
-			// salva
 			List<FinPagamento> pagamentos = pagar.getFinPagamentos();
+			// deleta
+			if (pagar.getFinPagarId() > 0) {
+				FiltroObjeto fo = new FiltroObjeto("finPagar", ECompara.IGUAL, pagar);
+				Sql sql = new Sql(new FinPagamento(), EComando.EXCLUIR, fo);
+				servico.executar(em, sql);
+			}
+
+			// salva
 			pagar.setFinPagamentos(null);
 			servico.salvar(em, pagar);
-
-			// deleta
-			FiltroObjeto fo = new FiltroObjeto("finPagar", ECompara.IGUAL, pagar);
-			Sql sql = new Sql(new FinPagamento(), EComando.EXCLUIR, fo);
-			servico.executar(em, sql);
 
 			// insere
 			double valor = 0.00;
@@ -67,7 +69,7 @@ public class SalvarPagar extends Chain {
 				finPag.setFinPagar(pagar);
 			}
 			servico.salvar(em, pagamentos);
-			
+
 			// categorias
 			if (categorias != null && !categorias.isEmpty()) {
 				servico.salvar(em, categorias);
@@ -77,7 +79,7 @@ public class SalvarPagar extends Chain {
 				next.execute();
 			}
 			em.getTransaction().commit();
-			
+
 			// trata a conta
 			if (valor > 0.00) {
 				ParametroFormula pf = new ParametroFormula("finContaSaldo", valor * -1);

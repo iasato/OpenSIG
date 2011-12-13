@@ -67,6 +67,7 @@ public class FecharEcfVenda extends Chain {
 	public void execute() throws OpenSigException {
 		FiltroNumero fn = new FiltroNumero("comEcfVendaId", ECompara.IGUAL, venda.getId());
 		venda = (ComEcfVenda) servico.selecionar(venda, fn, false);
+
 		if (next != null) {
 			next.execute();
 		}

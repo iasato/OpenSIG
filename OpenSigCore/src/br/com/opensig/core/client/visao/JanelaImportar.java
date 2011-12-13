@@ -14,6 +14,7 @@ import br.com.opensig.core.client.visao.abstrato.IListagem;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.core.EventObject;
@@ -79,8 +80,9 @@ public class JanelaImportar extends Window {
 	protected Panel getTipo() {
 		reader = new ArrayReader(new RecordDef(new FieldDef[] { new StringFieldDef("classe"), new StringFieldDef("extensao"), new StringFieldDef("modelo"), new StringFieldDef("nome"),
 				new StringFieldDef("imagem"), new StringFieldDef("descricao") }));
-		template = new XTemplate(new String[] { "<tpl for='.'>", "<div class='thumb-wrap'>", "<div class='thumb'><img src='opensig/img/expimp/{imagem}' ext:qtip='{descricao}'/></div>",
-				"<span class='x-editable' ext:qtip='{descricao}'>{nome}</span></div>", "</tpl>", "<div class='x-clear'></div>" });
+		template = new XTemplate(new String[] { "<tpl for='.'>", "<div class='thumb-wrap'>",
+				"<div class='thumb'><img src='" + GWT.getModuleName() + "/img/expimp/{imagem}' ext:qtip='{descricao}'/></div>", "<span class='x-editable' ext:qtip='{descricao}'>{nome}</span></div>",
+				"</tpl>", "<div class='x-clear'></div>" });
 
 		// tipo
 		panTipo = new Panel();

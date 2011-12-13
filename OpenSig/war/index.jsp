@@ -24,7 +24,7 @@
 <link rel="stylesheet" type="text/css" href="css/OpenSig.css" />
 <link rel="stylesheet" type="text/css" href="" id="estilo" />
 
-<title>OpenSIG - Sistemas Integrados Gerenciáveis Open Source</title>
+<title>OpenSIG - Sistemas Integrados Gerenci&aacute;veis Open Source</title>
 
 <script type="text/javascript">  var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-25564325-1']);

@@ -32,8 +32,10 @@ import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.financeiro.server.acao.SalvarPagar;
 import br.com.opensig.financeiro.shared.modelo.FinCategoria;
+import br.com.opensig.financeiro.shared.modelo.FinPagar;
 import br.com.opensig.fiscal.server.acao.SalvarEntrada;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
+import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
 
@@ -41,7 +43,7 @@ public class ComercialServiceImpl extends CoreServiceImpl implements ComercialSe
 
 	public ComercialServiceImpl() {
 	}
-	
+
 	public ComercialServiceImpl(Autenticacao auth) {
 		super(auth);
 	}
@@ -92,20 +94,25 @@ public class ComercialServiceImpl extends CoreServiceImpl implements ComercialSe
 
 	@Override
 	public ComCompra salvarCompra(ComCompra compra) throws ComercialException {
+		FinPagar finPagar = null;
+		FisNotaEntrada fisNota = null;
+
 		try {
 			// verifica se tem pagar
 			if (compra.getComCompraPaga()) {
 				SalvarPagar pagar = new SalvarPagar(null, this, compra.getFinPagar(), new ArrayList<FinCategoria>());
 				pagar.execute();
-				compra.setFinPagar(pagar.getPagar());
+				finPagar = pagar.getPagar();
 			}
 			// verifica se tem nota
 			if (compra.getComCompraNfe()) {
 				SalvarEntrada entrada = new SalvarEntrada(null, compra.getFisNotaEntrada().getFisNotaEntradaXml(), new FisNotaStatus(ENotaStatus.AUTORIZADO), getAuth());
 				entrada.execute();
-				compra.setFisNotaEntrada(entrada.getNota());
+				fisNota = entrada.getNota();
 			}
 			// salva a compra
+			compra.setFinPagar(finPagar);
+			compra.setFisNotaEntrada(fisNota);
 			new SalvarCompra(null, this, compra).execute();
 			// verifica se fecha a compra
 			if (compra.getComCompraFechada()) {
@@ -115,6 +122,16 @@ public class ComercialServiceImpl extends CoreServiceImpl implements ComercialSe
 			compra.anularDependencia();
 			return compra;
 		} catch (Exception e) {
+			try {
+				if (finPagar != null) {
+					deletar(finPagar);
+				}
+				if (fisNota != null) {
+					deletar(fisNota);
+				}
+			} catch (Exception ex) {
+			}
+
 			UtilServer.LOG.error("Erro no comando salvarCompra.", e);
 			throw new ComercialException(e.getMessage());
 		}

@@ -167,7 +167,7 @@ public class Sobre {
 		linha1.addToRow(lblVersao, 50);
 		linha1.addToRow(lblVersao1, 250);
 		linha1.addToRow(lblData, 40);
-		linha1.addToRow(lblData1, 80);
+		linha1.addToRow(lblData1, 120);
 		panVersao.add(linha1);
 
 		RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, GWT.getHostPageBaseURL() + "manifesto/OpenSig.MF");
@@ -183,7 +183,7 @@ public class Sobre {
 						if (linha.startsWith("Implementation-Version")) {
 							lblVersao1.setText(linha.split(":")[1]);
 						} else if (linha.startsWith("Built-Date")) {
-							lblData1.setText(linha.split(":")[1]);
+							lblData1.setText(linha.split(": ")[1]);
 						}
 					}
 				}

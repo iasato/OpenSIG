@@ -198,7 +198,6 @@ public class ListagemValidarProduto {
 						} else {
 							return true;
 						}
-
 					}
 				}, 1000);
 				tab.setActiveItem(0);

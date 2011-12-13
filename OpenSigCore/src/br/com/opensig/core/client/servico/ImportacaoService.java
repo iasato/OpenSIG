@@ -17,13 +17,13 @@ import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 public interface ImportacaoService<E extends Dados> extends CoreService<E> {
 
 	/**
-	 * Metodo que realiza a importacao espifica usando o modelo
+	 * Metodo que recebe os arquivos a serem importados pelo modelo passado.
 	 * 
 	 * @param modo
 	 *            as configuracoes da importacao.
 	 * @param arquivos
 	 *            a lista de arquivos que foram carregados para upload.
-	 * @return um mapa de objetos do tipo especificado.
+	 * @return a lista de arquivos processados.
 	 * @throws ImportacaoException
 	 *             ocorre caso tenha erro na importacao do arquivo.
 	 */

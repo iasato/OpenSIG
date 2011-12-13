@@ -8,10 +8,7 @@ import br.com.opensig.core.client.controlador.comando.ComandoAcao;
 import br.com.opensig.core.client.controlador.comando.EModo;
 import br.com.opensig.core.client.visao.JanelaExportar;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.gwtext.client.core.Ext;
 import com.gwtext.client.widgets.MessageBox;
 import com.gwtext.client.widgets.event.ButtonListenerAdapter;
 
@@ -32,7 +29,7 @@ public class ComandoImprimir extends ComandoAcao {
 		async = new AsyncCallback<String>() {
 			public void onSuccess(String arg0) {
 				LISTA.getPanel().getEl().unmask();
-				UtilClient.exportar("ExportacaoService?modo=text/html&id=" + arg0);
+				UtilClient.exportar("ExportacaoService?imp=true&id=" + arg0);
 			}
 
 			public void onFailure(Throwable arg0) {

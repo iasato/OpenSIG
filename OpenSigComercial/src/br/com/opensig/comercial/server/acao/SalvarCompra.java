@@ -36,22 +36,24 @@ public class SalvarCompra extends Chain {
 		EntityManagerFactory emf = null;
 		EntityManager em = null;
 		validarProduto();
-		
+
 		try {
 			// recupera uma instância do gerenciador de entidades
 			emf = Conexao.getInstancia(compra.getPu());
 			em = emf.createEntityManager();
 			em.getTransaction().begin();
 
-			// salva
 			List<ComCompraProduto> produtos = compra.getComCompraProdutos();
+			// deleta
+			if (compra.getComCompraId() > 0) {
+				FiltroObjeto fo = new FiltroObjeto("comCompra", ECompara.IGUAL, compra);
+				Sql sql = new Sql(new ComCompraProduto(), EComando.EXCLUIR, fo);
+				servico.executar(em, sql);
+			}
+
+			// salva
 			compra.setComCompraProdutos(null);
 			servico.salvar(em, compra);
-
-			// deleta
-			FiltroObjeto fo = new FiltroObjeto("comCompra", ECompara.IGUAL, compra);
-			Sql sql = new Sql(new ComCompraProduto(), EComando.EXCLUIR, fo);
-			servico.executar(em, sql);
 
 			// insere
 			for (ComCompraProduto comProd : produtos) {

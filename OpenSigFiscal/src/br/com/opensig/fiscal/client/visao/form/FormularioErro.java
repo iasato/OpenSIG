@@ -153,29 +153,17 @@ public class FormularioErro extends AFormulario<FisNotaSaida> {
 		MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtSalvar());
 		setDados();
 		FiscalProxy<FisNotaSaida> proxy = new FiscalProxy<FisNotaSaida>();
-
 		proxy.salvarSaida(txtXml.getValueAsString(), classe.getFisNotaStatus(), classe.getEmpEmpresa(), new AsyncCallback<Map<String, String>>() {
 			public void onSuccess(Map<String, String> result) {
 				MessageBox.hide();
-				ENotaStatus status = ENotaStatus.valueOf(result.get("status"));
-
-				if (status == ENotaStatus.ERRO) {
-					MessageBox.alert(OpenSigCore.i18n.txtSalvar(), result.get("msg"));
-				} else {
-					if (status == ENotaStatus.AUTORIZANDO) {
-						Timer tempo = new Timer() {
-							public void run() {
-								getLista().getPanel().getStore().reload();
-								janela.close();
-							}
-						};
-						int espera = Integer.valueOf(UtilClient.CONF.get("nfe.tempo_retorno"));
-						tempo.schedule(1000 * espera);
-					} else {
+				Timer tempo = new Timer() {
+					public void run() {
 						getLista().getPanel().getStore().reload();
 						janela.close();
 					}
-				}
+				};
+				int espera = Integer.valueOf(UtilClient.CONF.get("nfe.tempo_retorno"));
+				tempo.schedule(1000 * espera);
 			}
 
 			public void onFailure(Throwable caught) {

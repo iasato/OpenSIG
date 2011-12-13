@@ -87,10 +87,12 @@ public class SalvarProduto extends Chain {
 	private void salvarPrecos(EntityManager em, List<ProdPreco> precos) throws OpenSigException {
 		if (precos != null && !precos.isEmpty()) {
 			// deleta
-			FiltroObjeto fo = new FiltroObjeto("prodProduto", ECompara.IGUAL, produto);
-			Sql sql = new Sql(new ProdPreco(), EComando.EXCLUIR, fo);
-			servico.executar(em, sql);
-
+			if (produto.getProdProdutoId() > 0) {
+				FiltroObjeto fo = new FiltroObjeto("prodProduto", ECompara.IGUAL, produto);
+				Sql sql = new Sql(new ProdPreco(), EComando.EXCLUIR, fo);
+				servico.executar(em, sql);
+			}
+			
 			// insere
 			for (ProdPreco prodPre : precos) {
 				prodPre.setProdProduto(produto);

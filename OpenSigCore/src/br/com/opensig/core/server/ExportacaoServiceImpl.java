@@ -205,7 +205,7 @@ public class ExportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> i
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String id = req.getParameter("id");
-		String modo = req.getParameter("modo");
+		String imp = req.getParameter("imp");
 		HttpSession sessao = req.getSession();
 
 		try {
@@ -216,7 +216,7 @@ public class ExportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> i
 				arquivo = UtilServer.normaliza(arquivo).replace(" ", "_");
 
 				// setando os cabecalhos
-				if (modo == null) {
+				if (imp == null) {
 					resp.addHeader("Content-Disposition", "attachment; filename=" + arquivo.toLowerCase());
 					resp.addHeader("Pragma", "no-cache");
 					resp.addIntHeader("Expires", 0);
@@ -225,8 +225,7 @@ public class ExportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> i
 					String html = new String(obj).replace("<body>", "<body onload='this.focus(); this.print();'>");
 					html = UtilServer.normaliza(html);
 					obj = html.getBytes();
-					resp.addHeader("Content-Type", modo);
-					UtilServer.LOG.debug("Html formadado: " + html);
+					resp.addHeader("Content-Type", "text/html");
 				}
 
 				// codificando e enviando

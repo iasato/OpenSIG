@@ -19,7 +19,8 @@ public interface ImportacaoServiceAsync<E extends Dados> extends CoreServiceAsyn
 	/**
 	 * @see ImportacaoService#importar(SisExpImp, List)
 	 * @param asyncCallback
-	 *            um objeto assincrono com strings.
+	 *            um objeto assincrono com inteiro.
 	 */
 	public abstract void importar(SisExpImp modo, List<String> arquivos, AsyncCallback<Map<String, List<E>>> asyncCallback);
+
 }

@@ -40,16 +40,18 @@ public class SalvarEcfVenda extends Chain {
 			em = emf.createEntityManager();
 			em.getTransaction().begin();
 
-			// salva
 			List<ComEcfVendaProduto> produtos = venda.getComEcfVendaProdutos();
+			// deleta
+			if (venda.getComEcfVendaId() > 0) {
+				FiltroObjeto fo = new FiltroObjeto("comEcfVenda", ECompara.IGUAL, venda);
+				Sql sql = new Sql(new ComEcfVendaProduto(), EComando.EXCLUIR, fo);
+				servico.executar(em, sql);
+			}
+
+			// salva
 			venda.setComEcfVendaProdutos(null);
 			venda.setFinReceber(null);
 			servico.salvar(em, venda);
-
-			// deleta
-			FiltroObjeto fo = new FiltroObjeto("comEcfVenda", ECompara.IGUAL, venda);
-			Sql sql = new Sql(new ComEcfVendaProduto(), EComando.EXCLUIR, fo);
-			servico.executar(em, sql);
 
 			// insere
 			for (ComEcfVendaProduto comProd : produtos) {

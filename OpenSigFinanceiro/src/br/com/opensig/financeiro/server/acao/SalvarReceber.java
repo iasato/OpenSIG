@@ -46,15 +46,17 @@ public class SalvarReceber extends Chain {
 			em = emf.createEntityManager();
 			em.getTransaction().begin();
 
-			// salva
 			List<FinRecebimento> recebimentos = receber.getFinRecebimentos();
+			// deleta
+			if (receber.getFinReceberId() > 0) {
+				FiltroObjeto fo = new FiltroObjeto("finReceber", ECompara.IGUAL, receber);
+				Sql sql = new Sql(new FinRecebimento(), EComando.EXCLUIR, fo);
+				servico.executar(em, sql);
+			}
+
+			// salva
 			receber.setFinRecebimentos(null);
 			servico.salvar(em, receber);
-
-			// deleta
-			FiltroObjeto fo = new FiltroObjeto("finReceber", ECompara.IGUAL, receber);
-			Sql sql = new Sql(new FinRecebimento(), EComando.EXCLUIR, fo);
-			servico.executar(em, sql);
 
 			// insere
 			double valor = 0.00;
@@ -76,7 +78,7 @@ public class SalvarReceber extends Chain {
 				next.execute();
 			}
 			em.getTransaction().commit();
-			
+
 			// trata a conta
 			if (valor > 0.00) {
 				ParametroFormula pf = new ParametroFormula("finContaSaldo", valor);

@@ -416,9 +416,18 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 
 	private ProdProduto getProduto(Prod prod, MyIcms icms) throws OpenSigException {
 		Long ean = null;
-		if (prod.getCEAN() != null) {
+		try {
 			ean = Long.valueOf(prod.getCEAN());
+		} catch (Exception e) {
+			ean = null;
 		}
+		// ref + fornecedor
+		GrupoFiltro grupoRef = new GrupoFiltro();
+		FiltroTexto ft = new FiltroTexto("prodProdutoReferencia", ECompara.CONTEM, prod.getCProd());
+		grupoRef.add(ft, EJuncao.E);
+		FiltroObjeto fo = new FiltroObjeto("empFornecedor", ECompara.IGUAL, fornecedor);
+		grupoRef.add(fo);
+
 		// barra
 		GrupoFiltro grupoBarra = new GrupoFiltro();
 		FiltroNumero fn = new FiltroNumero("prodProdutoBarra", ECompara.IGUAL, ean);
@@ -427,14 +436,15 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		FiltroNumero fn1 = new FiltroNumero("prodPrecoBarra", ECompara.IGUAL, ean);
 		fn1.setCampoPrefixo("t2.");
 		grupoBarra.add(fn1, EJuncao.OU);
-		// ref + fornecedor
-		GrupoFiltro grupoRef = new GrupoFiltro();
-		FiltroTexto ft = new FiltroTexto("prodProdutoReferencia", ECompara.CONTEM, prod.getCProd());
-		grupoRef.add(ft, EJuncao.E);
-		FiltroObjeto fo = new FiltroObjeto("empFornecedor", ECompara.IGUAL, fornecedor);
-		grupoRef.add(fo);
+
 		// filtro geral
-		GrupoFiltro gf = new GrupoFiltro(EJuncao.OU, new IFiltro[] { grupoBarra, grupoRef });
+		GrupoFiltro gf = null;
+		if (ean != null) {
+			gf = new GrupoFiltro(EJuncao.OU, new IFiltro[] { grupoBarra, grupoRef });
+		} else {
+			gf = grupoRef;
+		}
+
 		// busca
 		ProdProduto produto = new ProdProduto();
 		Lista<ProdProduto> lista = servico.selecionar(produto, 0, 1, gf, false);

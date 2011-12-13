@@ -14,7 +14,7 @@ public interface IImportacao<E extends Dados> {
 	 * Metodo que importa o arquivo.
 	 * 
 	 * @param auth
-	 *            autenticacao do usuario atual.
+	 *            login do usuario atual.
 	 * @param arquivos
 	 *            uma mapa com nome e lista de array de bytes que representa os dados a serem importados.
 	 * @param modo

@@ -115,8 +115,9 @@ public class JanelaExportar extends Window {
 	protected Panel getTipo() {
 		reader = new ArrayReader(new RecordDef(new FieldDef[] { new StringFieldDef("classe"), new StringFieldDef("extensao"), new StringFieldDef("modelo"), new StringFieldDef("modo"),
 				new StringFieldDef("nome"), new StringFieldDef("imagem"), new StringFieldDef("descricao") }));
-		template = new XTemplate(new String[] { "<tpl for='.'>", "<div class='thumb-wrap'>", "<div class='thumb'><img src='opensig/img/expimp/{imagem}' ext:qtip='{descricao}'/></div>",
-				"<span class='x-editable' ext:qtip='{descricao}'>{nome}</span></div>", "</tpl>", "<div class='x-clear'></div>" });
+		template = new XTemplate(new String[] { "<tpl for='.'>", "<div class='thumb-wrap'>",
+				"<div class='thumb'><img src='" + GWT.getModuleName() + "/img/expimp/{imagem}' ext:qtip='{descricao}'/></div>", "<span class='x-editable' ext:qtip='{descricao}'>{nome}</span></div>",
+				"</tpl>", "<div class='x-clear'></div>" });
 
 		// tipo
 		panTipo = new Panel();

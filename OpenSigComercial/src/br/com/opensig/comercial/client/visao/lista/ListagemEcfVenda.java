@@ -60,6 +60,8 @@ import com.gwtextux.client.widgets.grid.plugins.GridListFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridLongFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridSummaryPlugin;
 import com.gwtextux.client.widgets.grid.plugins.SummaryColumnConfig;
+import com.gwtextux.client.widgets.upload.UploadDialog;
+import com.gwtextux.client.widgets.upload.UploadDialogListenerAdapter;
 import com.gwtextux.client.widgets.window.ToastWindow;
 
 public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
@@ -237,6 +239,15 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 			}
 		});
 		janela.inicializar();
+		janela.getUplArquivo().addListener(new UploadDialogListenerAdapter() {
+			public boolean onBeforeAdd(UploadDialog source, String filename) {
+				return source.getQueuedCount() == 0;
+			}
+
+			public void onFileAdd(UploadDialog source, String filename) {
+				source.startUpload();
+			}
+		});
 	}
 
 	private void analisarCat52(SisExpImp modo, List<String> arquivos) {

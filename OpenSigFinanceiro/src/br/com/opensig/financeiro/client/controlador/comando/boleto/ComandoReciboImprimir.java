@@ -14,7 +14,7 @@ public class ComandoReciboImprimir extends ComandoReciboHtml {
 
 			public void onSuccess(String arg0) {
 				MessageBox.hide();
-				UtilClient.exportar("ExportacaoService?modo=text/html&id=" + arg0);
+				UtilClient.exportar("ExportacaoService?imp=true&id=" + arg0);
 
 				if (comando != null) {
 					comando.execute(contexto);

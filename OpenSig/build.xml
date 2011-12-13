@@ -31,6 +31,12 @@
 		</manifest>
 	</target>
 
+	<target name="limparLibs">
+		<delete>
+			<fileset dir="${lib}" excludes="**/OpenSig*.jar, **/gwt-servlet.jar, **/beanio.jar" />
+		</delete>
+	</target>
+				
 	<target name="limpar">
 		<delete dir="${dist}" />
 		<delete dir="${mf}" />
@@ -69,12 +75,6 @@
 			<fileset file="../OpenSigCore/src/br/com/opensig/core/client/*.properties" />
 		</copy>
 
-	</target>
-
-	<target name="limparLibs">
-		<delete>
-			<fileset dir="${lib}" excludes="**/OpenSig*.jar, **/gwt-servlet.jar" />
-		</delete>
 	</target>
 
 	<target name="javac" depends="limpar, copiar">

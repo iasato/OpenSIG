@@ -33,11 +33,11 @@
 	}
 </script>
 
-<title>OpenSIG - Sistemas Integrados Gerenciáveis Open Source</title>
+<title>OpenSIG - Sistemas Integrados Gerenci&aacute;veis Open Source</title>
 </head>
 <body onload="javascript:document.nfe.chave.focus();">
 	<div id="stylized" class="myform">
-		<form id="nfe" name="nfe" method="post" action="OpenSigNfe.jsp">
+		<form id="nfe" name="nfe" method="post">
 			<a href="/" title="OpenSIG"><img
 				src="img/logo.png" width="32px" height="32px" /> </a>
 			<h1>Baixar Nota Fiscal Eletrônica</h1>
