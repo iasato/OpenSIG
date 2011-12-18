@@ -116,10 +116,10 @@ public class JanelaImportar extends Window {
 		proxy.selecionar(0, 0, gf, false, new AsyncCallback<Lista<SisExpImp>>() {
 			public void onSuccess(Lista<SisExpImp> result) {
 				if (result.getLista().isEmpty()) {
-					MessageBox.alert(OpenSigCore.i18n.txtImportar(), OpenSigCore.i18n.msgImportar());
+					MessageBox.alert(OpenSigCore.i18n.txtImportar(), OpenSigCore.i18n.errRegistro());
 					close();
 				} else {
-					// gera as exportacoes dinamicas
+					// gera as importacoes dinamicas
 					for (SisExpImp expimp : result.getLista()) {
 						String[] imp = new String[] { expimp.getSisExpImpClasse(), expimp.getSisExpImpExtensoes(), expimp.getSisExpImpModelo(), expimp.getSisExpImpNome(), expimp.getSisExpImpImagem(),
 								expimp.getSisExpImpDescricao() };
@@ -133,6 +133,7 @@ public class JanelaImportar extends Window {
 					dataView.refresh();
 					dataView.select(0);
 					rec = store.getAt(0);
+					btnOK.focus();
 				}
 			}
 

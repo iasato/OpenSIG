@@ -176,6 +176,7 @@ public class JanelaExportar extends Window {
 				dataView.refresh();
 				dataView.select(0);
 				rec = store.getAt(0);
+				btnOK.focus();
 			}
 
 			public void onFailure(Throwable caught) {
