@@ -7,6 +7,7 @@ import br.com.opensig.core.client.controlador.comando.FabricaComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoEditar;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoEditarFiltrados;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluirFiltrados;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoImportar;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovo;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovoDuplicar;
@@ -17,6 +18,7 @@ import br.com.opensig.fiscal.client.controlador.comando.ComandoEntrada;
 import br.com.opensig.fiscal.client.controlador.comando.ComandoIncentivo;
 import br.com.opensig.fiscal.client.controlador.comando.ComandoSaida;
 import br.com.opensig.fiscal.client.controlador.comando.ComandoSituacao;
+import br.com.opensig.fiscal.client.controlador.comando.ComandoSpedFiscal;
 import br.com.opensig.fiscal.client.controlador.comando.ComandoStatus;
 import br.com.opensig.fiscal.client.controlador.comando.acao.ComandoBackupEntrada;
 import br.com.opensig.fiscal.client.controlador.comando.acao.ComandoBackupSaida;
@@ -41,6 +43,7 @@ public class OpenSigFiscal implements EntryPoint {
 	 */
 	public void onModuleLoad() {
 		FabricaComando fc = FabricaComando.getInstancia();
+		// funcoes
 		fc.addComando(ComandoEntrada.class.getName(), (IComando) GWT.create(ComandoEntrada.class));
 		fc.addComando(ComandoSaida.class.getName(), (IComando) GWT.create(ComandoSaida.class));
 		fc.addComando(ComandoCertificado.class.getName(), (IComando) GWT.create(ComandoCertificado.class));
@@ -48,6 +51,8 @@ public class OpenSigFiscal implements EntryPoint {
 		fc.addComando(ComandoSituacao.class.getName(), (IComando) GWT.create(ComandoSituacao.class));
 		fc.addComando(ComandoCadastro.class.getName(), (IComando) GWT.create(ComandoCadastro.class));
 		fc.addComando(ComandoIncentivo.class.getName(), (IComando) GWT.create(ComandoIncentivo.class));
+		fc.addComando(ComandoSpedFiscal.class.getName(), (IComando) GWT.create(ComandoSpedFiscal.class));
+		// acoes
 		fc.addComando(ComandoBackupSaida.class.getName(), (IComando) GWT.create(ComandoBackupSaida.class));
 		fc.addComando(ComandoBackupEntrada.class.getName(), (IComando) GWT.create(ComandoBackupEntrada.class));
 		fc.addComando(ComandoInutilizar.class.getName(), (IComando) GWT.create(ComandoInutilizar.class));
@@ -55,19 +60,27 @@ public class OpenSigFiscal implements EntryPoint {
 
 		// acoes proibidas do certificado
 		Collection<Class> acoes = new ArrayList<Class>();
+		acoes.add(ComandoEditar.class);
 		acoes.add(ComandoEditarFiltrados.class);
 		acoes.add(ComandoNovoDuplicar.class);
 		acoes.add(ComandoImportar.class);
 		
-		// acoes proibidas para notas fiscais
+		// acoes proibidas para notas
 		Collection<Class> acoes2 = new ArrayList<Class>();
 		acoes2.add(ComandoNovo.class);
 		acoes2.add(ComandoEditar.class);
 		acoes2.add(ComandoEditarFiltrados.class);
 		acoes2.add(ComandoNovoDuplicar.class);
 
+		// acoes proibidas para sped fiscais
+		Collection<Class> acoes3 = new ArrayList<Class>();
+		acoes3.add(ComandoEditarFiltrados.class);
+		acoes3.add(ComandoNovoDuplicar.class);
+		acoes3.add(ComandoExcluirFiltrados.class);
+		
 		Ponte.setAcoesProibidas(ComandoEntrada.class.getName(), acoes2);
 		Ponte.setAcoesProibidas(ComandoSaida.class.getName(), acoes2);
+		Ponte.setAcoesProibidas(ComandoSpedFiscal.class.getName(), acoes3);
 		Ponte.setAcoesProibidas(ComandoCertificado.class.getName(), acoes);
 	}
 }

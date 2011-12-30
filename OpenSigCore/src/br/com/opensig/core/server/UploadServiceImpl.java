@@ -7,9 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -50,7 +50,7 @@ public class UploadServiceImpl extends HttpServlet {
 	/**
 	 * O mapa de parametros passados para definir o tipo de upload.
 	 */
-	protected Map<String, String> params;
+	protected SortedMap<String, String> params;
 
 	/**
 	 * Passe os parametros que precisar via post, mas existem dois usados pelo
@@ -63,7 +63,7 @@ public class UploadServiceImpl extends HttpServlet {
 		ServletFileUpload upload = new ServletFileUpload();
 		json = new JSONObject();
 		baos = new ByteArrayOutputStream();
-		params = new HashMap<String, String>();
+		params = new TreeMap<String, String>();
 
 		try {
 			FileItemIterator iter = upload.getItemIterator(req);
@@ -108,7 +108,7 @@ public class UploadServiceImpl extends HttpServlet {
 				json.put("dados", nomeArquivo);
 			} else {
 				// valida o tipo do arquivo
-				Map<String, byte[]> arquivos = new HashMap<String, byte[]>();
+				SortedMap<String, byte[]> arquivos = new TreeMap<String, byte[]>();
 				if (nomeArquivo.endsWith(".zip")) {
 					arquivos = UtilServer.getArquivos(baos.toByteArray());
 				} else {

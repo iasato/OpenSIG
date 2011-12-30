@@ -135,7 +135,7 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 
 		GrupoFiltro gf = new GrupoFiltro();
 		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteEmpresa.class) == null) {
-			FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
+			FiltroObjeto fo = new FiltroObjeto("comEcf.empEmpresa", ECompara.IGUAL, new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 			gf.add(fo, EJuncao.E);
 		}
 
@@ -188,7 +188,7 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 				// empresa
 				FiltroNumero fn = null;
 				if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteEmpresa.class) == null) {
-					fn = new FiltroNumero("empEmpresaId", ECompara.IGUAL, Ponte.getLogin().getEmpresaId());
+					fn = new FiltroNumero("comEcf.empEmpresa.empEmpresaId", ECompara.IGUAL, Ponte.getLogin().getEmpresaId());
 				}
 
 				FieldDef[] fdEmpresa = new FieldDef[] { new IntegerFieldDef("empEmpresaId"), new IntegerFieldDef("empEntidade.empEntidadeId"), new StringFieldDef("empEntidade.empEntidadeNome1") };

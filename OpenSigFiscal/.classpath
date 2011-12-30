@@ -4,8 +4,8 @@
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT-2.3.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GWT_EXT"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigCore"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigEmpresa"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigPermissao"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigEmpresa"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Jersey"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JPA">
 		<attributes>
@@ -28,5 +28,6 @@
 	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/nfexml2.jar"/>
 	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/simplecaptcha.jar"/>
 	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="/OpenSigComercial/dist/OpenSigComercial.jar"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>

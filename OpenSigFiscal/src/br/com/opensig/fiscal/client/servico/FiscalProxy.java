@@ -20,9 +20,14 @@ public class FiscalProxy<E extends Dados> extends CoreProxy<E> implements Fiscal
 	private static final ServiceDefTarget sdf = (ServiceDefTarget) async;
 
 	public FiscalProxy() {
-		sdf.setServiceEntryPoint(GWT.getHostPageBaseURL() + "FiscalService");
+		this(null);
 	}
 
+	public FiscalProxy(E classe) {
+		super.classe = classe;
+		sdf.setServiceEntryPoint(GWT.getHostPageBaseURL() + "FiscalService");
+	}
+	
 	@Override
 	public void analisarNFe(FisNotaSaida saida, AsyncCallback<Map<String, String>> asyncCallback) {
 		async.analisarNFe(saida, asyncCallback);
@@ -96,5 +101,25 @@ public class FiscalProxy<E extends Dados> extends CoreProxy<E> implements Fiscal
 	@Override
 	public void salvarCertificado(FisCertificado certificado, AsyncCallback asyncCallback) {
 		async.salvarCertificado(certificado, asyncCallback);
+	}
+	
+	@Override
+	public void salvar(AsyncCallback<E> asyncCallback) {
+		this.salvar(classe, asyncCallback);
+	}
+	
+	@Override
+	public void salvar(E unidade, AsyncCallback<E> asyncCallback) {
+		async.salvar(unidade, asyncCallback);
+	}
+	
+	@Override
+	public void deletar(AsyncCallback<E> asyncCallback) {
+		this.deletar(classe, asyncCallback);
+	}
+	
+	@Override
+	public void deletar(E unidade, AsyncCallback<E> asyncCallback) {
+		async.deletar(unidade, asyncCallback);
 	}
 }

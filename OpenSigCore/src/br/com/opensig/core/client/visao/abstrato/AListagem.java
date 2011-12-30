@@ -150,8 +150,7 @@ public abstract class AListagem<E extends Dados> extends GridPanel implements IL
 	 * Construtor padrao que recebe o formulario vinculado da lista.
 	 * 
 	 * @param form
-	 *            o formulario que a listagem vincula os dados, caso nao tenha,
-	 *            informar o FomularioVazio.
+	 *            o formulario que a listagem vincula os dados, caso nao tenha, informar o FomularioVazio.
 	 */
 	public AListagem(IFormulario<E> form) {
 		this.form = form;
@@ -236,11 +235,13 @@ public abstract class AListagem<E extends Dados> extends GridPanel implements IL
 
 		// adicionando os filtros
 		setGridFiltro();
-		GridFilterPlugin plugin = new GridFilterPlugin(filtros.values().toArray(new GridFilter[] {}));
-		plugin.setAutoReload(true);
-		plugin.setMenuFilterText(OpenSigCore.i18n.txtFiltros());
-		plugin.setUpdateBuffer(1000);
-		addPlugin(plugin);
+		if (filtros != null) {
+			GridFilterPlugin plugin = new GridFilterPlugin(filtros.values().toArray(new GridFilter[] {}));
+			plugin.setAutoReload(true);
+			plugin.setMenuFilterText(OpenSigCore.i18n.txtFiltros());
+			plugin.setUpdateBuffer(1000);
+			addPlugin(plugin);
+		}
 
 		// setando configuração
 		setTitle(OpenSigCore.i18n.txtListagem(), "icon-listagem");
@@ -415,7 +416,7 @@ public abstract class AListagem<E extends Dados> extends GridPanel implements IL
 		Record rec = UtilClient.getRegistro(ANavegacao.FUNCOES, "classe", funcao.getSisFuncaoClasse());
 		classe.setCampoOrdem(ordem.getField());
 		classe.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
-		
+
 		ExpListagem<E> expLista = new ExpListagem<E>();
 		expLista.setClasse(classe);
 		expLista.setMetadados(metadados);
@@ -428,7 +429,7 @@ public abstract class AListagem<E extends Dados> extends GridPanel implements IL
 	@Override
 	public void setImportacao(SisExpImp modo) {
 	}
-	
+
 	private void setFiltro(IFiltro filtro, String campo, String compara, String valor) {
 		MatchResult mat = RegExp.compile("^t\\d+\\.").exec(campo);
 		if (mat != null) {

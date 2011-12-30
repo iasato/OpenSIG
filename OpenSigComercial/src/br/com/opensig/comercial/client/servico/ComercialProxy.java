@@ -10,18 +10,24 @@ import br.com.opensig.comercial.shared.modelo.ComFrete;
 import br.com.opensig.comercial.shared.modelo.ComValorProduto;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.client.servico.CoreProxy;
+import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 
-public class ComercialProxy extends CoreProxy implements ComercialServiceAsync {
+public class ComercialProxy<E extends Dados> extends CoreProxy<E> implements ComercialServiceAsync<E> {
 
 	private ComercialServiceAsync async = (ComercialServiceAsync) GWT.create(ComercialService.class);
 	private ServiceDefTarget sdf = (ServiceDefTarget) async;
 
 	public ComercialProxy() {
+		this(null);
+	}
+
+	public ComercialProxy(E classe) {
+		super.classe = classe;
 		sdf.setServiceEntryPoint(GWT.getHostPageBaseURL() + "ComercialService");
 	}
 

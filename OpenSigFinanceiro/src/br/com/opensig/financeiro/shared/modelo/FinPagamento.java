@@ -116,7 +116,6 @@ public class FinPagamento extends Dados implements Serializable {
 
 	public void setFinPagamentoQuitado(boolean finPagamentoQuitado) {
 		this.finPagamentoQuitado = finPagamentoQuitado == false ? 0 : 1;
-		;
 	}
 
 	public Date getFinPagamentoRealizado() {

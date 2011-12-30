@@ -1,8 +1,10 @@
 package br.com.opensig.fiscal.server;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
@@ -44,9 +46,11 @@ import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.controlador.filtro.FiltroTexto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
+import br.com.opensig.core.client.servico.CoreException;
 import br.com.opensig.core.client.servico.ExportacaoException;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.CoreServiceImpl;
+import br.com.opensig.core.server.SessionManager;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Dados;
@@ -66,6 +70,7 @@ import br.com.opensig.fiscal.shared.modelo.FisCertificado;
 import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
+import br.com.opensig.fiscal.shared.modelo.FisSpedFiscal;
 import br.com.opensig.retconssitnfe.TProtNFe.InfProt;
 import br.com.opensig.retconssitnfe.TRetCancNFe.InfCanc;
 import br.com.opensig.retconssitnfe.TRetConsSitNFe;
@@ -73,13 +78,13 @@ import br.com.opensig.retconssitnfe.TRetConsSitNFe;
 @SuppressWarnings("restriction")
 public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> implements FiscalService<E> {
 
-	public FiscalServiceImpl(){
+	public FiscalServiceImpl() {
 	}
-	
-	public FiscalServiceImpl(Autenticacao auth){
+
+	public FiscalServiceImpl(Autenticacao auth) {
 		super(auth);
 	}
-	
+
 	public String exportar(String arquivo, String nome, String tipo) throws ExportacaoException {
 		// valida sessao
 		String retorno = "";
@@ -91,6 +96,20 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			if (tipo.equalsIgnoreCase("pdf")) {
 				String xml = new String(B64.decodeBuffer(arquivo));
 				obj = getDanfe(xml);
+			} else if (tipo.equalsIgnoreCase("zip") || tipo.equalsIgnoreCase("rec")) {
+				Autenticacao auth = SessionManager.LOGIN.get(sessao);
+				String cnpj = auth.getEmpresa()[5].replaceAll("\\D", "");
+				String path = UtilServer.PATH_EMPRESA + cnpj + "/sped/" + arquivo;
+				File arq = new File(path);
+
+				if (arq.exists()) {
+					InputStream is = new FileInputStream(arq);
+					obj = new byte[is.available()];
+					is.read(obj);
+					is.close();
+				} else {
+					throw new ExportacaoException("Arquivo nao encontrado!");
+				}
 			} else {
 				obj = B64.decodeBuffer(arquivo);
 			}
@@ -587,5 +606,42 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		} catch (Exception e) {
 			throw new FiscalException(e.getMessage());
 		}
+	}
+
+	@Override
+	public void deletar(E unidade) throws CoreException {
+		super.deletar(unidade);
+
+		if (unidade instanceof FisSpedFiscal) {
+			// identifica o usuario/empresa
+			FisSpedFiscal sped = (FisSpedFiscal) unidade;
+			HttpSession sessao = getThreadLocalRequest().getSession();
+			Autenticacao auth = SessionManager.LOGIN.get(sessao);
+
+			// controi o path do arquivo
+			String cnpj = auth.getEmpresa()[5].replaceAll("\\D", "");
+			String nome;
+			if (sped.getFisSpedFiscalMes() > 9) {
+				nome = sped.getFisSpedFiscalAno() + "" + sped.getFisSpedFiscalMes();
+			} else {
+				nome = sped.getFisSpedFiscalAno() + "0" + sped.getFisSpedFiscalMes();
+			}
+			String path = UtilServer.PATH_EMPRESA + cnpj + "/sped/" + nome + ".ZIP";
+
+			// deletando o arquivo sped
+			File f = new File(path);
+			if (f.exists()) {
+				f.delete();
+			}
+		}
+	}
+
+	@Override
+	public E salvar(E unidade) throws CoreException {
+		if(unidade instanceof FisSpedFiscal){
+			FisSpedFiscal sped = (FisSpedFiscal) unidade;
+		}
+		
+		return super.salvar(unidade);
 	}
 }

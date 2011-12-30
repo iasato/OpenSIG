@@ -390,6 +390,13 @@
 		<descricao>>Administer the incentives.</descricao>
 		<imagem>icon-incentivo</imagem>
 	</funcao>
+	<funcao>
+		<classe>br.com.opensig.fiscal.client.controlador.comando.ComandoSpedFiscal
+		</classe>
+		<nome>SPED Tax</nome>
+		<descricao>Public System of Digital Bookkeeping Tax</descricao>
+		<imagem>icon-sped</imagem>
+	</funcao>
 	<!-- Ações -->
 	<acao>
 		<classe>br.com.opensig.core.client.controlador.comando.lista.ComandoVisualizar

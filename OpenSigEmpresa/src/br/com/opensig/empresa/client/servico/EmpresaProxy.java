@@ -13,6 +13,11 @@ public class EmpresaProxy<E extends Dados> extends CoreProxy<E> implements Empre
 	private ServiceDefTarget sdf = (ServiceDefTarget) async;
 
 	public EmpresaProxy() {
+		this(null);
+	}
+	
+	public EmpresaProxy(E classe) {
+		super.classe = classe;
 		sdf.setServiceEntryPoint(GWT.getHostPageBaseURL() + "EmpresaService");
 	}
 

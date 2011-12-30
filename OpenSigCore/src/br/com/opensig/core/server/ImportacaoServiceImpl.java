@@ -23,7 +23,7 @@ public class ImportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> i
 
 	public ImportacaoServiceImpl() {
 	}
-	
+
 	public ImportacaoServiceImpl(Autenticacao auth) {
 		super(auth);
 	}
@@ -38,13 +38,7 @@ public class ImportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> i
 			// valida o tipo do arquivo
 			for (String nomeArquivo : arquivos) {
 				try {
-					if (nomeArquivo.endsWith(".zip")) {
-						dados.putAll(UtilServer.getArquivos((byte[]) sessao.getAttribute(nomeArquivo)));
-					} else {
-						dados.put(nomeArquivo, (byte[]) sessao.getAttribute(nomeArquivo));
-					}
-				} catch (Exception ex) {
-					throw new ImportacaoException(ex.getMessage());
+					dados.put(nomeArquivo, (byte[]) sessao.getAttribute(nomeArquivo));
 				} finally {
 					sessao.setAttribute(nomeArquivo, null);
 				}

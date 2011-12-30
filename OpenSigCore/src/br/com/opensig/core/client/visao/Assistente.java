@@ -33,28 +33,25 @@ public class Assistente extends Window {
 	 *            um mapa de contexto com as opcoes setadas da funcao.
 	 */
 	public Assistente(Map contexto) {
-		super("", 100, 100, true, true);
+		super("", 100, 100, true, false);
 		setLayout(new FitLayout());
 		setAutoHeight(true);
 		setAutoWidth(true);
-		setClosable(false);
+		setClosable(true);
 		this.contexto = contexto;
 	}
 
 	/**
-	 * Metodo que inicia o assistente, com um array de formularios e um comando
-	 * para ativar apos finalizar.
+	 * Metodo que inicia o assistente, com um array de formularios e um comando para ativar apos finalizar.
 	 * 
 	 * @param frmTelas
-	 *            um array de formularios que serao mostrados na ordem, como um
-	 *            passo-a-passo.
+	 *            um array de formularios que serao mostrados na ordem, como um passo-a-passo.
 	 * @param cmdFinalizar
 	 *            o comando disparado apos terminar todos os passos.
 	 */
 	public void iniciar(List<IFormulario> frmTelas, IComando cmdFinalizar) {
 		this.frmTelas = frmTelas;
 		this.cmdFinalizar = cmdFinalizar;
-
 		IFormulario formulario = frmTelas.get(0);
 		formulario.getPanel().setHeader(false);
 
@@ -65,10 +62,12 @@ public class Assistente extends Window {
 
 			formulario = frmTelas.get(frmTelas.size() - 1);
 			formulario.getPanel().setButtons(new Button[] { getBotao("voltar"), getBotao("finalizar") });
+			formulario.getPanel().setHeader(false);
 
 			for (int i = 1; i < frmTelas.size() - 1; i++) {
 				formulario = frmTelas.get(i);
 				formulario.getPanel().setButtons(new Button[] { getBotao("voltar"), getBotao("avancar") });
+				formulario.getPanel().setHeader(false);
 			}
 		}
 
@@ -83,7 +82,6 @@ public class Assistente extends Window {
 	 *            um objeto do tipo formulario.
 	 */
 	public void addFormulario(IFormulario formulario) {
-		formulario.getPanel().setHeader(false);
 		formulario.getPanel().setButtons(new Button[] { getBotao("voltar"), getBotao("avancar") });
 		frmTelas.add(frmTelas.size() - 1, formulario);
 	}
@@ -117,37 +115,60 @@ public class Assistente extends Window {
 		formulario.setContexto(contexto);
 		formulario.getPanel().enable();
 		formulario.getPanel().show();
+		formulario.mostrarDados();
 
 		setTitle(OpenSigCore.i18n.txtPasso() + " " + (frmAtual + 1) + " / " + frmTelas.size() + " - " + formulario.getPanel().getTitle());
 		setIconCls(formulario.getPanel().getIconCls());
 		removeAll();
 		add(formulario.getPanel());
 		doLayout();
+		try {
+			center();
+		} catch (Exception e) {
+			// ja esta no centro
+		}
 	}
 
 	private Button getBotao(final String tipo) {
 		Button botao = null;
-		botao = new Button(OpenSigCore.i18n.txtTipo());
+		botao = new Button();
 		botao.setIconCls("icon-" + tipo);
-		botao.addListener(new ButtonListenerAdapter() {
-			public void onClick(Button button, EventObject e) {
-				if (tipo.equals("cancelar")) {
+
+		if (tipo.equals("cancelar")) {
+			botao.setText(OpenSigCore.i18n.txtCancelar());
+			botao.addListener(new ButtonListenerAdapter() {
+				public void onClick(Button button, EventObject e) {
 					cancelar();
-				} else if (tipo.equals("voltar")) {
+				}
+			});
+		} else if (tipo.equals("voltar")) {
+			botao.setText(OpenSigCore.i18n.txtVoltar());
+			botao.addListener(new ButtonListenerAdapter() {
+				public void onClick(Button button, EventObject e) {
 					voltar();
-				} else if (tipo.equals("avancar")) {
+				}
+			});
+		} else if (tipo.equals("avancar")) {
+			botao.setText(OpenSigCore.i18n.txtAvancar());
+			botao.addListener(new ButtonListenerAdapter() {
+				public void onClick(Button button, EventObject e) {
 					avancar();
-				} else if (tipo.equals("finalizar")) {
+				}
+			});
+		} else if (tipo.equals("finalizar")) {
+			botao.setText(OpenSigCore.i18n.txtFinalizar());
+			botao.addListener(new ButtonListenerAdapter() {
+				public void onClick(Button button, EventObject e) {
 					finalizar();
 				}
-			}
-		});
+			});
+		}
 
 		return botao;
 	}
 
 	// Gets e Seteres
-	
+
 	public List<IFormulario> getFrmTelas() {
 		return frmTelas;
 	}

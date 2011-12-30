@@ -125,8 +125,8 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		txtBarra = new NumberField(OpenSigCore.i18n.txtBarra(), "prodProdutoBarra", 110);
 		txtBarra.setAllowDecimals(false);
 		txtBarra.setAllowNegative(false);
-		txtBarra.setMinLength(6);
-		txtBarra.setMaxLength(18);
+		txtBarra.setMinLength(8);
+		txtBarra.setMaxLength(14);
 
 		txtVolume = new NumberField(OpenSigCore.i18n.txtQtdCx(), "prodProdutoVolume", 60);
 		txtVolume.setAllowBlank(false);

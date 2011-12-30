@@ -979,6 +979,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtBarra();
 
   /**
+   * Translated "Bloco".
+   * 
+   * @return translated "Bloco"
+   */
+  @DefaultMessage("Bloco")
+  @Key("txtBloco")
+  String txtBloco();
+
+  /**
    * Translated "Bloquear".
    * 
    * @return translated "Bloquear"
@@ -1643,6 +1652,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Entrar")
   @Key("txtEntrar")
   String txtEntrar();
+
+  /**
+   * Translated "Enviado".
+   * 
+   * @return translated "Enviado"
+   */
+  @DefaultMessage("Enviado")
+  @Key("txtEnviado")
+  String txtEnviado();
 
   /**
    * Translated "Erro".
@@ -2885,6 +2903,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Soma")
   @Key("txtSoma")
   String txtSoma();
+
+  /**
+   * Translated "SPED".
+   * 
+   * @return translated "SPED"
+   */
+  @DefaultMessage("SPED")
+  @Key("txtSped")
+  String txtSped();
 
   /**
    * Translated "Status".

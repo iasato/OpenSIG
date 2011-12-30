@@ -129,8 +129,10 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 							// totais da leitura z
 						} else if (rec instanceof ComEcfZTotais) {
 							ComEcfZTotais total = (ComEcfZTotais) rec;
-							total.setComEcfZTotaisValor(total.getComEcfZTotaisValor() / 100);
-							ecfZ.getComZTotais().add(total);
+							if (total.getComEcfZTotaisValor() > 0.00) {
+								total.setComEcfZTotaisValor(total.getComEcfZTotaisValor() / 100);
+								ecfZ.getComZTotais().add(total);
+							}
 							// venda
 						} else if (rec instanceof ComEcfVenda) {
 							ComEcfVenda venda = getVenda((ComEcfVenda) rec, ecf);
@@ -153,7 +155,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 				System.gc();
 
 				// valida ecfZ
-				if (ecfZ != null && ecfZ.getComZTotais() != null) {
+				if (ecfZ != null && ecfZ.getComZTotais() != null && !ecfZ.getComZTotais().isEmpty()) {
 					// salva z
 					service.salvarEcfZ(ecfZ);
 					// salva as vendas
@@ -261,7 +263,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 		FiltroObjeto fo = new FiltroObjeto("comEcf", ECompara.IGUAL, ecf);
 		FiltroData fd = new FiltroData("comEcfZData", ECompara.IGUAL, ecfZ.getComEcfZData());
 		GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, fd });
-		if (service.selecionar(ecfZ, gf, false) != null) {
+		if (total == 0 || service.selecionar(ecfZ, gf, false) != null) {
 			ecfZ = null;
 		}
 
@@ -360,7 +362,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 			// efetiva a transacao
 			int total = rs.executeUpdate();
 			em.getTransaction().commit();
-			
+
 			// inicia a transacao
 			em.getTransaction().begin();
 			// atualiza pela descricao e valor

@@ -21,6 +21,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -245,8 +247,8 @@ public class UtilServer extends HttpServlet {
 	 *            arquivo compactado contendo os arquivos.
 	 * @return um mapa de nomes e bytes dos arquivos descompactados.
 	 */
-	public static Map<String, byte[]> getArquivos(byte[] zip) {
-		Map<String, byte[]> arquivos = new HashMap<String, byte[]>();
+	public static SortedMap<String, byte[]> getArquivos(byte[] zip) {
+		SortedMap<String, byte[]> arquivos = new TreeMap<String, byte[]>();
 		ZipInputStream zin = new ZipInputStream(new ByteArrayInputStream(zip));
 
 		try {

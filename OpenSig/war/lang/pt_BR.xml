@@ -392,6 +392,13 @@
 		<descricao>Administrar os incentivos.</descricao>
 		<imagem>icon-incentivo</imagem>
 	</funcao>
+	<funcao>
+		<classe>br.com.opensig.fiscal.client.controlador.comando.ComandoSpedFiscal
+		</classe>
+		<nome>SPED Fiscal</nome>
+		<descricao>Sistema Público de Escrituração Digital Fiscal</descricao>
+		<imagem>icon-sped</imagem>
+	</funcao>
 	<!-- Ações -->
 	<acao>
 		<classe>br.com.opensig.core.client.controlador.comando.lista.ComandoVisualizar
