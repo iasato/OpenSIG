@@ -22,6 +22,7 @@ import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.widgets.form.ComboBox;
 import com.gwtext.client.widgets.form.NumberField;
+import com.gwtext.client.widgets.form.TextField;
 import com.gwtext.client.widgets.grid.BaseColumnConfig;
 import com.gwtext.client.widgets.grid.CellMetadata;
 import com.gwtext.client.widgets.grid.ColumnConfig;
@@ -33,7 +34,7 @@ public class ListagemPreco extends AListagemEditor<ProdPreco> {
 
 	private Store storeEmbalagem;
 	private NumberField txtValor;
-	private NumberField txtBarra;
+	private TextField txtBarra;
 	private RecordDef camposTabela;
 
 	public ListagemPreco(boolean barraTarefa) {
@@ -44,7 +45,7 @@ public class ListagemPreco extends AListagemEditor<ProdPreco> {
 	public void inicializar() {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("prodPrecoId"), new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"),
-				new FloatFieldDef("prodPrecoValor"), new IntegerFieldDef("prodPrecoBarra") };
+				new FloatFieldDef("prodPrecoValor"), new StringFieldDef("prodPrecoBarra") };
 		campos = new RecordDef(fd);
 
 		// editores
@@ -85,11 +86,10 @@ public class ListagemPreco extends AListagemEditor<ProdPreco> {
 		ColumnConfig ccPreco = new ColumnConfig(OpenSigCore.i18n.txtPreco(), "prodPrecoValor", 100, false, IListagem.DINHEIRO);
 		ccPreco.setEditor(new GridEditor(txtValor));
 
-		txtBarra = new NumberField();
-		txtBarra.setAllowDecimals(false);
-		txtBarra.setAllowNegative(false);
-		txtBarra.setMinLength(6);
-		txtBarra.setMaxLength(18);
+		txtBarra = new TextField();
+		txtBarra.setMinLength(8);
+		txtBarra.setMaxLength(14);
+		txtBarra.setRegex("^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$");
 		txtBarra.setSelectOnFocus(true);
 		ColumnConfig ccBarra = new ColumnConfig(OpenSigCore.i18n.txtBarra(), "prodPrecoBarra", 100, false);
 		ccBarra.setEditor(new GridEditor(txtBarra));
@@ -115,14 +115,14 @@ public class ListagemPreco extends AListagemEditor<ProdPreco> {
 				double valor = rec.getAsDouble("prodPrecoValor");
 				String barra = rec.getAsString("prodPrecoBarra");
 
-				if (embalagemId < 1 || valor < 0.01 || (barra != null && (barra.length() < 6 || barra.length() > 18))) {
+				if (embalagemId < 1 || valor < 0.01 || (barra != null && (barra.length() == 8 || barra.length() == 12 || barra.length() == 13 || barra.length() == 14))) {
 					throw new Exception();
 				}
 
 				ProdPreco preco = new ProdPreco();
 				preco.setProdEmbalagem(new ProdEmbalagem(embalagemId));
 				preco.setProdPrecoValor(valor);
-				preco.setProdPrecoBarra(barra == null ? null : Long.valueOf(barra));
+				preco.setProdPrecoBarra(barra == null ? "" : barra);
 				lista.add(preco);
 			} catch (Exception ex) {
 				valida = false;
@@ -164,11 +164,11 @@ public class ListagemPreco extends AListagemEditor<ProdPreco> {
 		this.txtValor = txtValor;
 	}
 
-	public NumberField getTxtBarra() {
+	public TextField getTxtBarra() {
 		return txtBarra;
 	}
 
-	public void setTxtBarra(NumberField txtBarra) {
+	public void setTxtBarra(TextField txtBarra) {
 		this.txtBarra = txtBarra;
 	}
 

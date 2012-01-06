@@ -290,7 +290,7 @@ public class FormularioValorProduto extends AFormulario<ComValorProduto> {
 	}
 
 	private ComboBox getProduto() {
-		FieldDef[] fdProduto = new FieldDef[] { new IntegerFieldDef("prodProdutoId"), new StringFieldDef("prodProdutoNcm"), new IntegerFieldDef("prodProdutoBarra"),
+		FieldDef[] fdProduto = new FieldDef[] { new IntegerFieldDef("prodProdutoId"), new StringFieldDef("prodProdutoNcm"), new StringFieldDef("prodProdutoBarra"),
 				new StringFieldDef("prodProdutoDescricao") };
 
 		FiltroBinario fb = new FiltroBinario("prodProdutoAtivo", ECompara.IGUAL, 1);

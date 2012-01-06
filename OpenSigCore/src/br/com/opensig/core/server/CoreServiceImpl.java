@@ -693,7 +693,7 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 				// os metodos do objeto
 				for (Method met : obj.getClass().getMethods()) {
 					// verifica se é o get e retorna List
-					if (isGetter(met) && met.getReturnType() == List.class) {
+					if (UtilServer.isGetter(met) && met.getReturnType() == List.class) {
 						List<E> vMet = (List<E>) met.invoke(obj, new Object[] {});
 						// percorre as colecoes
 						for (Colecao col : dado.getColecao()) {
@@ -704,7 +704,7 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 									// percorre os metodos do objeto final
 									for (Method subMet : subObj.getClass().getMethods()) {
 										// verifica se é set e tem o mesmo nome
-										if (isSetter(subMet) && subMet.getName().equalsIgnoreCase(nMet)) {
+										if (UtilServer.isSetter(subMet) && subMet.getName().equalsIgnoreCase(nMet)) {
 											// seta o valor
 											subMet.invoke(subObj, new Object[] { sql.getParametro().getValor() });
 											break;
@@ -718,7 +718,7 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 							}
 						}
 						// verifica se é set e tem o mesmo nome
-					} else if (isSetter(met) && met.getName().equalsIgnoreCase(nMet)) {
+					} else if (UtilServer.isSetter(met) && met.getName().equalsIgnoreCase(nMet)) {
 						// seta o valor
 						met.invoke(obj, new Object[] { sql.getParametro().getValor() });
 						break;
@@ -891,7 +891,7 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 	protected void padronizaLetras(Object unidade, ELetra tipo, boolean limpar) {
 		for (Method metodo : unidade.getClass().getMethods()) {
 			try {
-				if (isGetter(metodo)) {
+				if (UtilServer.isGetter(metodo)) {
 					Object valorMetodo = metodo.invoke(unidade, new Object[] {});
 
 					if (metodo.getReturnType() == String.class) {
@@ -911,49 +911,9 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 					}
 				}
 			} catch (Exception ex) {
-				UtilServer.LOG.debug("Erro ao padronizar. " + metodo.getName(), ex);
+				// nao precisa modificar.
 			}
 		}
-	}
-
-	/**
-	 * Metodo que informa se o metodo da classe é do tipo GET.
-	 * 
-	 * @param method
-	 *            usando reflection para descrobrir os metodos.
-	 * @return verdadeiro se o metodo for GET, falso caso contrario.
-	 */
-	protected boolean isGetter(Method method) {
-		if (!method.getName().startsWith("get")) {
-			return false;
-		}
-		if (method.getParameterTypes().length != 0) {
-			return false;
-		}
-		if (void.class.equals(method.getReturnType())) {
-			return false;
-		}
-		return true;
-	}
-
-	/**
-	 * Metodo que informa se o metodo da classe é do tipo SET.
-	 * 
-	 * @param method
-	 *            usando reflection para descrobrir os metodos.
-	 * @return verdadeiro se o metodo for SET, falso caso contrario.
-	 */
-	protected boolean isSetter(Method method) {
-		if (!method.getName().startsWith("set")) {
-			return false;
-		}
-		if (method.getParameterTypes().length == 0) {
-			return false;
-		}
-		if (!void.class.equals(method.getReturnType())) {
-			return false;
-		}
-		return true;
 	}
 
 	@Override

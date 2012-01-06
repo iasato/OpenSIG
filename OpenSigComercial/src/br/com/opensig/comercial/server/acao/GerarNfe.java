@@ -399,7 +399,7 @@ public class GerarNfe extends Chain {
 		Dest dest = new Dest();
 		String razao = empDestino.getEmpEntidade().getEmpEntidadeNome1().trim();
 		razao = razao.length() > 60 ? razao.substring(0, 60) : razao;
-		
+
 		// empresa
 		if (auth.getConf().get("nfe.tipoamb").equals("2")) {
 			dest.setCNPJ("99999999000191");
@@ -462,17 +462,13 @@ public class GerarNfe extends Chain {
 			det.setNItem((i++) + "");
 			// cod produto
 			Prod prod = new Prod();
-			if (pp.getProdProdutoBarra() != null && pp.getProdProdutoBarra().toString().length() >= 12) {
-				prod.setCProd(pp.getProdProdutoBarra().toString());
-			} else {
+			if (pp.getProdProdutoBarra().equals("")) {
 				prod.setCProd(UtilServer.formataNumero(pp.getProdProdutoId(), 6, 0, false));
+			} else {
+				prod.setCProd(pp.getProdProdutoBarra().toString());
 			}
 			// barra
-			if (pp.getProdProdutoBarra() != null && pp.getProdProdutoBarra().toString().length() >= 12) {
-				prod.setCEAN(pp.getProdProdutoBarra().toString());
-			} else {
-				prod.setCEAN("");
-			}
+			prod.setCEAN(pp.getProdProdutoBarra());
 			// descricao
 			if (pp.getProdProdutoReferencia() != null && !pp.getProdProdutoReferencia().equals("")) {
 				prod.setXProd(pp.getProdProdutoDescricao().trim() + " REF-" + pp.getProdProdutoReferencia().trim());
@@ -494,11 +490,7 @@ public class GerarNfe extends Chain {
 			valorProd += Double.valueOf(strProd);
 			prod.setVProd(strProd);
 			// barra do tributo
-			if (pp.getProdProdutoBarra() != null && pp.getProdProdutoBarra().toString().length() >= 12) {
-				prod.setCEANTrib(pp.getProdProdutoBarra().toString());
-			} else {
-				prod.setCEANTrib("");
-			}
+			prod.setCEANTrib(pp.getProdProdutoBarra());
 			// unidade do tributo
 			prod.setUTrib(pp.getProdEmbalagem().getProdEmbalagemNome());
 			// quantidde do tributo

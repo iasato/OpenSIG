@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import br.com.opensig.core.client.OpenSigCore;
-import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.AComando;
 import br.com.opensig.core.client.controlador.comando.ComandoAcao;
 import br.com.opensig.core.client.controlador.comando.ComandoExecutar;
@@ -58,7 +57,7 @@ private IComando validaQuitar;
 				MessageBox.wait(OpenSigCore.i18n.txtQuitar(), OpenSigCore.i18n.txtAguarde());
 
 				// variaveis usadas
-				hoje = UtilClient.DATA;
+				hoje = new Date();
 				GrupoFiltro gf = new GrupoFiltro();
 				Map<Integer, Double> contas = new HashMap<Integer, Double>();
 				List<Sql> sqls = new ArrayList<Sql>();

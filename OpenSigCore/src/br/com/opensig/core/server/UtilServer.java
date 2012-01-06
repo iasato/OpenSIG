@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -612,5 +613,45 @@ public class UtilServer extends HttpServlet {
 		// remove alguns caracteres especiais
 		xml = xml.replaceAll(UtilServer.CONF.get("nfe.regexp"), "");
 		return xml;
+	}
+	
+	/**
+	 * Metodo que informa se o metodo da classe é do tipo GET.
+	 * 
+	 * @param method
+	 *            usando reflection para descrobrir os metodos.
+	 * @return verdadeiro se o metodo for GET, falso caso contrario.
+	 */
+	public static boolean isGetter(Method method) {
+		if (!method.getName().startsWith("get")) {
+			return false;
+		}
+		if (method.getParameterTypes().length != 0) {
+			return false;
+		}
+		if (void.class.equals(method.getReturnType())) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Metodo que informa se o metodo da classe é do tipo SET.
+	 * 
+	 * @param method
+	 *            usando reflection para descrobrir os metodos.
+	 * @return verdadeiro se o metodo for SET, falso caso contrario.
+	 */
+	public static boolean isSetter(Method method) {
+		if (!method.getName().startsWith("set")) {
+			return false;
+		}
+		if (method.getParameterTypes().length == 0) {
+			return false;
+		}
+		if (!void.class.equals(method.getReturnType())) {
+			return false;
+		}
+		return true;
 	}
 }

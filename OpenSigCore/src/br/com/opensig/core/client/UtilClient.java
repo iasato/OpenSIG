@@ -40,10 +40,6 @@ import com.gwtext.client.widgets.grid.GridPanel;
 public class UtilClient {
 
 	/**
-	 * Data do sistema usando a data do servidor.
-	 */
-	public static Date DATA;
-	/**
 	 * Configuracoes setadas para a empresa.
 	 */
 	public static Map<String, String> CONF;

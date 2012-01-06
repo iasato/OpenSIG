@@ -1,5 +1,6 @@
 package br.com.opensig.financeiro.client.visao.lista;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -164,7 +165,7 @@ public class ListagemRetorno extends AListagem<FinRetorno> {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
 			if (entry.getKey().equals("finRetornoCadastro")) {
-				((GridDateFilter) entry.getValue()).setValueOn(UtilClient.DATA);
+				((GridDateFilter) entry.getValue()).setValueOn(new Date());
 			} else if (entry.getKey().equals("empEmpresa.empEmpresaId")) {
 				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
 			} else if (entry.getKey().equals("empEmpresa.empEntidade.empEntidadeNome1")) {

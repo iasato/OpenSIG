@@ -1,11 +1,11 @@
 package br.com.opensig.financeiro.client.visao.form;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import br.com.opensig.core.client.OpenSigCore;
-import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.AComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvar;
@@ -167,7 +167,7 @@ public class FormularioRetorno extends AFormulario<FinRetorno> {
 			classe.setFinRetornoQuantidade(financeiros.size());
 			classe.setEmpEmpresa(new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 			classe.setFinConta(new FinConta(Integer.valueOf(cmbConta.getValue())));
-			classe.setFinRetornoCadastro(UtilClient.DATA);
+			classe.setFinRetornoCadastro(new Date());
 			classe.setFinRetornoArquivo(arquivo);
 		} else {
 			new ToastWindow(OpenSigCore.i18n.txtListagem(), OpenSigCore.i18n.errLista()).show();

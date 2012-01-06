@@ -65,6 +65,7 @@ import br.com.opensig.fiscal.server.acao.GerarNfeCancelada;
 import br.com.opensig.fiscal.server.acao.GerarNfeInutilizada;
 import br.com.opensig.fiscal.server.acao.RetornarNfe;
 import br.com.opensig.fiscal.server.acao.SalvarSaida;
+import br.com.opensig.fiscal.server.sped.EFD;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
 import br.com.opensig.fiscal.shared.modelo.FisCertificado;
 import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
@@ -611,37 +612,55 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 	@Override
 	public void deletar(E unidade) throws CoreException {
 		super.deletar(unidade);
-
 		if (unidade instanceof FisSpedFiscal) {
-			// identifica o usuario/empresa
 			FisSpedFiscal sped = (FisSpedFiscal) unidade;
-			HttpSession sessao = getThreadLocalRequest().getSession();
-			Autenticacao auth = SessionManager.LOGIN.get(sessao);
-
-			// controi o path do arquivo
-			String cnpj = auth.getEmpresa()[5].replaceAll("\\D", "");
-			String nome;
-			if (sped.getFisSpedFiscalMes() > 9) {
-				nome = sped.getFisSpedFiscalAno() + "" + sped.getFisSpedFiscalMes();
-			} else {
-				nome = sped.getFisSpedFiscalAno() + "0" + sped.getFisSpedFiscalMes();
-			}
-			String path = UtilServer.PATH_EMPRESA + cnpj + "/sped/" + nome + ".ZIP";
-
-			// deletando o arquivo sped
-			File f = new File(path);
-			if (f.exists()) {
-				f.delete();
-			}
+			File f = getEfd(sped);
+			f.delete();
 		}
 	}
 
 	@Override
 	public E salvar(E unidade) throws CoreException {
-		if(unidade instanceof FisSpedFiscal){
+		super.salvar(unidade, false);
+		if (unidade instanceof FisSpedFiscal) {
+			// deleta o antigo efd
 			FisSpedFiscal sped = (FisSpedFiscal) unidade;
+			sped.setId(unidade.getId());
+			File f = getEfd(sped);
+			f.delete();
+
+			// deleta o recibo se existir
+			String novoPath = f.getPath().replace("ZIP", "REC");
+			f = new File(novoPath);
+			f.delete();
+
+			// seta o arquivo para o novo TXT e chama a thread que gera o EFD
+			f = new File(f.getPath().replace("REC", "TXT"));
+			f.delete();
+			Thread efd = new Thread(new EFD(f, sped, getAuth()));
+			efd.start();
 		}
-		
-		return super.salvar(unidade);
+
+		return unidade;
+	}
+
+	private File getEfd(FisSpedFiscal sped) {
+		// identifica o usuario/empresa
+		HttpSession sessao = getThreadLocalRequest().getSession();
+		Autenticacao auth = SessionManager.LOGIN.get(sessao);
+
+		// controi o path do arquivo
+		String cnpj = auth.getEmpresa()[5].replaceAll("\\D", "");
+		String nome = sped.getFisSpedFiscalTipo();
+		if (sped.getFisSpedFiscalMes() > 9) {
+			nome += sped.getFisSpedFiscalAno() + "" + sped.getFisSpedFiscalMes();
+		} else {
+			nome += sped.getFisSpedFiscalAno() + "0" + sped.getFisSpedFiscalMes();
+		}
+		String path = UtilServer.PATH_EMPRESA + cnpj + "/sped/" + nome + ".ZIP";
+
+		// deletando o arquivo sped
+		File f = new File(path);
+		return f;
 	}
 }

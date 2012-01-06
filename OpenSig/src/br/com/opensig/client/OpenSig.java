@@ -1,7 +1,5 @@
 package br.com.opensig.client;
 
-import java.util.Date;
-
 import br.com.opensig.client.visao.AreaTrabalho;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
@@ -67,18 +65,6 @@ public class OpenSig implements EntryPoint {
 				});
 			}
 		});
-
-		// pega a hora do servidor
-		UtilClient.DATA = new Date(Long.valueOf(RootPanel.get("serverTime").getElement().getInnerText()));
-
-		// atualiza o cliente a cada segundo
-		Scheduler.get().scheduleFixedPeriod(new RepeatingCommand() {
-			@SuppressWarnings("deprecation")
-			public boolean execute() {
-				UtilClient.DATA.setSeconds(UtilClient.DATA.getSeconds() + 1);
-				return true;
-			}
-		}, 1000);
 
 		// verifica se o usuario ficou sem mexer pelo tempo determinado
 		Scheduler.get().scheduleFixedPeriod(new RepeatingCommand() {

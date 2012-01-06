@@ -194,13 +194,12 @@ public class ComVendaProduto extends Dados implements Serializable {
 	}
 
 	public String[] toArray() {
-		String barra = prodProduto.getProdProdutoBarra() == null || prodProduto.getProdProdutoBarra() == 0L ? null : prodProduto.getProdProdutoBarra() + "";
 		return new String[] { comVendaProdutoId + "", comVenda.getComVendaId() + "", comVenda.getEmpEmpresa().getEmpEmpresaId() + "", comVenda.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(),
-				comVenda.getEmpCliente().getEmpEntidade().getEmpEntidadeNome1(), prodProduto.getEmpFornecedor().getEmpEntidade().getEmpEntidadeNome1(), prodProduto.getProdProdutoId() + "", barra,
-				prodProduto.getProdProdutoDescricao(), prodProduto.getProdProdutoReferencia(), UtilClient.getDataGrid(comVenda.getComVendaData()), comVendaProdutoQuantidade + "",
-				prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), comVendaProdutoBruto.toString(), comVendaProdutoDesconto.toString(), comVendaProdutoLiquido.toString(),
-				comVendaProdutoTotalBruto.toString(), comVendaProdutoTotalLiquido.toString(), "0", prodProduto.getProdOrigem().getProdOrigemId() + "", comVendaProdutoIcms + "",
-				comVendaProdutoIpi + "", comVendaProdutoOrdem + "" };
+				comVenda.getEmpCliente().getEmpEntidade().getEmpEntidadeNome1(), prodProduto.getEmpFornecedor().getEmpEntidade().getEmpEntidadeNome1(), prodProduto.getProdProdutoId() + "",
+				prodProduto.getProdProdutoBarra(), prodProduto.getProdProdutoDescricao(), prodProduto.getProdProdutoReferencia(), UtilClient.getDataGrid(comVenda.getComVendaData()),
+				comVendaProdutoQuantidade + "", prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), comVendaProdutoBruto.toString(), comVendaProdutoDesconto.toString(),
+				comVendaProdutoLiquido.toString(), comVendaProdutoTotalBruto.toString(), comVendaProdutoTotalLiquido.toString(), "0", prodProduto.getProdOrigem().getProdOrigemId() + "",
+				comVendaProdutoIcms + "", comVendaProdutoIpi + "", comVendaProdutoOrdem + "" };
 	}
 
 	public Dados getObjeto(String campo) {

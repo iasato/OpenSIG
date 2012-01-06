@@ -328,7 +328,7 @@ public class ListagemValidarProduto {
 		ProdProduto prod = comPro.getProdProduto();
 		// altera
 		prod.setProdProdutoId(rec.getAsInteger("prodProdutoId"));
-		prod.setProdProdutoBarra(rec.getAsString("prodProduto.prodProdutoBarra") != null ? Long.valueOf(rec.getAsString("prodProduto.prodProdutoBarra")) : null);
+		prod.setProdProdutoBarra(rec.getAsString("prodProduto.prodProdutoBarra") != null ? rec.getAsString("prodProduto.prodProdutoBarra") : "");
 		prod.setProdProdutoDescricao(rec.getAsString("prodProduto.prodProdutoDescricao"));
 		prod.setProdProdutoReferencia(rec.getAsString("prodProduto.prodProdutoReferencia"));
 		prod.setProdProdutoIncentivo(rec.getAsBoolean("prodProduto.prodProdutoIncentivo"));
@@ -394,7 +394,9 @@ public class ListagemValidarProduto {
 			// barra
 			if (conf.getDataIndex().equals("prodProduto.prodProdutoBarra")) {
 				TextField txtBarra = new TextField();
-				txtBarra.setMaxLength(13);
+				txtBarra.setMinLength(8);
+				txtBarra.setMaxLength(14);
+				txtBarra.setRegex("^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$");
 
 				gridProdutos.setEditorListener(txtBarra);
 				gridProdutos.getModelos().setEditable(conf.getId(), true);

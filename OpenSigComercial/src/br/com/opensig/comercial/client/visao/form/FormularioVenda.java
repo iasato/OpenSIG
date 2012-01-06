@@ -1,6 +1,7 @@
 package br.com.opensig.comercial.client.visao.form;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -356,7 +357,7 @@ public class FormularioVenda extends AFormulario<ComVenda> {
 			classe.setSisUsuario(new SisUsuario(Integer.valueOf(hdnUsuario.getValueAsString())));
 		}
 
-		classe.setComVendaData(UtilClient.DATA);
+		classe.setComVendaData(new Date());
 		classe.setComVendaValorBruto(bruto);
 		classe.setComVendaValorLiquido(liquido);
 		classe.setComVendaObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());

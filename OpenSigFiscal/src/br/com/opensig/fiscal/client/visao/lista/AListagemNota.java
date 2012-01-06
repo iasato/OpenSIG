@@ -1,5 +1,6 @@
 package br.com.opensig.fiscal.client.visao.lista;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,7 +236,7 @@ public abstract class AListagemNota<E extends Dados> extends AListagem<E> {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
 			if (entry.getKey().equals(nomes.get("data"))) {
-				((GridDateFilter) entry.getValue()).setValueOn(UtilClient.DATA);
+				((GridDateFilter) entry.getValue()).setValueOn(new Date());
 			} else if (entry.getKey().equals("empEmpresa.empEmpresaId")) {
 				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
 			} else if (entry.getKey().equals("empEmpresa.empEntidade.empEntidadeNome1")) {

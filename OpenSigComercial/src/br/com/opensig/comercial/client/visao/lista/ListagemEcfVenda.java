@@ -1,5 +1,6 @@
 package br.com.opensig.comercial.client.visao.lista;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -181,7 +182,7 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
 			if (entry.getKey().equals("comEcfVendaData")) {
-				((GridDateFilter) entry.getValue()).setValueOn(UtilClient.DATA);
+				((GridDateFilter) entry.getValue()).setValueOn(new Date());
 			} else if (entry.getKey().equals("comEcf.empEmpresa.empEmpresaId")) {
 				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
 			} else if (entry.getKey().equals("comEcf.empEmpresa.empEntidade.empEntidadeNome1")) {

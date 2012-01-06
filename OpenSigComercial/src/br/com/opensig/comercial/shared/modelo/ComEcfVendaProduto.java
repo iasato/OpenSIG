@@ -219,7 +219,7 @@ public class ComEcfVendaProduto extends Dados implements Serializable {
 		if (prodProduto != null) {
 			fornecedor = prodProduto.getEmpFornecedor().getEmpEntidade().getEmpEntidadeNome1();
 			prodId = prodProduto.getProdProdutoId() + "";
-			barra = prodProduto.getProdProdutoBarra() == null || prodProduto.getProdProdutoBarra() == 0L ? null : prodProduto.getProdProdutoBarra() + "";
+			barra = prodProduto.getProdProdutoBarra();
 			desc = prodProduto.getProdProdutoDescricao();
 			ref = prodProduto.getProdProdutoReferencia();
 		}

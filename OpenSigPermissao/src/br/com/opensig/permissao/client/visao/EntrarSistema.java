@@ -1,5 +1,7 @@
 package br.com.opensig.permissao.client.visao;
 
+import java.util.Date;
+
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.js.OpenSigCoreJS;
@@ -89,7 +91,7 @@ public class EntrarSistema {
 		frmAcesso.add(linha1);
 
 		String captcha = RootPanel.get("captcha").getElement().getInnerText();
-		imgCaptcha = new Image("imgCaptcha", GWT.getHostPageBaseURL() + "PermissaoService?data=" + UtilClient.DATA.getTime());
+		imgCaptcha = new Image("imgCaptcha", GWT.getHostPageBaseURL() + "PermissaoService?data=" + new Date().getTime());
 
 		txtCaptcha = new TextField(OpenSigCore.i18n.txtImagem(), "captcha", 50);
 		txtCaptcha.setAllowBlank(false);
@@ -187,7 +189,7 @@ public class EntrarSistema {
 							MessageBox.hide();
 							MessageBox.alert(OpenSigCore.i18n.txtAutenticao(), caught.getMessage());
 							txtCaptcha.setValue("");
-							imgCaptcha.setSrc(GWT.getHostPageBaseURL() + "PermissaoService?data=" + UtilClient.DATA.getTime());
+							imgCaptcha.setSrc(GWT.getHostPageBaseURL() + "PermissaoService?data=" + new Date().getTime());
 						}
 
 						public void onSuccess(Autenticacao result) {

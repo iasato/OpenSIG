@@ -276,15 +276,15 @@ public class FormularioPesquisa extends AFormulario<ProdProduto> {
 			if (chkBarra.getValue()) {
 				try {
 					// barra
-					FiltroNumero fn = new FiltroNumero("prodProdutoBarra", ECompara.IGUAL, txtBusca.getValueAsString());
-					gf.add(fn, EJuncao.OU);
+					FiltroTexto ft = new FiltroTexto("prodProdutoBarra", ECompara.IGUAL, txtBusca.getValueAsString());
+					gf.add(ft, EJuncao.OU);
 					// barra do preco
-					FiltroNumero fn1 = new FiltroNumero("prodPrecoBarra", ECompara.IGUAL, txtBusca.getValueAsString());
-					fn1.setCampoPrefixo("t2.");
-					gf.add(fn1, EJuncao.OU);
+					FiltroTexto ft1 = new FiltroTexto("prodPrecoBarra", ECompara.IGUAL, txtBusca.getValueAsString());
+					ft1.setCampoPrefixo("t2.");
+					gf.add(ft1, EJuncao.OU);
 				} catch (Exception e) {
-					FiltroNumero fn = new FiltroNumero("prodProdutoBarra", ECompara.IGUAL, 0);
-					gf.add(fn, EJuncao.OU);
+					FiltroTexto ft = new FiltroTexto("prodProdutoBarra", ECompara.IGUAL, "");
+					gf.add(ft, EJuncao.OU);
 				}
 			}
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT-2.3.0"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GWT_EXT"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigCore"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigPermissao"/>
@@ -29,5 +29,6 @@
 	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/simplecaptcha.jar"/>
 	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="lib" path="/OpenSigComercial/dist/OpenSigComercial.jar"/>
+	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/beanio.jar" sourcepath="/Users/pedrohenriquelira/.m2/repository/org/beanio/beanio/1.2.0/beanio-1.2.0-sources.jar"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>

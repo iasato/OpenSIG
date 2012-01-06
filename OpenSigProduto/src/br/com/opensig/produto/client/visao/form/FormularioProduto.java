@@ -79,7 +79,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 	private NumberField txtVolume;
 	private NumberField txtEstoque;
 	private TextField txtNcm;
-	private NumberField txtBarra;
+	private TextField txtBarra;
 	private ComboBox cmbFornecedor;
 	private ComboBox cmbFabricante;
 	private ComboBox cmbTributacao;
@@ -120,13 +120,12 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		txtNcm.setAllowBlank(false);
 		txtNcm.setMinLength(2);
 		txtNcm.setMaxLength(8);
-		txtNcm.setRegex("^\\d{2}$|^\\d{8}$");
+		txtNcm.setRegex("^(\\d{2}|\\d{8})$");
 
-		txtBarra = new NumberField(OpenSigCore.i18n.txtBarra(), "prodProdutoBarra", 110);
-		txtBarra.setAllowDecimals(false);
-		txtBarra.setAllowNegative(false);
+		txtBarra = new TextField(OpenSigCore.i18n.txtBarra(), "prodProdutoBarra", 110);
 		txtBarra.setMinLength(8);
 		txtBarra.setMaxLength(14);
+		txtBarra.setRegex("^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$");
 
 		txtVolume = new NumberField(OpenSigCore.i18n.txtQtdCx(), "prodProdutoVolume", 60);
 		txtVolume.setAllowBlank(false);
@@ -258,11 +257,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		classe.setProdPrecos(precos);
 		classe.setProdProdutoId(Integer.valueOf(hdnCod.getValueAsString()));
 		classe.setProdProdutoNcm(txtNcm.getValueAsString());
-		if (txtBarra.getValue() != null) {
-			classe.setProdProdutoBarra(txtBarra.getValue().longValue());
-		} else {
-			classe.setProdProdutoBarra(null);
-		}
+		classe.setProdProdutoBarra(txtBarra.getValueAsString() != null ? txtBarra.getValueAsString() : "");
 		classe.setProdProdutoReferencia(txtReferencia.getValueAsString() == null ? "" : txtReferencia.getValueAsString());
 		if (txtCusto.getValue() != null) {
 			classe.setProdProdutoCusto(txtCusto.getValue().doubleValue());
@@ -295,11 +290,11 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		}
 		classe.setProdProdutoCategoria(strCategorias);
 		if (classe.getProdProdutoId() == 0) {
-			classe.setProdProdutoCadastrado(UtilClient.DATA);
-			classe.setProdProdutoAlterado(UtilClient.DATA);
+			classe.setProdProdutoCadastrado(new Date());
+			classe.setProdProdutoAlterado(new Date());
 		} else {
 			classe.setProdProdutoCadastrado(dtCadastro);
-			classe.setProdProdutoAlterado(UtilClient.DATA);
+			classe.setProdProdutoAlterado(new Date());
 		}
 		if (cmbOrigem.getValue() != null) {
 			ProdOrigem origem = new ProdOrigem(Integer.valueOf(cmbOrigem.getValue()));
@@ -567,7 +562,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		// filtro
 		int id = UtilClient.getSelecionado(lista.getPanel());
 		FiltroObjeto filtro = new FiltroObjeto("proProduto", ECompara.IGUAL, new ProdProduto(id));
-		
+
 		ExpListagem<ProdPreco> precos = new ExpListagem<ProdPreco>();
 		precos.setClasse(preco);
 		precos.setMetadados(metadados);
@@ -667,11 +662,11 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		this.txtPreco = txtPreco;
 	}
 
-	public NumberField getTxtBarra() {
+	public TextField getTxtBarra() {
 		return txtBarra;
 	}
 
-	public void setTxtBarra(NumberField txtBarra) {
+	public void setTxtBarra(TextField txtBarra) {
 		this.txtBarra = txtBarra;
 	}
 

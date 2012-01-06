@@ -34,7 +34,7 @@ public class ProdPreco extends Dados implements Serializable {
 	private double prodPrecoValor;
 
 	@Column(name = "prod_preco_barra")
-	private Long prodPrecoBarra;
+	private String prodPrecoBarra;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_produto_id")
@@ -69,11 +69,11 @@ public class ProdPreco extends Dados implements Serializable {
 		this.prodPrecoValor = prodPrecoValor;
 	}
 
-	public Long getProdPrecoBarra() {
+	public String getProdPrecoBarra() {
 		return prodPrecoBarra;
 	}
 
-	public void setProdPrecoBarra(Long prodPrecoBarra) {
+	public void setProdPrecoBarra(String prodPrecoBarra) {
 		this.prodPrecoBarra = prodPrecoBarra;
 	}
 
@@ -102,8 +102,7 @@ public class ProdPreco extends Dados implements Serializable {
 	}
 
 	public String[] toArray() {
-		String barra = prodPrecoBarra == null || prodPrecoBarra == 0L ? null : prodPrecoBarra + "";
-		return new String[] { prodPrecoId + "", prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), prodPrecoValor + "", barra };
+		return new String[] { prodPrecoId + "", prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), prodPrecoValor + "", prodPrecoBarra };
 	}
 
 	public Dados getObjeto(String campo) {

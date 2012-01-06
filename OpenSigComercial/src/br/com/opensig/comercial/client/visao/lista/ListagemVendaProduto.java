@@ -1,5 +1,6 @@
 package br.com.opensig.comercial.client.visao.lista;
 
+import java.util.Date;
 import java.util.Map.Entry;
 
 import br.com.opensig.comercial.client.controlador.comando.ComandoVenda;
@@ -57,7 +58,7 @@ public class ListagemVendaProduto extends AListagem<ComVendaProduto> {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comVendaProdutoId"), new IntegerFieldDef("comVenda.comVendaId"), new IntegerFieldDef("comVenda.empEmpresa.empEmpresaId"),
 				new StringFieldDef("comVenda.empEmpresa.empEntidade.empEntidadeNome1"), new StringFieldDef("comVenda.empCliente.empEntidade.empEntidadeNome1"),
-				new StringFieldDef("prodProduto.empFornecedor.empEntidade.empEntidadeNome1"), new IntegerFieldDef("prodProduto.prodProdutoId"), new IntegerFieldDef("prodProduto.prodProdutoBarra"),
+				new StringFieldDef("prodProduto.empFornecedor.empEntidade.empEntidadeNome1"), new IntegerFieldDef("prodProduto.prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"),
 				new StringFieldDef("prodProduto.prodProdutoDescricao"), new StringFieldDef("prodProduto.prodProdutoReferencia"), new DateFieldDef("comVenda.comVendaData"),
 				new FloatFieldDef("comVendaProdutoQuantidade"), new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"),
 				new FloatFieldDef("comVendaProdutoBruto"), new FloatFieldDef("comVendaProdutoDesconto"), new FloatFieldDef("comVendaProdutoLiquido"), new FloatFieldDef("comVendaProdutoTotalBruto"),
@@ -135,7 +136,7 @@ public class ListagemVendaProduto extends AListagem<ComVendaProduto> {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
 			if (entry.getKey().equals("comVenda.comVendaData")) {
-				((GridDateFilter) entry.getValue()).setValueOn(UtilClient.DATA);
+				((GridDateFilter) entry.getValue()).setValueOn(new Date());
 			} else if (entry.getKey().equals("comVenda.empEmpresa.empEmpresaId")) {
 				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
 			} else if (entry.getKey().equals("comVenda.empEmpresa.empEntidade.empEntidadeNome1")) {

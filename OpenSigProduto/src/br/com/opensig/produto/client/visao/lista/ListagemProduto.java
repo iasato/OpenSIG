@@ -48,7 +48,7 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 
 	public void inicializar() {
 		// campos
-		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("prodProdutoId"), new StringFieldDef("prodProdutoNcm"), new IntegerFieldDef("prodProdutoBarra"),
+		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("prodProdutoId"), new StringFieldDef("prodProdutoNcm"), new StringFieldDef("prodProdutoBarra"),
 				new StringFieldDef("prodProdutoDescricao"), new StringFieldDef("prodProdutoReferencia"), new FloatFieldDef("prodProdutoCusto"), new FloatFieldDef("prodProdutoPreco"),
 				new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"), new IntegerFieldDef("prodProdutoVolume"),
 				new FloatFieldDef("t1.prodEstoqueQuantidade"), new StringFieldDef("prodProdutoCategoria"), new IntegerFieldDef("empFornecedor.empFornecedorId"),

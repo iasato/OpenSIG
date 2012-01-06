@@ -1,5 +1,6 @@
 package br.com.opensig.comercial.client.visao.lista;
 
+import java.util.Date;
 import java.util.Map.Entry;
 
 import br.com.opensig.comercial.client.controlador.comando.ComandoCompra;
@@ -56,7 +57,7 @@ public class ListagemCompraProduto extends AListagem<ComCompraProduto> {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comCompraProdutoId"), new IntegerFieldDef("comCompra.comCompraId"), new IntegerFieldDef("comCompra.empEmpresa.empEmpresaId"),
 				new StringFieldDef("comCompra.empEmpresa.empEntidade.empEntidadeNome1"), new StringFieldDef("prodProduto.empFornecedor.empEntidade.empEntidadeNome1"),
-				new IntegerFieldDef("prodProduto.prodProdutoId"), new IntegerFieldDef("prodProduto.prodProdutoBarra"), new StringFieldDef("prodProduto.prodProdutoDescricao"),
+				new IntegerFieldDef("prodProduto.prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"), new StringFieldDef("prodProduto.prodProdutoDescricao"),
 				new StringFieldDef("prodProduto.prodProdutoReferencia"), new IntegerFieldDef("prodProduto.prodTributacao.prodTributacaoDentro"),
 				new StringFieldDef("prodProduto.prodTributacao.prodTributacaoCst"), new DateFieldDef("comCompra.comCompraRecebimento"), new FloatFieldDef("comCompraProdutoQuantidade"),
 				new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"), new FloatFieldDef("comCompraProdutoValor"),
@@ -118,7 +119,7 @@ public class ListagemCompraProduto extends AListagem<ComCompraProduto> {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
 			if (entry.getKey().equals("comCompra.comCompraRecebimento")) {
-				((GridDateFilter) entry.getValue()).setValueOn(UtilClient.DATA);
+				((GridDateFilter) entry.getValue()).setValueOn(new Date());
 			} else if (entry.getKey().equals("comCompra.empEmpresa.empEmpresaId")) {
 				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
 			} else if (entry.getKey().equals("comCompra.empEmpresa.empEntidade.empEntidadeNome1")) {

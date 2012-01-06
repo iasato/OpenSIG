@@ -1,6 +1,7 @@
 package br.com.opensig.financeiro.client.visao.form;
 
-import br.com.opensig.core.client.UtilClient;
+import java.util.Date;
+
 import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.financeiro.shared.modelo.FinForma;
 import br.com.opensig.financeiro.shared.modelo.FinPagamento;
@@ -38,7 +39,7 @@ public class FormularioPagamento extends AFormularioFinanciado<FinPagamento> {
 		classe.setFinPagamentoObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
 		classe.setFinPagamentoQuitado(false);
 		classe.setFinPagamentoRealizado(null);
-		classe.setFinPagamentoCadastro(UtilClient.DATA);
+		classe.setFinPagamentoCadastro(new Date());
 		classe.setFinPagamentoVencimento(dtVencimento.getValue());
 		
 		if (txtValor.getValue() != null) {

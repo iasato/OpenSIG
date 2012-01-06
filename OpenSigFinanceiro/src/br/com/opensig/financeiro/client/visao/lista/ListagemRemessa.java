@@ -1,5 +1,6 @@
 package br.com.opensig.financeiro.client.visao.lista;
 
+import java.util.Date;
 import java.util.Map.Entry;
 
 import br.com.opensig.core.client.OpenSigCore;
@@ -123,7 +124,7 @@ public class ListagemRemessa extends AListagem<FinRemessa> {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
 			if (entry.getKey().equals("finRemessaCadastro")) {
-				((GridDateFilter) entry.getValue()).setValueOn(UtilClient.DATA);
+				((GridDateFilter) entry.getValue()).setValueOn(new Date());
 			} else if (entry.getKey().equals("empEmpresa.empEmpresaId")) {
 				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
 			} else if (entry.getKey().equals("empEmpresa.empEntidade.empEntidadeNome1")) {

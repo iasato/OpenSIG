@@ -160,7 +160,7 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 			public void onAfterEdit(GridPanel grid, Record record, String field, Object newValue, Object oldValue, int rowIndex, int colIndex) {
 				if (field.equalsIgnoreCase("quitado")) {
 					if (Boolean.valueOf(newValue.toString())) {
-						record.set("realizado", UtilClient.DATA);
+						record.set("realizado", new Date());
 					} else {
 						record.set("realizado", (Date) null);
 					}
@@ -220,7 +220,7 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 					fin.setFinPagamentoDocumento(documento);
 					fin.setFinPagamentoValor(valor);
 					fin.setFinPagamentoParcela(parcela);
-					fin.setFinPagamentoCadastro(UtilClient.DATA);
+					fin.setFinPagamentoCadastro(new Date());
 					fin.setFinPagamentoVencimento(vencimento);
 					fin.setFinPagamentoQuitado(quitado);
 					fin.setFinPagamentoRealizado(realizado);
@@ -233,7 +233,7 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 					fin.setFinRecebimentoDocumento(documento);
 					fin.setFinRecebimentoValor(valor);
 					fin.setFinRecebimentoParcela(parcela);
-					fin.setFinRecebimentoCadastro(UtilClient.DATA);
+					fin.setFinRecebimentoCadastro(new Date());
 					fin.setFinRecebimentoVencimento(vencimento);
 					fin.setFinRecebimentoQuitado(quitado);
 					fin.setFinRecebimentoRealizado(realizado);

@@ -49,7 +49,7 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comEcfVendaProdutoId"), new IntegerFieldDef("comEcfVenda.comEcfVendaId"), new IntegerFieldDef("comEcfVenda.comEcf.comEcfId"),
 				new StringFieldDef("comEcfVenda.comEcf.comEcfSerie"), new IntegerFieldDef("empEmpresaId"), new StringFieldDef("empEmpresa"), new StringFieldDef("empCliente"),
-				new StringFieldDef("empFornecedor"), new IntegerFieldDef("prodProdutoId"), new IntegerFieldDef("prodProduto.prodProdutoBarra"), new StringFieldDef("prodProduto.prodProdutoDescricao"),
+				new StringFieldDef("empFornecedor"), new IntegerFieldDef("prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"), new StringFieldDef("prodProduto.prodProdutoDescricao"),
 				new StringFieldDef("prodProduto.prodProdutoReferencia"), new DateFieldDef("comEcfVenda.comEcfVendaData"), new FloatFieldDef("comEcfVendaProdutoQuantidade"),
 				new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"), new FloatFieldDef("comEcfVendaProdutoBruto"),
 				new FloatFieldDef("comEcfVendaProdutoDesconto"), new FloatFieldDef("comEcfVendaProdutoLiquido"), new FloatFieldDef("comEcfVendaProdutoTotal"),

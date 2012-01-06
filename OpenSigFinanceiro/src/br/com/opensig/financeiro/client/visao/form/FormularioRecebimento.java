@@ -1,6 +1,7 @@
 package br.com.opensig.financeiro.client.visao.form;
 
-import br.com.opensig.core.client.UtilClient;
+import java.util.Date;
+
 import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.financeiro.shared.modelo.FinForma;
 import br.com.opensig.financeiro.shared.modelo.FinReceber;
@@ -39,7 +40,7 @@ public class FormularioRecebimento extends AFormularioFinanciado<FinRecebimento>
 		classe.setFinRecebimentoQuitado(false);
 		classe.setFinRecebimentoRealizado(null);
 		classe.setFinRecebimentoVencimento(dtVencimento.getValue());
-		classe.setFinRecebimentoCadastro(UtilClient.DATA);
+		classe.setFinRecebimentoCadastro(new Date());
 		
 		if (txtValor.getValue() != null) {
 			classe.setFinRecebimentoValor(txtValor.getValue().doubleValue());

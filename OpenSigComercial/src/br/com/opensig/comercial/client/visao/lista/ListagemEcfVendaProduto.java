@@ -1,5 +1,6 @@
 package br.com.opensig.comercial.client.visao.lista;
 
+import java.util.Date;
 import java.util.Map.Entry;
 
 import br.com.opensig.comercial.client.controlador.comando.ComandoEcfVenda;
@@ -60,7 +61,7 @@ public class ListagemEcfVendaProduto extends AListagem<ComEcfVendaProduto> {
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comEcfVendaProdutoId"), new IntegerFieldDef("comEcfVenda.comEcfVendaId"), new IntegerFieldDef("comEcfVenda.comEcf.comEcfId"),
 				new StringFieldDef("comEcfVenda.comEcf.comEcfSerie"), new IntegerFieldDef("comEcfVenda.comEcf.empEmpresa.empEmpresaId"),
 				new StringFieldDef("comEcfVenda.comEcf.empEmpresa.empEntidade.empEntidadeNome1"), new StringFieldDef("comEcfVenda.empCliente.empEntidade.empEntidadeNome1"),
-				new StringFieldDef("prodProduto.empFornecedor.empEntidade.empEntidadeNome1"), new IntegerFieldDef("prodProduto.prodProdutoId"), new IntegerFieldDef("prodProduto.prodProdutoBarra"),
+				new StringFieldDef("prodProduto.empFornecedor.empEntidade.empEntidadeNome1"), new IntegerFieldDef("prodProduto.prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"),
 				new StringFieldDef("prodProduto.prodProdutoDescricao"), new StringFieldDef("prodProduto.prodProdutoReferencia"), new DateFieldDef("comEcfVenda.comEcfVendaData"),
 				new FloatFieldDef("comEcfVendaProdutoQuantidade"), new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"),
 				new FloatFieldDef("comEcfVendaProdutoBruto"), new FloatFieldDef("comEcfVendaProdutoDesconto"), new FloatFieldDef("comEcfVendaProdutoLiquido"),
@@ -129,7 +130,7 @@ public class ListagemEcfVendaProduto extends AListagem<ComEcfVendaProduto> {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
 			if (entry.getKey().equals("comEcfVenda.comEcfVendaData")) {
-				((GridDateFilter) entry.getValue()).setValueOn(UtilClient.DATA);
+				((GridDateFilter) entry.getValue()).setValueOn(new Date());
 			} else if (entry.getKey().equals("comEcfVenda.comEcf.empEmpresa.empEmpresaId")) {
 				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
 			} else if (entry.getKey().equals("comEcfVenda.comEcf.empEmpresa.empEntidade.empEntidadeNome1")) {

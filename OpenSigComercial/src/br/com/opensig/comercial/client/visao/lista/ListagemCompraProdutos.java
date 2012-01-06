@@ -55,7 +55,7 @@ public class ListagemCompraProdutos extends AListagemEditor<ComCompraProduto> {
 	public void inicializar() {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comCompraProdutoId"), new IntegerFieldDef("comCompra.comCompraId"), new IntegerFieldDef("empEmpresaId"),
-				new StringFieldDef("empEmpresa"), new StringFieldDef("empFornecedor"), new IntegerFieldDef("prodProdutoId"), new IntegerFieldDef("prodProduto.prodProdutoBarra"),
+				new StringFieldDef("empEmpresa"), new StringFieldDef("empFornecedor"), new IntegerFieldDef("prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"),
 				new StringFieldDef("prodProduto.prodProdutoDescricao"), new StringFieldDef("prodProduto.prodProdutoReferencia"), new FloatFieldDef("prodTributacaoDentro"),
 				new StringFieldDef("prodTributacaoCst"), new DateFieldDef("comCompra.comCompraRecebimento"), new FloatFieldDef("comCompraProdutoQuantidade"),
 				new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"), new FloatFieldDef("comCompraProdutoValor"),

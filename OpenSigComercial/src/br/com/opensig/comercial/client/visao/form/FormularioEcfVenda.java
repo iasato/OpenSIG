@@ -401,7 +401,7 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 			gridProdutos.getProxy().setFiltroPadrao(fo);
 			gridProdutos.getStore().reload();
 		} else {
-			data = UtilClient.DATA;
+			data = new Date();
 			gridProdutos.getTopToolbar().show();
 		}
 		cmbEcf.focus(true);

@@ -62,7 +62,7 @@ public class ComandoQuitarRecebimento extends ComandoAcao<FinRecebimento> {
 				MessageBox.wait(OpenSigCore.i18n.txtQuitar(), OpenSigCore.i18n.txtAguarde());
 
 				// variaveis usadas
-				hoje = UtilClient.DATA;
+				hoje = new Date();
 				sha1 = OpenSigCoreJS.sha1(UtilClient.getDataGrid(hoje)).toUpperCase();
 				GrupoFiltro gf = new GrupoFiltro();
 				Map<Integer, Double> contas = new HashMap<Integer, Double>();

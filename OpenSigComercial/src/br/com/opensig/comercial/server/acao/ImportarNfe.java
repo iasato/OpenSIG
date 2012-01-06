@@ -325,14 +325,23 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		comProdutos = new ArrayList<ComCompraProduto>();
 		for (Det det : nfe.getInfNFe().getDet()) {
 			MyIcms myicms = getIcms(det.getImposto().getICMS());
-			String ipi = det.getImposto().getIPI().getIPITrib() != null ? det.getImposto().getIPI().getIPITrib().getPIPI() : "0";
+			String ipi = "0";
+			try {
+				ipi = det.getImposto().getIPI().getIPITrib().getPIPI();
+			} catch (Exception e) {
+				ipi = "0";
+			}
 
 			// setando o produto da compra
 			ComCompraProduto comProd = new ComCompraProduto();
 			ProdProduto prod = getProduto(det.getProd(), myicms);
 			comProd.setProdProduto(prod);
 			comProd.setProdEmbalagem(prod.getProdEmbalagem());
-			comProd.setComCompraProdutoCfop(Integer.valueOf(det.getProd().getCFOP()));
+			int cfop = Integer.valueOf(det.getProd().getCFOP());
+			if (cfop > 5000) {
+				cfop -= 4000;
+			}
+			comProd.setComCompraProdutoCfop(cfop);
 			comProd.setComCompraProdutoIcms(Double.valueOf(myicms.getAliquota()));
 			comProd.setComCompraProdutoIpi(Double.valueOf(ipi));
 			comProd.setComCompraProdutoQuantidade(Double.valueOf(det.getProd().getQCom()));
@@ -415,12 +424,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 	}
 
 	private ProdProduto getProduto(Prod prod, MyIcms icms) throws OpenSigException {
-		Long ean = null;
-		try {
-			ean = Long.valueOf(prod.getCEAN());
-		} catch (Exception e) {
-			ean = null;
-		}
+		String ean = prod.getCEAN();
 		// ref + fornecedor
 		GrupoFiltro grupoRef = new GrupoFiltro();
 		FiltroTexto ft = new FiltroTexto("prodProdutoReferencia", ECompara.CONTEM, prod.getCProd());
@@ -430,12 +434,12 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 
 		// barra
 		GrupoFiltro grupoBarra = new GrupoFiltro();
-		FiltroNumero fn = new FiltroNumero("prodProdutoBarra", ECompara.IGUAL, ean);
-		grupoBarra.add(fn, EJuncao.OU);
+		FiltroTexto ft1 = new FiltroTexto("prodProdutoBarra", ECompara.IGUAL, ean);
+		grupoBarra.add(ft1, EJuncao.OU);
 		// barra do preco
-		FiltroNumero fn1 = new FiltroNumero("prodPrecoBarra", ECompara.IGUAL, ean);
-		fn1.setCampoPrefixo("t2.");
-		grupoBarra.add(fn1, EJuncao.OU);
+		FiltroTexto ft2 = new FiltroTexto("prodPrecoBarra", ECompara.IGUAL, ean);
+		ft2.setCampoPrefixo("t2.");
+		grupoBarra.add(ft2, EJuncao.OU);
 
 		// filtro geral
 		GrupoFiltro gf = null;

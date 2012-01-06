@@ -54,7 +54,7 @@ public class ProdProduto extends Dados implements Serializable {
 	private int prodProdutoIncentivo;
 
 	@Column(name = "prod_produto_barra")
-	private Long prodProdutoBarra;
+	private String prodProdutoBarra;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "prod_produto_cadastrado")
@@ -167,11 +167,11 @@ public class ProdProduto extends Dados implements Serializable {
 		this.prodProdutoIncentivo = prodProdutoIncentivo == false ? 0 : 1;
 	}
 
-	public Long getProdProdutoBarra() {
+	public String getProdProdutoBarra() {
 		return this.prodProdutoBarra;
 	}
 
-	public void setProdProdutoBarra(Long prodProdutoBarra) {
+	public void setProdProdutoBarra(String prodProdutoBarra) {
 		this.prodProdutoBarra = prodProdutoBarra;
 	}
 
@@ -296,7 +296,6 @@ public class ProdProduto extends Dados implements Serializable {
 	}
 
 	public String[] toArray() {
-		String barra = prodProdutoBarra == null || prodProdutoBarra == 0L ? null : prodProdutoBarra + "";
 		double estoque = 0;
 		for (ProdEstoque est : prodEstoques) {
 			if (est.getEmpEmpresa().getEmpEmpresaId() == empresa) {
@@ -305,7 +304,7 @@ public class ProdProduto extends Dados implements Serializable {
 			}
 		}
 
-		return new String[] { prodProdutoId + "", prodProdutoNcm, barra, prodProdutoDescricao, prodProdutoReferencia, prodProdutoCusto + "", prodProdutoPreco + "",
+		return new String[] { prodProdutoId + "", prodProdutoNcm, prodProdutoBarra, prodProdutoDescricao, prodProdutoReferencia, prodProdutoCusto + "", prodProdutoPreco + "",
 				prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), prodProdutoVolume + "", estoque + "", prodProdutoCategoria, empFornecedor.getEmpFornecedorId() + "",
 				empFornecedor.getEmpEntidade().getEmpEntidadeNome1(), empFabricante.getEmpFornecedorId() + "", empFabricante.getEmpEntidade().getEmpEntidadeNome1(),
 				prodTributacao.getProdTributacaoId() + "", prodTributacao.getProdTributacaoNome(), prodTributacao.getProdTributacaoCst(), prodTributacao.getProdTributacaoCfop() + "",
