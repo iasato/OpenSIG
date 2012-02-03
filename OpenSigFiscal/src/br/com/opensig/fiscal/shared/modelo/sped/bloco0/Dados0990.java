@@ -4,15 +4,10 @@ import br.com.opensig.fiscal.server.sped.Bean;
 
 public class Dados0990 extends Bean {
 
-	private String reg;
 	private int qtd_lin;
 
-	public String getReg() {
-		return reg;
-	}
-
-	public void setReg(String reg) {
-		this.reg = reg;
+	public Dados0990() {
+		reg = "0990";
 	}
 
 	public int getQtd_lin() {

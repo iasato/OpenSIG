@@ -2,16 +2,22 @@ package br.com.opensig.fiscal.server.sped;
 
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.util.Date;
+import java.util.List;
 
 import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
 
+import br.com.opensig.comercial.shared.modelo.ComCompra;
+import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
+import br.com.opensig.comercial.shared.modelo.ComFrete;
+import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.fiscal.client.servico.FiscalService;
 import br.com.opensig.fiscal.shared.modelo.FisSpedFiscal;
 
-public abstract class ARegistro<E extends Bean> implements IRegistro {
+public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 
 	protected Writer arquivo;
 	protected FisSpedFiscal sped;
@@ -20,6 +26,14 @@ public abstract class ARegistro<E extends Bean> implements IRegistro {
 	protected String bean;
 	protected int qtdLinhas;
 	protected boolean fimBloco;
+	protected Date inicio;
+	protected Date fim;
+	protected List<ComCompra> compras;
+	protected List<ComFrete> fretes;
+	protected List<ComVenda> vendas;
+	protected List<ComEcfVenda> ecfs;
+	protected E bloco;
+	protected T dados;
 
 	public ARegistro(String bean) {
 		this.bean = bean;
@@ -31,14 +45,38 @@ public abstract class ARegistro<E extends Bean> implements IRegistro {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", arquivo);
-			out.write(getDados());
+			bloco = getDados(dados);
+			normalizar(bloco);
+			out.write(bloco);
 			out.flush();
+			qtdLinhas = 1;
 		} catch (Exception e) {
+			qtdLinhas = 0;
 			UtilServer.LOG.error("Erro na geracao do Registro -> " + bean, e);
 		}
 	}
 
-	protected abstract E getDados() throws Exception;
+	protected void normalizar(E bloco) {
+		for (Method metodo : bloco.getClass().getMethods()) {
+			try {
+				if (UtilServer.isGetter(metodo)) {
+					Object valorMetodo = metodo.invoke(bloco, new Object[] {});
+
+					if (metodo.getReturnType() == String.class) {
+						String nomeMetodo = metodo.getName().replaceFirst("get", "set");
+						Method set = bloco.getClass().getMethod(nomeMetodo, new Class[] { String.class });
+						String valor = valorMetodo == null ? "" : valorMetodo.toString();
+						valor = UtilServer.normaliza(valor).replaceAll(auth.getConf().get("nfe.regexp"), "");
+						set.invoke(bloco, new Object[] { valor.trim() });
+					}
+				}
+			} catch (Exception ex) {
+				UtilServer.LOG.debug("Erro ao padronizar. " + metodo.getName(), ex);
+			}
+		}
+	}
+
+	protected abstract E getDados(T dados) throws Exception;
 
 	@Override
 	public Writer getArquivo() {
@@ -100,23 +138,83 @@ public abstract class ARegistro<E extends Bean> implements IRegistro {
 		this.fimBloco = fimBloco;
 	}
 
-	protected void normalizar(E dados) {
-		for (Method metodo : dados.getClass().getMethods()) {
-			try {
-				if (UtilServer.isGetter(metodo)) {
-					Object valorMetodo = metodo.invoke(dados, new Object[] {});
-
-					if (metodo.getReturnType() == String.class) {
-						String nomeMetodo = metodo.getName().replaceFirst("get", "set");
-						Method set = dados.getClass().getMethod(nomeMetodo, new Class[] { String.class });
-						String valor = valorMetodo == null ? "" : valorMetodo.toString();
-						valor = UtilServer.normaliza(valor).replaceAll(auth.getConf().get("nfe.regexp"), "");
-						set.invoke(dados, new Object[] { valor.trim() });
-					}
-				}
-			} catch (Exception ex) {
-				UtilServer.LOG.debug("Erro ao padronizar. " + metodo.getName(), ex);
-			}
-		}
+	@Override
+	public Date getInicio() {
+		return this.inicio;
 	}
+
+	@Override
+	public void setInicio(Date inicio) {
+		this.inicio = inicio;
+	}
+
+	@Override
+	public Date getFim() {
+		return this.fim;
+	}
+
+	@Override
+	public void setFim(Date fim) {
+		this.fim = fim;
+	}
+
+	@Override
+	public List<ComCompra> getCompras() {
+		return this.compras;
+	}
+
+	@Override
+	public void setCompras(java.util.List<ComCompra> compras) {
+		this.compras = compras;
+	}
+
+	@Override
+	public List<ComFrete> getFretes() {
+		return this.fretes;
+	}
+
+	@Override
+	public void setFretes(List<ComFrete> fretes) {
+		this.fretes = fretes;
+	}
+
+	@Override
+	public List<ComVenda> getVendas() {
+		return this.vendas;
+	}
+
+	@Override
+	public void setVendas(List<ComVenda> vendas) {
+		this.vendas = vendas;
+	}
+
+	@Override
+	public List<ComEcfVenda> getEcfs() {
+		return this.ecfs;
+	}
+
+	@Override
+	public void setEcfs(List<ComEcfVenda> ecfs) {
+		this.ecfs = ecfs;
+	}
+
+	@Override
+	public T getDados() {
+		return this.dados;
+	}
+
+	@Override
+	public void setDados(T dados) {
+		this.dados = dados;
+	}
+
+	@Override
+	public E getBloco() {
+		return this.bloco;
+	}
+
+	@Override
+	public void setBloco(E bloco) {
+		this.bloco = bloco;
+	};
 }

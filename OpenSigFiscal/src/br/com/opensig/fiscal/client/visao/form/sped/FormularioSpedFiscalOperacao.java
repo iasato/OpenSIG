@@ -191,7 +191,7 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 		Store store = new SimpleStore(new String[] { "id", "valor" }, new String[][] { new String[] { "-1", valor0 }, new String[] { "1", valor1 }, new String[] { "0", valor2 } });
 		store.addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
-				cmbCompras.setValue("-1");
+				cmbCompras.setValue("1");
 			}
 		});
 

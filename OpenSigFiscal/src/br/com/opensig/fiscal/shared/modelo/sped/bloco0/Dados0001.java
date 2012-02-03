@@ -4,17 +4,12 @@ import br.com.opensig.fiscal.server.sped.Bean;
 
 public class Dados0001 extends Bean {
 
-	private String reg;
 	private int ind_mov;
 
-	public String getReg() {
-		return reg;
+	public Dados0001() {
+		reg = "0001";
 	}
-
-	public void setReg(String reg) {
-		this.reg = reg;
-	}
-
+	
 	public int getInd_mov() {
 		return ind_mov;
 	}

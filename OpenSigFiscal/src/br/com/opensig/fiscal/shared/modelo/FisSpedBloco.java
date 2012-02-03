@@ -38,6 +38,9 @@ public class FisSpedBloco extends Dados implements Serializable {
 	@Column(name = "fis_sped_bloco_ordem")
 	private int fisSpedBlocoOrdem;
 
+	@Column(name = "fis_sped_bloco_nivel")
+	private int fisSpedBlocoNivel;
+	
 	@Column(name = "fis_sped_bloco_pis_cofins")
 	private int fisSpedBlocoPisCofins;
 
@@ -109,6 +112,14 @@ public class FisSpedBloco extends Dados implements Serializable {
 		this.fisSpedBlocoOrdem = fisSpedBlocoOrdem;
 	}
 
+	public int getFisSpedBlocoNivel() {
+		return fisSpedBlocoNivel;
+	}
+	
+	public void setFisSpedBlocoNivel(int fisSpedBlocoNivel) {
+		this.fisSpedBlocoNivel = fisSpedBlocoNivel;
+	}
+	
 	public boolean getFisSpedBlocoPisCofins() {
 		return this.fisSpedBlocoPisCofins == 0 ? false : true;
 	}
@@ -138,7 +149,7 @@ public class FisSpedBloco extends Dados implements Serializable {
 	@Override
 	public String[] toArray() {
 		return new String[] { fisSpedBlocoId + "", getFisSpedBlocoIcmsIpi() + "", getFisSpedBlocoPisCofins() + "", fisSpedBlocoLetra, fisSpedBlocoDescricao, fisSpedBlocoRegistro,
-				getFisSpedBlocoObrigatorio() + "", fisSpedBlocoClasse, fisSpedBlocoOrdem + "" };
+				getFisSpedBlocoObrigatorio() + "", fisSpedBlocoClasse, fisSpedBlocoOrdem + "", fisSpedBlocoNivel + "" };
 	}
 
 }

@@ -4,7 +4,6 @@ import br.com.opensig.fiscal.server.sped.Bean;
 
 public class Dados0100 extends Bean {
 
-	private String reg;
 	private String nome;
 	private String cpf;
 	private String crc;
@@ -19,14 +18,10 @@ public class Dados0100 extends Bean {
 	private String email;
 	private int cod_mun;
 
-	public String getReg() {
-		return reg;
+	public Dados0100() {
+		reg = "0100";
 	}
-
-	public void setReg(String reg) {
-		this.reg = reg;
-	}
-
+	
 	public int getCep() {
 		return cep;
 	}

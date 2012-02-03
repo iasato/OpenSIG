@@ -66,7 +66,7 @@ public class Paginador extends PagingToolbar {
 			private int aux = tempo;
 
 			public void run() {
-				if (aux == 0) {
+				if (aux == 0 && txtPag.isValid()) {
 					store.reload();
 					aux = tempo;
 				}
@@ -84,13 +84,14 @@ public class Paginador extends PagingToolbar {
 		txtPag.setAllowDecimals(false);
 		txtPag.setAllowNegative(false);
 		txtPag.setMinValue(1);
+		txtPag.setMaxValue(1000);
 		txtPag.setWidth(30);
 		txtPag.setValue(tamanho);
 		txtPag.setSelectOnFocus(true);
 		txtPag.addListener(new TextFieldListenerAdapter() {
 
 			public void onSpecialKey(Field field, EventObject e) {
-				if (e.getKey() == EventObject.ENTER) {
+				if (e.getKey() == EventObject.ENTER && txtPag.isValid()) {
 					int tamanho = Integer.parseInt(field.getValueAsString());
 					setPageSize(tamanho);
 					store.load(0, tamanho);

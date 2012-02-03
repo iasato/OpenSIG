@@ -4,7 +4,7 @@
 		<writer>
 			<property name="delimiter" value="|" />
 		</writer>
-		<record name="Lista" class="br.com.opensig.fiscal.shared.modelo.sped.bloco0.Dados0150">
+		<record name="Dados" class="br.com.opensig.fiscal.shared.modelo.sped.bloco0.Dados0150">
 			<field name="padrao" type="string" length="1" default="" />
 			<field name="reg" type="string" length="4" trim="true" />
 			<field name="cod_part" type="string" length="60" trim="true" />

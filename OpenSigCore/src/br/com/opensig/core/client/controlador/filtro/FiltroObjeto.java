@@ -31,6 +31,7 @@ public class FiltroObjeto extends AFiltro<Dados> {
 		if (compara == ECompara.IGUAL || compara == ECompara.DIFERENTE) {
 			return super.getSql();
 		} else if (compara == ECompara.NULO || compara == ECompara.VAZIO) {
+			tratarPrefixo();
 			return prefixo + campo + " " + compara.toString();
 		} else {
 			throw new ParametroException(OpenSigCore.i18n.errFiltro());

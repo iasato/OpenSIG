@@ -6,7 +6,6 @@ import br.com.opensig.fiscal.server.sped.Bean;
 
 public class Dados0000 extends Bean {
 
-	private String reg;
 	private int cod_ver;
 	private int cod_fin;
 	private Date dt_ini;
@@ -22,14 +21,10 @@ public class Dados0000 extends Bean {
 	private String ind_perfil;
 	private int ind_ativ;
 
-	public String getReg() {
-		return reg;
+	public Dados0000() {
+		reg = "0000";
 	}
-
-	public void setReg(String reg) {
-		this.reg = reg;
-	}
-
+	
 	public int getCod_ver() {
 		return cod_ver;
 	}

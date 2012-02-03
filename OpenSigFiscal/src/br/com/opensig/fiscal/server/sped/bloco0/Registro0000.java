@@ -1,36 +1,26 @@
 package br.com.opensig.fiscal.server.sped.bloco0;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
+import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.empresa.shared.modelo.EmpMunicipio;
 import br.com.opensig.fiscal.server.sped.ARegistro;
 import br.com.opensig.fiscal.shared.modelo.sped.bloco0.Dados0000;
 
-public class Registro0000 extends ARegistro<Dados0000> {
+public class Registro0000 extends ARegistro<Dados0000, Dados> {
 
 	public Registro0000() {
 		super("/br/com/opensig/fiscal/shared/modelo/sped/bloco0/Bean0000.xml");
 	}
 
 	@Override
-	protected Dados0000 getDados() throws Exception {
+	protected Dados0000 getDados(Dados dados) throws Exception {
 		Dados0000 d = new Dados0000();
-		d.setReg("0000");
 		d.setCod_ver(sped.getFisSpedFiscalAno() % 2008 + 1);
 		d.setCod_fin(sped.getFinalidade());
-
-		Date inicio = new SimpleDateFormat("ddMMyyyy").parse("01" + (sped.getFisSpedFiscalMes() > 9 ? sped.getFisSpedFiscalMes() : "0" + sped.getFisSpedFiscalMes()) + sped.getFisSpedFiscalAno());
 		d.setDt_ini(inicio);
-
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(inicio);
-		cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-		d.setDt_fin(cal.getTime());
+		d.setDt_fin(fim);
 
 		FiltroNumero fn = new FiltroNumero("empEmpresaId", ECompara.IGUAL, sped.getEmpEmpresa().getEmpEmpresaId());
 		EmpEmpresa emp = (EmpEmpresa) service.selecionar(new EmpEmpresa(), fn, false);
@@ -51,9 +41,6 @@ public class Registro0000 extends ARegistro<Dados0000> {
 		
 		d.setInd_perfil(auth.getConf().get("sped.0000.ind_perfil"));
 		d.setInd_ativ(Integer.valueOf(auth.getConf().get("sped.0000.ind_ativ")));
-		
-		normalizar(d);
-		qtdLinhas = 1;
 		return d;
 	}
 

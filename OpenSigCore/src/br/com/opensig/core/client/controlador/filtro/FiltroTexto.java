@@ -32,6 +32,7 @@ public class FiltroTexto extends AFiltro<String> {
 	@Override
 	public String getSql() throws ParametroException {
 		if (compara != ECompara.MAIOR && compara != ECompara.MAIOR_IGUAL && compara != ECompara.MENOR && compara != ECompara.MENOR_IGUAL) {
+			tratarPrefixo();
 			return "UPPER(" + prefixo + campo + ") " + compara.toString() + " :" + getCampoId();
 		} else {
 			throw new ParametroException(OpenSigCore.i18n.errFiltro());

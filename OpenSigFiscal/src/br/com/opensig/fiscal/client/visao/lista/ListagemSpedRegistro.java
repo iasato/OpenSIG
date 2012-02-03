@@ -27,7 +27,7 @@ public class ListagemSpedRegistro extends AListagem<FisSpedBloco> {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("fisSpedBlocoId"), new BooleanFieldDef("fisSpedBlocoIcmsIpi"), new BooleanFieldDef("fisSpedBlocoPisCofins"),
 				new StringFieldDef("fisSpedBlocoLetra"), new StringFieldDef("fisSpedBlocoDescricao"), new StringFieldDef("fisSpedBlocoRegistro"), new BooleanFieldDef("fisSpedBlocoObrigatorio"),
-				new StringFieldDef("fisSpedBlocoClasse"), new IntegerFieldDef("fisSpedBlocoOrdem") };
+				new StringFieldDef("fisSpedBlocoClasse"), new IntegerFieldDef("fisSpedBlocoOrdem"), new IntegerFieldDef("fisSpedBlocoNivel") };
 		campos = new RecordDef(fd);
 
 		// selected

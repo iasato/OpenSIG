@@ -3,7 +3,10 @@ package br.com.opensig.comercial.server.acao;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBElement;
 
@@ -109,7 +112,7 @@ public class GerarNfe extends Chain {
 
 	private boolean dentro;
 	private ComNatureza comNatureza;
-	private Collection<String> infos;
+	private Map<Integer, String> infos;
 
 	private double valorProd;
 	private double baseICMS;
@@ -126,7 +129,7 @@ public class GerarNfe extends Chain {
 		this.venda = venda;
 		this.frete = frete;
 		this.data = UtilServer.getData();
-		this.infos = new ArrayList<String>();
+		this.infos = new HashMap<Integer, String>();
 		this.auth = auth;
 	}
 
@@ -508,7 +511,7 @@ public class GerarNfe extends Chain {
 
 			// verifica se tem algum decreto
 			if (pp.getProdTributacao().getProdTributacaoDecreto() != null && !pp.getProdTributacao().getProdTributacaoDecreto().equals("")) {
-				infos.add(pp.getProdTributacao().getProdTributacaoDecreto());
+				infos.put(pp.getProdTributacao().getProdTributacaoId(), pp.getProdTributacao().getProdTributacaoDecreto());
 			}
 		}
 	}
@@ -876,8 +879,8 @@ public class GerarNfe extends Chain {
 	public InfAdic getInformacoes() {
 		StringBuffer sb = new StringBuffer();
 		// adiciona as informacoes necessarias de decretos
-		for (String info : infos) {
-			sb.append(info + "#");
+		for (Entry<Integer, String> info : infos.entrySet()) {
+			sb.append(info.getValue() + "#");
 		}
 		// adiciona o pedido da venda
 		sb.append("Venda " + UtilServer.formataNumero(venda.getComVendaId(), 6, 0, false) + " ");

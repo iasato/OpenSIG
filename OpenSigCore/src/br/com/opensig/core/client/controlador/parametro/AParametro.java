@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
+
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 
 /**
@@ -103,6 +106,7 @@ public abstract class AParametro<E extends Serializable> implements IParametro<E
 	}
 
 	public String getSql() throws ParametroException {
+		tratarPrefixo();
 		return prefixo + campo + " " + compara.toString() + " :" + getCampoId();
 	}
 
@@ -117,4 +121,12 @@ public abstract class AParametro<E extends Serializable> implements IParametro<E
 	}
 
 	public abstract void setValorString(String valor);
+	
+	protected void tratarPrefixo() {
+		// valida se o filtro é já tem prefixo
+		MatchResult mat = RegExp.compile("^t\\d+\\.").exec(campo);
+		if (mat != null) {
+			prefixo = "";
+		}
+	}
 }

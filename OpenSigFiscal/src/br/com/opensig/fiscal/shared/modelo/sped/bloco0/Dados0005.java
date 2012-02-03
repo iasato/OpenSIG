@@ -4,7 +4,6 @@ import br.com.opensig.fiscal.server.sped.Bean;
 
 public class Dados0005 extends Bean {
 
-	private String reg;
 	private String fantasia;
 	private int cep;
 	private String end;
@@ -15,14 +14,10 @@ public class Dados0005 extends Bean {
 	private String fax;
 	private String email;
 
-	public String getReg() {
-		return reg;
+	public Dados0005() {
+		reg = "0005";
 	}
-
-	public void setReg(String reg) {
-		this.reg = reg;
-	}
-
+	
 	public String getFantasia() {
 		return fantasia;
 	}

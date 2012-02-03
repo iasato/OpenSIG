@@ -129,8 +129,9 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 
 			if (removeDependencia) {
 				// transformando o resultado numa matrix de Strings
-				String[][] dados = new String[total][];
-				for (int i = 0; i < lista.size(); i++) {
+				String[][] dados = new String[limite][];
+				int fim = lista.size() > limite ? limite : lista.size();
+				for (int i = 0; i < fim; i++) {
 					lista.get(i).setEmpresa(classe.getEmpresa());
 					dados[i] = lista.get(i).toArray();
 				}
