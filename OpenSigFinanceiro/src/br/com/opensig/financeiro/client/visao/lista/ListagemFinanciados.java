@@ -7,6 +7,7 @@ import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
+import br.com.opensig.core.client.js.OpenSigCoreJS;
 import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.client.visao.abstrato.AListagemEditor;
 import br.com.opensig.core.client.visao.abstrato.IListagem;
@@ -28,12 +29,14 @@ import com.gwtext.client.data.RecordDef;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.data.event.StoreListenerAdapter;
+import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.MessageBox;
 import com.gwtext.client.widgets.form.Checkbox;
 import com.gwtext.client.widgets.form.ComboBox;
 import com.gwtext.client.widgets.form.DateField;
 import com.gwtext.client.widgets.form.NumberField;
 import com.gwtext.client.widgets.form.TextField;
+import com.gwtext.client.widgets.form.event.TextFieldListenerAdapter;
 import com.gwtext.client.widgets.grid.BaseColumnConfig;
 import com.gwtext.client.widgets.grid.CellMetadata;
 import com.gwtext.client.widgets.grid.ColumnConfig;
@@ -115,7 +118,8 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 		ccDocumento.setEditor(new GridEditor(getDocumento()));
 
 		ColumnConfig ccParcela = new ColumnConfig(OpenSigCore.i18n.txtParcela(), "parcela", 50, false);
-
+		ccParcela.setEditor(new GridEditor(getParcela()));
+		
 		ColumnConfig ccCadastro = new ColumnConfig("", "cadastro", 10, false);
 		ccCadastro.setHidden(true);
 		ccCadastro.setFixed(true);
@@ -269,6 +273,21 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 		txtDocumento.setSelectOnFocus(true);
 		txtDocumento.setMaxLength(50);
 		return txtDocumento;
+	}
+	
+	private TextField getParcela() {
+		TextField txtParcela = new TextField();
+		txtParcela.setAllowBlank(false);
+		txtParcela.setSelectOnFocus(true);
+		txtParcela.setMaxLength(5);
+		txtParcela.setMinLength(5);
+		txtParcela.addListener(new TextFieldListenerAdapter() {
+			public void onRender(Component component) {
+				super.onRender(component);
+				OpenSigCoreJS.mascarar(component.getId(), "99/99", null);
+			}
+		});
+		return txtParcela;
 	}
 
 	private NumberField getValor() {

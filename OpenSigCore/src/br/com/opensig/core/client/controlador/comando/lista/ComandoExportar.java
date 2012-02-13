@@ -37,10 +37,9 @@ public class ComandoExportar<E extends Dados> extends ComandoAcao<E> {
 		});
 	}
 
-	private void execute() {
-		FORM.setLista(LISTA);
+	public void execute() {
 		EModo modo = contexto.get("acao") != null ? (EModo) contexto.get("acao") : EModo.LISTAGEM;
-		JanelaExportar janela = new JanelaExportar(FORM, modo);
+		JanelaExportar janela = new JanelaExportar(LISTA, modo);
 		janela.show();
 	}
 }

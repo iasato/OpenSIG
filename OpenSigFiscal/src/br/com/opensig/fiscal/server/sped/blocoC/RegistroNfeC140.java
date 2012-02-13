@@ -1,7 +1,6 @@
 package br.com.opensig.fiscal.server.sped.blocoC;
 
 import br.com.opensig.fiscal.server.sped.ARegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.blocoC.DadosC140;
 import br.com.opensig.nfe.TNFe;
 import br.com.opensig.nfe.TNFe.InfNFe.Cobr.Dup;
 
@@ -10,7 +9,7 @@ public class RegistroNfeC140 extends ARegistro<DadosC140, TNFe> {
 	private String emitente;
 
 	public RegistroNfeC140(String emitente) {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/blocoC/BeanC140.xml");
+		super("/br/com/opensig/fiscal/server/sped/blocoC/BeanC140.xml");
 		this.emitente = emitente;
 	}
 
@@ -21,7 +20,7 @@ public class RegistroNfeC140 extends ARegistro<DadosC140, TNFe> {
 		int par = 1;
 		
 		for (Dup rec : dados.getInfNFe().getCobr().getDup()) {
-			r141.setArquivo(arquivo);
+			r141.setEsquitor(escritor);
 			r141.setAuth(auth);
 			r141.setDados(rec);
 			r141.setParcela(par++);

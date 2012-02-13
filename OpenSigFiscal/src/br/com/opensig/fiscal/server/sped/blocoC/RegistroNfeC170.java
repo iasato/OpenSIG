@@ -1,7 +1,6 @@
 package br.com.opensig.fiscal.server.sped.blocoC;
 
 import br.com.opensig.fiscal.server.sped.ARegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.blocoC.DadosC170;
 import br.com.opensig.nfe.TNFe.InfNFe.Det;
 import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.COFINS;
 import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS00;
@@ -15,11 +14,12 @@ public class RegistroNfeC170 extends ARegistro<DadosC170, Det> {
 
 	private ProdProduto produto;
 	private String natureza;
-
+	private String crt;
+	
 	public RegistroNfeC170() {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/blocoC/BeanC170.xml");
+		super("/br/com/opensig/fiscal/server/sped/blocoC/BeanC170.xml");
 	}
-
+	
 	@Override
 	protected DadosC170 getDados(Det dados) throws Exception {
 		Prod prod = dados.getProd();
@@ -36,24 +36,26 @@ public class RegistroNfeC170 extends ARegistro<DadosC170, Det> {
 		d.setCfop(Integer.valueOf(prod.getCFOP()));
 		d.setCod_nat(natureza);
 
-		// simples nacional
-		try {
+		if (crt.equals("1")) {
 			d.setCst_icms(produto.getProdTributacao().getProdTributacaoCson());
-		// normal
-		} catch (Exception e) {
-			d.setCst_icms(produto.getProdTributacao().getProdTributacaoCst());
+		} else {
+			d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
 		}
 
 		if (d.getCst_icms().equals("101")) {
 			ICMSSN101 icms = dados.getImposto().getICMS().getICMSSN101();
-			d.setVl_bc_icms(d.getVl_item());
-			d.setAliq_icms(Double.valueOf(icms.getPCredSN()));
-			d.setVl_icms(Double.valueOf(icms.getVCredICMSSN()));
-		} else if (d.getCst_icms().equals("00")) {
+			if (icms != null) {
+				d.setVl_bc_icms(d.getVl_item());
+				d.setAliq_icms(Double.valueOf(icms.getPCredSN()));
+				d.setVl_icms(Double.valueOf(icms.getVCredICMSSN()));
+			}
+		} else if (d.getCst_icms().endsWith("00")) {
 			ICMS00 icms = dados.getImposto().getICMS().getICMS00();
-			d.setVl_bc_icms(Double.valueOf(icms.getVBC()));
-			d.setAliq_icms(Double.valueOf(icms.getPICMS()));
-			d.setVl_icms(Double.valueOf(icms.getVICMS()));
+			if (icms != null) {
+				d.setVl_bc_icms(Double.valueOf(icms.getVBC()));
+				d.setAliq_icms(Double.valueOf(icms.getPICMS()));
+				d.setVl_icms(Double.valueOf(icms.getVICMS()));
+			}
 		}
 
 		// ipi
@@ -144,5 +146,13 @@ public class RegistroNfeC170 extends ARegistro<DadosC170, Det> {
 
 	public void setNatureza(String natureza) {
 		this.natureza = natureza;
+	}
+
+	public String getCrt() {
+		return crt;
+	}
+
+	public void setCrt(String crt) {
+		this.crt = crt;
 	}
 }

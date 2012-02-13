@@ -84,6 +84,7 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 	protected String strCategorias;
 	protected ListagemFinanciados<T> gridFormas;
 	protected List<T> formas;
+	protected ComboBox cmbForma;
 	protected NumberField txtParcelas;
 	protected Map<String, String> nomes;
 
@@ -147,11 +148,6 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 
 		add(new HTML("<br/>"));
 
-		txtParcelas = new NumberField("", "parcelas", 50);
-		txtParcelas.setAllowNegative(false);
-		txtParcelas.setAllowDecimals(false);
-		txtParcelas.setMaxLength(2);
-
 		gridFormas = new ListagemFinanciados<T>(financeiro, true) {
 			public IComando AntesDoComando(IComando comando) {
 				if (comando instanceof ComandoAdicionar) {
@@ -162,6 +158,7 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 							if (getForm().isValid()) {
 								gridFormas.stopEditing();
 								int parcelas = txtParcelas.getValue() != null ? txtParcelas.getValue().intValue() : 1;
+								String forma = cmbForma.getValue();
 								String valorAux = UtilClient.formataNumero(txtValor.getValue().doubleValue() / parcelas, 1, 2, false);
 								valorAux = valorAux.replace(",", ".");
 
@@ -178,6 +175,8 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 
 									Record rec = gridFormas.getCampos().createRecord(new Object[gridFormas.getCampos().getFields().length]);
 									rec.set("id", 0);
+									rec.set("finFormaId", forma);
+									rec.set("documento", txtNfe.getValueAsString());
 									rec.set("valor", valorAux);
 									rec.set("parcela", parcela);
 									rec.set("quitado", false);
@@ -205,6 +204,7 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 				}
 			};
 		};
+
 		gridFormas.getStore().addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
 				if (records.length > 0 && hdnCod.getValueAsString().equals("0")) {
@@ -217,9 +217,26 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 			}
 		});
 
+		txtParcelas = new NumberField("", "parcelas", 50);
+		txtParcelas.setAllowNegative(false);
+		txtParcelas.setAllowDecimals(false);
+		txtParcelas.setMaxLength(2);
+
+		cmbForma = new ComboBox("", "tipo", 150);
+		cmbForma.setListWidth(150);
+		cmbForma.setStore(gridFormas.getStoreForma());
+		cmbForma.setTriggerAction(ComboBox.ALL);
+		cmbForma.setMode(ComboBox.LOCAL);
+		cmbForma.setDisplayField("finFormaDescricao");
+		cmbForma.setValueField("finFormaId");
+		cmbForma.setForceSelection(true);
+		cmbForma.setEditable(false);
+
 		gridFormas.getTopToolbar().addText(OpenSigCore.i18n.txtParcela());
 		gridFormas.getTopToolbar().addField(txtParcelas);
 		gridFormas.getTopToolbar().addSpacer();
+		gridFormas.getTopToolbar().addText(OpenSigCore.i18n.txtTipo());
+		gridFormas.getTopToolbar().addField(cmbForma);
 
 		add(gridFormas);
 	}
@@ -275,10 +292,13 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 	public void limparDados() {
 		getForm().reset();
 		txtParcelas.setValue("");
+		dtCadastro.setRawValue(UtilClient.eval("$wnd.Date.today().toString('dd/MM/yyyy')"));
 		FiltroNumero fn = new FiltroNumero(classe.getCampoId(), ECompara.IGUAL, 0);
 		gridFormas.getProxy().setFiltroPadrao(fn);
 		gridFormas.getStore().removeAll();
 		treeCategoria.getLblValidacao().hide();
+		treeCategoria.limpar();
+		treeCategoria.carregar(null, null);
 	}
 
 	public void gerarListas() {
@@ -308,7 +328,7 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 		int id = UtilClient.getSelecionado(lista.getPanel());
 		classe.setId(id);
 		FiltroObjeto filtro = new FiltroObjeto(nomes.get("classe"), ECompara.IGUAL, classe);
-		
+
 		ExpListagem<T> financiados = new ExpListagem<T>();
 		financiados.setClasse(financeiro);
 		financiados.setMetadados(metadados);

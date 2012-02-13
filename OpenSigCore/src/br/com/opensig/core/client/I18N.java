@@ -466,11 +466,11 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String msgFavoritoInvalido();
 
   /**
-   * Translated "Utilize as variáveis, números e operadores aritiméticos para construir a fórmula de preço de venda, deve-se usar parenteses para precedência de operações.".
+   * Translated "Utilize as variáveis, números e operadores aritiméticos para construir a f��rmula de preço de venda, deve-se usar parenteses para precedência de operações.".
    * 
-   * @return translated "Utilize as variáveis, números e operadores aritiméticos para construir a fórmula de preço de venda, deve-se usar parenteses para precedência de operações."
+   * @return translated "Utilize as variáveis, números e operadores aritiméticos para construir a f��rmula de preço de venda, deve-se usar parenteses para precedência de operações."
    */
-  @DefaultMessage("Utilize as variáveis, números e operadores aritiméticos para construir a fórmula de preço de venda, deve-se usar parenteses para precedência de operações.")
+  @DefaultMessage("Utilize as variáveis, números e operadores aritiméticos para construir a f��rmula de preço de venda, deve-se usar parenteses para precedência de operações.")
   @Key("msgFormula")
   String msgFormula();
 
@@ -700,11 +700,11 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String msgSobre();
 
   /**
-   * Translated "+55 (82) 3324-3818".
+   * Translated "+55 (82) 3313-6532".
    * 
-   * @return translated "+55 (82) 3324-3818"
+   * @return translated "+55 (82) 3313-6532"
    */
-  @DefaultMessage("+55 (82) 3324-3818")
+  @DefaultMessage("+55 (82) 3313-6532")
   @Key("msgTelefone")
   String msgTelefone();
 
@@ -869,6 +869,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Atenção")
   @Key("txtAtencao")
   String txtAtencao();
+
+  /**
+   * Translated "Atividade".
+   * 
+   * @return translated "Atividade"
+   */
+  @DefaultMessage("Atividade")
+  @Key("txtAtividade")
+  String txtAtividade();
 
   /**
    * Translated "Ativo".
@@ -1096,6 +1105,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtCancelar();
 
   /**
+   * Translated "Cargo".
+   * 
+   * @return translated "Cargo"
+   */
+  @DefaultMessage("Cargo")
+  @Key("txtCargo")
+  String txtCargo();
+
+  /**
    * Translated "Carregar".
    * 
    * @return translated "Carregar"
@@ -1121,6 +1139,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Categoria")
   @Key("txtCategoria")
   String txtCategoria();
+
+  /**
+   * Translated "Celular".
+   * 
+   * @return translated "Celular"
+   */
+  @DefaultMessage("Celular")
+  @Key("txtCelular")
+  String txtCelular();
 
   /**
    * Translated "Cep".
@@ -1618,6 +1645,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtEntidadeDoc2();
 
   /**
+   * Translated "IM".
+   * 
+   * @return translated "IM"
+   */
+  @DefaultMessage("IM")
+  @Key("txtEntidadeDoc3")
+  String txtEntidadeDoc3();
+
+  /**
    * Translated "Razão Social / Nome".
    * 
    * @return translated "Razão Social / Nome"
@@ -1805,6 +1841,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Favorito")
   @Key("txtFavorito")
   String txtFavorito();
+
+  /**
+   * Translated "Fax".
+   * 
+   * @return translated "Fax"
+   */
+  @DefaultMessage("Fax")
+  @Key("txtFax")
+  String txtFax();
 
   /**
    * Translated "Fechada".
@@ -2113,6 +2158,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtInicio();
 
   /**
+   * Translated "Interesse".
+   * 
+   * @return translated "Interesse"
+   */
+  @DefaultMessage("Interesse")
+  @Key("txtInteresse")
+  String txtInteresse();
+
+  /**
    * Translated "Intervalo".
    * 
    * @return translated "Intervalo"
@@ -2192,6 +2246,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Limite")
   @Key("txtLimite")
   String txtLimite();
+
+  /**
+   * Translated "Lingua".
+   * 
+   * @return translated "Lingua"
+   */
+  @DefaultMessage("Lingua")
+  @Key("txtLingua")
+  String txtLingua();
 
   /**
    * Translated "Linha".
@@ -2957,6 +3020,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Tabela")
   @Key("txtTabela")
   String txtTabela();
+
+  /**
+   * Translated "Tags".
+   * 
+   * @return translated "Tags"
+   */
+  @DefaultMessage("Tags")
+  @Key("txtTags")
+  String txtTags();
 
   /**
    * Translated "Telefone".

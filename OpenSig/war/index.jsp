@@ -8,7 +8,6 @@
 	String captcha = getServletContext().getInitParameter("login.captcha");
 	String esqueceu = getServletContext().getInitParameter("login.esqueceu");
 	String modulos = getServletContext().getInitParameter("login.modulos");
-	long serverTime = UtilServer.getData().getTime();
 %>
 
 <html>
@@ -34,7 +33,6 @@
 	<div id="captcha" style="display: none"><%=captcha%></div>
 	<div id="esqueceu" style="display: none"><%=esqueceu%></div>
 	<div id="modulos" style="display: none"><%=modulos%></div>
-	<div id="serverTime" style="display: none"><%=serverTime%></div>
 
 	<iframe id="__gwt_historyFrame"
 		style="position: absolute; width: 0; height: 0; border: 0"></iframe>

@@ -726,10 +726,12 @@ public abstract class AGrafico<E extends Dados> extends Panel implements IGrafic
 			valores.add(new String[] { OpenSigCore.i18n.txtSelecionar(), "" });
 		}
 
+		int diff = lista.getModelos().getColumnCount() - lista.getCampos().getFields().length;
+		
 		for (int i = 1; i < lista.getModelos().getColumnCount(); i++) {
 			try {
 				if (!(lista.getModelos().isHidden(i) && lista.getModelos().isFixed(i))) {
-					FieldDef campo = lista.getCampos().getFields()[i];
+					FieldDef campo = lista.getCampos().getFields()[i - diff];
 					permite = false;
 
 					if (combo.equals("x")) {
@@ -740,7 +742,7 @@ public abstract class AGrafico<E extends Dados> extends Panel implements IGrafic
 						permite = true;
 					}
 
-					if (campo.getName().startsWith("Cod")) {
+					if (campo.getName().startsWith("Cod") || lista.getModelos().getColumnHeader(i).startsWith("Cod")) {
 						permite = false;
 					}
 

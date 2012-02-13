@@ -237,12 +237,6 @@ public class CoreProxy<E extends Dados> extends GWTProxy implements CoreServiceA
 								fil = lista;
 							}
 
-							// valida se o filtro é já tem prefixo
-							MatchResult mat = RegExp.compile("^t\\d+\\.").exec(fil.getCampo());
-							if (mat != null) {
-								fil.setCampoPrefixo("");
-							}
-
 							filtroAtual.add(fil, EJuncao.E);
 						}
 					} catch (Exception ex) {

@@ -14,16 +14,11 @@ import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.comercial.shared.modelo.ComVendaProduto;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.fiscal.server.sped.ARegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.bloco0.Dados0190;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 
 public class Registro0190 extends ARegistro<Dados0190, ProdEmbalagem> {
 
 	private List<Integer> embalagens;
-
-	public Registro0190() {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/bloco0/Bean0190.xml");
-	}
 
 	@Override
 	public void executar() {
@@ -33,7 +28,7 @@ public class Registro0190 extends ARegistro<Dados0190, ProdEmbalagem> {
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
-			BeanWriter out = factory.createWriter("EFD", arquivo);
+			BeanWriter out = factory.createWriter("EFD", escritor);
 			// compras
 			for (ComCompra compra : getCompras()) {
 				for (ComCompraProduto cProd : compra.getComCompraProdutos()) {

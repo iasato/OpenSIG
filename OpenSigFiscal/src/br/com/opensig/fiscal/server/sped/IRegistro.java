@@ -1,5 +1,6 @@
 package br.com.opensig.fiscal.server.sped;
 
+import java.io.File;
 import java.io.Writer;
 import java.util.Date;
 import java.util.List;
@@ -10,13 +11,18 @@ import br.com.opensig.comercial.shared.modelo.ComFrete;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.fiscal.client.servico.FiscalService;
+import br.com.opensig.fiscal.shared.modelo.FisSpedBloco;
 import br.com.opensig.fiscal.shared.modelo.FisSpedFiscal;
 
 public interface IRegistro<E,T> {
 
-	public Writer getArquivo();
+	public File getLeitor();
+	
+	public void setLeitor(File leitor);
+	
+	public Writer getEscritor();
 
-	public void setArquivo(Writer arquivo);
+	public void setEsquitor(Writer escritor);
 
 	public FisSpedFiscal getSped();
 
@@ -45,6 +51,10 @@ public interface IRegistro<E,T> {
 	public boolean getFimBloco();
 	
 	public void setFimBloco(boolean fimBloco);
+	
+	public List<FisSpedBloco> getBlocos();
+	
+	public void setBlocos(List<FisSpedBloco> blocos);
 	
 	public List<ComCompra> getCompras();
 	

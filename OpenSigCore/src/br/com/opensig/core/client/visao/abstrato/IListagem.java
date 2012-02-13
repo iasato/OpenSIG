@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Map;
 
 import br.com.opensig.core.client.OpenSigCore;
+import br.com.opensig.core.client.controlador.comando.EModo;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.servico.CoreProxy;
@@ -18,6 +19,7 @@ import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.RecordDef;
 import com.gwtext.client.data.Store;
@@ -171,16 +173,32 @@ public interface IListagem<E extends Dados> {
 
 	/**
 	 * Metodo que pega os dados para exportacao.
+	 * 
+	 * @return o objeto de exportacao de listagem.
 	 */
 	public ExpListagem<E> getExportacao();
 
 	/**
+	 * Metodo que recupera o tipo de exportacao.
+	 * 
+	 * @param expimp
+	 *            o tipo de opcoes para exportar.
+	 * @param modo
+	 *            o modo de exportacao externa.
+	 * @param modo2
+	 *            o modo de exportacao interna.
+	 * @param async
+	 *            o metodo assincrono a ser executado.
+	 */
+	public void setExportacao(SisExpImp expimp, EModo modo, EModo modo2, AsyncCallback<String> async);
+
+	/**
 	 * Metodo que recupera o tipo de importacao.
 	 * 
-	 * @param modo
+	 * @param expimp
 	 *            o tipo de opcoes para importar.
 	 */
-	public void setImportacao(SisExpImp modo);
+	public void setImportacao(SisExpImp expimp);
 
 	/**
 	 * Metodo que retorna o objeto visual da listagem.
@@ -358,9 +376,5 @@ public interface IListagem<E extends Dados> {
 	public NavegacaoLista<E> getNavegacao();
 
 	public void setNavegacao(NavegacaoLista<E> navegacao);
-
-	public CoreProxy<E> getCore();
-
-	public void setCore(CoreProxy<E> core);
 
 }

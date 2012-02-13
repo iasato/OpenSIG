@@ -2,11 +2,11 @@
 
 <project name="OpenSigCore" basedir="." default="publicar">
 
-	<property name="gwt" location="/Users/pedrohenriquelira/Documents/Google/gwt-2.3.0" />
+	<property name="gwt" location="/Users/pedrohenriquelira/Documents/Google/gwt-2.4.0" />
 	<property name="src" location="./src" />
 	<property name="dist" location="./dist" />
 	<property name="pacote" value="br.com.opensig.core.client" />
-	<property name="versao" value="1.01" />
+	<property name="versao" value="1.02" />
 	<property name="empresa" value="PhD - Systems Solutions" />
 	<property name="autor" value="Pedro H. Lira" />
 	<property name="url" value="http://phdss.com.br" />

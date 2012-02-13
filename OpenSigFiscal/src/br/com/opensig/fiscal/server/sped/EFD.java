@@ -196,7 +196,7 @@ public class EFD implements Runnable {
 		// contagem das linhas do bloco e do arquivo
 		int qtdBloco = 0;
 		int qtdArquivo = 0;
-		FileWriter fw = new FileWriter(arquivo, true);
+		FileWriter escritor = new FileWriter(arquivo, true);
 		// para cada registro instancia sua classe e executa o comando
 		for (FisSpedBloco bloco : blocos) {
 			if (bloco.getFisSpedBlocoNivel() < 3) {
@@ -204,12 +204,14 @@ public class EFD implements Runnable {
 					Class<IRegistro> classe = (Class<IRegistro>) Class.forName(bloco.getFisSpedBlocoClasse());
 					IRegistro registro = classe.newInstance();
 					registro.setQtdLInhas(bloco.getFisSpedBlocoClasse().endsWith("9999") ? qtdArquivo : qtdBloco);
-					registro.setArquivo(fw);
+					registro.setLeitor(arquivo);
+					registro.setEsquitor(escritor);
 					registro.setSped(sped);
 					registro.setService(service);
 					registro.setAuth(auth);
 					registro.setInicio(inicio);
 					registro.setFim(fim);
+					registro.setBlocos(blocos);
 					registro.setCompras(compras);
 					registro.setFretes(fretes);
 					registro.setVendas(vendas);
@@ -223,7 +225,7 @@ public class EFD implements Runnable {
 				}
 			}
 		}
-		fw.flush();
-		fw.close();
+		escritor.flush();
+		escritor.close();
 	}
 }

@@ -19,8 +19,8 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/log4j-1.2.14.jar" sourcepath="/Users/pedrohenriquelira/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14-sources.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/nfexml2.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/beanio.jar" sourcepath="/Users/pedrohenriquelira/.m2/repository/org/beanio/beanio/1.2.0/beanio-1.2.0-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/log4j-1.2.14.jar" sourcepath="/Users/pedrohenriquelira/.m2/repository/log4j/log4j/1.2.14/log4j-1.2.14-sources.jar"/>
+	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/nfexml2.jar"/>
+	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/beanio.jar" sourcepath="/Users/pedrohenriquelira/.m2/repository/org/beanio/beanio/1.2.0/beanio-1.2.0-sources.jar"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>

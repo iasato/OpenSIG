@@ -119,7 +119,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			throw new ExportacaoException("Erro ao exportar -> " + ex.getMessage());
 		}
 
-		retorno = sessao.getId() + UtilServer.getData().getTime();
+		retorno = sessao.getId() + new Date().getTime();
 		sessao.setAttribute(retorno, obj);
 		sessao.setAttribute(retorno + "arquivo", nome + "." + tipo);
 		return retorno;
@@ -248,7 +248,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			// valida se teve resultado
 			if (obj != null) {
 				HttpSession sessao = getThreadLocalRequest().getSession();
-				String retorno = sessao.getId() + UtilServer.getData().getTime();
+				String retorno = sessao.getId() + new Date().getTime();
 				sessao.setAttribute(retorno, obj);
 				sessao.setAttribute(retorno + "arquivo", "backup_notas.zip");
 				return retorno;

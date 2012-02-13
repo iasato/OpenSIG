@@ -35,9 +35,9 @@ public class RecuperarEntrada implements IImportacao<FisNotaEntrada> {
 				FisNotaStatus nfStatus = new FisNotaStatus(status);
 				new SalvarEntrada(null, xml, nfStatus, auth).execute();
 			} catch (Exception ex) {
-				FisNotaEntrada saida = new FisNotaEntrada();
-				saida.setFisNotaEntradaErro(ex.getMessage());
-				lista.add(saida);
+				FisNotaEntrada entrada = new FisNotaEntrada();
+				entrada.setFisNotaEntradaErro(ex.getMessage());
+				lista.add(entrada);
 			}
 		}
 		

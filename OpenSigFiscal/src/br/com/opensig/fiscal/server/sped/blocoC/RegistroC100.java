@@ -21,8 +21,6 @@ import br.com.opensig.financeiro.shared.modelo.FinPagar;
 import br.com.opensig.financeiro.shared.modelo.FinReceber;
 import br.com.opensig.fiscal.server.sped.ARegistro;
 import br.com.opensig.fiscal.server.sped.IRegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.blocoC.DadosC100;
-import br.com.opensig.fiscal.shared.modelo.sped.blocoC.DadosC170;
 import br.com.opensig.nfe.TNFe;
 import br.com.opensig.nfe.TNFe.InfNFe.Det;
 import br.com.opensig.nfe.TNFe.InfNFe.Ide;
@@ -33,10 +31,6 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 
 	private Map<String, List<DadosC170>> analitico = new HashMap<String, List<DadosC170>>();
 
-	public RegistroC100() {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/blocoC/BeanC100.xml");
-	}
-
 	@Override
 	public void executar() {
 		qtdLinhas = 0;
@@ -44,7 +38,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
-			BeanWriter out = factory.createWriter("EFD", arquivo);
+			BeanWriter out = factory.createWriter("EFD", escritor);
 			TNFe nfe = null;
 			IRegistro r140 = null;
 
@@ -78,7 +72,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 
 				// caso pagamento a prazo
 				if (obj.getInd_pgto().equals("1")) {
-					r140.setArquivo(arquivo);
+					r140.setEsquitor(escritor);
 					r140.setAuth(auth);
 					r140.executar();
 					qtdLinhas += r140.getQtdLinhas();
@@ -87,8 +81,9 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				// produtos
 				if (compra.getComCompraNfe()) {
 					RegistroNfeC170 r170 = new RegistroNfeC170();
-					r170.setArquivo(arquivo);
+					r170.setEsquitor(escritor);
 					r170.setAuth(auth);
+					r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
 					r170.setNatureza(compra.getComNatureza().getComNaturezaId() + "");
 					int item = 0;
 					for (Det det : nfe.getInfNFe().getDet()) {
@@ -100,7 +95,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 					}
 				} else {
 					RegistroC170<ComCompraProduto> r170 = new RegistroC170<ComCompraProduto>();
-					r170.setArquivo(arquivo);
+					r170.setEsquitor(escritor);
 					r170.setAuth(auth);
 					for (ComCompraProduto prod : compra.getComCompraProdutos()) {
 						r170.setDados(prod);
@@ -111,7 +106,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				}
 				
 				// analitico das compras
-				getAnalitico();
+				getAnalitico(false);
 			}
 
 			// processa as saidas / vendas
@@ -143,7 +138,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 
 				// caso pagamento a prazo
 				if (obj.getInd_pgto().equals("1")) {
-					r140.setArquivo(arquivo);
+					r140.setEsquitor(escritor);
 					r140.setAuth(auth);
 					r140.executar();
 					qtdLinhas += r140.getQtdLinhas();
@@ -152,7 +147,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				// frete da nota
 				if (!obj.getInd_frt().equals("9")) {
 					RegistroC160 r160 = new RegistroC160();
-					r160.setArquivo(arquivo);
+					r160.setEsquitor(escritor);
 					r160.setAuth(auth);
 					r160.setDados(nfe.getInfNFe().getTransp());
 					r160.executar();
@@ -162,8 +157,9 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				// produtos
 				if (venda.getComVendaNfe()) {
 					RegistroNfeC170 r170 = new RegistroNfeC170();
-					r170.setArquivo(arquivo);
+					r170.setEsquitor(escritor);
 					r170.setAuth(auth);
+					r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
 					r170.setNatureza(venda.getComNatureza().getComNaturezaId() + "");
 					int item = 0;
 					for (Det det : nfe.getInfNFe().getDet()) {
@@ -175,7 +171,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 					}
 				} else {
 					RegistroC170<ComVendaProduto> r170 = new RegistroC170<ComVendaProduto>();
-					r170.setArquivo(arquivo);
+					r170.setEsquitor(escritor);
 					r170.setAuth(auth);
 					for (ComVendaProduto prod : venda.getComVendaProdutos()) {
 						r170.setDados(prod);
@@ -186,7 +182,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				}
 				
 				// analitico das vendas
-				getAnalitico();
+				getAnalitico(true);
 			}
 		} catch (Exception e) {
 			qtdLinhas = 0;
@@ -211,7 +207,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 		d.setNum_doc(Integer.valueOf(ide.getNNF()));
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		d.setDt_doc(sdf.parse(ide.getDEmi()));
-		d.setDt_e_s(sdf.parse(ide.getDSaiEnt()));
+		d.setDt_e_s(ide.getDSaiEnt() == null ? d.getDt_doc() : sdf.parse(ide.getDSaiEnt()));
 		d.setVl_doc(Double.valueOf(icms.getVNF()));
 		d.setInd_pgto(ide.getIndPag());
 		d.setVl_desc(Double.valueOf(icms.getVDesc()));
@@ -347,10 +343,10 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 		}
 	}
 
-	private void getAnalitico(){
+	private void getAnalitico(boolean saida){
 		if (!analitico.isEmpty()) {
-			RegistroC190 r190 = new RegistroC190();
-			r190.setArquivo(arquivo);
+			RegistroC190 r190 = new RegistroC190(saida);
+			r190.setEsquitor(escritor);
 			r190.setAuth(auth);
 			for (Entry<String, List<DadosC170>> entry : analitico.entrySet()) {
 				r190.setDados(entry.getValue());

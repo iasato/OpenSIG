@@ -103,7 +103,7 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 
 	private ComboBox getSped() {
 		final String valor1 = "ICMS_IPI";
-		// String valor2 = "PIS_COFINS";
+		// final String valor2 = "PIS_COFINS";
 
 		Store store = new SimpleStore(new String[] { "id", "valor" }, new String[][] { new String[] { valor1, valor1 } });
 		store.addStoreListener(new StoreListenerAdapter() {
@@ -135,12 +135,6 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 		}
 
 		Store store = new SimpleStore(new String[] { "id", "valor" }, anos.toArray(new String[][] {}));
-		store.addStoreListener(new StoreListenerAdapter() {
-			public void onLoad(Store store, Record[] records) {
-				cmbAno.setValue(atual + "");
-			}
-		});
-
 		cmbAno = new ComboBox(OpenSigCore.i18n.txtAno(), "cmbAno", 90);
 		cmbAno.setForceSelection(true);
 		cmbAno.setEditable(false);
@@ -164,12 +158,6 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 		}
 
 		Store store = new SimpleStore(new String[] { "id", "valor" }, meses.toArray(new String[][] {}));
-		store.addStoreListener(new StoreListenerAdapter() {
-			public void onLoad(Store store, Record[] records) {
-				cmbMes.setValue((new Date().getMonth() + 1) + "");
-			}
-		});
-
 		cmbMes = new ComboBox(OpenSigCore.i18n.txtMes(), "cmbMes", 90);
 		cmbMes.setForceSelection(true);
 		cmbMes.setEditable(false);
@@ -179,7 +167,7 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 		cmbMes.setMode(ComboBox.LOCAL);
 		cmbMes.setTriggerAction(ComboBox.ALL);
 		cmbMes.setAllowBlank(false);
-
+		
 		store.load();
 		return cmbMes;
 	}

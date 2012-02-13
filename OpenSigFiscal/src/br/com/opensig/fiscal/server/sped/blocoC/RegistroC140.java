@@ -9,13 +9,8 @@ import br.com.opensig.financeiro.shared.modelo.FinPagar;
 import br.com.opensig.financeiro.shared.modelo.FinReceber;
 import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
 import br.com.opensig.fiscal.server.sped.ARegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.blocoC.DadosC140;
 
 public class RegistroC140<T extends Dados> extends ARegistro<DadosC140, T> {
-
-	public RegistroC140() {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/blocoC/BeanC140.xml");
-	}
 
 	@Override
 	public void executar() {
@@ -24,7 +19,7 @@ public class RegistroC140<T extends Dados> extends ARegistro<DadosC140, T> {
 		if (dados instanceof FinReceber) {
 			FinReceber receber = (FinReceber) dados;
 			RegistroC141<FinRecebimento> r141 = new RegistroC141<FinRecebimento>();
-			r141.setArquivo(arquivo);
+			r141.setEsquitor(escritor);
 			r141.setAuth(auth);
 			Collections.sort(receber.getFinRecebimentos(), new Comparator<FinRecebimento>() {
 				public int compare(FinRecebimento o1, FinRecebimento o2) {
@@ -39,7 +34,7 @@ public class RegistroC140<T extends Dados> extends ARegistro<DadosC140, T> {
 		} else if (dados instanceof FinPagar) {
 			FinPagar pagar = (FinPagar) dados;
 			RegistroC141<FinPagamento> r141 = new RegistroC141<FinPagamento>();
-			r141.setArquivo(arquivo);
+			r141.setEsquitor(escritor);
 			r141.setAuth(auth);
 			Collections.sort(pagar.getFinPagamentos(), new Comparator<FinPagamento>() {
 				public int compare(FinPagamento o1, FinPagamento o2) {

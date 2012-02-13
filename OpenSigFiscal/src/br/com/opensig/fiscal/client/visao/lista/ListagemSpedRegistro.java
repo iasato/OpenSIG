@@ -51,7 +51,7 @@ public class ListagemSpedRegistro extends AListagem<FisSpedBloco> {
 		// seta atributos
 		setHeader(false);
 		setAutoScroll(true);
-		setHeight(600);
+		setHeight(560);
 		setMargins(0);
 		setLoadMask(true);
 		setStripeRows(true);

@@ -128,7 +128,7 @@ public class GerarNfe extends Chain {
 		this.servico = servico;
 		this.venda = venda;
 		this.frete = frete;
-		this.data = UtilServer.getData();
+		this.data = new Date();
 		this.infos = new HashMap<Integer, String>();
 		this.auth = auth;
 	}

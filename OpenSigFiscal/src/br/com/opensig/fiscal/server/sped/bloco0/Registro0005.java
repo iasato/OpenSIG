@@ -7,13 +7,8 @@ import br.com.opensig.empresa.shared.modelo.EmpContato;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.empresa.shared.modelo.EmpEndereco;
 import br.com.opensig.fiscal.server.sped.ARegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.bloco0.Dados0005;
 
 public class Registro0005 extends ARegistro<Dados0005, Dados> {
-
-	public Registro0005() {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/bloco0/Bean0005.xml");
-	}
 
 	@Override
 	protected Dados0005 getDados(Dados dados) throws Exception {

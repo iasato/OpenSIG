@@ -2,6 +2,7 @@ package br.com.opensig.core.client.visao;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
 import br.com.opensig.core.client.OpenSigCore;
@@ -65,8 +66,7 @@ public class Arvore<E extends Dados> extends TreePanel {
 	}
 
 	/**
-	 * Construtor informando a classe do tipo generico informado e o titudo da
-	 * arvore.
+	 * Construtor informando a classe do tipo generico informado e o titudo da arvore.
 	 * 
 	 * @param classe
 	 *            um objeto que será usado como referencia.
@@ -105,7 +105,7 @@ public class Arvore<E extends Dados> extends TreePanel {
 						if (btnID.equalsIgnoreCase("yes")) {
 							MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtCarregar());
 							carregar(filtro, asyncCallback);
-						} else {
+						} else if (asyncCallback != null) {
 							asyncCallback.onFailure(caught);
 						}
 					}
@@ -116,14 +116,15 @@ public class Arvore<E extends Dados> extends TreePanel {
 				for (E objeto : result.getLista()) {
 					root.appendChild(novoItem(objeto));
 				}
-				asyncCallback.onSuccess(result);
+				if (asyncCallback != null) {
+					asyncCallback.onSuccess(result);
+				}
 			}
 		});
 	}
 
 	/**
-	 * Metodo que marca os nodes como checados, usando uma lista de string
-	 * passada.
+	 * Metodo que marca os nodes como checados, usando uma lista de string passada.
 	 * 
 	 * @param nomes
 	 *            um array de string com os nomes a serem marcados.
@@ -144,16 +145,26 @@ public class Arvore<E extends Dados> extends TreePanel {
 				return true;
 			}
 		});
+		
+		root.sort(new Comparator<TreeNode>() {
+			public int compare(TreeNode arg0, TreeNode arg1) {
+				if (arg0.getUI().isChecked() && !arg1.getUI().isChecked()) {
+					return -1;
+				} else if (!arg0.getUI().isChecked() && arg1.getUI().isChecked()) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
 	}
 
 	/**
 	 * Metodo que valida se tem algum objeto selecionado e insere a colecao.
 	 * 
 	 * @param objs
-	 *            a colecao de objetos que sera usada para inserir os node
-	 *            checados.
-	 * @return verdadeiro se tiver pelo menos 1 item selecionado, false caso
-	 *         contrario.
+	 *            a colecao de objetos que sera usada para inserir os node checados.
+	 * @return verdadeiro se tiver pelo menos 1 item selecionado, false caso contrario.
 	 */
 	public boolean validar(final Collection<E> objs) {
 		root.cascade(new NodeTraversalCallback() {
@@ -176,10 +187,8 @@ public class Arvore<E extends Dados> extends TreePanel {
 	 * Metodo que valida se tem alguma string selecionado e insere a colecao.
 	 * 
 	 * @param objs
-	 *            a colecao de strings que sera usada para inserir os node
-	 *            checados.
-	 * @return verdadeiro se tiver pelo menos 1 item selecionado, false caso
-	 *         contrario.
+	 *            a colecao de strings que sera usada para inserir os node checados.
+	 * @return verdadeiro se tiver pelo menos 1 item selecionado, false caso contrario.
 	 */
 	public boolean validarCategoria(Collection<String[]> objs) {
 		boolean valida = false;
@@ -478,7 +487,7 @@ public class Arvore<E extends Dados> extends TreePanel {
 	}
 
 	// Gets e Seteres
-	
+
 	public E getClasse() {
 		return classe;
 	}

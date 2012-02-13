@@ -1,5 +1,6 @@
 package br.com.opensig.financeiro.server;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -63,7 +64,7 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 				obj = cob.boleto(tipo, finBoleto);
 			}
 
-			retorno = sessao.getId() + UtilServer.getData().getTime();
+			retorno = sessao.getId() + new Date().getTime();
 			sessao.setAttribute(retorno, obj);
 			sessao.setAttribute(retorno + "arquivo", nome + "." + tipo);
 		} catch (Exception e) {

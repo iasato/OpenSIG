@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -73,7 +74,7 @@ public class ExportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> i
 			throw new ExportacaoException(ex.getMessage());
 		}
 
-		retorno = sessao.getId() + UtilServer.getData().getTime();
+		retorno = sessao.getId() + new Date().getTime();
 		sessao.setAttribute(retorno, obj);
 		sessao.setAttribute(retorno + "arquivo", nome);
 		return retorno;
@@ -98,7 +99,7 @@ public class ExportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> i
 		// pegas os dados da sessao
 		HttpSession sessao = getThreadLocalRequest().getSession();
 		Autenticacao auth = SessionManager.LOGIN.get(sessao);
-		String retorno = sessao.getId() + UtilServer.getData().getTime();
+		String retorno = sessao.getId() + new Date().getTime();
 
 		try {
 			// gera os dados de cebecalho e rodape

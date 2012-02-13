@@ -28,7 +28,11 @@ public abstract class AExportacao<E extends Dados> implements IExportacao<E> {
 	/**
 	 * Dados recuperados do banco.
 	 */
-	protected Lista lista;
+	protected Lista<E> registro;
+	/**
+	 * Dados recuperados do banco.
+	 */
+	protected Lista<E> lista;
 	/**
 	 * Modo de exportacao
 	 */

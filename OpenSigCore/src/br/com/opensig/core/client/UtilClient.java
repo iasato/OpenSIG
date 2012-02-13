@@ -94,10 +94,12 @@ public class UtilClient {
 	 *            o valor da data a ser formatada.
 	 * @return a data formatada no padrão.
 	 */
-	@SuppressWarnings("deprecation")
 	public static String getDataGrid(Date data) {
 		if (data != null) {
-			return (data.getMonth() + 1) + "/" + data.getDate() + "/" + (data.getYear() + 1900);
+			String dia = data.getDate() > 9 ? data.getDate() + "" : "0" + data.getDate();
+			String mes = data.getMonth() >= 9 ? (data.getMonth() + 1) + "" : "0" + (data.getMonth() + 1);
+			String ano = (data.getYear() + 1900) + "";
+			return (mes + "/" + dia + "/" + ano);
 		} else {
 			return "";
 		}
@@ -110,10 +112,12 @@ public class UtilClient {
 	 *            o valor da hora a ser formatada.
 	 * @return a hora formatada no padrão.
 	 */
-	@SuppressWarnings("deprecation")
 	public static String getHoraGrid(Date hora) {
 		if (hora != null) {
-			return hora.getHours() + ":" + hora.getMinutes() + ":" + hora.getSeconds();
+			String seg = hora.getSeconds() > 9 ? hora.getSeconds() + "" : "0" + hora.getSeconds();
+			String min = hora.getMinutes() > 9 ? hora.getMinutes() + "" : "0" + hora.getMinutes();
+			String hor = hora.getHours() > 9 ? hora.getHours() + "" : "0" + hora.getHours();
+			return hor + ":" + min + ":" + seg;
 		} else {
 			return "";
 		}

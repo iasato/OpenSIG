@@ -1,6 +1,7 @@
 package br.com.opensig.financeiro.server.cobranca;
 
 import java.text.DateFormat;
+import java.util.Date;
 
 import org.jboleto.Banco;
 import org.jboleto.FabricaBanco;
@@ -47,8 +48,8 @@ public abstract class ACobranca implements ICobranca {
 		jBoletoBean.setTituloBoletoHtml("boleto");
 		jBoletoBean.setEspecieDocumento("DM");
 		jBoletoBean.setAceite("N");
-		jBoletoBean.setDataDocumento(UtilServer.formataData(UtilServer.getData(), DateFormat.MEDIUM));
-		jBoletoBean.setDataProcessamento(UtilServer.formataData(UtilServer.getData(), DateFormat.MEDIUM));
+		jBoletoBean.setDataDocumento(UtilServer.formataData(new Date(), DateFormat.MEDIUM));
+		jBoletoBean.setDataProcessamento(UtilServer.formataData(new Date(), DateFormat.MEDIUM));
 		jBoletoBean.setCedente(empresa[2] + " - " + empresa[5]);
 
 		jBoletoBean.setNomeSacado(cliente.getEmpEntidadeNome1());

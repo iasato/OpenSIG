@@ -36,7 +36,6 @@ import com.gwtext.client.widgets.Window;
 import com.gwtext.client.widgets.event.ButtonListenerAdapter;
 import com.gwtext.client.widgets.event.DataViewListenerAdapter;
 
-//TODO documentar
 public class JanelaImportar extends Window {
 
 	protected Record rec;

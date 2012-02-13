@@ -82,7 +82,36 @@ public class Xls<E extends Dados> extends AExportacao<E> {
 
 	@Override
 	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpListagem<E> exp, String[][] enderecos, String[][] contatos) {
-		return null;
+		// seleciona os dados
+		try {
+			this.lista = service.selecionar(exp.getClasse(), modo.getInicio(), modo.getLimite(), exp.getFiltro(), true);
+		} catch (CoreException e) {
+			return null;
+		} finally {
+			this.modo = modo;
+			this.expLista = exp;
+		}
+
+		// definindo o final
+		if (modo.getLimite() == 0) {
+			fim = lista.getDados().length;
+		} else if (lista.getTotal() - modo.getInicio() < modo.getLimite()) {
+			fim = lista.getTotal() - modo.getInicio();
+		} else {
+			fim = modo.getLimite();
+		}
+
+		// inicio do arquivo
+		HSSFSheet sheet = wb.createSheet(exp.getNome());
+		// cabecalho
+		getCabecalho(sheet, exp.getMetadados());
+		// registro
+		getCorpo(sheet, exp.getMetadados(), service);
+		// rodape
+		getRodape(sheet, exp.getMetadados());
+
+		// retorno
+		return wb.getBytes();
 	}
 
 	@Override
@@ -97,9 +126,12 @@ public class Xls<E extends Dados> extends AExportacao<E> {
 			this.expReg = exp;
 		}
 
-		// determina o final dos registros
-		fim = lista.getDados().length - modo.getInicio();
-		if (modo.getLimite() > 0 && modo.getLimite() < fim) {
+		// definindo o final
+		if (modo.getLimite() == 0) {
+			fim = lista.getDados().length;
+		} else if (lista.getTotal() - modo.getInicio() < modo.getLimite()) {
+			fim = lista.getTotal() - modo.getInicio();
+		} else {
 			fim = modo.getLimite();
 		}
 
@@ -166,7 +198,7 @@ public class Xls<E extends Dados> extends AExportacao<E> {
 			}
 
 			// sub-lista de cada registro
-			if (expReg.getExpLista() != null) {
+			if (expReg != null && expReg.getExpLista() != null) {
 				for (ExpListagem expLista : expReg.getExpLista()) {
 					try {
 						FiltroObjeto filtro = (FiltroObjeto) expLista.getFiltro();

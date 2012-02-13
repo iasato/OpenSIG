@@ -12,9 +12,7 @@ import br.com.opensig.core.client.controlador.filtro.FiltroTexto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.servico.CoreProxy;
-import br.com.opensig.core.client.servico.ExportacaoProxy;
-import br.com.opensig.core.client.visao.abstrato.IFormulario;
-import br.com.opensig.core.shared.modelo.ExpRegistro;
+import br.com.opensig.core.client.visao.abstrato.IListagem;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 
@@ -45,19 +43,22 @@ import com.gwtext.client.widgets.form.Radio;
 import com.gwtext.client.widgets.form.TextField;
 import com.gwtext.client.widgets.form.event.CheckboxListenerAdapter;
 import com.gwtext.client.widgets.layout.HorizontalLayout;
+import com.gwtextux.client.widgets.window.ToastWindow;
 
-//TODO documentar
 public class JanelaExportar extends Window {
 
-	protected IFormulario form;
+	protected IListagem lista;
 	protected EModo modo;
 	protected Record rec;
 	protected AsyncCallback<String> async;
-
+	
+	protected int limite;
 	protected Button btnOK;
 	protected Panel panTipo;
 	protected DataView dataView;
 	protected Panel panForm;
+	protected Radio chkListagem;
+	protected Radio chkRegistro;
 	protected Radio chkTudo;
 	protected Radio chkAtual;
 	protected Radio chkIntervalo;
@@ -67,24 +68,25 @@ public class JanelaExportar extends Window {
 	protected XTemplate template;
 	protected Store store;
 
-	public JanelaExportar(final IFormulario form, EModo modo) {
-		this(form, modo, new AsyncCallback<String>() {
+	public JanelaExportar(final IListagem lista, EModo modo) {
+		this(lista, modo, new AsyncCallback<String>() {
 			public void onSuccess(String arg0) {
-				form.getLista().getPanel().getEl().unmask();
+				lista.getPanel().getEl().unmask();
 				UtilClient.exportar("ExportacaoService?id=" + arg0);
 			}
 
 			public void onFailure(Throwable arg0) {
-				form.getLista().getPanel().getEl().unmask();
+				lista.getPanel().getEl().unmask();
 				MessageBox.alert(OpenSigCore.i18n.txtExportar(), OpenSigCore.i18n.errExportar());
 			}
 		});
 	}
 
-	public JanelaExportar(IFormulario form, EModo modo, AsyncCallback<String> async) {
-		this.form = form;
+	public JanelaExportar(IListagem lista, EModo modo, AsyncCallback<String> async) {
+		this.lista = lista;
 		this.modo = modo;
 		this.async = async;
+		this.limite = UtilClient.CONF.get("listagem.registro") != null ? Integer.valueOf(UtilClient.CONF.get("listagem.registro")) : 500;
 
 		inicializar();
 		setDados();
@@ -101,7 +103,7 @@ public class JanelaExportar extends Window {
 		});
 
 		setTitle(OpenSigCore.i18n.txtExportar());
-		setSize(300, 260);
+		setSize(300, 280);
 		setModal(true);
 		setResizable(false);
 		setButtonAlign(Position.CENTER);
@@ -148,11 +150,11 @@ public class JanelaExportar extends Window {
 		String[] html = new String[] { "br.com.opensig.core.server.exportar.Html", "html", "", modo.name(), "HTML", "html.png", "" };
 		dados.add(html);
 		// xls
-		String[] xls = new String[] { "br.com.opensig.core.server.exportar.Xls", "xls", "", EModo.REGISTRO.name(), "XLS", "xls.png", "" };
+		String[] xls = new String[] { "br.com.opensig.core.server.exportar.Xls", "xls", "", modo.name(), "XLS", "xls.png", "" };
 		dados.add(xls);
 
 		// filtro
-		FiltroTexto ft1 = new FiltroTexto("sisExpImpFuncao", ECompara.IGUAL, form.getFuncao().getSisFuncaoClasse());
+		FiltroTexto ft1 = new FiltroTexto("sisExpImpFuncao", ECompara.IGUAL, lista.getFuncao().getSisFuncaoClasse());
 		FiltroTexto ft2 = new FiltroTexto("sisExpImpTipo", ECompara.IGUAL, "E");
 		GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { ft1, ft2 });
 
@@ -196,17 +198,32 @@ public class JanelaExportar extends Window {
 		panForm.add(new HTML(OpenSigCore.i18n.msgExportarPagina()));
 		panForm.add(new HTML("<br/>"));
 
+		Panel panDados = new Panel();
+		panDados.setLayout(new HorizontalLayout(5));
+		
+		chkRegistro = new Radio(OpenSigCore.i18n.txtRegistro(), "dados");
+		chkRegistro.setHideLabel(true);
+		chkRegistro.setChecked(modo == EModo.REGISTRO);
+		panDados.add(chkRegistro);
+		
+		chkListagem = new Radio(OpenSigCore.i18n.txtListagem(),  "dados");
+		chkListagem.setHideLabel(true);
+		chkListagem.setChecked(modo == EModo.LISTAGEM);
+		chkListagem.setDisabled(modo == EModo.REGISTRO);
+		panDados.add(chkListagem);
+		
 		Panel panRange = new Panel();
 		panRange.setLayout(new HorizontalLayout(5));
 
 		chkTudo = new Radio(OpenSigCore.i18n.txtTudo(), "range");
-		chkTudo.setChecked(true);
 		chkTudo.setHideLabel(true);
+		chkTudo.setChecked(modo == EModo.LISTAGEM);
+		chkTudo.setDisabled(modo == EModo.REGISTRO);
 		panRange.add(chkTudo);
 
 		chkAtual = new Radio(OpenSigCore.i18n.txtAtual(), "range");
 		chkAtual.setHideLabel(true);
-		chkAtual.setDisabled(modo == EModo.REGISTRO);
+		chkAtual.setChecked(modo == EModo.REGISTRO);
 		panRange.add(chkAtual);
 
 		txtIntervalo = new TextField("", "intervalo", 60);
@@ -231,19 +248,19 @@ public class JanelaExportar extends Window {
 		panRange.add(chkIntervalo);
 		panRange.add(txtIntervalo);
 
+		panForm.add(panDados);
 		panForm.add(panRange);
 		return panForm;
 	}
 
 	public void exportar() {
 		// intervalo
-		int limite = UtilClient.CONF.get("listagem.registro") != null ? Integer.valueOf(UtilClient.CONF.get("listagem.registro")) : 500;
 		int inicio = 0;
 		int fim = 0;
-		int tamanho = form.getLista().getPaginador().getPageSize();
+		int tamanho = lista.getPaginador().getPageSize();
 
 		if (chkAtual.getValue()) {
-			inicio = (form.getLista().getPaginador().getCurrentPage() - 1) * tamanho;
+			inicio = (lista.getPaginador().getCurrentPage() - 1) * tamanho;
 			fim = tamanho;
 		} else if (chkIntervalo.getValue()) {
 			try {
@@ -259,7 +276,7 @@ public class JanelaExportar extends Window {
 			}
 
 			// ajustando
-			if (inicio < 0 || inicio > form.getLista().getPanel().getStore().getTotalCount()) {
+			if (inicio < 0 || inicio > lista.getPanel().getStore().getTotalCount()) {
 				inicio = 0;
 			}
 		}
@@ -276,36 +293,24 @@ public class JanelaExportar extends Window {
 		expimp.setInicio(inicio);
 		expimp.setLimite(fim);
 
-		if ((fim == 0 && form.getLista().getPanel().getStore().getTotalCount() > limite) || fim > limite) {
+		if ((fim == 0 && limite > 0 && lista.getPanel().getStore().getTotalCount() > limite) || (fim > limite && limite > 0)) {
 			MessageBox.alert(OpenSigCore.i18n.txtExportar(), OpenSigCore.i18n.msgExportar(limite + ""));
-		} else if (form.getLista().getPanel().getStore().getCount() > 0) {
-			form.getLista().getPanel().getEl().mask(OpenSigCore.i18n.txtAguarde());
-			ExportacaoProxy proxy = new ExportacaoProxy();
-			EModo modo2 = EModo.valueOf(rec.getAsString("modo"));
-
-			// se diferentes trata como registro com filtro da listagem
-			if (modo != modo2) {
-				form.getLista().getPanel().getSelectionModel().selectFirstRow();
-				ExpRegistro exp = form.getExportacao();
-				exp.setFiltro(form.getLista().getProxy().getFiltroTotal());
-				proxy.exportar(expimp, exp, async);
-			} else if (modo == EModo.LISTAGEM) {
-				proxy.exportar(expimp, form.getLista().getExportacao(), async);
-			} else {
-				proxy.exportar(expimp, form.getExportacao(), async);
-			}
+		} else if (lista.getPanel().getStore().getCount() > 0) {
+			EModo modo2 = chkRegistro.getValue() ? EModo.REGISTRO : EModo.LISTAGEM;
+			lista.setExportacao(expimp, modo, modo2, async);
 			close();
 		} else {
+			new ToastWindow(OpenSigCore.i18n.txtExportar(), OpenSigCore.i18n.msgRegistro()).show();
 			close();
 		}
 	}
 
-	public IFormulario getForm() {
-		return form;
+	public IListagem getLista() {
+		return lista;
 	}
-
-	public void setForm(IFormulario form) {
-		this.form = form;
+	
+	public void setLista(IListagem lista) {
+		this.lista = lista;
 	}
 
 	public EModo getModo() {
@@ -322,14 +327,6 @@ public class JanelaExportar extends Window {
 
 	public void setRec(Record rec) {
 		this.rec = rec;
-	}
-
-	public AsyncCallback<String> getAsync() {
-		return async;
-	}
-
-	public void setAsync(AsyncCallback<String> async) {
-		this.async = async;
 	}
 
 	public Button getBtnOK() {
@@ -418,6 +415,14 @@ public class JanelaExportar extends Window {
 
 	public void setStore(Store store) {
 		this.store = store;
+	}
+
+	public int getLimite() {
+		return limite;
+	}
+
+	public void setLimite(int limite) {
+		this.limite = limite;
 	}
 
 }

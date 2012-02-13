@@ -1,15 +1,10 @@
 package br.com.opensig.fiscal.server.sped.blocoC;
 
 import br.com.opensig.fiscal.server.sped.ARegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.blocoC.DadosC160;
 import br.com.opensig.nfe.TNFe.InfNFe.Transp;
 import br.com.opensig.nfe.TNFe.InfNFe.Transp.Vol;
 
 public class RegistroC160 extends ARegistro<DadosC160, Transp> {
-
-	public RegistroC160() {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/blocoC/BeanC160.xml");
-	}
 
 	@Override
 	protected DadosC160 getDados(Transp dados) throws Exception {

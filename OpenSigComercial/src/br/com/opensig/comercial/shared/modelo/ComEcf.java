@@ -45,7 +45,7 @@ public class ComEcf extends Dados implements Serializable {
 	}
 
 	public ComEcf(int comEcfId) {
-		super("pu_comercial", "ComEcf", "comEcfId", "comEcfModelo");
+		super("pu_comercial", "ComEcf", "comEcfId", "comEcfCaixa");
 		this.comEcfId = comEcfId;
 	}
 

@@ -5,7 +5,7 @@ import java.util.Map;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.controlador.comando.ComandoAba;
 
-import com.gwtextux.client.widgets.window.ToastWindow;
+import com.gwtext.client.widgets.MessageBox;
 
 /**
  * Classe do comando padrao, para toda comando que nao foi implementado.
@@ -25,6 +25,6 @@ public class ComandoVisualizar extends ComandoAba {
 	@Override
 	protected void execute() {
 		FORM.getBtnSalvar().disable();
-		new ToastWindow(OpenSigCore.i18n.txtFormulario(), OpenSigCore.i18n.txtVisualizar()).show();
+		MessageBox.alert(OpenSigCore.i18n.txtFormulario(), OpenSigCore.i18n.txtVisualizar());
 	}
 }

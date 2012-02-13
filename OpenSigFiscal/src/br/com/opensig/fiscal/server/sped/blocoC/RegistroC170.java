@@ -4,17 +4,12 @@ import br.com.opensig.comercial.shared.modelo.ComCompraProduto;
 import br.com.opensig.comercial.shared.modelo.ComVendaProduto;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.fiscal.server.sped.ARegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.blocoC.DadosC170;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 
 	private ProdProduto produto;
 	private int item = 1;
-
-	public RegistroC170() {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/blocoC/BeanC170.xml");
-	}
 
 	@Override
 	protected DadosC170 getDados(T dados) throws Exception {
@@ -40,7 +35,7 @@ public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 		d.setInd_mov("0");
 		d.setCfop(compra.getComCompraProdutoCfop());
 		d.setCod_nat(compra.getComCompra().getComNatureza().getComNaturezaId() + "");
-		d.setCst_icms(produto.getProdTributacao().getProdTributacaoCst());
+		d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
 
 		// icms
 		if (compra.getComCompraProdutoIcms() > 0) {
@@ -54,8 +49,9 @@ public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 		d.setInd_apur("0");
 		d.setCod_enq("");
 		d.setCst_ipi("");
-		if (compra.getComCompraProdutoIpi() > 0) {
-			d.setCst_ipi("99");
+		if (auth.getConf().get("sped.0000.ind_ativ").equals("0")) {
+			//TODO pegar da tributacao
+			d.setCst_ipi("00");
 			d.setVl_bc_ipi(compra.getComCompraProdutoTotal());
 			d.setAliq_ipi(compra.getComCompraProdutoIpi());
 			double valor = compra.getComCompraProdutoTotal() * compra.getComCompraProdutoIpi() / 100;
@@ -82,7 +78,7 @@ public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 		d.setInd_mov("0");
 		d.setCfop(produto.getProdTributacao().getProdTributacaoCfop());
 		d.setCod_nat(venda.getComVenda().getComNatureza().getComNaturezaId() + "");
-		d.setCst_icms(produto.getProdTributacao().getProdTributacaoCst());
+		d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
 
 		// icms
 		if (venda.getComVendaProdutoIcms() > 0) {
@@ -96,8 +92,9 @@ public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 		d.setInd_apur("0");
 		d.setCod_enq("");
 		d.setCst_ipi("");
-		if (venda.getComVendaProdutoIpi() > 0) {
-			d.setCst_ipi("99");
+		if (auth.getConf().get("sped.0000.ind_ativ").equals("0")) {
+			//TODO pegar da tributacao
+			d.setCst_ipi("50");
 			d.setVl_bc_ipi(venda.getComVendaProdutoTotalLiquido());
 			d.setAliq_ipi(venda.getComVendaProdutoIpi());
 			double valor = venda.getComVendaProdutoTotalLiquido() * venda.getComVendaProdutoIpi() / 100;

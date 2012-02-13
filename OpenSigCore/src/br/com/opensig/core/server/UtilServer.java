@@ -14,7 +14,6 @@ import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -57,8 +56,6 @@ import br.com.opensig.core.client.servico.OpenSigException;
 public class UtilServer extends HttpServlet {
 	// tabela com vinculos das letras
 	private static char[] tabela = new char[256];
-	// hora de desvio para verao
-	private static int VERAO = 0;
 	// path local
 	private static String PATH = "";
 
@@ -110,9 +107,6 @@ public class UtilServer extends HttpServlet {
 		PropertyConfigurator.configure(log4j);
 		LOG = Logger.getLogger(UtilServer.class);
 
-		// setando o verao
-		VERAO = Integer.valueOf(getServletContext().getInitParameter("sistema.verao")).intValue();
-
 		// setando a chave/senha
 		CHAVE = getServletContext().getInitParameter("sistema.chave");
 
@@ -120,23 +114,27 @@ public class UtilServer extends HttpServlet {
 		PATH = getServletContext().getRealPath("/");
 
 		// configurando o as opcoes do app
-		PATH_EMPRESA = getServletContext().getInitParameter("sistema.empresas");
-		CONF.put("sistema.empresas", PATH_EMPRESA);
+		if (getServletContext().getInitParameter("sistema.empresas") != null) {
+			PATH_EMPRESA = getServletContext().getInitParameter("sistema.empresas");
+			CONF.put("sistema.empresas", PATH_EMPRESA);
+			File dir = new File(PATH_EMPRESA + "conf/");
 
-		File dir = new File(PATH_EMPRESA + "conf/");
-		for (File conf : dir.listFiles()) {
-			if (conf.isFile() && conf.getName().endsWith(".conf")) {
-				Properties prop = new Properties();
-				try {
-					FileInputStream fis = new FileInputStream(conf);
-					prop.load(fis);
-					fis.close();
-				} catch (Exception ex) {
-					LOG.error("Nao leu os dados do arquivo -> " + conf.getName(), ex);
-				} finally {
-					// adicionando os valores
-					for (Entry<Object, Object> entry : prop.entrySet()) {
-						CONF.put(entry.getKey().toString(), entry.getValue().toString());
+			if (dir.exists() && dir.isDirectory()) {
+				for (File conf : dir.listFiles()) {
+					if (conf.isFile() && conf.getName().endsWith(".conf")) {
+						Properties prop = new Properties();
+						try {
+							FileInputStream fis = new FileInputStream(conf);
+							prop.load(fis);
+							fis.close();
+						} catch (Exception ex) {
+							LOG.error("Nao leu os dados do arquivo -> " + conf.getName(), ex);
+						} finally {
+							// adicionando os valores
+							for (Entry<Object, Object> entry : prop.entrySet()) {
+								CONF.put(entry.getKey().toString(), entry.getValue().toString());
+							}
+						}
 					}
 				}
 			}
@@ -334,18 +332,6 @@ public class UtilServer extends HttpServlet {
 			UtilServer.LOG.error("Erro ao formatar a string em xml.", e);
 			return null;
 		}
-	}
-
-	/**
-	 * Metodo que retorna a data corrigindo a hora de versao
-	 * 
-	 * @return a data correspondete
-	 */
-	public static Date getData() {
-		Calendar calendario = Calendar.getInstance(LOCAL);
-		calendario.setTime(new Date());
-		calendario.add(Calendar.HOUR, VERAO);
-		return calendario.getTime();
 	}
 
 	/**
@@ -614,7 +600,7 @@ public class UtilServer extends HttpServlet {
 		xml = xml.replaceAll(UtilServer.CONF.get("nfe.regexp"), "");
 		return xml;
 	}
-	
+
 	/**
 	 * Metodo que informa se o metodo da classe é do tipo GET.
 	 * 

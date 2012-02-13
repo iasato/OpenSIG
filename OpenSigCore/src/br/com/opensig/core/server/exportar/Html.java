@@ -1,7 +1,9 @@
 package br.com.opensig.core.server.exportar;
 
 import java.text.DateFormat;
+import java.util.Date;
 
+import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.servico.CoreException;
 import br.com.opensig.core.client.servico.CoreService;
 import br.com.opensig.core.server.UtilServer;
@@ -39,7 +41,7 @@ public class Html<E extends Dados> extends AExportacao<E> {
 		// cabecalho da empresa
 		sb.append(getCabecalhoEmpresa());
 		// inicio da listagem
-		sb.append("<table>");
+		sb.append("<table -fs-table-paginate: paginate;page-break-inside: avoid;>");
 		// cabeçalho da listagem
 		sb.append(getCabecalhoListagem());
 		// corpo da listagem
@@ -60,7 +62,7 @@ public class Html<E extends Dados> extends AExportacao<E> {
 	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpRegistro<E> exp, String[][] enderecos, String[][] contatos) {
 		// seleciona os dados
 		try {
-			this.lista = service.selecionar(exp.getClasse(), 0, 1, exp.getFiltro(), true);
+			this.registro = service.selecionar(exp.getClasse(), modo.getInicio(), modo.getLimite(), exp.getFiltro(), true);
 		} catch (CoreException e) {
 			return null;
 		} finally {
@@ -74,38 +76,62 @@ public class Html<E extends Dados> extends AExportacao<E> {
 		sb.append(getEstilo(exp.getExpLista() == null ? "portrait" : "landscape", exp.getNome()));
 		// cabecalho da empresa
 		sb.append(getCabecalhoEmpresa());
-		// inicio do registro
-		sb.append("<table>");
-		// cabeçalho do registro
-		sb.append(getCabecalhoRegistro());
-		// corpo do registro
-		sb.append(getCorpoRegistro());
-		// fim do registro
-		sb.append("</table>");
-		// listas do registro
-		if (exp.getExpLista() != null) {
-			for (ExpListagem expLista : exp.getExpLista()) {
-				// seleciona os dados
-				try {
-					this.lista = service.selecionar(expLista.getClasse(), 0, 0, expLista.getFiltro(), true);
-				} catch (CoreException e) {
-					return null;
-				} finally {
-					this.agrupados = new double[expLista.getMetadados().size()];
-					this.expLista = expLista;
-				}
 
-				// inicio listagem
-				sb.append("<hr /><table>");
-				// cabecalho da listagem
-				sb.append(getCabecalhoListagem());
-				// corpo da listagem
-				sb.append(getCorpoListagem());
-				// rodape da listagem
-				sb.append(getRodapeListagem());
-				// fim da listagem
-				sb.append("</table>");
+		// definindo o final
+		int fim = 0;
+		if (modo.getLimite() == 0) {
+			fim = registro.getDados().length;
+		} else if (registro.getTotal() - modo.getInicio() < modo.getLimite()) {
+			fim = registro.getTotal() - modo.getInicio();
+		} else {
+			fim = modo.getLimite();
+		}
+		for (int pos = 0; pos < fim; pos++) {
+			String[] reg = registro.getDados()[pos];
+			if (pos + 1 < fim) {
+				sb.append("<div style=\"page-break-after: always\"");
+			} else {
+				sb.append("<div>");
 			}
+			// inicio do registro
+			sb.append("<table>");
+			// cabeçalho do registro
+			sb.append(getCabecalhoRegistro());
+			// corpo do registro
+			sb.append(getCorpoRegistro(reg));
+			// fim do registro
+			sb.append("</table>");
+			// listas do registro
+			if (exp.getExpLista() != null) {
+				for (ExpListagem expLista : exp.getExpLista()) {
+					// seleciona os dados
+					try {
+						if (expLista.getFiltro() instanceof FiltroObjeto) {
+							Dados d = (Dados) expLista.getFiltro().getValor();
+							int id = d.getCampoId().equalsIgnoreCase("empEntidadeId") ? Integer.valueOf(reg[1]) : Integer.valueOf(reg[0]);
+							d.setId(id);
+						}
+						this.lista = service.selecionar(expLista.getClasse(), 0, 0, expLista.getFiltro(), true);
+					} catch (CoreException e) {
+						return null;
+					} finally {
+						this.agrupados = new double[expLista.getMetadados().size()];
+						this.expLista = expLista;
+					}
+
+					// inicio listagem
+					sb.append("<hr /><table>");
+					// cabecalho da listagem
+					sb.append(getCabecalhoListagem());
+					// corpo da listagem
+					sb.append(getCorpoListagem());
+					// rodape da listagem
+					sb.append(getRodapeListagem());
+					// fim da listagem
+					sb.append("</table>");
+				}
+			}
+			sb.append("</div>");
 		}
 		// rodape da empresa
 		sb.append(getRodapeEmpresa(enderecos, contatos));
@@ -130,14 +156,14 @@ public class Html<E extends Dados> extends AExportacao<E> {
 	 * 
 	 * @return o corpo do registro.
 	 */
-	public String getCorpoRegistro() {
+	public String getCorpoRegistro(String[] dados) {
 		StringBuffer sb = new StringBuffer("<tbody><tr>");
 		int col = 0;
 		int visivel = 0;
 
 		for (ExpMeta meta : expReg.getMetadados()) {
 			if (meta != null) {
-				sb.append("<td><b>" + meta.getRotulo() + "</b>: " + getValor(lista.getDados()[0][col]) + "</td>");
+				sb.append("<td><b>" + meta.getRotulo() + "</b>: " + getValor(dados[col]) + "</td>");
 				visivel++;
 				if (visivel != 0 && visivel % 4 == 0) {
 					sb.append("</tr><tr>");
@@ -163,9 +189,10 @@ public class Html<E extends Dados> extends AExportacao<E> {
 		// dados da empresa
 		StringBuffer sb = new StringBuffer("<table><tbody><tr style='height: 10px;'>");
 		sb.append("<td>" + auth.getEmpresa()[2] + "</td>");
-		sb.append("<td align='right'>" + auth.getConf().get("txtData") + " :: " + UtilServer.formataData(UtilServer.getData(), DateFormat.MEDIUM) + " "
-				+ UtilServer.formataHora(UtilServer.getData(), DateFormat.MEDIUM) + "</td></tr>");
-		sb.append("<tr style='height: 10px;'><td>" + auth.getConf().get("txtEntidadeDoc1") + ": " + auth.getEmpresa()[5] + " " + auth.getConf().get("txtEntidadeDoc2") + ": " + auth.getEmpresa()[6] + "</td>");
+		sb.append("<td align='right'>" + auth.getConf().get("txtData") + " :: " + UtilServer.formataData(new Date(), DateFormat.MEDIUM) + " " + UtilServer.formataHora(new Date(), DateFormat.MEDIUM)
+				+ "</td></tr>");
+		sb.append("<tr style='height: 10px;'><td>" + auth.getConf().get("txtEntidadeDoc1") + ": " + auth.getEmpresa()[5] + " " + auth.getConf().get("txtEntidadeDoc2") + ": " + auth.getEmpresa()[6]
+				+ "</td>");
 		sb.append("<td align='right'>" + auth.getConf().get("txtUsuario") + " :: " + auth.getUsuario()[1] + "</td></tr>");
 		// finalizando
 		sb.append("</tbody></table><hr />");
@@ -225,7 +252,7 @@ public class Html<E extends Dados> extends AExportacao<E> {
 		StringBuffer sb = new StringBuffer("<head>");
 		sb.append("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
 		sb.append("<style type=\"text/css\" media=\"all\">");
-		sb.append("@page {size: " + size + "; margin: 10px;}");
+		sb.append("@page {size: " + size + "; margin: 0.25in; @bottom-center { content: \"Pagina \" counter(page) \" de \" counter(pages); }}");
 		sb.append("table {width: 100%;border-spacing: 0px;border-bottom: none; font-family: serif; font-size: 12px;}");
 		sb.append("caption {height: 30px;font-size: 14px;font-weight: bold;}");
 		sb.append("thead tr {height: 30px;vertical-align: top; text-align: left; text-transform: uppercase;font-weight: bold;}");
@@ -260,8 +287,12 @@ public class Html<E extends Dados> extends AExportacao<E> {
 	 */
 	public String getCorpoListagem() {
 		StringBuffer sb = new StringBuffer("<tbody>");
-		int fim = lista.getDados().length - modo.getInicio();
-		if (modo.getLimite() > 0 && modo.getLimite() < fim) {
+		int fim = 0;
+		if (modo.getLimite() == 0 || expReg != null) {
+			fim = lista.getDados().length;
+		} else if (lista.getTotal() - modo.getInicio() < modo.getLimite()) {
+			fim = lista.getTotal() - modo.getInicio();
+		} else {
 			fim = modo.getLimite();
 		}
 
@@ -310,7 +341,14 @@ public class Html<E extends Dados> extends AExportacao<E> {
 	public String getRodapeListagem() {
 		boolean semGrupo = true;
 		String rodape = "";
-		int reg = modo.getLimite() > 0 ? modo.getLimite() : lista.getDados().length;
+		int reg = 0;
+		if (modo.getLimite() == 0 || expReg != null) {
+			reg = lista.getDados().length;
+		} else if (lista.getTotal() - modo.getInicio() < modo.getLimite()) {
+			reg = lista.getTotal() - modo.getInicio();
+		} else {
+			reg = modo.getLimite();
+		}
 
 		for (int i = 0; i < agrupados.length; i++) {
 			if (agrupados[i] == 0) {

@@ -15,6 +15,6 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/Externas/simplecaptcha.jar"/>
+	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/simplecaptcha.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

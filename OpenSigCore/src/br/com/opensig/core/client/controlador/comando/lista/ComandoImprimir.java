@@ -42,9 +42,8 @@ public class ComandoImprimir extends ComandoAcao {
 	@Override
 	public void execute(final Map contexto) {
 		super.execute(contexto);
-		FORM.setLista(LISTA);
 		final EModo modo = contexto.get("acao") != null ? (EModo) contexto.get("acao") : EModo.LISTAGEM;
-		final JanelaExportar janela = new JanelaExportar(FORM, modo, async);
+		final JanelaExportar janela = new JanelaExportar(LISTA, modo, async);
 
 		janela.getBtnOK().purgeListeners();
 		janela.getBtnOK().addListener(new ButtonListenerAdapter() {
@@ -57,7 +56,7 @@ public class ComandoImprimir extends ComandoAcao {
 		janela.getPanTipo().setVisible(false);
 		janela.setIconCls("icon-imprimir");
 		janela.setTitle(OpenSigCore.i18n.txtImprimir());
-		janela.setHeight(145);
+		janela.setHeight(160);
 		janela.show();
 	}
 }

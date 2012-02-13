@@ -34,7 +34,7 @@ public class BancoBrasil extends ACobranca {
 
 	public BancoBrasil(FinConta conta) {
 		super(conta, Banco.BANCO_DO_BRASIL);
-		hoje = UtilServer.getData();
+		hoje = new Date();
 	}
 
 	public Boolean remessa(FinRemessa rem) throws FinanceiroException {

@@ -10,8 +10,7 @@ import com.google.gwt.regexp.shared.RegExp;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 
 /**
- * Classe que abstrai as implementações do parametro definindos todos os métodos
- * com funcionalidades padronizadas.
+ * Classe que abstrai as implementações do parametro definindos todos os métodos com funcionalidades padronizadas.
  * 
  * @param <E>
  *            usando genérico para tipar o modelo de parametro usado.
@@ -76,7 +75,7 @@ public abstract class AParametro<E extends Serializable> implements IParametro<E
 	}
 
 	// Gets e Seteres
-	
+
 	public String getCampoId() {
 		return campo.replace('.', '_') + "_" + campoId;
 	}
@@ -121,7 +120,7 @@ public abstract class AParametro<E extends Serializable> implements IParametro<E
 	}
 
 	public abstract void setValorString(String valor);
-	
+
 	protected void tratarPrefixo() {
 		// valida se o filtro é já tem prefixo
 		MatchResult mat = RegExp.compile("^t\\d+\\.").exec(campo);

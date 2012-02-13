@@ -323,7 +323,8 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		gridPrecos.getProxy().setFiltroPadrao(fn);
 		gridPrecos.getStore().removeAll();
 		treeCategoria.getLblValidacao().hide();
-		treeCategoria.selecionar(null);
+		treeCategoria.limpar();
+		treeCategoria.carregar(null, null);
 	}
 
 	public void mostrarDados() {
@@ -487,7 +488,6 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 
 					public void onFailure(Throwable caught) {
 						new ToastWindow(OpenSigCore.i18n.txtCategoria(), OpenSigCore.i18n.errListagem());
-
 					}
 				});
 			}

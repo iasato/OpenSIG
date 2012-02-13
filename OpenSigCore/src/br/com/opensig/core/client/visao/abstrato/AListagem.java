@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
+import br.com.opensig.core.client.controlador.comando.EModo;
 import br.com.opensig.core.client.controlador.comando.FabricaComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoVisualizar;
@@ -20,6 +21,7 @@ import br.com.opensig.core.client.controlador.filtro.FiltroTexto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.servico.CoreProxy;
+import br.com.opensig.core.client.servico.ExportacaoProxy;
 import br.com.opensig.core.client.visao.FormularioVazio;
 import br.com.opensig.core.client.visao.NavegacaoLista;
 import br.com.opensig.core.client.visao.Paginador;
@@ -29,6 +31,7 @@ import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EDirecao;
 import br.com.opensig.core.shared.modelo.ExpListagem;
 import br.com.opensig.core.shared.modelo.ExpMeta;
+import br.com.opensig.core.shared.modelo.ExpRegistro;
 import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.core.shared.modelo.IFavoritoCampo;
 import br.com.opensig.core.shared.modelo.sistema.SisAcao;
@@ -37,6 +40,7 @@ import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.core.EventObject;
 import com.gwtext.client.core.SortDir;
 import com.gwtext.client.data.ArrayReader;
@@ -427,6 +431,24 @@ public abstract class AListagem<E extends Dados> extends GridPanel implements IL
 	}
 
 	@Override
+	public void setExportacao(SisExpImp expimp, EModo modo, EModo modo2, AsyncCallback<String> async) {
+		getPanel().getEl().mask(OpenSigCore.i18n.txtAguarde());
+		ExportacaoProxy proxy = new ExportacaoProxy();
+
+		// se diferentes trata como registro com filtro da listagem
+		if (modo != modo2) {
+			getPanel().getSelectionModel().selectFirstRow();
+			ExpRegistro exp = form.getExportacao();
+			exp.setFiltro(form.getLista().getProxy().getFiltroTotal());
+			proxy.exportar(expimp, exp, async);
+		} else if (modo == EModo.LISTAGEM) {
+			proxy.exportar(expimp, form.getLista().getExportacao(), async);
+		} else {
+			proxy.exportar(expimp, form.getExportacao(), async);
+		}
+	}
+
+	@Override
 	public void setImportacao(SisExpImp modo) {
 	}
 
@@ -684,16 +706,6 @@ public abstract class AListagem<E extends Dados> extends GridPanel implements IL
 	@Override
 	public void setNavegacao(NavegacaoLista<E> navegacao) {
 		this.navegacao = navegacao;
-	}
-
-	@Override
-	public CoreProxy<E> getCore() {
-		return proxy;
-	}
-
-	@Override
-	public void setCore(CoreProxy<E> core) {
-		this.proxy = core;
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package br.com.opensig.comercial.server.acao;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -16,7 +17,6 @@ import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.controlador.parametro.GrupoParametro;
 import br.com.opensig.core.client.controlador.parametro.IParametro;
-import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.client.controlador.parametro.ParametroData;
 import br.com.opensig.core.client.controlador.parametro.ParametroFormula;
 import br.com.opensig.core.client.controlador.parametro.ParametroNumero;
@@ -161,7 +161,7 @@ public class FecharCompra extends Chain {
 					// formando os parametros
 					ParametroNumero pn1 = new ParametroNumero("prodProdutoCusto", custo);
 					ParametroNumero pn2 = new ParametroNumero("prodProdutoPreco", preco);
-					ParametroData pd = new ParametroData("prodProdutoAlterado", UtilServer.getData());
+					ParametroData pd = new ParametroData("prodProdutoAlterado", new Date());
 					GrupoParametro gp = new GrupoParametro(new IParametro[] { pn1, pn2, pd });
 					// formando o filtro
 					FiltroNumero fn = new FiltroNumero("prodProdutoId", ECompara.IGUAL, comProd.getProdProduto().getId());

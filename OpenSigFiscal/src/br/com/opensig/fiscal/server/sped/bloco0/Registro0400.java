@@ -11,15 +11,10 @@ import br.com.opensig.comercial.shared.modelo.ComNatureza;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.fiscal.server.sped.ARegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.bloco0.Dados0400;
 
 public class Registro0400 extends ARegistro<Dados0400, ComNatureza> {
 
 	private List<Integer> naturezas;
-
-	public Registro0400() {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/bloco0/Bean0400.xml");
-	}
 
 	@Override
 	public void executar() {
@@ -29,7 +24,7 @@ public class Registro0400 extends ARegistro<Dados0400, ComNatureza> {
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
-			BeanWriter out = factory.createWriter("EFD", arquivo);
+			BeanWriter out = factory.createWriter("EFD", escritor);
 			// compras
 			for (ComCompra compra : getCompras()) {
 				if (!naturezas.contains(compra.getComNatureza().getComNaturezaId())) {

@@ -3,6 +3,7 @@ package br.com.opensig.financeiro.client.visao.form;
 import java.util.Map;
 
 import br.com.opensig.core.client.OpenSigCore;
+import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.AComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvar;
@@ -151,6 +152,8 @@ public class FormularioRemessa extends AFormulario<FinRemessa> {
 
 	public void limparDados() {
 		getForm().reset();
+		dtInicio.setRawValue(UtilClient.eval("$wnd.Date.today().toString('dd/MM/yyyy')"));
+		dtTermino.setRawValue(UtilClient.eval("$wnd.Date.today().toString('dd/MM/yyyy')"));
 	}
 
 	public void gerarListas() {

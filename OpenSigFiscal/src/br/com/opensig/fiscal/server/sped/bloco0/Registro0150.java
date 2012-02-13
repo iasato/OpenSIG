@@ -13,15 +13,10 @@ import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.empresa.shared.modelo.EmpEndereco;
 import br.com.opensig.empresa.shared.modelo.EmpEntidade;
 import br.com.opensig.fiscal.server.sped.ARegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.bloco0.Dados0150;
 
 public class Registro0150 extends ARegistro<Dados0150, EmpEntidade> {
 
 	private List<Integer> entidades;
-
-	public Registro0150() {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/bloco0/Bean0150.xml");
-	}
 
 	@Override
 	public void executar() {
@@ -31,7 +26,7 @@ public class Registro0150 extends ARegistro<Dados0150, EmpEntidade> {
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
-			BeanWriter out = factory.createWriter("EFD", arquivo);
+			BeanWriter out = factory.createWriter("EFD", escritor);
 			// compras
 			for (ComCompra compra : getCompras()) {
 				if (!entidades.contains(compra.getEmpFornecedor().getEmpEntidade().getEmpEntidadeId())) {

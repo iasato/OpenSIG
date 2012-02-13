@@ -4,13 +4,8 @@ import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.financeiro.shared.modelo.FinPagamento;
 import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
 import br.com.opensig.fiscal.server.sped.ARegistro;
-import br.com.opensig.fiscal.shared.modelo.sped.blocoC.DadosC141;
 
 public class RegistroC141<T extends Dados> extends ARegistro<DadosC141, T> {
-
-	public RegistroC141() {
-		super("/br/com/opensig/fiscal/shared/modelo/sped/blocoC/BeanC141.xml");
-	}
 
 	@Override
 	protected DadosC141 getDados(T dados) throws Exception {

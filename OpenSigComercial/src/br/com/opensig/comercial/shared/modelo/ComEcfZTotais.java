@@ -44,7 +44,7 @@ public class ComEcfZTotais extends Dados implements Serializable {
 	}
 
 	public ComEcfZTotais(int comEcfZTotaisId) {
-		super("pu_comercial", "ComEcfZTotais", "comEcfZTotaisId", "comEcfZTotaisId");
+		super("pu_comercial", "ComEcfZTotais", "comEcfZTotaisId", "comEcfZTotaisCodigo");
 		this.comEcfZTotaisId = comEcfZTotaisId;
 	}
 

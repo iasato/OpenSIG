@@ -168,7 +168,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			compra = new ComCompra();
 			compra.setEmpEstado(getEstado(ide.getCUF()));
 			compra.setComCompraEmissao(dtData);
-			compra.setComCompraRecebimento(UtilServer.getData());
+			compra.setComCompraRecebimento(new Date());
 			compra.setComCompraSerie(Integer.valueOf(ide.getSerie()));
 			compra.setComCompraNumero(Integer.valueOf(ide.getNNF()));
 			compra.setComCompraIcmsBase(Double.valueOf(tot.getVBC()));
@@ -209,7 +209,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 				try {
 					dtData = new SimpleDateFormat("yyyy-MM-dd").parse(dup.getDVenc());
 				} catch (ParseException e) {
-					dtData = UtilServer.getData();
+					dtData = new Date();
 				}
 
 				// parcela
@@ -224,7 +224,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 				pag.setFinPagamentoDocumento(dup.getNDup());
 				pag.setFinPagamentoValor(Double.valueOf(dup.getVDup()));
 				pag.setFinPagamentoParcela(parcela);
-				pag.setFinPagamentoCadastro(UtilServer.getData());
+				pag.setFinPagamentoCadastro(new Date());
 				pag.setFinPagamentoVencimento(dtData);
 				pag.setFinPagar(pagar);
 				pagamentos.add(pag);
@@ -475,7 +475,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			produto.setProdTributacao(getTributacao(icms.getCst()));
 			produto.setProdProdutoAtivo(true);
 			produto.setProdProdutoCategoria(auth.getConf().get("categoria.padrao") + "::");
-			produto.setProdProdutoCadastrado(UtilServer.getData());
+			produto.setProdProdutoCadastrado(new Date());
 			produto.setProdProdutoCusto(Double.valueOf(prod.getVUnCom()));
 			produto.setProdProdutoPreco(0.00);
 		}

@@ -1,5 +1,6 @@
 package br.com.opensig.fiscal.server.sped;
 
+import java.io.File;
 import java.io.Writer;
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -15,11 +16,13 @@ import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.fiscal.client.servico.FiscalService;
+import br.com.opensig.fiscal.shared.modelo.FisSpedBloco;
 import br.com.opensig.fiscal.shared.modelo.FisSpedFiscal;
 
 public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 
-	protected Writer arquivo;
+	protected File leitor;
+	protected Writer escritor;
 	protected FisSpedFiscal sped;
 	protected FiscalService service;
 	protected Autenticacao auth;
@@ -28,12 +31,17 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 	protected boolean fimBloco;
 	protected Date inicio;
 	protected Date fim;
+	protected List<FisSpedBloco> blocos;
 	protected List<ComCompra> compras;
 	protected List<ComFrete> fretes;
 	protected List<ComVenda> vendas;
 	protected List<ComEcfVenda> ecfs;
 	protected E bloco;
 	protected T dados;
+
+	public ARegistro() {
+		bean = "/" + getClass().getName().replace("Registro", "Bean").replace('.', '/') + ".xml";
+	}
 
 	public ARegistro(String bean) {
 		this.bean = bean;
@@ -44,7 +52,7 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
-			BeanWriter out = factory.createWriter("EFD", arquivo);
+			BeanWriter out = factory.createWriter("EFD", escritor);
 			bloco = getDados(dados);
 			normalizar(bloco);
 			out.write(bloco);
@@ -76,16 +84,36 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 		}
 	}
 
+	protected int getSubBlocos(String letra) {
+		int tot = 0;
+		for (FisSpedBloco bl : blocos) {
+			if (bl.getFisSpedBlocoLetra().equals(letra) && bl.getFisSpedBlocoNivel() > 1) {
+				tot++;
+			}
+		}
+		return tot;
+	}
+
 	protected abstract E getDados(T dados) throws Exception;
 
 	@Override
-	public Writer getArquivo() {
-		return arquivo;
+	public File getLeitor(){
+		return this.leitor;
+	}
+	
+	@Override
+	public void setLeitor(File leitor){
+		this.leitor = leitor;
+	}
+	
+	@Override
+	public Writer getEscritor() {
+		return escritor;
 	}
 
 	@Override
-	public void setArquivo(Writer arquivo) {
-		this.arquivo = arquivo;
+	public void setEsquitor(Writer arquivo) {
+		this.escritor = arquivo;
 	}
 
 	@Override
@@ -156,6 +184,16 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 	@Override
 	public void setFim(Date fim) {
 		this.fim = fim;
+	}
+
+	@Override
+	public List<FisSpedBloco> getBlocos() {
+		return this.blocos;
+	}
+
+	@Override
+	public void setBlocos(List<FisSpedBloco> blocos) {
+		this.blocos = blocos;
 	}
 
 	@Override
