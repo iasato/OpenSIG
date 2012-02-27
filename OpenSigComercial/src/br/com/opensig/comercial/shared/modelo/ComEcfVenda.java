@@ -61,6 +61,9 @@ public class ComEcfVenda extends Dados implements Serializable {
 	private String comEcfVendaObservacao;
 
 	@Transient
+	private String cancelada;
+	
+	@Transient
 	private String comEcfVendaNome;
 	
 	@Transient 
@@ -198,6 +201,14 @@ public class ComEcfVenda extends Dados implements Serializable {
 		this.comEcf = comEcf;
 	}
 
+	public String getCancelada() {
+		return cancelada;
+	}
+	
+	public void setCancelada(String cancelada) {
+		this.cancelada = cancelada;
+	}
+	
 	public String getComEcfVendaNome() {
 		return comEcfVendaNome;
 	}

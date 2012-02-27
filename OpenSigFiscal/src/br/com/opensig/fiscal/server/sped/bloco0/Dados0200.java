@@ -12,7 +12,7 @@ public class Dados0200 extends Bean {
 	private int tipo_item;
 	private String cod_ncm;
 	private String ex_ipi;
-	private int cod_gen;
+	private String cod_gen;
 	private int cod_lst;
 	private double aliq_icms;
 
@@ -84,11 +84,11 @@ public class Dados0200 extends Bean {
 		this.ex_ipi = ex_ipi;
 	}
 
-	public int getCod_gen() {
+	public String getCod_gen() {
 		return cod_gen;
 	}
 
-	public void setCod_gen(int cod_gen) {
+	public void setCod_gen(String cod_gen) {
 		this.cod_gen = cod_gen;
 	}
 

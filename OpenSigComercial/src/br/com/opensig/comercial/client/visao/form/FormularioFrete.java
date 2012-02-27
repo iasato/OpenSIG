@@ -93,7 +93,9 @@ public class FormularioFrete extends AFormulario<ComFrete> {
 		txtCfop.setAllowBlank(false);
 		txtCfop.setAllowDecimals(false);
 		txtCfop.setAllowNegative(false);
+		txtCfop.setMinLength(4);
 		txtCfop.setMaxLength(4);
+		txtCfop.setMaxValue(4000);
 
 		txtVolume = new NumberField(OpenSigCore.i18n.txtVolume(), "comFreteVolume", 70);
 		txtVolume.setAllowBlank(false);

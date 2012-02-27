@@ -40,7 +40,7 @@ public class RegistroD100 extends ARegistro<DadosD100, ComFrete> {
 	@Override
 	protected DadosD100 getDados(ComFrete dados) throws Exception {
 		DadosD100 d = new DadosD100();
-		d.setInd_oper("1");
+		d.setInd_oper("0");
 		d.setInd_emit("1");
 		d.setCod_part(dados.getEmpTransportadora().getEmpEntidade().getEmpEntidadeId() + "");
 		d.setCod_mod("08");
@@ -60,7 +60,7 @@ public class RegistroD100 extends ARegistro<DadosD100, ComFrete> {
 		d.setVl_serv(dados.getComFreteValor());
 		d.setVl_bc_icms(dados.getComFreteBase());
 		d.setVl_icms(dados.getComFreteIcms());
-		d.setVl_nt(dados.getComFreteValor() - dados.getComFreteBase());
+		d.setVl_nt(dados.getComFreteValor());
 		d.setCod_inf("");
 		d.setCod_cta("");
 

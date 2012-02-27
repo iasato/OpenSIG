@@ -177,6 +177,13 @@
 		<imagem>icon-tributacao</imagem>
 	</funcao>
 	<funcao>
+		<classe>br.com.opensig.produto.client.controlador.comando.ComandoIpi
+		</classe>
+		<nome>IPI</nome>
+		<descricao>Administers the IPIs of products.</descricao>
+		<imagem>icon-ipi</imagem>
+	</funcao>
+	<funcao>
 		<classe>br.com.opensig.produto.client.controlador.comando.ComandoPesquisa
 		</classe>
 		<nome>Search</nome>

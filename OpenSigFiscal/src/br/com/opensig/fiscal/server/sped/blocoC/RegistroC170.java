@@ -3,6 +3,7 @@ package br.com.opensig.fiscal.server.sped.blocoC;
 import br.com.opensig.comercial.shared.modelo.ComCompraProduto;
 import br.com.opensig.comercial.shared.modelo.ComVendaProduto;
 import br.com.opensig.core.shared.modelo.Dados;
+import br.com.opensig.empresa.shared.modelo.EmpEstado;
 import br.com.opensig.fiscal.server.sped.ARegistro;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
 
@@ -29,82 +30,90 @@ public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 		d.setCod_item(produto.getProdProdutoId() + "");
 		d.setDescr_compl("");
 		d.setQtd(compra.getComCompraProdutoQuantidade());
-		d.setUnid(produto.getProdEmbalagem().getProdEmbalagemId() + "");
+		d.setUnid(produto.getProdEmbalagem().getProdEmbalagemNome());
 		d.setVl_item(compra.getComCompraProdutoTotal());
-		d.setVl_desc(0.00);
 		d.setInd_mov("0");
-		d.setCfop(compra.getComCompraProdutoCfop());
+		int cfop = compra.getComCompraProdutoCfop(); 
+		d.setCfop(cfop >= 5000 ? cfop - 4000 : cfop);
 		d.setCod_nat(compra.getComCompra().getComNatureza().getComNaturezaId() + "");
 		d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
 
 		// icms
 		if (compra.getComCompraProdutoIcms() > 0) {
-			d.setVl_bc_icms(Double.valueOf(compra.getComCompraProdutoTotal()));
-			d.setAliq_icms(Double.valueOf(compra.getComCompraProdutoIcms()));
-			double valor = compra.getComCompraProdutoTotal() * compra.getComCompraProdutoIcms() / 100;
-			d.setVl_icms(Double.valueOf(valor));
+			d.setVl_bc_icms(compra.getComCompraProdutoTotal());
+			d.setAliq_icms(compra.getComCompraProdutoIcms());
+			d.setVl_icms(d.getVl_bc_icms() * d.getAliq_icms() / 100);
 		}
 
 		// ipi
 		d.setInd_apur("0");
 		d.setCod_enq("");
-		d.setCst_ipi("");
-		if (auth.getConf().get("sped.0000.ind_ativ").equals("0")) {
-			//TODO pegar da tributacao
-			d.setCst_ipi("00");
-			d.setVl_bc_ipi(compra.getComCompraProdutoTotal());
-			d.setAliq_ipi(compra.getComCompraProdutoIpi());
-			double valor = compra.getComCompraProdutoTotal() * compra.getComCompraProdutoIpi() / 100;
-			d.setVl_ipi(valor);
-		}
+		d.setCst_ipi(produto.getProdIpi().getProdIpiCstEntrada());
+		d.setVl_bc_ipi(compra.getComCompraProdutoTotal());
+		d.setAliq_ipi(compra.getComCompraProdutoIpi());
+		double valor = compra.getComCompraProdutoTotal() * compra.getComCompraProdutoIpi() / 100;
+		d.setVl_ipi(valor);
 
-		// pis e cofins zerados, pois nao tem dados na manual
+		// pis e cofins zerados, pois nao tem dados no manual
 		d.setCst_pis("");
 		d.setCst_cofins("");
-
 		return d;
 	}
 
-	private DadosC170 getVenda(ComVendaProduto venda) {
-		produto = venda.getProdProduto();
+	private DadosC170 getVenda(ComVendaProduto vp) {
+		EmpEstado origem = sped.getEmpEmpresa().getEmpEntidade().getEmpEnderecos().get(0).getEmpMunicipio().getEmpEstado();
+		EmpEstado destino = vp.getComVenda().getEmpCliente().getEmpEntidade().getEmpEnderecos().get(0).getEmpMunicipio().getEmpEstado();
+		produto = vp.getProdProduto();
 		DadosC170 d = new DadosC170();
 		d.setNum_item(item++);
 		d.setCod_item(produto.getProdProdutoId() + "");
 		d.setDescr_compl("");
-		d.setQtd(venda.getComVendaProdutoQuantidade());
-		d.setUnid(produto.getProdEmbalagem().getProdEmbalagemId() + "");
-		d.setVl_item(venda.getComVendaProdutoTotalLiquido());
-		d.setVl_desc(0.00);
+		d.setQtd(vp.getComVendaProdutoQuantidade());
+		d.setUnid(produto.getProdEmbalagem().getProdEmbalagemNome());
+		d.setVl_item(vp.getComVendaProdutoTotalLiquido());
 		d.setInd_mov("0");
-		d.setCfop(produto.getProdTributacao().getProdTributacaoCfop());
-		d.setCod_nat(venda.getComVenda().getComNatureza().getComNaturezaId() + "");
-		d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
+		int cfop = origem.equals(destino) ? produto.getProdTributacao().getProdTributacaoCfop() : produto.getProdTributacao().getProdTributacaoCfop() + 1000;
+		d.setCfop(cfop);
+		d.setCod_nat(vp.getComVenda().getComNatureza().getComNaturezaId() + "");
+		if (vp.getComVenda().getComNatureza().getComNaturezaIcms()) {
+			d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
+		} else {
+			d.setCst_icms(produto.getProdTributacao().getProdTributacaoCson());
+		}
 
-		// icms
-		if (venda.getComVendaProdutoIcms() > 0) {
-			d.setVl_bc_icms(Double.valueOf(venda.getComVendaProdutoTotalLiquido()));
-			d.setAliq_icms(Double.valueOf(venda.getComVendaProdutoIcms()));
-			double valor = venda.getComVendaProdutoTotalLiquido() * venda.getComVendaProdutoIcms() / 100;
-			d.setVl_icms(Double.valueOf(valor));
+		// icms caso informado na venda
+		if (vp.getComVendaProdutoIcms() > 0) {
+			d.setVl_bc_icms(vp.getComVendaProdutoTotalLiquido());
+			d.setAliq_icms(vp.getComVendaProdutoIcms());
+			d.setVl_icms(d.getVl_bc_icms() * d.getAliq_icms() / 100);
+			// caso destaque icms
+		} else if (vp.getComVenda().getComNatureza().getComNaturezaIcms()) {
+			if (d.getCst_icms().endsWith("00")) {
+				double aliq = origem.equals(destino) ? vp.getProdProduto().getProdTributacao().getProdTributacaoDentro() : vp.getProdProduto().getProdTributacao().getProdTributacaoFora();
+				d.setVl_bc_icms(vp.getComVendaProdutoTotalLiquido());
+				d.setAliq_icms(aliq);
+				d.setVl_icms(d.getVl_bc_icms() * aliq / 100);
+			}
 		}
 
 		// ipi
 		d.setInd_apur("0");
 		d.setCod_enq("");
-		d.setCst_ipi("");
-		if (auth.getConf().get("sped.0000.ind_ativ").equals("0")) {
-			//TODO pegar da tributacao
-			d.setCst_ipi("50");
-			d.setVl_bc_ipi(venda.getComVendaProdutoTotalLiquido());
-			d.setAliq_ipi(venda.getComVendaProdutoIpi());
-			double valor = venda.getComVendaProdutoTotalLiquido() * venda.getComVendaProdutoIpi() / 100;
-			d.setVl_ipi(valor);
+		d.setCst_ipi(produto.getProdIpi().getProdIpiCstSaida());
+		if (vp.getComVendaProdutoIpi() > 0) {
+			d.setVl_bc_ipi(vp.getComVendaProdutoTotalLiquido());
+			d.setAliq_ipi(vp.getComVendaProdutoIpi());
+			d.setVl_ipi(d.getVl_bc_ipi() * d.getAliq_ipi() / 100);
+		} else if (auth.getConf().get("sped.0000.ind_ativ").equals("0")) {
+			d.setCod_enq(auth.getConf().get("nfe.ipi_enq"));
+			d.setVl_bc_ipi(vp.getComVendaProdutoTotalLiquido());
+			d.setAliq_ipi(produto.getProdIpi().getProdIpiAliquota());
+			d.setVl_ipi(d.getVl_bc_ipi() * d.getAliq_ipi() / 100);
 		}
 
-		// pis e cofins zerados, pois nao tem dados na manual
+		// pis e cofins zerados, pois nao tem dados no manual
 		d.setCst_pis("");
 		d.setCst_cofins("");
-
 		return d;
 	}
 }

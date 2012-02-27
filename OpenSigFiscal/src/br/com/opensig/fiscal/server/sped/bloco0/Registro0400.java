@@ -35,10 +35,12 @@ public class Registro0400 extends ARegistro<Dados0400, ComNatureza> {
 			}
 			// vendas
 			for (ComVenda venda : getVendas()) {
-				if (!naturezas.contains(venda.getComNatureza().getComNaturezaId())) {
-					out.write(getDados(venda.getComNatureza()));
-					out.flush();
-					naturezas.add(venda.getComNatureza().getComNaturezaId());
+				if (!venda.getComVendaCancelada() && !venda.getComVendaNfe()) {
+					if (!naturezas.contains(venda.getComNatureza().getComNaturezaId())) {
+						out.write(getDados(venda.getComNatureza()));
+						out.flush();
+						naturezas.add(venda.getComNatureza().getComNaturezaId());
+					}
 				}
 			}
 		} catch (Exception e) {

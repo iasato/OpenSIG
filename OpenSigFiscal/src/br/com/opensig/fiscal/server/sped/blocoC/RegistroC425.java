@@ -42,8 +42,6 @@ public class RegistroC425 extends ARegistro<DadosC425, ComEcfVendaProduto> {
 		d.setQtd(dados.getComEcfVendaProdutoQuantidade());
 		d.setUnid(dados.getProdEmbalagem().getProdEmbalagemNome());
 		d.setVl_item(dados.getComEcfVendaProdutoTotal());
-		d.setVl_pis(0.00);
-		d.setVl_cofins(0.00);
 
 		normalizar(d);
 		qtdLinhas++;

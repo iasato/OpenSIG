@@ -151,7 +151,7 @@ public interface CoreService<E extends Dados> extends RemoteService {
 	public void deletar(E unidade) throws CoreException;
 
 	/**
-	 * Metodo para executar instruções diretas no BD, usar com moderação
+	 * Metodo para executar instruções de atualizacao e exclusao no BD
 	 * 
 	 * @param sqls
 	 *            um array de instruções SQL
@@ -160,6 +160,17 @@ public interface CoreService<E extends Dados> extends RemoteService {
 	 *             dispara uma exceção caso ocorra erro na execução do comando.
 	 */
 	public Integer[] executar(Sql[] sqls) throws CoreException;
+	
+	/**
+	 * Metodo para executar instruções de atualizacao e exclusao no BD modo nativo
+	 * 
+	 * @param sql
+	 *            uma String com a de instrucao SQL
+	 * @return a quantidade de registros afetados pela instrução enviada.
+	 * @throws CoreException
+	 *             dispara uma exceção caso ocorra erro na execução do comando.
+	 */
+	public Integer executar(String sql) throws CoreException;
 
 	/**
 	 * Metodo que recupera a autenticacao atual.

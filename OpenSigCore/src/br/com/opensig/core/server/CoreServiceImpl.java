@@ -590,6 +590,37 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 		return resultado;
 	}
 
+	@Override
+	public Integer executar(String sql) throws CoreException {
+		EntityManagerFactory emf = null;
+		EntityManager em = null;
+		Integer resultado = null;
+		int pos = 0;
+
+		try {
+			if (sql != null && !sql.equals("")) {
+				emf = Conexao.getInstancia("pu_core");
+				em = emf.createEntityManager();
+				em.getTransaction().begin();
+				Query rs = em.createNativeQuery(sql);
+				resultado = rs.executeUpdate();
+				em.getTransaction().commit();
+			}
+		} catch (Exception ex) {
+			if (em != null && em.getTransaction().isActive()) {
+				em.getTransaction().rollback();
+			}
+
+			UtilServer.LOG.error("Erro ao executar", ex);
+			throw new CoreException(ex.getMessage());
+		} finally {
+			em.close();
+			emf.close();
+		}
+
+		return resultado;
+	}
+
 	/**
 	 * Metodo para executar instruções diretas no BD com a mesma transacao.
 	 * 
@@ -894,21 +925,22 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			try {
 				if (UtilServer.isGetter(metodo)) {
 					Object valorMetodo = metodo.invoke(unidade, new Object[] {});
+					if (valorMetodo != null) {
+						if (metodo.getReturnType() == String.class) {
+							String nomeMetodo = metodo.getName().replaceFirst("get", "set");
+							Method set = unidade.getClass().getMethod(nomeMetodo, new Class[] { String.class });
+							String valor = valorMetodo.toString();
 
-					if (metodo.getReturnType() == String.class) {
-						String nomeMetodo = metodo.getName().replaceFirst("get", "set");
-						Method set = unidade.getClass().getMethod(nomeMetodo, new Class[] { String.class });
-						String valor = valorMetodo == null ? "" : valorMetodo.toString();
+							if (tipo == ELetra.GRANDE) {
+								valor = valor.toUpperCase();
+							} else if (tipo == ELetra.PEQUENA) {
+								valor = valor.toLowerCase();
+							}
 
-						if (tipo == ELetra.GRANDE) {
-							valor = valor.toUpperCase();
-						} else if (tipo == ELetra.PEQUENA) {
-							valor = valor.toLowerCase();
+							set.invoke(unidade, new Object[] { limpar ? valor.trim() : valor });
+						} else if (metodo.getReturnType().getSuperclass() == Dados.class && valorMetodo != null) {
+							padronizaLetras(valorMetodo, tipo, limpar);
 						}
-
-						set.invoke(unidade, new Object[] { limpar ? valor.trim() : valor });
-					} else if (metodo.getReturnType().getSuperclass() == Dados.class && valorMetodo != null) {
-						padronizaLetras(valorMetodo, tipo, limpar);
 					}
 				}
 			} catch (Exception ex) {

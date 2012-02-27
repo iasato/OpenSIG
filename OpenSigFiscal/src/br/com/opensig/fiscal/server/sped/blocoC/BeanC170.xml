@@ -28,19 +28,19 @@
 			<field name="cst_ipi" type="string" length="2" trim="true" />
 			<field name="cod_enq" type="string" length="3" trim="true" />
 			<field name="vl_bc_ipi" type="double" format="##0.00" />
-			<field name="aliq_ipi" type="double" length="6" format="##0.00" />
+			<field name="aliq_ipi" type="double" length="6" format="000.00" />
 			<field name="vl_ipi" type="double" format="##0.00" />
 			<field name="cst_pis" type="string" length="2" trim="true" />
 			<field name="vl_bc_pis" type="double" format="##0.00" />
-			<field name="aliq_pis" type="double" length="8" format="##0.0000" />
+			<field name="aliq_pis" type="double" format="##0.00" default="" />
 			<field name="quant_bc_pis" type="double" format="##0.000" />
-			<field name="aliq2_pis" type="double" format="##0.0000" />
+			<field name="aliq2_pis" type="double" length="8" format="##0.0000" default="" />
 			<field name="vl_pis" type="double" format="##0.00" />
 			<field name="cst_cofins" type="string" length="2" trim="true" />
 			<field name="vl_bc_cofins" type="double" format="##0.00" />
-			<field name="aliq_cofins" type="double" length="8" format="##0.0000" />
+			<field name="aliq_cofins" type="double" format="##0.00" default="" />
 			<field name="quant_bc_cofins" type="double" format="##0.000" />
-			<field name="aliq2_cofins" type="double" format="##0.0000" />
+			<field name="aliq2_cofins" type="double" length="8" format="##0.0000" default="" />
 			<field name="vl_cofins" type="double" format="##0.00" />
 			<field name="cod_cta" type="string" length="255" trim="true" />
 			<field name="padrao" type="string" length="1" default="" />

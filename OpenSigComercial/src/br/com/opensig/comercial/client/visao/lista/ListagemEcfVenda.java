@@ -304,13 +304,6 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 			mnuContexto.addItem(itemProduto);
 		}
 
-		// receber
-		SisFuncao receber = UtilClient.getFuncaoPermitida(ComandoReceber.class);
-		MenuItem itemReceber = gerarFuncao(receber, "finReceberId", "finReceber.finReceberId");
-		if (itemReceber != null) {
-			mnuContexto.addItem(itemReceber);
-		}
-
 		if (mnuContexto.getItems().length > 0) {
 			MenuItem mnuItem = getIrPara();
 			mnuItem.setMenu(mnuContexto);

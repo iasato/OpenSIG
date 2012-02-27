@@ -29,15 +29,15 @@ public class DadosC170 extends Bean {
 	private double vl_ipi;
 	private String cst_pis;
 	private double vl_bc_pis;
-	private double aliq_pis;
+	private Double aliq_pis;
 	private double quant_bc_pis;
-	private double aliq2_pis;
+	private Double aliq2_pis;
 	private double vl_pis;
 	private String cst_cofins;
 	private double vl_bc_cofins;
-	private double aliq_cofins;
+	private Double aliq_cofins;
 	private double quant_bc_cofins;
-	private double aliq2_cofins;
+	private Double aliq2_cofins;
 	private double vl_cofins;
 	private String cod_cta;
 	
@@ -245,11 +245,11 @@ public class DadosC170 extends Bean {
 		this.vl_bc_pis = vl_bc_pis;
 	}
 
-	public double getAliq_pis() {
+	public Double getAliq_pis() {
 		return aliq_pis;
 	}
 
-	public void setAliq_pis(double aliq_pis) {
+	public void setAliq_pis(Double aliq_pis) {
 		this.aliq_pis = aliq_pis;
 	}
 
@@ -261,11 +261,11 @@ public class DadosC170 extends Bean {
 		this.quant_bc_pis = quant_bc_pis;
 	}
 
-	public double getAliq2_pis() {
+	public Double getAliq2_pis() {
 		return aliq2_pis;
 	}
 
-	public void setAliq2_pis(double aliq2_pis) {
+	public void setAliq2_pis(Double aliq2_pis) {
 		this.aliq2_pis = aliq2_pis;
 	}
 
@@ -293,11 +293,11 @@ public class DadosC170 extends Bean {
 		this.vl_bc_cofins = vl_bc_cofins;
 	}
 
-	public double getAliq_cofins() {
+	public Double getAliq_cofins() {
 		return aliq_cofins;
 	}
 
-	public void setAliq_cofins(double aliq_cofins) {
+	public void setAliq_cofins(Double aliq_cofins) {
 		this.aliq_cofins = aliq_cofins;
 	}
 
@@ -309,11 +309,11 @@ public class DadosC170 extends Bean {
 		this.quant_bc_cofins = quant_bc_cofins;
 	}
 
-	public double getAliq2_cofins() {
+	public Double getAliq2_cofins() {
 		return aliq2_cofins;
 	}
 
-	public void setAliq2_cofins(double aliq2_cofins) {
+	public void setAliq2_cofins(Double aliq2_cofins) {
 		this.aliq2_cofins = aliq2_cofins;
 	}
 

@@ -88,7 +88,9 @@ public class ListagemCompraProdutos extends AListagemEditor<ComCompraProduto> {
 		txtCfop.setAllowDecimals(false);
 		txtCfop.setAllowNegative(false);
 		txtCfop.setSelectOnFocus(true);
+		txtCfop.setMinLength(4);
 		txtCfop.setMaxLength(4);
+		txtCfop.setMaxValue(4000);
 
 		txtIcms = new NumberField();
 		txtIcms.setAllowBlank(false);

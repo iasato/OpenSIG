@@ -38,7 +38,13 @@ public class ImportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> i
 			// valida o tipo do arquivo
 			for (String nomeArquivo : arquivos) {
 				try {
-					dados.put(nomeArquivo, (byte[]) sessao.getAttribute(nomeArquivo));
+					if (nomeArquivo.endsWith(".zip")) {
+						dados.putAll(UtilServer.getArquivos((byte[]) sessao.getAttribute(nomeArquivo)));
+					} else {
+						dados.put(nomeArquivo, (byte[]) sessao.getAttribute(nomeArquivo));
+					}
+				} catch (Exception ex) {
+					throw new ImportacaoException(ex.getMessage());
 				} finally {
 					sessao.setAttribute(nomeArquivo, null);
 				}

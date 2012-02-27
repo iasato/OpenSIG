@@ -47,11 +47,11 @@ public class ListagemVendaProdutos extends AListagemEditor<ComVendaProduto> {
 
 	public void inicializar() {
 		// campos
-		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comVendaProdutoId"), new IntegerFieldDef("comVenda.comVendaId"), new IntegerFieldDef("empEmpresaId"), new StringFieldDef("empEmpresa"), new StringFieldDef("empCliente"),
-				new StringFieldDef("empFornecedor"), new IntegerFieldDef("prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"), new StringFieldDef("prodProduto.prodProdutoDescricao"),
-				new StringFieldDef("prodProduto.prodProdutoReferencia"), new DateFieldDef("comVenda.comVendaData"), new FloatFieldDef("comVendaProdutoQuantidade"),
-				new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"), new FloatFieldDef("comVendaProdutoBruto"),
-				new FloatFieldDef("comVendaProdutoDesconto"), new FloatFieldDef("comVendaProdutoLiquido"), new FloatFieldDef("comVendaProdutoTotalBruto"),
+		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comVendaProdutoId"), new IntegerFieldDef("comVenda.comVendaId"), new IntegerFieldDef("empEmpresaId"), new StringFieldDef("empEmpresa"),
+				new StringFieldDef("empCliente"), new StringFieldDef("empFornecedor"), new IntegerFieldDef("prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"),
+				new StringFieldDef("prodProduto.prodProdutoDescricao"), new StringFieldDef("prodProduto.prodProdutoReferencia"), new DateFieldDef("comVenda.comVendaData"),
+				new FloatFieldDef("comVendaProdutoQuantidade"), new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"),
+				new FloatFieldDef("comVendaProdutoBruto"), new FloatFieldDef("comVendaProdutoDesconto"), new FloatFieldDef("comVendaProdutoLiquido"), new FloatFieldDef("comVendaProdutoTotalBruto"),
 				new FloatFieldDef("comVendaProdutoTotalLiquido"), new IntegerFieldDef("comVendaProdutoEstoque"), new IntegerFieldDef("comVendaProdutoOrigem"),
 				new FloatFieldDef("comVendaProdutoIcms"), new FloatFieldDef("comVendaProdutoIpi"), new IntegerFieldDef("comVendaProdutoOrdem") };
 		campos = new RecordDef(fd);
@@ -97,7 +97,7 @@ public class ListagemVendaProdutos extends AListagemEditor<ComVendaProduto> {
 		ColumnConfig ccVendaId = new ColumnConfig("", "empVendaId", 10, true);
 		ccVendaId.setHidden(true);
 		ccVendaId.setFixed(true);
-		
+
 		ColumnConfig ccEmpresaId = new ColumnConfig("", "empEmpresaId", 10, true);
 		ccEmpresaId.setHidden(true);
 		ccEmpresaId.setFixed(true);
@@ -139,13 +139,13 @@ public class ListagemVendaProdutos extends AListagemEditor<ComVendaProduto> {
 
 		ColumnConfig ccBruto = new ColumnConfig(OpenSigCore.i18n.txtBruto(), "comVendaProdutoBruto", 75, true, IListagem.DINHEIRO);
 		ccBruto.setHidden(true);
-		
+
 		ColumnConfig ccDesconto = new ColumnConfig(OpenSigCore.i18n.txtDesconto(), "comVendaProdutoDesconto", 50, true, IListagem.PORCENTAGEM);
 		ccDesconto.setEditor(new GridEditor(txtDesconto));
 
 		ColumnConfig ccLiquido = new ColumnConfig(OpenSigCore.i18n.txtLiquido(), "comVendaProdutoLiquido", 75, true, IListagem.DINHEIRO);
 		ccLiquido.setEditor(new GridEditor(txtLiquido));
-		
+
 		ColumnConfig ccEstoque = new ColumnConfig("", "comVendaProdutoEstoque", 0, false);
 		ccEstoque.setHidden(true);
 		ccEstoque.setFixed(true);
@@ -169,12 +169,12 @@ public class ListagemVendaProdutos extends AListagemEditor<ComVendaProduto> {
 		ColumnConfig ccTotalBruto = new ColumnConfig(OpenSigCore.i18n.txtTotal() + " " + OpenSigCore.i18n.txtBruto(), "comVendaProdutoTotalBruto", 75, true, IListagem.DINHEIRO);
 		ccTotalBruto.setHidden(true);
 		SummaryColumnConfig sumBruto = new SummaryColumnConfig(SummaryColumnConfig.SUM, ccTotalBruto, IListagem.DINHEIRO);
-		
+
 		ColumnConfig ccTatalLiquido = new ColumnConfig(OpenSigCore.i18n.txtTotal(), "comVendaProdutoTotalLiquido", 75, true, IListagem.DINHEIRO);
 		SummaryColumnConfig sumLiquido = new SummaryColumnConfig(SummaryColumnConfig.SUM, ccTatalLiquido, IListagem.DINHEIRO);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccVendaId, ccEmpresaId, ccEmpresa, ccCliente, ccFornecedor, ccProdId, ccBarra, ccProduto, ccReferencia, ccData, ccQuantidade, ccEmbalagemId,
-				ccEmbalagem, ccBruto, ccDesconto, ccLiquido, sumBruto, sumLiquido, ccEstoque, ccOrigem, ccIcms, ccIpi, ccOrdem };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccVendaId, ccEmpresaId, ccEmpresa, ccCliente, ccFornecedor, ccProdId, ccBarra, ccProduto, ccReferencia, ccData, ccQuantidade,
+				ccEmbalagemId, ccEmbalagem, ccBruto, ccDesconto, ccLiquido, sumBruto, sumLiquido, ccEstoque, ccOrigem, ccIcms, ccIpi, ccOrdem };
 		modelos = new ColumnModel(bcc);
 
 		// configurações padrão e carrega dados

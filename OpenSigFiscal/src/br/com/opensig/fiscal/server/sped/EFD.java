@@ -30,6 +30,7 @@ import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
+import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.client.servico.FiscalService;
 import br.com.opensig.fiscal.server.FiscalServiceImpl;
 import br.com.opensig.fiscal.shared.modelo.FisSpedBloco;
@@ -67,6 +68,10 @@ public class EFD implements Runnable {
 			fretes = getFretes();
 			vendas = getVendas();
 			ecfs = getEcfs();
+			// setando a empresa no sped
+			FiltroNumero fn = new FiltroNumero("empEmpresaId", ECompara.IGUAL, sped.getEmpEmpresa().getEmpEmpresaId());
+			EmpEmpresa emp = (EmpEmpresa) service.selecionar(new EmpEmpresa(), fn, false);
+			sped.setEmpEmpresa(emp);
 			escreverRegistros();
 			// lendo dados do arquivo
 			InputStream is = new FileInputStream(arquivo);
@@ -83,9 +88,9 @@ public class EFD implements Runnable {
 			os.flush();
 			os.close();
 			// atualizando o status do registro
-			FiltroNumero fn = new FiltroNumero("fisSpedFiscalId", ECompara.IGUAL, sped.getFisSpedFiscalId());
+			FiltroNumero fn1 = new FiltroNumero("fisSpedFiscalId", ECompara.IGUAL, sped.getFisSpedFiscalId());
 			ParametroBinario pb = new ParametroBinario("fisSpedFiscalAtivo", 1);
-			Sql sql = new Sql(new FisSpedFiscal(), EComando.ATUALIZAR, fn, pb);
+			Sql sql = new Sql(new FisSpedFiscal(), EComando.ATUALIZAR, fn1, pb);
 			service.executar(new Sql[] { sql });
 		} catch (Exception e) {
 			UtilServer.LOG.error("Nao gerou o efd.", e);

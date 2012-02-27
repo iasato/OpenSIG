@@ -686,7 +686,7 @@ public class GerarNfe extends Chain {
 			if (venProd.getComVendaProdutoIpi() > 0) {
 				por = venProd.getComVendaProdutoIpi();
 			} else {
-				por = Double.valueOf(auth.getConf().get("nfe.ipi"));
+				por = venProd.getProdProduto().getProdIpi().getProdIpiAliquota();
 			}
 		}
 
@@ -694,12 +694,11 @@ public class GerarNfe extends Chain {
 		double valor = venProd.getComVendaProdutoTotalLiquido() * por / 100;
 		String strValor = getValorNfe(valor);
 		valorIpi += Double.valueOf(strValor);
-		String cst = por == 0.00 ? "99" : "50";
 
 		// enquadramento
 		ipi.setCEnq(auth.getConf().get("nfe.ipi_enq"));
 		IPITrib trib = new IPITrib();
-		trib.setCST(cst);
+		trib.setCST(venProd.getProdProduto().getProdIpi().getProdIpiCstSaida());
 		trib.setVBC(getValorNfe(venProd.getComVendaProdutoTotalLiquido()));
 		trib.setPIPI(getValorNfe(por));
 		trib.setVIPI(strValor);

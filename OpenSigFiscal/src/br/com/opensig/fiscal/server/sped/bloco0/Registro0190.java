@@ -41,21 +41,25 @@ public class Registro0190 extends ARegistro<Dados0190, ProdEmbalagem> {
 			}
 			// vendas
 			for (ComVenda venda : getVendas()) {
-				for (ComVendaProduto vProd : venda.getComVendaProdutos()) {
-					if (!embalagens.contains(vProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
-						out.write(getDados(vProd.getProdProduto().getProdEmbalagem()));
-						out.flush();
-						embalagens.add(vProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
+				if (!venda.getComVendaCancelada() && !venda.getComVendaNfe()) {
+					for (ComVendaProduto vProd : venda.getComVendaProdutos()) {
+						if (!embalagens.contains(vProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
+							out.write(getDados(vProd.getProdProduto().getProdEmbalagem()));
+							out.flush();
+							embalagens.add(vProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
+						}
 					}
 				}
 			}
 			// ecfs
 			for (ComEcfVenda venda : getEcfs()) {
-				for (ComEcfVendaProduto eProd : venda.getComEcfVendaProdutos()) {
-					if (!embalagens.contains(eProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
-						out.write(getDados(eProd.getProdProduto().getProdEmbalagem()));
-						out.flush();
-						embalagens.add(eProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
+				if (!venda.getComEcfVendaCancelada()) {
+					for (ComEcfVendaProduto eProd : venda.getComEcfVendaProdutos()) {
+						if (!eProd.getComEcfVendaProdutoCancelado() && !embalagens.contains(eProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
+							out.write(getDados(eProd.getProdProduto().getProdEmbalagem()));
+							out.flush();
+							embalagens.add(eProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
+						}
 					}
 				}
 			}

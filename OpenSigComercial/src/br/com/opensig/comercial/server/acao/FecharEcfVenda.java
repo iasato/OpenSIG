@@ -1,6 +1,5 @@
 package br.com.opensig.comercial.server.acao;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -25,11 +24,6 @@ import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
-import br.com.opensig.financeiro.server.acao.SalvarReceber;
-import br.com.opensig.financeiro.shared.modelo.FinConta;
-import br.com.opensig.financeiro.shared.modelo.FinForma;
-import br.com.opensig.financeiro.shared.modelo.FinReceber;
-import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdEstoque;
 
@@ -37,7 +31,6 @@ public class FecharEcfVenda extends Chain {
 
 	private CoreServiceImpl servico;
 	private ComEcfVenda venda;
-	private FinReceber receber;
 	private List<String[]> invalidos;
 	private Autenticacao auth;
 
@@ -50,16 +43,16 @@ public class FecharEcfVenda extends Chain {
 
 		// atualiza venda
 		AtualizarVenda atuVen = new AtualizarVenda(next);
-		// gerar receber padrao
-		AtualizarReceber atuRec = new AtualizarReceber(atuVen);
 		// atauliza estoque
-		AtualizarEstoque atuEst = new AtualizarEstoque(atuRec);
+		AtualizarEstoque atuEst = new AtualizarEstoque(atuVen);
 		// valida o estoque
 		ValidarEstoque valEst = new ValidarEstoque(atuEst);
 		if (auth.getConf().get("estoque.ativo").equalsIgnoreCase("sim")) {
 			this.next = valEst;
-		} else {
+		} else if (auth.getConf().get("estoque.ativo").equalsIgnoreCase("nao")) {
 			this.next = atuEst;
+		} else{
+			this.next = atuVen;
 		}
 	}
 
@@ -152,16 +145,18 @@ public class FecharEcfVenda extends Chain {
 				// recupera uma instância do gerenciador de entidades
 				FiltroObjeto fo1 = new FiltroObjeto("empEmpresa", ECompara.IGUAL, venda.getComEcf().getEmpEmpresa());
 				for (ComEcfVendaProduto comProd : venda.getComEcfVendaProdutos()) {
-					// formando os parametros
-					ParametroFormula pn1 = new ParametroFormula("prodEstoqueQuantidade", -1 * comProd.getComEcfVendaProdutoQuantidade());
-					// formando o filtro
-					FiltroObjeto fo2 = new FiltroObjeto("prodProduto", ECompara.IGUAL, comProd.getProdProduto());
-					GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo1, fo2 });
-					// busca o item
-					ProdEstoque est = new ProdEstoque();
-					// formando o sql
-					Sql sql = new Sql(est, EComando.ATUALIZAR, gf, pn1);
-					servico.executar(em, sql);
+					if (!comProd.getComEcfVendaProdutoCancelado()) {
+						// formando os parametros
+						ParametroFormula pn1 = new ParametroFormula("prodEstoqueQuantidade", -1 * comProd.getComEcfVendaProdutoQuantidade());
+						// formando o filtro
+						FiltroObjeto fo2 = new FiltroObjeto("prodProduto", ECompara.IGUAL, comProd.getProdProduto());
+						GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo1, fo2 });
+						// busca o item
+						ProdEstoque est = new ProdEstoque();
+						// formando o sql
+						Sql sql = new Sql(est, EComando.ATUALIZAR, gf, pn1);
+						servico.executar(em, sql);
+					}
 				}
 
 				if (next != null) {
@@ -182,56 +177,6 @@ public class FecharEcfVenda extends Chain {
 		}
 	}
 
-	private class AtualizarReceber extends Chain {
-
-		public AtualizarReceber(Chain next) throws OpenSigException {
-			super(next);
-		}
-
-		@Override
-		public void execute() throws OpenSigException {
-			// forma dinheiro
-			FinForma forma = new FinForma(1);
-
-			// unica parcela ja quitada
-			FinRecebimento parcela = new FinRecebimento();
-			parcela.setFinForma(forma);
-			parcela.setFinRecebimentoCadastro(venda.getComEcfVendaData());
-			parcela.setFinRecebimentoDocumento(venda.getComEcfVendaCoo() + "");
-			parcela.setFinRecebimentoParcela("01/01");
-			parcela.setFinRecebimentoQuitado(true);
-			parcela.setFinRecebimentoRealizado(venda.getComEcfVendaData());
-			parcela.setFinRecebimentoValor(venda.getComEcfVendaLiquido());
-			parcela.setFinRecebimentoVencimento(venda.getComEcfVendaData());
-			parcela.setFinRecebimentoObservacao(auth.getConf().get("categoria.ecf"));
-
-			// conta padrao
-			FinConta conta = new FinConta(Integer.valueOf(auth.getConf().get("conta.padrao")));
-			List<FinRecebimento> parcelas = new ArrayList<FinRecebimento>();
-			parcelas.add(parcela);
-
-			// gera o receber
-			receber = new FinReceber();
-			receber.setEmpEmpresa(venda.getComEcf().getEmpEmpresa());
-			receber.setEmpEntidade(venda.getEmpCliente().getEmpEntidade());
-			receber.setFinConta(conta);
-			receber.setFinRecebimentos(parcelas);
-			receber.setFinReceberCadastro(venda.getComEcfVendaData());
-			receber.setFinReceberCategoria(auth.getConf().get("categoria.ecf"));
-			receber.setFinReceberValor(venda.getComEcfVendaLiquido());
-			receber.setFinReceberNfe(venda.getComEcfVendaCoo());
-
-			// efetua o salvamento do receber
-			SalvarReceber salvar = new SalvarReceber(null, servico, receber, null);
-			salvar.execute();
-
-			if (next != null) {
-				next.execute();
-			}
-		}
-
-	}
-
 	private class AtualizarVenda extends Chain {
 
 		public AtualizarVenda(Chain next) throws OpenSigException {
@@ -250,7 +195,6 @@ public class FecharEcfVenda extends Chain {
 				em.getTransaction().begin();
 				// atualiza o status para fechada
 				venda.setComEcfVendaFechada(true);
-				venda.setFinReceber(receber);
 				servico.salvar(em, venda);
 
 				if (next != null) {

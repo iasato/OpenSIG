@@ -53,6 +53,7 @@ import br.com.opensig.nfe.TNFe.InfNFe.Emit;
 import br.com.opensig.nfe.TNFe.InfNFe.Ide;
 import br.com.opensig.nfe.TNFe.InfNFe.Total.ICMSTot;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
+import br.com.opensig.produto.shared.modelo.ProdIpi;
 import br.com.opensig.produto.shared.modelo.ProdOrigem;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
 import br.com.opensig.produto.shared.modelo.ProdTributacao;
@@ -63,6 +64,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 	private ComCompra compra;
 	private List<ComCompraProduto> comProdutos;
 	private List<ProdTributacao> tributacao;
+	private List<ProdIpi> ipis;
 	private List<ProdEmbalagem> embalagem;
 	private EmpEmpresa empresa;
 	private EmpFornecedor fornecedor;
@@ -317,6 +319,10 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		Lista<ProdTributacao> tributo = servico.selecionar(new ProdTributacao(), 0, 0, null, false);
 		tributacao = tributo.getLista();
 
+		// pega os ipis
+		Lista<ProdIpi> tributoIpi = servico.selecionar(new ProdIpi(), 0, 0, null, false);
+		ipis = tributoIpi.getLista();
+		
 		// pega as embalagens
 		Lista<ProdEmbalagem> emb = servico.selecionar(new ProdEmbalagem(), 0, 0, null, false);
 		embalagem = emb.getLista();
@@ -325,23 +331,20 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		comProdutos = new ArrayList<ComCompraProduto>();
 		for (Det det : nfe.getInfNFe().getDet()) {
 			MyIcms myicms = getIcms(det.getImposto().getICMS());
-			String ipi = "0";
+			String ipi = "";
 			try {
-				ipi = det.getImposto().getIPI().getIPITrib().getPIPI();
+				ipi = det.getImposto().getIPI().getIPITrib().getCST();
 			} catch (Exception e) {
-				ipi = "0";
+				ipi = "99";
 			}
 
 			// setando o produto da compra
 			ComCompraProduto comProd = new ComCompraProduto();
-			ProdProduto prod = getProduto(det.getProd(), myicms);
+			ProdProduto prod = getProduto(det.getProd(), myicms, ipi);
 			comProd.setProdProduto(prod);
 			comProd.setProdEmbalagem(prod.getProdEmbalagem());
 			int cfop = Integer.valueOf(det.getProd().getCFOP());
-			if (cfop > 5000) {
-				cfop -= 4000;
-			}
-			comProd.setComCompraProdutoCfop(cfop);
+			comProd.setComCompraProdutoCfop(cfop >= 5000 ? cfop - 4000 : cfop);
 			comProd.setComCompraProdutoIcms(Double.valueOf(myicms.getAliquota()));
 			comProd.setComCompraProdutoIpi(Double.valueOf(ipi));
 			comProd.setComCompraProdutoQuantidade(Double.valueOf(det.getProd().getQCom()));
@@ -423,7 +426,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		return myicms;
 	}
 
-	private ProdProduto getProduto(Prod prod, MyIcms icms) throws OpenSigException {
+	private ProdProduto getProduto(Prod prod, MyIcms icms, String ipi) throws OpenSigException {
 		String ean = prod.getCEAN();
 		// ref + fornecedor
 		GrupoFiltro grupoRef = new GrupoFiltro();
@@ -473,6 +476,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			produto.setEmpFornecedor(fornecedor);
 			produto.setEmpFabricante(fornecedor);
 			produto.setProdTributacao(getTributacao(icms.getCst()));
+			produto.setProdIpi(getIpi(ipi));
 			produto.setProdProdutoAtivo(true);
 			produto.setProdProdutoCategoria(auth.getConf().get("categoria.padrao") + "::");
 			produto.setProdProdutoCadastrado(new Date());
@@ -509,6 +513,21 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 				break;
 			} else if (cst.length() == 3 && trib.getProdTributacaoCson().equals(cst)) {
 				resp = trib;
+				break;
+			}
+		}
+
+		return resp;
+	}
+	
+	private ProdIpi getIpi(String cst){
+		// se nao achar colocar a padrao 00
+		ProdIpi resp = new ProdIpi(1);
+
+		// percorre as tributacoes
+		for (ProdIpi ipi : ipis) {
+			if (ipi.getProdIpiCstSaida().equals(cst)) {
+				resp = ipi;
 				break;
 			}
 		}

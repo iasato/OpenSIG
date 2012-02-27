@@ -142,6 +142,9 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 							ComEcfVendaProduto prod = (ComEcfVendaProduto) rec;
 							ComEcfVenda venda = mapVenda.get(prod.getComEcfVendaProdutoCoo());
 							prod = getProduto(prod, venda.getComEcfVendaDesconto());
+							if (venda.getComEcfVendaCancelada()) {
+								prod.setComEcfVendaProdutoCancelado(true);
+							}
 							venda.getComEcfVendaProdutos().add(prod);
 						}
 					} catch (Exception e) {
@@ -193,30 +196,34 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 		int vendasNfechadas = 0;
 		int prodNachados = 0;
 		String estoque = auth.getConf().get("estoque.ativo");
+		if (estoque.equalsIgnoreCase("sim")) {
+			auth.getConf().put("estoque.ativo", "nao");
+		}
 
 		try {
-			auth.getConf().put("estoque.ativo", "nao");
 			FecharEcfVenda fecharVenda;
 			ArrayList<String[]> invalidos = new ArrayList<String[]>();
 
 			// percorre as vendas
 			for (ComEcfVenda venda : vendasEcf.getLista()) {
 				vendas++;
-				// verifica se pode fechar a venda
-				boolean fechar = true;
-				for (ComEcfVendaProduto venProd : venda.getComEcfVendaProdutos()) {
-					if (venProd.getProdProduto() == null) {
-						prodNachados++;
-						fechar = false;
+				if (!venda.getComEcfVendaCancelada()) {
+					// verifica se pode fechar a venda
+					boolean fechar = true;
+					for (ComEcfVendaProduto venProd : venda.getComEcfVendaProdutos()) {
+						if (venProd.getProdProduto() == null) {
+							prodNachados++;
+							fechar = false;
+						}
 					}
-				}
 
-				// valida se fecha a venda
-				if (fechar) {
-					fecharVenda = new FecharEcfVenda(null, service, venda, invalidos, auth);
-					fecharVenda.execute();
-				} else {
-					vendasNfechadas++;
+					// valida se fecha a venda
+					if (fechar) {
+						fecharVenda = new FecharEcfVenda(null, service, venda, invalidos, auth);
+						fecharVenda.execute();
+					} else {
+						vendasNfechadas++;
+					}
 				}
 			}
 
@@ -280,6 +287,8 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 		venda.setComEcfVendaDesconto(desc);
 		venda.setComEcfVendaLiquido(venda.getComEcfVendaLiquido() / 100);
 		venda.setComEcfVendaProdutos(new ArrayList<ComEcfVendaProduto>());
+		venda.setComEcfVendaCancelada(venda.getCancelada().equalsIgnoreCase("S"));
+		venda.setComEcfVendaFechada(venda.getComEcfVendaCancelada());
 		if (Long.valueOf(venda.getComEcfVendaCpf()) != 0) {
 			venda.setComEcfVendaObservacao("Nome=" + venda.getComEcfVendaNome() + "-CPF=" + venda.getComEcfVendaCpf());
 		}
@@ -296,6 +305,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 		prod.setComEcfVendaProdutoQuantidade(prod.getComEcfVendaProdutoQuantidade() / 1000);
 		double total = liquido * prod.getComEcfVendaProdutoQuantidade();
 		prod.setComEcfVendaProdutoTotal(total);
+		prod.setComEcfVendaProdutoCancelado(prod.getCancelado().equalsIgnoreCase("S"));
 		return prod;
 	}
 
@@ -303,18 +313,6 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 	private void salvaVendas(Map<Integer, ComEcfVenda> mapVenda, Cat52 cat52) {
 		// percorre as vendas
 		for (Entry<Integer, ComEcfVenda> venda : mapVenda.entrySet()) {
-			// coloca valor caso esteja cancelada
-			if (venda.getValue().getComEcfVendaCancelada()) {
-				double valor = 0.00;
-				for (ComEcfVendaProduto prod : venda.getValue().getComEcfVendaProdutos()) {
-					valor += prod.getComEcfVendaProdutoLiquido();
-					prod.setComEcfVendaProdutoCancelado(true);
-				}
-				valor /= 100;
-				venda.getValue().setComEcfVendaBruto(valor);
-				venda.getValue().setComEcfVendaLiquido(valor);
-			}
-
 			try {
 				ComEcfVenda ecfVenda = service.salvarEcfVenda(venda.getValue());
 				if (primeiraVenda == 0) {

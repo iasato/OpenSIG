@@ -8,7 +8,7 @@ public class RegistroE001 extends ARegistro<DadosE001, Dados> {
 	@Override
 	protected DadosE001 getDados(Dados dados) throws Exception {
 		DadosE001 d = new DadosE001();
-		d.setInd_mov(getSubBlocos("E") > 0 ? 0 : 1);
+		d.setInd_mov(1);
 		return d;
 	}
 

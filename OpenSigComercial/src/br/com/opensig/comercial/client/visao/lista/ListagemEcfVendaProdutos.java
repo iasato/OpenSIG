@@ -11,6 +11,7 @@ import br.com.opensig.core.client.visao.abstrato.IListagem;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
 
+import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.gwtext.client.core.Ext;
 import com.gwtext.client.data.BooleanFieldDef;
@@ -53,7 +54,7 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 				new StringFieldDef("prodProduto.prodProdutoReferencia"), new DateFieldDef("comEcfVenda.comEcfVendaData"), new FloatFieldDef("comEcfVendaProdutoQuantidade"),
 				new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"), new FloatFieldDef("comEcfVendaProdutoBruto"),
 				new FloatFieldDef("comEcfVendaProdutoDesconto"), new FloatFieldDef("comEcfVendaProdutoLiquido"), new FloatFieldDef("comEcfVendaProdutoTotal"),
-				new BooleanFieldDef("comEcfVendaCancelado"), new IntegerFieldDef("comEcfVendaProdutoOrdem") };
+				new BooleanFieldDef("comEcfVendaProdutoCancelado"), new IntegerFieldDef("comEcfVendaProdutoOrdem") };
 		campos = new RecordDef(fd);
 
 		// editores
@@ -140,9 +141,7 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 		ColumnConfig ccLiquido = new ColumnConfig(OpenSigCore.i18n.txtLiquido(), "comEcfVendaProdutoLiquido", 75, true, IListagem.DINHEIRO);
 		ccLiquido.setEditor(new GridEditor(txtLiquido));
 
-		ColumnConfig ccCancelado = new ColumnConfig(OpenSigCore.i18n.txtCancelada(), "comEcfVendaProdutoCancelado", 10, true);
-		ccCancelado.setHidden(true);
-		ccCancelado.setFixed(true);
+		ColumnConfig ccCancelado = new ColumnConfig(OpenSigCore.i18n.txtCancelada(), "comEcfVendaProdutoCancelado", 75, true, IListagem.BOLEANO);
 
 		ColumnConfig ccOrdem = new ColumnConfig(OpenSigCore.i18n.txtOrdem(), "comEcfVendaProdutoOrdem", 100, true);
 		ccOrdem.setHidden(true);

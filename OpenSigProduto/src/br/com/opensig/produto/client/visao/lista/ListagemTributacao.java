@@ -29,14 +29,14 @@ public class ListagemTributacao extends AListagem<ProdTributacao> {
 		campos = new RecordDef(fd);
 
 		// colunas
-		ColumnConfig ccId = new ColumnConfig(OpenSigCore.i18n.txtCod(), "prodTributacaoId", 75, true);
+		ColumnConfig ccId = new ColumnConfig(OpenSigCore.i18n.txtCod(), "prodTributacaoId", 50, true);
 		ColumnConfig ccNome = new ColumnConfig(OpenSigCore.i18n.txtNome(), "prodTributacaoNome", 300, true);
-		ColumnConfig ccCst = new ColumnConfig(OpenSigCore.i18n.txtCst(), "prodTributacaoCst", 75, true);
-		ColumnConfig ccCson = new ColumnConfig(OpenSigCore.i18n.txtCson(), "prodTributacaoCson", 75, true);
-		ColumnConfig ccCfop = new ColumnConfig(OpenSigCore.i18n.txtCfop(), "prodTributacaoCfop", 75, true);
-		ColumnConfig ccDentro = new ColumnConfig(OpenSigCore.i18n.txtDentro(), "prodTributacaoDentro", 75, true, PORCENTAGEM);
-		ColumnConfig ccFora = new ColumnConfig(OpenSigCore.i18n.txtFora(), "prodTributacaoFora", 75, true, PORCENTAGEM);
-		ColumnConfig ccDecreto = new ColumnConfig(OpenSigCore.i18n.txtDecreto(), "prodTributacaoDecreto", 100, true);
+		ColumnConfig ccCst = new ColumnConfig(OpenSigCore.i18n.txtCst(), "prodTributacaoCst", 50, true);
+		ColumnConfig ccCson = new ColumnConfig(OpenSigCore.i18n.txtCson(), "prodTributacaoCson", 50, true);
+		ColumnConfig ccCfop = new ColumnConfig(OpenSigCore.i18n.txtCfop(), "prodTributacaoCfop", 50, true);
+		ColumnConfig ccDentro = new ColumnConfig(OpenSigCore.i18n.txtDentro(), "prodTributacaoDentro", 50, true, PORCENTAGEM);
+		ColumnConfig ccFora = new ColumnConfig(OpenSigCore.i18n.txtFora(), "prodTributacaoFora", 50, true, PORCENTAGEM);
+		ColumnConfig ccDecreto = new ColumnConfig(OpenSigCore.i18n.txtDecreto(), "prodTributacaoDecreto", 200, true);
 
 		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccNome, ccCst, ccCson, ccCfop, ccDentro, ccFora, ccDecreto };
 		modelos = new ColumnModel(bcc);

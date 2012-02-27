@@ -1,9 +1,6 @@
 package br.com.opensig.fiscal.server.sped.bloco0;
 
-import br.com.opensig.core.client.controlador.filtro.ECompara;
-import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.empresa.shared.modelo.EmpMunicipio;
 import br.com.opensig.fiscal.server.sped.ARegistro;
 
@@ -17,19 +14,16 @@ public class Registro0000 extends ARegistro<Dados0000, Dados> {
 		d.setDt_ini(inicio);
 		d.setDt_fin(fim);
 
-		FiltroNumero fn = new FiltroNumero("empEmpresaId", ECompara.IGUAL, sped.getEmpEmpresa().getEmpEmpresaId());
-		EmpEmpresa emp = (EmpEmpresa) service.selecionar(new EmpEmpresa(), fn, false);
-		
-		d.setNome(emp.getEmpEntidade().getEmpEntidadeNome1());
-		if (emp.getEmpEntidade().getEmpEntidadeDocumento1().length() == 18) {
-			d.setCnpj(emp.getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", ""));
+		d.setNome(sped.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1());
+		if (sped.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento1().length() == 18) {
+			d.setCnpj(sped.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", ""));
 		} else {
-			d.setCpf(emp.getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", ""));
+			d.setCpf(sped.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", ""));
 		}
 		
-		EmpMunicipio mun = emp.getEmpEntidade().getEmpEnderecos().get(0).getEmpMunicipio();
+		EmpMunicipio mun = sped.getEmpEmpresa().getEmpEntidade().getEmpEnderecos().get(0).getEmpMunicipio();
 		d.setUf(mun.getEmpEstado().getEmpEstadoSigla());
-		d.setIe(emp.getEmpEntidade().getEmpEntidadeDocumento2());
+		d.setIe(sped.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento2());
 		d.setCod_mun(mun.getEmpMunicipioIbge());
 		
 		//TODO im e suframa adicionar ao sistema isso

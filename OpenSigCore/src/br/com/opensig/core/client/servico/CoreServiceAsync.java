@@ -88,6 +88,13 @@ public interface CoreServiceAsync<E extends Dados> {
 	public abstract void executar(Sql[] sqls, AsyncCallback<Integer[]> asyncCallback);
 
 	/**
+	 * @see CoreService#executar(String)
+	 * @param asyncCallback
+	 *            um objeto assincrono com inteiros.
+	 */
+	public abstract void executar(String sql, AsyncCallback<Integer> asyncCallback);
+	
+	/**
 	 * @see CoreService#getAuth()
 	 * @param asyncCallback
 	 *            um objeto assincrono da autenticacao.

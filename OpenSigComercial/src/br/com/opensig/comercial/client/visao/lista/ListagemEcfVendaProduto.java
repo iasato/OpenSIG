@@ -65,7 +65,7 @@ public class ListagemEcfVendaProduto extends AListagem<ComEcfVendaProduto> {
 				new StringFieldDef("prodProduto.prodProdutoDescricao"), new StringFieldDef("prodProduto.prodProdutoReferencia"), new DateFieldDef("comEcfVenda.comEcfVendaData"),
 				new FloatFieldDef("comEcfVendaProdutoQuantidade"), new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"),
 				new FloatFieldDef("comEcfVendaProdutoBruto"), new FloatFieldDef("comEcfVendaProdutoDesconto"), new FloatFieldDef("comEcfVendaProdutoLiquido"),
-				new FloatFieldDef("comEcfVendaProdutoTotal"), new BooleanFieldDef("comEcfVendaCancelado"), new IntegerFieldDef("comEcfVendaProdutoOrdem") };
+				new FloatFieldDef("comEcfVendaProdutoTotal"), new BooleanFieldDef("comEcfVendaProdutoCancelado"), new IntegerFieldDef("comEcfVendaProdutoOrdem") };
 		campos = new RecordDef(fd);
 
 		// colunas
@@ -93,7 +93,7 @@ public class ListagemEcfVendaProduto extends AListagem<ComEcfVendaProduto> {
 		ccEmbalagemId.setFixed(true);
 		ColumnConfig ccEmbalagem = new ColumnConfig(OpenSigCore.i18n.txtEmbalagem(), "prodEmbalagem.prodEmbalagemNome", 75, true);
 		ColumnConfig ccDesconto = new ColumnConfig(OpenSigCore.i18n.txtDesconto(), "comEcfVendaProdutoDesconto", 50, true, PORCENTAGEM);
-		ColumnConfig ccCancelado = new ColumnConfig(OpenSigCore.i18n.txtCancelada(), "comEcfVendaCancelado", 75, true, BOLEANO);
+		ColumnConfig ccCancelado = new ColumnConfig(OpenSigCore.i18n.txtCancelada(), "comEcfVendaProdutoCancelado", 75, true, BOLEANO);
 		ColumnConfig ccOrdem = new ColumnConfig(OpenSigCore.i18n.txtOrdem(), "comVendaProdutoOrdem", 100, true);
 		ccOrdem.setHidden(true);
 

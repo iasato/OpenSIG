@@ -47,30 +47,34 @@ public class RegistroC420 extends ARegistro<DadosC420, ComEcfZTotais> {
 			r425.setAuth(auth);
 
 			for (ComEcfZTotais tot : totais) {
-				bloco = getDados(tot);
-				out.write(bloco);
-				out.flush();
+				if (tot.getComEcfZTotaisValor() > 0) {
+					bloco = getDados(tot);
+					out.write(bloco);
+					out.flush();
 
-				// itens que compoem este total
-				int idTributacao = 0;
-				if (tot.getComEcfZTotaisCodigo().startsWith("T") || tot.getComEcfZTotaisCodigo().startsWith("01T")) {
-					idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.tributado"));
-				} else if (tot.getComEcfZTotaisCodigo().startsWith("F")) {
-					idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.substituicao"));
-				} else if (tot.getComEcfZTotaisCodigo().startsWith("I")) {
-					idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.isento"));
-				} else if (tot.getComEcfZTotaisCodigo().startsWith("N")) {
-					idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.nao_tributado"));
-				}
+					// somente perfil B
+					if (auth.getConf().get("sped.0000.ind_perfil").equals("B")) {
+						// itens que compoem este total
+						int idTributacao = 0;
+						if (tot.getComEcfZTotaisCodigo().equals("01T1700")) {
+							idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.tributado"));
+						} else if (tot.getComEcfZTotaisCodigo().equals("F1")) {
+							idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.substituicao"));
+						} else if (tot.getComEcfZTotaisCodigo().equals("I1")) {
+							idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.isento"));
+						} else if (tot.getComEcfZTotaisCodigo().equals("N1")) {
+							idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.nao_tributado"));
+						}
 
-				if (idTributacao > 0) {
-					r425.setIdTributacao(idTributacao);
-					r425.setProdutos(fiscal.values());
-					r425.executar();
-					qtdLinhas += r425.getQtdLinhas();
+						if (idTributacao > 0) {
+							r425.setIdTributacao(idTributacao);
+							r425.setProdutos(fiscal.values());
+							r425.executar();
+							qtdLinhas += r425.getQtdLinhas();
+						}
+					}
 				}
 			}
-
 		} catch (Exception e) {
 			qtdLinhas = 0;
 			UtilServer.LOG.error("Erro na geracao do Registro -> " + bean, e);
@@ -84,7 +88,7 @@ public class RegistroC420 extends ARegistro<DadosC420, ComEcfZTotais> {
 		d.setVlr_acum_tot(dados.getComEcfZTotaisValor());
 		if (dados.getComEcfZTotaisCodigo().length() == 7) {
 			d.setNr_tot(dados.getComEcfZTotaisCodigo().substring(0, 2));
-			d.setDescr_nr_tot("carga tributaria na porcentagem de " + dados.getComEcfZTotaisCodigo().substring(3, 5) + "," + dados.getComEcfZTotaisCodigo().substring(5, 7));
+			d.setDescr_nr_tot("Tributado");
 		}
 
 		normalizar(d);

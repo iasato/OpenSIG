@@ -23,8 +23,6 @@ import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
-import br.com.opensig.financeiro.shared.modelo.FinConta;
-import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdEstoque;
 
@@ -42,10 +40,8 @@ public class ExcluirEcfVenda extends Chain {
 
 		// atualiza venda
 		DeletarVenda delVen = new DeletarVenda(next);
-		// atualiza os conta
-		AtualizarConta atuConta = new AtualizarConta(delVen);
 		// valida o estoque
-		AtualizarEstoque atuEst = new AtualizarEstoque(atuConta);
+		AtualizarEstoque atuEst = new AtualizarEstoque(delVen);
 		this.next = atuEst;
 	}
 
@@ -79,9 +75,9 @@ public class ExcluirEcfVenda extends Chain {
 				em = emf.createEntityManager();
 				em.getTransaction().begin();
 
-				if (auth.getConf().get("estoque.ativo").equalsIgnoreCase("sim") && venda.getComEcfVendaFechada()) {
+				if (auth.getConf().get("estoque.ativo").equalsIgnoreCase("sim") && venda.getComEcfVendaFechada() && !venda.getComEcfVendaCancelada()) {
 					for (ComEcfVendaProduto comVen : venda.getComEcfVendaProdutos()) {
-						if (comVen.getProdProduto() != null) {
+						if (comVen.getProdProduto() != null && !comVen.getComEcfVendaProdutoCancelado()) {
 							// fatorando a quantida no estoque
 							double qtd = comVen.getComEcfVendaProdutoQuantidade();
 							if (comVen.getProdEmbalagem().getProdEmbalagemId() != comVen.getProdProduto().getProdEmbalagem().getProdEmbalagemId()) {
@@ -132,57 +128,6 @@ public class ExcluirEcfVenda extends Chain {
 				}
 			}
 			return unid;
-		}
-	}
-
-	private class AtualizarConta extends Chain {
-
-		public AtualizarConta(Chain next) throws OpenSigException {
-			super(next);
-		}
-
-		@Override
-		public void execute() throws OpenSigException {
-			EntityManagerFactory emf = null;
-			EntityManager em = null;
-
-			try {
-				// recupera uma instância do gerenciador de entidades
-				FinConta conta = new FinConta();
-				emf = Conexao.getInstancia(conta.getPu());
-				em = emf.createEntityManager();
-				em.getTransaction().begin();
-
-				if (venda.getFinReceber() != null) {
-					conta = venda.getFinReceber().getFinConta();
-					double valPag = 0.00;
-					for (FinRecebimento rec : venda.getFinReceber().getFinRecebimentos()) {
-						if (rec.getFinRecebimentoQuitado()) {
-							valPag += rec.getFinRecebimentoValor();
-						}
-					}
-
-					if (valPag > 0) {
-						conta.setFinContaSaldo(conta.getFinContaSaldo() - valPag);
-						servico.salvar(em, conta);
-					}
-				}
-
-				if (next != null) {
-					next.execute();
-				}
-				em.getTransaction().commit();
-			} catch (Exception ex) {
-				if (em != null && em.getTransaction().isActive()) {
-					em.getTransaction().rollback();
-				}
-
-				UtilServer.LOG.error("Erro ao atualizar a conta.", ex);
-				throw new ComercialException(ex.getMessage());
-			} finally {
-				em.close();
-				emf.close();
-			}
 		}
 	}
 

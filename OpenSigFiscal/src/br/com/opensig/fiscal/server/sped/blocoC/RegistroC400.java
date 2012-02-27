@@ -10,7 +10,10 @@ import br.com.opensig.comercial.shared.modelo.ComEcf;
 import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
 import br.com.opensig.comercial.shared.modelo.ComEcfZ;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
+import br.com.opensig.core.client.controlador.filtro.EJuncao;
+import br.com.opensig.core.client.controlador.filtro.FiltroData;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
+import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.fiscal.server.sped.ARegistro;
@@ -55,8 +58,14 @@ public class RegistroC400 extends ARegistro<DadosC400, ComEcf> {
 	}
 
 	private void setEcfZ(ComEcf ecf) throws Exception {
+		GrupoFiltro gf = new GrupoFiltro();
+		FiltroData fd1 = new FiltroData("comEcfZData", ECompara.MAIOR_IGUAL, inicio);
+		gf.add(fd1, EJuncao.E);
+		FiltroData fd2 = new FiltroData("comEcfZData", ECompara.MENOR_IGUAL, fim);
+		gf.add(fd2, EJuncao.E);
 		FiltroObjeto fo = new FiltroObjeto("comEcf", ECompara.IGUAL, ecf);
-		Lista<ComEcfZ> ecfz = service.selecionar(new ComEcfZ(), 0, 0, fo, false);
+		gf.add(fo);
+		Lista<ComEcfZ> ecfz = service.selecionar(new ComEcfZ(), 0, 0, gf, false);
 
 		RegistroC405 r405 = new RegistroC405();
 		r405.setEsquitor(escritor);

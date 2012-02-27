@@ -88,6 +88,10 @@ public class ProdProduto extends Dados implements Serializable {
 	@JoinColumn(name = "prod_tributacao_id")
 	private ProdTributacao prodTributacao;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "prod_ipi_id")
+	private ProdIpi prodIpi;
+
 	@JoinColumn(name = "emp_fornecedor_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private EmpFornecedor empFornecedor;
@@ -255,6 +259,14 @@ public class ProdProduto extends Dados implements Serializable {
 		this.prodTributacao = prodTributacao;
 	}
 
+	public ProdIpi getProdIpi() {
+		return prodIpi;
+	}
+
+	public void setProdIpi(ProdIpi prodIpi) {
+		this.prodIpi = prodIpi;
+	}
+
 	public EmpFornecedor getEmpFabricante() {
 		return empFabricante;
 	}
@@ -308,14 +320,16 @@ public class ProdProduto extends Dados implements Serializable {
 				prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), prodProdutoVolume + "", estoque + "", prodProdutoCategoria, empFornecedor.getEmpFornecedorId() + "",
 				empFornecedor.getEmpEntidade().getEmpEntidadeNome1(), empFabricante.getEmpFornecedorId() + "", empFabricante.getEmpEntidade().getEmpEntidadeNome1(),
 				prodTributacao.getProdTributacaoId() + "", prodTributacao.getProdTributacaoNome(), prodTributacao.getProdTributacaoCst(), prodTributacao.getProdTributacaoCfop() + "",
-				prodTributacao.getProdTributacaoDentro() + "", prodTributacao.getProdTributacaoFora() + "", prodTributacao.getProdTributacaoDecreto(), prodOrigem.getProdOrigemId() + "",
-				prodOrigem.getProdOrigemDescricao(), UtilClient.getDataHoraGrid(prodProdutoCadastrado), UtilClient.getDataHoraGrid(prodProdutoAlterado), getProdProdutoAtivo() + "",
-				getProdProdutoIncentivo() + "", prodProdutoSinc + "" };
+				prodTributacao.getProdTributacaoDentro() + "", prodTributacao.getProdTributacaoFora() + "", prodTributacao.getProdTributacaoDecreto(), prodIpi.getProdIpiId() + "",
+				prodIpi.getProdIpiNome(), prodIpi.getProdIpiAliquota() + "", prodOrigem.getProdOrigemId() + "", prodOrigem.getProdOrigemDescricao(), UtilClient.getDataHoraGrid(prodProdutoCadastrado),
+				UtilClient.getDataHoraGrid(prodProdutoAlterado), getProdProdutoAtivo() + "", getProdProdutoIncentivo() + "", prodProdutoSinc + "" };
 	}
 
 	public Dados getObjeto(String campo) {
 		if (campo.startsWith("prodTributacao")) {
 			return new ProdTributacao();
+		} else if (campo.startsWith("prodIpi")) {
+			return new ProdIpi();
 		} else if (campo.startsWith("empFornecedor")) {
 			return new EmpFornecedor();
 		} else if (campo.startsWith("empFabricante")) {
@@ -333,6 +347,7 @@ public class ProdProduto extends Dados implements Serializable {
 		prodPrecos = null;
 		prodEstoques = null;
 		prodTributacao = null;
+		prodIpi = null;
 		empFornecedor = null;
 		empFabricante = null;
 		prodOrigem = null;

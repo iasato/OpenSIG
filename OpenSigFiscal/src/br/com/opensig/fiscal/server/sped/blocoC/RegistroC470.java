@@ -12,20 +12,11 @@ public class RegistroC470 extends ARegistro<DadosC470, ComEcfVendaProduto> {
 		DadosC470 d = new DadosC470();
 		d.setCod_item(produto.getProdProdutoId() + "");
 		d.setQtd(dados.getComEcfVendaProdutoQuantidade());
-		d.setQtd_canc(dados.getComEcfVendaProdutoCancelado() ? dados.getComEcfVendaProdutoQuantidade() : 0);
 		d.setUnid(dados.getProdEmbalagem().getProdEmbalagemNome());
 		d.setCfop(produto.getProdTributacao().getProdTributacaoCfop());
 		d.setVl_item(dados.getComEcfVendaProdutoTotal());
-		if (auth.getConf().get("nfe.crt").equals("1")) {
-			d.setCst_icms(produto.getProdTributacao().getProdTributacaoCson());
-			d.setAliq_icms(0.00);
-		} else {
-			d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
-			d.setAliq_icms(produto.getProdTributacao().getProdTributacaoDentro());
-		}
-		d.setVl_pis(0.00);
-		d.setVl_cofins(0.00);
-
+		d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
+		d.setAliq_icms(produto.getProdTributacao().getProdTributacaoDentro());
 		return d;
 	}
 }

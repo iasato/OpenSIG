@@ -45,10 +45,12 @@ public class Registro0150 extends ARegistro<Dados0150, EmpEntidade> {
 			}
 			// vendas
 			for (ComVenda venda : getVendas()) {
-				if (!entidades.contains(venda.getEmpCliente().getEmpEntidade().getEmpEntidadeId())) {
-					out.write(getDados(venda.getEmpCliente().getEmpEntidade()));
-					out.flush();
-					entidades.add(venda.getEmpCliente().getEmpEntidade().getEmpEntidadeId());
+				if (!venda.getComVendaCancelada()) {
+					if (!entidades.contains(venda.getEmpCliente().getEmpEntidade().getEmpEntidadeId())) {
+						out.write(getDados(venda.getEmpCliente().getEmpEntidade()));
+						out.flush();
+						entidades.add(venda.getEmpCliente().getEmpEntidade().getEmpEntidadeId());
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -57,14 +59,14 @@ public class Registro0150 extends ARegistro<Dados0150, EmpEntidade> {
 	}
 
 	@Override
-	protected Dados0150 getDados(EmpEntidade ent) throws Exception{
+	protected Dados0150 getDados(EmpEntidade ent) throws Exception {
 		Dados0150 d = new Dados0150();
 		d.setCod_part(ent.getEmpEntidadeId() + "");
 		d.setNome(ent.getEmpEntidadeNome1());
 
 		if (ent.getEmpEntidadeDocumento1().length() == 18) {
 			d.setCnpj(ent.getEmpEntidadeDocumento1().replaceAll("\\D", ""));
-			d.setIe(ent.getEmpEntidadeDocumento2());
+			d.setIe(ent.getEmpEntidadeDocumento2().replaceAll("\\D", ""));
 		} else {
 			d.setCpf(ent.getEmpEntidadeDocumento1().replaceAll("\\D", ""));
 		}

@@ -6,8 +6,6 @@ import br.com.opensig.fiscal.server.sped.ARegistro;
 
 public class RegistroC490 extends ARegistro<DadosC490, List<DadosC470>> {
 
-	public static double ICMS_SAIDA = 0.00;
-
 	@Override
 	protected DadosC490 getDados(List<DadosC470> dados) throws Exception {
 		DadosC490 d = new DadosC490();
@@ -23,8 +21,6 @@ public class RegistroC490 extends ARegistro<DadosC490, List<DadosC470>> {
 			d.setVl_icms(d.getVl_bc_icms() * d.getAliq_icms() / 100);
 		}
 
-		// gerando dados para o registro E110
-		ICMS_SAIDA += d.getVl_icms();
 		return d;
 	}
 

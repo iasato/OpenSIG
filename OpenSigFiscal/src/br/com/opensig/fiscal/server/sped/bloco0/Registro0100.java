@@ -17,7 +17,7 @@ public class Registro0100 extends ARegistro<Dados0100, Dados> {
 
 		Dados0100 d = new Dados0100();
 		d.setNome(fun.getEmpEntidade().getEmpEntidadeNome1());
-		d.setCpf(fun.getEmpEntidade().getEmpEntidadeDocumento1());
+		d.setCpf(fun.getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", ""));
 		d.setCrc(fun.getEmpEntidade().getEmpEntidadeDocumento2());
 		
 		EmpEndereco end = fun.getEmpEntidade().getEmpEnderecos().get(0);

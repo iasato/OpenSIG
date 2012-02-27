@@ -307,6 +307,7 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 		txtPadraoCfop.setAllowDecimals(false);
 		txtPadraoCfop.setMinLength(4);
 		txtPadraoCfop.setMaxLength(4);
+		txtPadraoCfop.setMaxValue(4000);
 		gridProdutos.getTopToolbar().addText(OpenSigCore.i18n.txtPadrao() + "-" + OpenSigCore.i18n.txtCfop());
 		gridProdutos.getTopToolbar().addField(txtPadraoCfop);
 		gridProdutos.getTopToolbar().addSpacer();

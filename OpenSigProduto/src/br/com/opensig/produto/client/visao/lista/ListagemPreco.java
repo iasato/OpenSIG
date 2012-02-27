@@ -122,7 +122,7 @@ public class ListagemPreco extends AListagemEditor<ProdPreco> {
 				ProdPreco preco = new ProdPreco();
 				preco.setProdEmbalagem(new ProdEmbalagem(embalagemId));
 				preco.setProdPrecoValor(valor);
-				preco.setProdPrecoBarra(barra == null ? "" : barra);
+				preco.setProdPrecoBarra(barra);
 				lista.add(preco);
 			} catch (Exception ex) {
 				valida = false;

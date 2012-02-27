@@ -33,6 +33,7 @@ import br.com.opensig.produto.client.visao.lista.ListagemPreco;
 import br.com.opensig.produto.shared.modelo.ProdCategoria;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdEstoque;
+import br.com.opensig.produto.shared.modelo.ProdIpi;
 import br.com.opensig.produto.shared.modelo.ProdOrigem;
 import br.com.opensig.produto.shared.modelo.ProdPreco;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
@@ -83,6 +84,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 	private ComboBox cmbFornecedor;
 	private ComboBox cmbFabricante;
 	private ComboBox cmbTributacao;
+	private ComboBox cmbIpi;
 	private ComboBox cmbOrigem;
 	private ComboBox cmbEmbalagem;
 	private Checkbox chkAtivo;
@@ -179,7 +181,8 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		MultiFieldPanel linha3 = new MultiFieldPanel();
 		linha3.setBorder(false);
 		linha3.addToRow(getFornecedor(), 330);
-		linha3.addToRow(getTributacao(), 240);
+		linha3.addToRow(getTributacao(), 130);
+		linha3.addToRow(getIpi(), 130);
 		coluna1.add(linha3);
 
 		txtEstoque = new NumberField(OpenSigCore.i18n.txtEstoque(), "t1.prodEstoqueQuantidade", 60);
@@ -257,8 +260,8 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		classe.setProdPrecos(precos);
 		classe.setProdProdutoId(Integer.valueOf(hdnCod.getValueAsString()));
 		classe.setProdProdutoNcm(txtNcm.getValueAsString());
-		classe.setProdProdutoBarra(txtBarra.getValueAsString() != null ? txtBarra.getValueAsString() : "");
-		classe.setProdProdutoReferencia(txtReferencia.getValueAsString() == null ? "" : txtReferencia.getValueAsString());
+		classe.setProdProdutoBarra(txtBarra.getValueAsString().equals("") ? null : txtBarra.getValueAsString());
+		classe.setProdProdutoReferencia(txtReferencia.getValueAsString());
 		if (txtCusto.getValue() != null) {
 			classe.setProdProdutoCusto(txtCusto.getValue().doubleValue());
 		}
@@ -287,6 +290,10 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		if (cmbTributacao.getValue() != null) {
 			ProdTributacao tributacao = new ProdTributacao(Integer.valueOf(cmbTributacao.getValue()));
 			classe.setProdTributacao(tributacao);
+		}
+		if (cmbIpi.getValue() != null) {
+			ProdIpi ipi = new ProdIpi(Integer.valueOf(cmbIpi.getValue()));
+			classe.setProdIpi(ipi);
 		}
 		classe.setProdProdutoCategoria(strCategorias);
 		if (classe.getProdProdutoId() == 0) {
@@ -354,6 +361,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		} else {
 			cmbOrigem.setValue("1");
 			cmbTributacao.setValue("1");
+			cmbIpi.setValue("7");
 			cmbEmbalagem.setValue("1");
 		}
 		txtNcm.focus(true);
@@ -480,16 +488,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		final Store storeTributacao = new Store(proxy, new ArrayReader(new RecordDef(fdTributacao)), false);
 		storeTributacao.addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
-				treeCategoria.carregar(null, new AsyncCallback<Lista<ProdCategoria>>() {
-
-					public void onSuccess(Lista<ProdCategoria> result) {
-						mostrar();
-					}
-
-					public void onFailure(Throwable caught) {
-						new ToastWindow(OpenSigCore.i18n.txtCategoria(), OpenSigCore.i18n.errListagem());
-					}
-				});
+				cmbIpi.getStore().load();
 			}
 
 			public void onLoadException(Throwable error) {
@@ -503,7 +502,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 			}
 		});
 
-		cmbTributacao = new ComboBox(OpenSigCore.i18n.txtTributacao(), "prodTributacao.prodTributacaoId", 220);
+		cmbTributacao = new ComboBox(OpenSigCore.i18n.txtTributacao(), "prodTributacao.prodTributacaoId", 100);
 		cmbTributacao.setAllowBlank(false);
 		cmbTributacao.setStore(storeTributacao);
 		cmbTributacao.setTriggerAction(ComboBox.ALL);
@@ -517,6 +516,52 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		cmbTributacao.setEditable(false);
 
 		return cmbTributacao;
+	}
+
+	private ComboBox getIpi() {
+		FieldDef[] fdIpi = new FieldDef[] { new IntegerFieldDef("prodIpiId"), new StringFieldDef("prodIpiNome"), new StringFieldDef("prodIpiCstEntrada"), new StringFieldDef("prodIpiCstSaida"),
+				new IntegerFieldDef("prodIpiAliquota") };
+		CoreProxy<ProdIpi> proxy = new CoreProxy<ProdIpi>(new ProdIpi());
+		final Store storeIpi = new Store(proxy, new ArrayReader(new RecordDef(fdIpi)), false);
+		storeIpi.addStoreListener(new StoreListenerAdapter() {
+			public void onLoad(Store store, Record[] records) {
+				treeCategoria.carregar(null, new AsyncCallback<Lista<ProdCategoria>>() {
+
+					public void onSuccess(Lista<ProdCategoria> result) {
+						mostrar();
+					}
+
+					public void onFailure(Throwable caught) {
+						new ToastWindow(OpenSigCore.i18n.txtCategoria(), OpenSigCore.i18n.errListagem());
+					}
+				});
+			}
+
+			public void onLoadException(Throwable error) {
+				MessageBox.confirm(OpenSigCore.i18n.txtIpi(), OpenSigCore.i18n.msgRecarregar(), new ConfirmCallback() {
+					public void execute(String btnID) {
+						if (btnID.equalsIgnoreCase("yes")) {
+							storeIpi.load();
+						}
+					}
+				});
+			}
+		});
+
+		cmbIpi = new ComboBox(OpenSigCore.i18n.txtIpi(), "prodIpi.prodIpiId", 100);
+		cmbIpi.setAllowBlank(false);
+		cmbIpi.setStore(storeIpi);
+		cmbIpi.setTriggerAction(ComboBox.ALL);
+		cmbIpi.setMode(ComboBox.LOCAL);
+		cmbIpi.setDisplayField("prodIpiNome");
+		cmbIpi.setValueField("prodIpiId");
+		cmbIpi.setTpl("<div class=\"x-combo-list-item\"><b>{prodIpiNome}</b> - <i>" + OpenSigCore.i18n.txtAliquota() + " [{prodIpiAliquota}], " + OpenSigCore.i18n.txtCst()
+				+ " [{prodIpiCstEntrada} / {prodIpiCstSaida}]</i></div>");
+		cmbIpi.setForceSelection(true);
+		cmbIpi.setListWidth(500);
+		cmbIpi.setEditable(false);
+
+		return cmbIpi;
 	}
 
 	private Arvore getCategoria() {
@@ -684,6 +729,14 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 
 	public void setCmbTributacao(ComboBox cmbTributacao) {
 		this.cmbTributacao = cmbTributacao;
+	}
+
+	public ComboBox getCmbIpi() {
+		return cmbIpi;
+	}
+
+	public void setCmbIpi(ComboBox cmbIpi) {
+		this.cmbIpi = cmbIpi;
 	}
 
 	public Checkbox getChkAtivo() {

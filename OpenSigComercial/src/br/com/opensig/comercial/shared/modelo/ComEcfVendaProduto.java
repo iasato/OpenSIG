@@ -55,11 +55,14 @@ public class ComEcfVendaProduto extends Dados implements Serializable {
 	private Double comEcfVendaProdutoLiquido;
 
 	@Transient
+	private String cancelado;
+
+	@Transient
 	private int comEcfVendaProdutoCoo;
-	
+
 	@Transient
 	private String comEcfVendaProdutoUnd;
-	
+
 	@JoinColumn(name = "prod_produto_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ProdProduto prodProduto;
@@ -185,6 +188,14 @@ public class ComEcfVendaProduto extends Dados implements Serializable {
 		this.comEcfVenda = comEcfVenda;
 	}
 
+	public String getCancelado() {
+		return cancelado;
+	}
+
+	public void setCancelado(String cancelado) {
+		this.cancelado = cancelado;
+	}
+
 	public int getComEcfVendaProdutoCoo() {
 		return comEcfVendaProdutoCoo;
 	}
@@ -227,7 +238,7 @@ public class ComEcfVendaProduto extends Dados implements Serializable {
 		return new String[] { comEcfVendaProdutoId + "", comEcfVenda.getComEcfVendaId() + "", comEcfVenda.getComEcf().getComEcfId() + "", comEcfVenda.getComEcf().getComEcfSerie(),
 				comEcfVenda.getComEcf().getEmpEmpresa().getEmpEmpresaId() + "", comEcfVenda.getComEcf().getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(),
 				comEcfVenda.getEmpCliente().getEmpEntidade().getEmpEntidadeNome1(), fornecedor, prodId, barra, desc, ref, UtilClient.getDataGrid(comEcfVenda.getComEcfVendaData()),
-				comEcfVendaProdutoQuantidade + "", prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), comEcfVendaProdutoBruto.toString(),
+				comEcfVendaProdutoQuantidade.toString(), prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), comEcfVendaProdutoBruto.toString(),
 				comEcfVendaProdutoDesconto.toString(), comEcfVendaProdutoLiquido.toString(), comEcfVendaProdutoTotal.toString(), getComEcfVendaProdutoCancelado() + "", comEcfVendaProdutoOrdem + "" };
 	}
 

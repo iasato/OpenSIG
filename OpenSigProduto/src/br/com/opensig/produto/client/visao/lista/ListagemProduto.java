@@ -17,6 +17,7 @@ import br.com.opensig.empresa.client.controlador.comando.ComandoFornecedor;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.produto.shared.modelo.ProdCategoria;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
+import br.com.opensig.produto.shared.modelo.ProdIpi;
 import br.com.opensig.produto.shared.modelo.ProdOrigem;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
 import br.com.opensig.produto.shared.modelo.ProdTributacao;
@@ -55,7 +56,8 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 				new StringFieldDef("empFornecedor.empEntidade.empEntidadeNome1"), new IntegerFieldDef("empFabricante.empFornecedorId"),
 				new StringFieldDef("empFabricante.empEntidade.empEntidadeNome1"), new IntegerFieldDef("prodTributacao.prodTributacaoId"), new StringFieldDef("prodTributacao.prodTributacaoNome"),
 				new StringFieldDef("prodTributacao.prodTributacaoCst"), new IntegerFieldDef("prodTributacao.prodTributacaoCfop"), new IntegerFieldDef("prodTributacao.prodTributacaoDentro"),
-				new IntegerFieldDef("prodTributacao.prodTributacaoFora"), new StringFieldDef("prodTributacao.prodTributacaoDecreto"), new IntegerFieldDef("prodOrigem.prodOrigemId"),
+				new IntegerFieldDef("prodTributacao.prodTributacaoFora"), new StringFieldDef("prodTributacao.prodTributacaoDecreto"), new IntegerFieldDef("prodIpi.prodIpiId"),
+				new StringFieldDef("prodIpi.prodIpiNome"), new FloatFieldDef("prodIpi.prodIpiAliquota"), new IntegerFieldDef("prodOrigem.prodOrigemId"),
 				new StringFieldDef("prodOrigem.prodOrigemDescricao"), new DateFieldDef("prodProdutoCadastrado"), new DateFieldDef("prodProdutoAlterado"), new BooleanFieldDef("prodProdutoAtivo"),
 				new BooleanFieldDef("prodProdutoIncentivo"), new IntegerFieldDef("prodProdutoSinc") };
 		campos = new RecordDef(fd);
@@ -88,13 +90,19 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 		ccCst.setHidden(true);
 		ColumnConfig ccCfop = new ColumnConfig(OpenSigCore.i18n.txtCfop(), "prodTributacao.prodTributacaoCfop", 50, true);
 		ccCfop.setHidden(true);
-		ColumnConfig ccDentro = new ColumnConfig(OpenSigCore.i18n.txtDentro(), "prodTributacao.prodTributacaoDentro", 50, true);
+		ColumnConfig ccDentro = new ColumnConfig(OpenSigCore.i18n.txtIcms() + " " + OpenSigCore.i18n.txtDentro(), "prodTributacao.prodTributacaoDentro", 75, true, PORCENTAGEM);
 		ccDentro.setHidden(true);
-		ColumnConfig ccFora = new ColumnConfig(OpenSigCore.i18n.txtFora(), "prodTributacao.prodTributacaoFora", 50, true);
+		ColumnConfig ccFora = new ColumnConfig(OpenSigCore.i18n.txtIcms() + " " + OpenSigCore.i18n.txtFora(), "prodTributacao.prodTributacaoFora", 75, true, PORCENTAGEM);
 		ccFora.setHidden(true);
 		ColumnConfig ccDecreto = new ColumnConfig(OpenSigCore.i18n.txtDecreto(), "prodTributacao.prodTributacaoDecreto", 100, true);
 		ccDecreto.setHidden(true);
 		ccDecreto.setFixed(true);
+		ColumnConfig ccIpiId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtIpi(), "prodIpi.prodIpiId", 100, true);
+		ccIpiId.setHidden(true);
+		ColumnConfig ccIpi = new ColumnConfig(OpenSigCore.i18n.txtIpi(), "prodIpi.prodIpiNome", 100, true);
+		ccIpi.setHidden(true);
+		ColumnConfig ccAliquota = new ColumnConfig(OpenSigCore.i18n.txtIpi() + " " + OpenSigCore.i18n.txtAliquota(), "prodIpi.prodIpiAliquota", 75, true, PORCENTAGEM);
+		ccAliquota.setHidden(true);
 		ColumnConfig ccOrigemId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtOrigem(), "prodOrigem.prodOrigemId", 100, true);
 		ccOrigemId.setHidden(true);
 		ColumnConfig ccOrigem = new ColumnConfig(OpenSigCore.i18n.txtOrigem(), "prodOrigem.prodOrigemDescricao", 100, true);
@@ -114,8 +122,8 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 
 		if (form != null) {
 			BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccNcm, ccBarra, ccDescricao, ccRef, ccCusto, ccPreco, ccEmbalagemId, ccEmbalagem, ccVolume, ccEstoque, ccCategoria, ccCodForn,
-					ccFornecedor, ccCodFabr, ccFabricante, ccTributacaoId, ccTributacao, ccCst, ccCfop, ccDentro, ccFora, ccDecreto, ccOrigemId, ccOrigem, ccCadastro, ccAlterado, ccAtivo,
-					ccIncentivo, ccSinc };
+					ccFornecedor, ccCodFabr, ccFabricante, ccTributacaoId, ccTributacao, ccCst, ccCfop, ccDentro, ccFora, ccDecreto, ccIpiId, ccIpi, ccAliquota, ccOrigemId, ccOrigem, ccCadastro,
+					ccAlterado, ccAtivo, ccIncentivo, ccSinc };
 			modelos = new ColumnModel(bcc);
 		} else {
 			BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccBarra, ccDescricao, ccRef, ccEmbalagem, ccVolume, ccPreco, ccEstoque, ccFornecedor };
@@ -126,7 +134,7 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 
 		filtroPadrao = new FiltroObjeto("empEmpresa", ECompara.IGUAL, new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 		filtroPadrao.setCampoPrefixo("t1.");
-		super.inicializar(); 
+		super.inicializar();
 	}
 
 	public void setGridFiltro() {
@@ -154,6 +162,17 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 				GridListFilter fTributacao = new GridListFilter("prodTributacao.prodTributacaoNome", storeTributacao);
 				fTributacao.setLabelField("prodTributacaoNome");
 				fTributacao.setLabelValue("prodTributacaoNome");
+				fTributacao.setLoadingText(OpenSigCore.i18n.txtAguarde());
+				entry.setValue(fTributacao);
+			} else if (entry.getKey().equals("prodIpi.prodIpiNome")) {
+				// ipi
+				FieldDef[] fdIpi = new FieldDef[] { new IntegerFieldDef("prodIpiId"), new StringFieldDef("prodIpiNome") };
+				CoreProxy<ProdIpi> proxy = new CoreProxy<ProdIpi>(new ProdIpi());
+				Store storeIpi = new Store(proxy, new ArrayReader(new RecordDef(fdIpi)), true);
+
+				GridListFilter fTributacao = new GridListFilter("prodIpi.prodIpiNome", storeIpi);
+				fTributacao.setLabelField("prodIpiNome");
+				fTributacao.setLabelValue("prodIpiNome");
 				fTributacao.setLoadingText(OpenSigCore.i18n.txtAguarde());
 				entry.setValue(fTributacao);
 			} else if (entry.getKey().equals("prodOrigem.prodOrigemDescricao")) {
@@ -190,14 +209,14 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 	@Override
 	public void irPara() {
 		Menu mnuContexto = new Menu();
-		
+
 		// fornecedor
 		SisFuncao fornecedor = UtilClient.getFuncaoPermitida(ComandoFornecedor.class);
 		MenuItem itemFornecedor = gerarFuncao(fornecedor, "empFornecedorId", "empFornecedor.empFornecedorId");
 		if (itemFornecedor != null) {
 			mnuContexto.addItem(itemFornecedor);
 		}
-		
+
 		// compra produtos
 		String strCompras = FabricaComando.getInstancia().getComandoCompleto("ComandoCompraProduto");
 		SisFuncao compras = UtilClient.getFuncaoPermitida(strCompras);
@@ -205,7 +224,7 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 		if (itemCompras != null) {
 			mnuContexto.addItem(itemCompras);
 		}
-		
+
 		// venda produtos
 		String strVendas = FabricaComando.getInstancia().getComandoCompleto("ComandoVendaProduto");
 		SisFuncao vendas = UtilClient.getFuncaoPermitida(strVendas);
@@ -213,7 +232,7 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 		if (itemVendas != null) {
 			mnuContexto.addItem(itemVendas);
 		}
-		
+
 		// venda ecf produtos
 		String strEcfs = FabricaComando.getInstancia().getComandoCompleto("ComandoEcfVendaProduto");
 		SisFuncao ecf = UtilClient.getFuncaoPermitida(strEcfs);
@@ -221,7 +240,7 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 		if (itemEcf != null) {
 			mnuContexto.addItem(itemEcf);
 		}
-		
+
 		if (mnuContexto.getItems().length > 0) {
 			MenuItem mnuItem = getIrPara();
 			mnuItem.setMenu(mnuContexto);

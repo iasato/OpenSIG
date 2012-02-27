@@ -24,8 +24,6 @@ import br.com.opensig.core.shared.modelo.Sql;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.regexp.shared.MatchResult;
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.gwtext.client.core.UrlParam;
@@ -348,6 +346,11 @@ public class CoreProxy<E extends Dados> extends GWTProxy implements CoreServiceA
 	@Override
 	public void executar(Sql[] sqls, AsyncCallback<Integer[]> asyncCallback) {
 		async.executar(sqls, asyncCallback);
+	}
+	
+	@Override
+	public void executar(String sql, AsyncCallback<Integer> asyncCallback) {
+		async.executar(sql, asyncCallback);
 	}
 
 	@Override

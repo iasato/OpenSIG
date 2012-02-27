@@ -1,3 +1,8 @@
+DELETE FROM sis_permissao WHERE sis_acao_id > 0 AND NOT sis_acao_id IN (SELECT sis_acao_id FROM sis_acao);
+DELETE FROM sis_permissao WHERE sis_funcao_id > 0 AND NOT sis_funcao_id IN (SELECT sis_funcao_id FROM sis_funcao);
+DELETE FROM sis_permissao WHERE sis_modulo_id > 0 AND NOT sis_modulo_id IN (SELECT sis_modulo_id FROM sis_modulo);
+
+ALTER TABLE `com_ecf_z` CHANGE COLUMN `com_ecf_z_data` `com_ecf_z_data` DATE NOT NULL  ;
 ALTER TABLE `com_ecf_venda_produto` CHANGE COLUMN `com_ecf_venda_produto_codigo` `com_ecf_venda_produto_codigo` VARCHAR(14) NULL  ;
 
 CREATE  TABLE `fis_sped_fiscal` (
@@ -23,38 +28,37 @@ CREATE  TABLE `fis_sped_fiscal` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-CREATE  TABLE `fis_sped_bloco` (
-  `fis_sped_bloco_id` INT NOT NULL AUTO_INCREMENT ,
-  `fis_sped_bloco_icms_ipi` TINYINT(1) NOT NULL ,
-  `fis_sped_bloco_pis_cofins` TINYINT(1) NOT NULL ,
-  `fis_sped_bloco_letra` VARCHAR(1) NOT NULL ,
-  `fis_sped_bloco_descricao` VARCHAR(500) NOT NULL ,
-  `fis_sped_bloco_registro` VARCHAR(4) NOT NULL ,
-  `fis_sped_bloco_obrigatorio` TINYINT(1) NOT NULL ,
-  `fis_sped_bloco_classe` VARCHAR(255) NULL ,
-  `fis_sped_bloco_ordem` INT NOT NULL ,
-  PRIMARY KEY (`fis_sped_bloco_id`) )
+ALTER TABLE `prod_produto` CHANGE COLUMN `prod_produto_barra` `prod_produto_barra` VARCHAR(14) NULL  , CHANGE COLUMN `prod_produto_sinc` `prod_produto_sinc` INT(11) NOT NULL  ;
+ALTER TABLE `prod_preco` CHANGE COLUMN `prod_preco_barra` `prod_preco_barra` VARCHAR(14) NULL  ;
+
+CREATE  TABLE `prod_ipi` (
+  `prod_ipi_id` INT NOT NULL AUTO_INCREMENT ,
+  `prod_ipi_nome` VARCHAR(100) NOT NULL ,
+  `prod_ipi_cst_entrada` VARCHAR(2) NOT NULL ,
+  `prod_ipi_cst_saida` VARCHAR(2) NOT NULL ,
+  `prod_ipi_aliquota` DECIMAL(4,2) NOT NULL ,
+  `prod_ipi_decreto` VARCHAR(1000) NOT NULL ,
+  PRIMARY KEY (`prod_ipi_id`) )
 ENGINE = InnoDB;
 
-CREATE  TABLE `fis_sped_bloco_empresa` (
-  `fis_sped_bloco_empresa_id` INT NOT NULL AUTO_INCREMENT ,
-  `emp_empresa_id` INT NOT NULL ,
-  `fis_sped_bloco_id` INT NOT NULL ,
-  PRIMARY KEY (`fis_sped_bloco_empresa_id`) ,
-  INDEX `FK_fis_sped_bloco_empresa_1` USING BTREE (`emp_empresa_id` ASC) ,
-  INDEX `FK_fis_sped_bloco_empresa_2` USING BTREE (`fis_sped_bloco_id` ASC) ,
-  CONSTRAINT `FK_fis_sped_bloco_empresa_1`
-    FOREIGN KEY (`emp_empresa_id` )
-    REFERENCES `emp_empresa` (`emp_empresa_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `FK_fis_sped_bloco_empresa_2`
-    FOREIGN KEY (`fis_sped_bloco_id` )
-    REFERENCES `fis_sped_bloco` (`fis_sped_bloco_id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+INSERT INTO `prod_ipi` (`prod_ipi_id`, `prod_ipi_nome`, `prod_ipi_cst_entrada`, `prod_ipi_cst_saida`, `prod_ipi_aliquota`, `prod_ipi_decreto`) VALUES (1, 'Entrada / Saida Tributada', '00', '50', 0, ' ');
+INSERT INTO `prod_ipi` (`prod_ipi_id`, `prod_ipi_nome`, `prod_ipi_cst_entrada`, `prod_ipi_cst_saida`, `prod_ipi_aliquota`, `prod_ipi_decreto`) VALUES (2, 'Entrada / Saida tributada com alíquota zero', '01', '51', 0, ' ');
+INSERT INTO `prod_ipi` (`prod_ipi_id`, `prod_ipi_nome`, `prod_ipi_cst_entrada`, `prod_ipi_cst_saida`, `prod_ipi_aliquota`, `prod_ipi_decreto`) VALUES (3, 'Entrada / Saida isenta', '02', '52', 0, ' ');
+INSERT INTO `prod_ipi` (`prod_ipi_id`, `prod_ipi_nome`, `prod_ipi_cst_entrada`, `prod_ipi_cst_saida`, `prod_ipi_aliquota`, `prod_ipi_decreto`) VALUES (4, 'Entrada / Saida não-tributada', '03', '53', 0, ' ');
+INSERT INTO `prod_ipi` (`prod_ipi_id`, `prod_ipi_nome`, `prod_ipi_cst_entrada`, `prod_ipi_cst_saida`, `prod_ipi_aliquota`, `prod_ipi_decreto`) VALUES (5, 'Entrada / Saida imune', '04', '54', 0, ' ');
+INSERT INTO `prod_ipi` (`prod_ipi_id`, `prod_ipi_nome`, `prod_ipi_cst_entrada`, `prod_ipi_cst_saida`, `prod_ipi_aliquota`, `prod_ipi_decreto`) VALUES (6, 'Entrada / Saida com suspensão', '05', '55', 0, ' ');
+INSERT INTO `prod_ipi` (`prod_ipi_id`, `prod_ipi_nome`, `prod_ipi_cst_entrada`, `prod_ipi_cst_saida`, `prod_ipi_aliquota`, `prod_ipi_decreto`) VALUES (7, 'Outras entradas / saidas', '49', '99', 0, ' ');
 
-INSERT INTO `sis_funcao` (`sis_modulo_id`, `sis_funcao_classe`, `sis_funcao_ordem`, `sis_funcao_subordem`, `sis_funcao_ativo`) VALUES (6, 'br.com.opensig.fiscal.client.controlador.comando.ComandoSpedFiscal', 7, 0, 1);
+UPDATE prod_ipi SET prod_ipi_nome = UPPER(prod_ipi_nome);
+UPDATE prod_ipi SET prod_ipi_decreto = "";
 
-INSERT INTO `com_natureza` (`emp_empresa_id`, `com_natureza_nome`, `com_natureza_descricao`, `com_natureza_cfop_trib`, `com_natureza_cfop_sub`, `com_natureza_icms`, `com_natureza_ipi`, `com_natureza_pis`, `com_natureza_cofins`) VALUES (1, 'COMPRA', 'COMPRA DE MERCADORIAS', 2102, 2403, 0, 0, 0, 0);
+ALTER TABLE `prod_produto` ADD COLUMN `prod_ipi_id` INT(11) NOT NULL  AFTER `prod_tributacao_id`;
+UPDATE `prod_produto` SET `prod_ipi_id` = 7;
+ALTER TABLE `prod_produto`  
+  ADD CONSTRAINT `FK_prod_produto_6`
+  FOREIGN KEY (`prod_ipi_id` )
+  REFERENCES `prod_ipi` (`prod_ipi_id` )
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION
+, ADD INDEX `FK_prod_produto_6` USING BTREE (`prod_ipi_id` ASC) ;
+

@@ -223,7 +223,7 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 		gridProdutos.addGridRowListener(new GridRowListenerAdapter() {
 			public void onRowContextMenu(GridPanel grid, int rowIndex, EventObject e) {
 				cmdPesquisa.execute(gridProdutos.getContexto());
-			}          
+			}
 		});
 
 		gridProdutos.addEditorGridListener(new EditorGridListenerAdapter() {

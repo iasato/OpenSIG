@@ -41,21 +41,25 @@ public class Registro0200 extends ARegistro<Dados0200, ProdProduto> {
 			}
 			// vendas
 			for (ComVenda venda : getVendas()) {
-				for (ComVendaProduto vProd : venda.getComVendaProdutos()) {
-					if (!produtos.contains(vProd.getProdProduto().getProdProdutoId())) {
-						out.write(getDados(vProd.getProdProduto()));
-						out.flush();
-						produtos.add(vProd.getProdProduto().getProdProdutoId());
+				if (!venda.getComVendaCancelada() && !venda.getComVendaNfe()) {
+					for (ComVendaProduto vProd : venda.getComVendaProdutos()) {
+						if (!produtos.contains(vProd.getProdProduto().getProdProdutoId())) {
+							out.write(getDados(vProd.getProdProduto()));
+							out.flush();
+							produtos.add(vProd.getProdProduto().getProdProdutoId());
+						}
 					}
 				}
 			}
 			// ecfs
 			for (ComEcfVenda venda : getEcfs()) {
-				for (ComEcfVendaProduto eProd : venda.getComEcfVendaProdutos()) {
-					if (!produtos.contains(eProd.getProdProduto().getProdProdutoId())) {
-						out.write(getDados(eProd.getProdProduto()));
-						out.flush();
-						produtos.add(eProd.getProdProduto().getProdProdutoId());
+				if (!venda.getComEcfVendaCancelada()) {
+					for (ComEcfVendaProduto eProd : venda.getComEcfVendaProdutos()) {
+						if (!eProd.getComEcfVendaProdutoCancelado() && !produtos.contains(eProd.getProdProduto().getProdProdutoId())) {
+							out.write(getDados(eProd.getProdProduto()));
+							out.flush();
+							produtos.add(eProd.getProdProduto().getProdProdutoId());
+						}
 					}
 				}
 			}
@@ -75,8 +79,12 @@ public class Registro0200 extends ARegistro<Dados0200, ProdProduto> {
 		d.setTipo_item(0); // TODO colocar tabela auxiliar e habilitar no sistema
 		if (prod.getProdProdutoNcm().length() == 8) {
 			d.setCod_ncm(prod.getProdProdutoNcm());
+			d.setCod_gen(prod.getProdProdutoNcm().substring(0, 2));
+		} else {
+			d.setCod_gen(prod.getProdProdutoNcm());
 		}
 		d.setEx_ipi("");
+
 		d.setAliq_icms(prod.getProdTributacao().getProdTributacaoDentro());
 
 		normalizar(d);

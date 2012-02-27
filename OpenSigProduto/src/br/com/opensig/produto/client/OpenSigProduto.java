@@ -8,6 +8,7 @@ import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoVisualizar;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.produto.client.controlador.comando.ComandoEmbalagem;
+import br.com.opensig.produto.client.controlador.comando.ComandoIpi;
 import br.com.opensig.produto.client.controlador.comando.ComandoPesquisa;
 import br.com.opensig.produto.client.controlador.comando.ComandoProduto;
 import br.com.opensig.produto.client.controlador.comando.ComandoTributacao;
@@ -32,6 +33,7 @@ public class OpenSigProduto implements EntryPoint {
         FabricaComando fc = FabricaComando.getInstancia();
         fc.addComando(ComandoProduto.class.getName(), (IComando) GWT.create(ComandoProduto.class));
         fc.addComando(ComandoTributacao.class.getName(), (IComando) GWT.create(ComandoTributacao.class));
+        fc.addComando(ComandoIpi.class.getName(), (IComando) GWT.create(ComandoIpi.class));
         fc.addComando(ComandoPesquisa.class.getName(), (IComando) GWT.create(ComandoPesquisa.class));
         fc.addComando(ComandoEmbalagem.class.getName(), (IComando) GWT.create(ComandoEmbalagem.class));
 
