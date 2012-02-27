@@ -39,6 +39,8 @@ import br.com.opensig.financeiro.client.visao.lista.ListagemFinanciados;
 import br.com.opensig.financeiro.shared.modelo.FinCategoria;
 import br.com.opensig.financeiro.shared.modelo.FinConta;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.gwtext.client.data.ArrayReader;
@@ -292,7 +294,7 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 	public void limparDados() {
 		getForm().reset();
 		txtParcelas.setValue("");
-		dtCadastro.setRawValue(UtilClient.eval("$wnd.Date.today().toString('dd/MM/yyyy')"));
+		dtCadastro.setRawValue(DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(new Date()));
 		FiltroNumero fn = new FiltroNumero(classe.getCampoId(), ECompara.IGUAL, 0);
 		gridFormas.getProxy().setFiltroPadrao(fn);
 		gridFormas.getStore().removeAll();

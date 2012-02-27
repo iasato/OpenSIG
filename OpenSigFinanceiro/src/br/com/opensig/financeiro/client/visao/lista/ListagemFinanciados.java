@@ -228,7 +228,7 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 					fin.setFinPagamentoVencimento(vencimento);
 					fin.setFinPagamentoQuitado(quitado);
 					fin.setFinPagamentoRealizado(realizado);
-					fin.setFinPagamentoObservacao(obs);
+					fin.setFinPagamentoObservacao(obs == null ? "" : obs);
 					lista.add((E) fin);
 				} else {
 					FinRecebimento fin = new FinRecebimento();
@@ -241,7 +241,7 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 					fin.setFinRecebimentoVencimento(vencimento);
 					fin.setFinRecebimentoQuitado(quitado);
 					fin.setFinRecebimentoRealizado(realizado);
-					fin.setFinRecebimentoObservacao(obs);
+					fin.setFinRecebimentoObservacao(obs == null ? "" : obs);
 					lista.add((E) fin);
 				}
 			} catch (Exception ex) {

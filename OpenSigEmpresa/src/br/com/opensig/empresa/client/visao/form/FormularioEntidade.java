@@ -288,7 +288,7 @@ public abstract class FormularioEntidade<E extends Dados> extends AFormulario<E>
 		entidade.setEmpEntidadePessoa(cmbPessoa.getValue());
 		entidade.setEmpEntidadeDocumento2(txtDoc2.getValueAsString() == null ? "" : txtDoc2.getValueAsString());
 		entidade.setEmpEntidadeAtivo(chkAtivo.getValue());
-		entidade.setEmpEntidadeObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
+		entidade.setEmpEntidadeObservacao(txtObservacao.getValueAsString());
 
 		if (cmbPessoa.getValue().equalsIgnoreCase(fisica)) {
 			entidade.setEmpEntidadeDocumento1(txtCPF.getValueAsString());

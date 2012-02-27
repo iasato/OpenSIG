@@ -1,9 +1,9 @@
 package br.com.opensig.financeiro.client.visao.form;
 
+import java.util.Date;
 import java.util.Map;
 
 import br.com.opensig.core.client.OpenSigCore;
-import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.AComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvar;
@@ -19,6 +19,8 @@ import br.com.opensig.financeiro.client.servico.FinanceiroProxy;
 import br.com.opensig.financeiro.shared.modelo.FinConta;
 import br.com.opensig.financeiro.shared.modelo.FinRemessa;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.data.ArrayReader;
 import com.gwtext.client.data.FieldDef;
@@ -152,8 +154,8 @@ public class FormularioRemessa extends AFormulario<FinRemessa> {
 
 	public void limparDados() {
 		getForm().reset();
-		dtInicio.setRawValue(UtilClient.eval("$wnd.Date.today().toString('dd/MM/yyyy')"));
-		dtTermino.setRawValue(UtilClient.eval("$wnd.Date.today().toString('dd/MM/yyyy')"));
+		dtInicio.setRawValue(DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(new Date()));
+		dtTermino.setRawValue(dtInicio.getRawValue());
 	}
 
 	public void gerarListas() {

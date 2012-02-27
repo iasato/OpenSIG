@@ -282,6 +282,10 @@ public class NavegacaoLista<E extends Dados> extends ANavegacao {
 				FiltroNumero fn = new FiltroNumero(UtilClient.getCampoPrefixado(campo.getName()), ECompara.IGUAL, numero);
 				fn.setCampoPrefixo("");
 				gf.add(fn, EJuncao.OU);
+			} else if (campo instanceof StringFieldDef) {
+				FiltroTexto ft = new FiltroTexto(UtilClient.getCampoPrefixado(campo.getName()), ECompara.CONTEM, texto);
+				ft.setCampoPrefixo("");
+				gf.add(ft, EJuncao.OU);
 			}
 		}
 

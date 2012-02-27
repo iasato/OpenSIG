@@ -220,7 +220,7 @@ public class FormularioFrete extends AFormulario<ComFrete> {
 		if (txtValor.getValue() != null) {
 			classe.setComFreteValor(txtValor.getValue().doubleValue());
 		}
-		classe.setComFreteObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
+		classe.setComFreteObservacao(txtObservacao.getValueAsString());
 
 		if (!hdnFornecedor.getValueAsString().equals("0")) {
 			EmpFornecedor fornecedor = new EmpFornecedor(Integer.valueOf(hdnFornecedor.getValueAsString()));

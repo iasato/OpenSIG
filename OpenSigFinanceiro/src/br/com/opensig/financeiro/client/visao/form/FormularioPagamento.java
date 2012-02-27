@@ -36,7 +36,7 @@ public class FormularioPagamento extends AFormularioFinanciado<FinPagamento> {
 		classe.setFinPagar(new FinPagar(Integer.valueOf(hdnFinanceiro.getValueAsString())));
 		classe.setFinPagamentoId(Integer.valueOf(hdnCod.getValueAsString()));
 		classe.setFinPagamentoParcela(txtParcela.getValueAsString());
-		classe.setFinPagamentoObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
+		classe.setFinPagamentoObservacao(txtObservacao.getValueAsString());
 		classe.setFinPagamentoQuitado(false);
 		classe.setFinPagamentoRealizado(null);
 		classe.setFinPagamentoCadastro(new Date());

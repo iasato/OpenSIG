@@ -80,7 +80,7 @@ public class FormularioReceber extends AFormularioFinanceiro<FinReceber, FinRece
 		}
 		classe.setFinReceberCadastro(dtCadastro.getValue());
 		classe.setFinReceberCategoria(strCategorias);
-		classe.setFinReceberObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
+		classe.setFinReceberObservacao(txtObservacao.getValueAsString());
 
 		return retorno;
 	}

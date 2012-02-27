@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Ant-Version: Apache Ant 1.7.1
 Created-By: 20.4-b02-402 (Apple Inc.)
 Implementation-Title: OpenSigCore
-Implementation-Version: 1.02-b1294
+Implementation-Version: 1.02-b1295
 Implementation-Vendor: PhD - Systems Solutions
 Implementation-Url: http://phdss.com.br
 Built-By: Pedro H. Lira - opensig@phdss.com.br
-Built-Date: 27-02-2012 09:09:06
+Built-Date: 27-02-2012 17:58:58
 Main-Class: br.com.opensig.core.client.OpenSigCore
 

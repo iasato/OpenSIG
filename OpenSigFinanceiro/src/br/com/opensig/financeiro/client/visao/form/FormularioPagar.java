@@ -80,7 +80,7 @@ public class FormularioPagar extends AFormularioFinanceiro<FinPagar, FinPagament
 		}
 		classe.setFinPagarCadastro(dtCadastro.getValue());
 		classe.setFinPagarCategoria(strCategorias);
-		classe.setFinPagarObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
+		classe.setFinPagarObservacao(txtObservacao.getValueAsString());
 
 		return retorno;
 	}

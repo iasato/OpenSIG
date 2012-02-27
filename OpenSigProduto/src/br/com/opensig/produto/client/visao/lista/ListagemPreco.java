@@ -115,7 +115,7 @@ public class ListagemPreco extends AListagemEditor<ProdPreco> {
 				double valor = rec.getAsDouble("prodPrecoValor");
 				String barra = rec.getAsString("prodPrecoBarra");
 
-				if (embalagemId < 1 || valor < 0.01 || (barra != null && (barra.length() == 8 || barra.length() == 12 || barra.length() == 13 || barra.length() == 14))) {
+				if (embalagemId < 1 || valor < 0.01 || (barra != null && barra.length() != 8 && barra.length() != 12 && barra.length() != 13 && barra.length() != 14)) {
 					throw new Exception();
 				}
 

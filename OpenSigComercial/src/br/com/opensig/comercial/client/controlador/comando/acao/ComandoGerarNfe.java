@@ -71,7 +71,7 @@ public class ComandoGerarNfe extends ComandoAcao {
 					venda.setComVendaData(rec.getAsDate("comVendaData"));
 					venda.setComVendaValorBruto(rec.getAsDouble("comVendaValorBruto"));
 					venda.setComVendaValorLiquido(rec.getAsDouble("comVendaValorLiquido"));
-					venda.setComVendaObservacao(rec.getAsString("comVendaObservacao"));
+					venda.setComVendaObservacao(rec.getAsString("comVendaObservacao") == null ? "" : rec.getAsString("comVendaObservacao"));
 					abrirFrete();
 				} else {
 					MessageBox.alert(OpenSigCore.i18n.txtAcesso(), OpenSigCore.i18n.txtAcessoNegado());

@@ -368,7 +368,7 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 		classe.setComEcfVendaBruto(txtBruto.getValue().doubleValue());
 		classe.setComEcfVendaDesconto(txtDesc.getValue().doubleValue());
 		classe.setComEcfVendaLiquido(txtLiquido.getValue().doubleValue());
-		classe.setComEcfVendaObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
+		classe.setComEcfVendaObservacao(txtObservacao.getValueAsString());
 
 		return retorno;
 	}

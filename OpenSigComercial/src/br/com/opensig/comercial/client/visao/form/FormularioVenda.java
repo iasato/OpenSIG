@@ -360,7 +360,7 @@ public class FormularioVenda extends AFormulario<ComVenda> {
 		classe.setComVendaData(new Date());
 		classe.setComVendaValorBruto(bruto);
 		classe.setComVendaValorLiquido(liquido);
-		classe.setComVendaObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
+		classe.setComVendaObservacao(txtObservacao.getValueAsString());
 
 		return retorno;
 	}

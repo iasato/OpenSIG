@@ -478,7 +478,7 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 		if (txtValorNota.getValue() != null) {
 			classe.setComCompraValorNota(txtValorNota.getValue().doubleValue());
 		}
-		classe.setComCompraObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
+		classe.setComCompraObservacao(txtObservacao.getValueAsString());
 
 		if (!hdnFornecedor.getValueAsString().equals("0")) {
 			EmpFornecedor fornecedor = new EmpFornecedor(Integer.valueOf(hdnFornecedor.getValueAsString()));
