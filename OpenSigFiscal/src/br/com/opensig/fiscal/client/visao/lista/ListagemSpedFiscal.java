@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.AComando;
+import br.com.opensig.core.client.controlador.comando.EModo;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvarFinal;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoEditar;
@@ -20,11 +21,16 @@ import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.servico.CoreProxy;
+import br.com.opensig.core.client.servico.ExportacaoProxy;
+import br.com.opensig.core.client.servico.ImportacaoProxy;
 import br.com.opensig.core.client.visao.Assistente;
+import br.com.opensig.core.client.visao.JanelaUpload;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AListagem;
 import br.com.opensig.core.client.visao.abstrato.IFormulario;
+import br.com.opensig.core.shared.modelo.ExpRegistro;
 import br.com.opensig.core.shared.modelo.IFavorito;
+import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.client.servico.FiscalProxy;
 import br.com.opensig.fiscal.client.visao.form.sped.FormularioSpedFiscalCompra;
@@ -35,6 +41,9 @@ import br.com.opensig.fiscal.client.visao.form.sped.FormularioSpedFiscalRegistro
 import br.com.opensig.fiscal.client.visao.form.sped.FormularioSpedFiscalVenda;
 import br.com.opensig.fiscal.shared.modelo.FisSpedFiscal;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.gwtext.client.core.EventObject;
+import com.gwtext.client.core.Position;
 import com.gwtext.client.data.ArrayReader;
 import com.gwtext.client.data.BooleanFieldDef;
 import com.gwtext.client.data.DateFieldDef;
@@ -44,7 +53,10 @@ import com.gwtext.client.data.Record;
 import com.gwtext.client.data.RecordDef;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
+import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.MessageBox;
+import com.gwtext.client.widgets.Window;
+import com.gwtext.client.widgets.event.ButtonListenerAdapter;
 import com.gwtext.client.widgets.grid.BaseColumnConfig;
 import com.gwtext.client.widgets.grid.ColumnConfig;
 import com.gwtext.client.widgets.grid.ColumnModel;
@@ -52,6 +64,8 @@ import com.gwtextux.client.widgets.grid.plugins.GridCellActionsPlugin;
 import com.gwtextux.client.widgets.grid.plugins.GridFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridListFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridLongFilter;
+import com.gwtextux.client.widgets.upload.UploadDialog;
+import com.gwtextux.client.widgets.upload.UploadDialogListenerAdapter;
 
 public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 
@@ -178,6 +192,114 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 		return comando;
 	}
 
+	@Override
+	public void setExportacao(final SisExpImp expimp, EModo modo, EModo modo2, final AsyncCallback<String> async) {
+		if (expimp.getSisExpImpClasse().equals("br.com.opensig.fiscal.server.acao.ExportarSped")) {
+			final Window wnd = new Window("", 360, 130, true, false);
+			final FormularioSpedFiscalOperacao frm = new FormularioSpedFiscalOperacao(classe, funcao);
+			frm.setHeader(false);
+
+			Button btn = new Button(OpenSigCore.i18n.txtOk());
+			btn.setIconCls("icon-salvar");
+			btn.addListener(new ButtonListenerAdapter() {
+				public void onClick(Button button, EventObject e) {
+					if (frm.getForm().isValid()) {
+						String nome = frm.getCmbSped().getValueAsString();
+						nome += frm.getCmbAno().getValueAsString();
+						nome += frm.getCmbMes().getValueAsString();
+
+						ExpRegistro<FisSpedFiscal> exp = new ExpRegistro<FisSpedFiscal>();
+						exp.setClasse(classe);
+						exp.setNome(nome);
+
+						getPanel().getEl().mask(OpenSigCore.i18n.txtAguarde());
+						ExportacaoProxy proxy = new ExportacaoProxy();
+						proxy.exportar(expimp, exp, async);
+						wnd.close();
+					}
+				}
+			});
+
+			wnd.setTitle(OpenSigCore.i18n.txtExportar(), "icon-sped");
+			wnd.add(frm);
+			wnd.addButton(btn);
+			wnd.setButtonAlign(Position.CENTER);
+			wnd.show();
+		} else {
+			super.setExportacao(expimp, modo, modo2, async);
+		}
+	}
+
+	@Override
+	public void setImportacao(final SisExpImp modo) {
+		final JanelaUpload<FisSpedFiscal> janela = new JanelaUpload<FisSpedFiscal>();
+		janela.setTipos(modo.getSisExpImpExtensoes().split(" "));
+		janela.setAssincrono(new AsyncCallback() {
+			public void onSuccess(Object result) {
+				analisar(modo, janela.getOks());
+				janela.getUplArquivo().close();
+			}
+
+			public void onFailure(Throwable caught) {
+				janela.resultado();
+			}
+		});
+		janela.inicializar();
+		janela.getUplArquivo().addListener(new UploadDialogListenerAdapter() {
+			public boolean onBeforeAdd(UploadDialog source, String filename) {
+				return source.getQueuedCount() == 0;
+			}
+
+			public void onFileAdd(UploadDialog source, String filename) {
+				source.startUpload();
+			}
+		});
+	}
+
+	private void analisar(final SisExpImp modo, final List<String> arquivos) {
+		final Window wnd = new Window("", 360, 130, true, false);
+		final FormularioSpedFiscalOperacao frm = new FormularioSpedFiscalOperacao(classe, funcao);
+		frm.setHeader(false);
+
+		Button btn = new Button(OpenSigCore.i18n.txtOk());
+		btn.setIconCls("icon-salvar");
+		btn.addListener(new ButtonListenerAdapter() {
+			public void onClick(Button button, EventObject e) {
+				if (frm.getForm().isValid()) {
+					String nome = frm.getCmbSped().getValueAsString();
+					nome += frm.getCmbAno().getValueAsString();
+					nome += frm.getCmbMes().getValueAsString();
+					arquivos.add(nome);
+
+					getEl().mask(OpenSigCore.i18n.txtAguarde());
+					ImportacaoProxy<FisSpedFiscal> proxy = new ImportacaoProxy<FisSpedFiscal>();
+					proxy.importar(modo, arquivos, new AsyncCallback<Map<String, List<FisSpedFiscal>>>() {
+
+						public void onSuccess(Map<String, List<FisSpedFiscal>> result) {
+							getEl().unmask();
+							getStore().reload();
+							MessageBox.alert(OpenSigCore.i18n.txtImportar(), OpenSigCore.i18n.msgImportarOK());
+						}
+
+						public void onFailure(Throwable caught) {
+							getEl().unmask();
+							getStore().reload();
+							MessageBox.alert(OpenSigCore.i18n.txtImportar(), OpenSigCore.i18n.errImportar());
+						}
+					});
+					wnd.close();
+				}
+			}
+		});
+
+		wnd.setTitle(OpenSigCore.i18n.txtImportar(), "icon-sped");
+		wnd.setClosable(false);
+		wnd.add(frm);
+		wnd.addButton(btn);
+		wnd.setButtonAlign(Position.CENTER);
+		wnd.show();
+	}
+	
 	public void setGridFiltro() {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {

@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import br.com.opensig.core.client.controlador.filtro.ECompara;
-import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.servico.CoreService;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.server.exportar.AExportacao;
@@ -18,26 +16,19 @@ public class ExportarSped extends AExportacao<FisSpedFiscal> {
 
 	@Override
 	public byte[] getArquivo(CoreService<FisSpedFiscal> service, SisExpImp modo, ExpListagem<FisSpedFiscal> exp, String[][] enderecos, String[][] contatos) {
-		return null;
+		return getArquivo(exp.getClasse(), exp.getNome(), modo);
 	}
 
 	@Override
 	public byte[] getArquivo(CoreService<FisSpedFiscal> service, SisExpImp modo, ExpRegistro<FisSpedFiscal> exp, String[][] enderecos, String[][] contatos) {
-		/*
+		return getArquivo(exp.getClasse(), exp.getNome(), modo);
+	}
+
+	private byte[] getArquivo(FisSpedFiscal sped, String nome, SisExpImp modo) {
 		byte[] obj = null;
 
 		try {
-			FiltroNumero fn = new FiltroNumero("fisSpedFiscalId", ECompara.IGUAL, exp.getClasse().getFisSpedFiscalId());
-			FisSpedFiscal sped = service.selecionar(exp.getClasse(), fn, false);
 			String cnpj = auth.getEmpresa()[5].replaceAll("\\D", "");
-
-			String nome;
-			if (sped.getFisSpedFiscalMes() > 9) {
-				nome = sped.getFisSpedFiscalAno() + "" + sped.getFisSpedFiscalMes();
-			} else {
-				nome = sped.getFisSpedFiscalAno() + "0" + sped.getFisSpedFiscalMes();
-			}
-			
 			String arquivo = UtilServer.PATH_EMPRESA + cnpj + "/sped/" + nome + "." + modo.getSisExpImpExtensoes();
 			File arq = new File(arquivo);
 
@@ -50,8 +41,7 @@ public class ExportarSped extends AExportacao<FisSpedFiscal> {
 		} catch (Exception e) {
 			obj = null;
 		}
-*/
-		return null;
-	}
 
+		return obj;
+	}
 }

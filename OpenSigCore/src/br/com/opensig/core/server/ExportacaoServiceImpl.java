@@ -32,13 +32,13 @@ import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
  */
 public class ExportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> implements ExportacaoService<E> {
 
-	public ExportacaoServiceImpl(){
+	public ExportacaoServiceImpl() {
 	}
-	
-	public ExportacaoServiceImpl(Autenticacao auth){
+
+	public ExportacaoServiceImpl(Autenticacao auth) {
 		super(auth);
 	}
-	
+
 	@Override
 	public String exportar(SisExpImp modo, ExpListagem<E> expLista) throws ExportacaoException {
 		return exportar(modo, null, expLista, expLista.getNome());
@@ -218,7 +218,12 @@ public class ExportacaoServiceImpl<E extends Dados> extends CoreServiceImpl<E> i
 
 				// setando os cabecalhos
 				if (imp == null) {
-					resp.addHeader("Content-Disposition", "attachment; filename=" + arquivo.toLowerCase());
+					if (obj == null) {
+						resp.addHeader("Content-Disposition", "attachment; filename=vazio.txt");
+						obj = new String("Dados nao encontrados.").getBytes();
+					} else {
+						resp.addHeader("Content-Disposition", "attachment; filename=" + arquivo.toLowerCase());
+					}
 					resp.addHeader("Pragma", "no-cache");
 					resp.addIntHeader("Expires", 0);
 					resp.addHeader("Content-Type", "application/octet-stream");

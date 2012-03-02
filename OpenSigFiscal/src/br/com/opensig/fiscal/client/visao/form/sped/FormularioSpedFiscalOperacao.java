@@ -153,7 +153,7 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 		List<String[]> meses = new ArrayList<String[]>();
 		for (int mes = 1; mes <= 12; mes++) {
 			String strMes = mes < 10 ? "0" + mes : mes + "";
-			String[] valor = new String[] { mes + "", strMes };
+			String[] valor = new String[] { strMes + "", strMes };
 			meses.add(valor);
 		}
 
@@ -220,6 +220,54 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 
 		store.load();
 		return cmbVendas;
+	}
+
+	public ComboBox getCmbSped() {
+		return cmbSped;
+	}
+
+	public void setCmbSped(ComboBox cmbSped) {
+		this.cmbSped = cmbSped;
+	}
+
+	public ComboBox getCmbAno() {
+		return cmbAno;
+	}
+
+	public void setCmbAno(ComboBox cmbAno) {
+		this.cmbAno = cmbAno;
+	}
+
+	public ComboBox getCmbMes() {
+		return cmbMes;
+	}
+
+	public void setCmbMes(ComboBox cmbMes) {
+		this.cmbMes = cmbMes;
+	}
+
+	public ComboBox getCmbCompras() {
+		return cmbCompras;
+	}
+
+	public void setCmbCompras(ComboBox cmbCompras) {
+		this.cmbCompras = cmbCompras;
+	}
+
+	public ComboBox getCmbVendas() {
+		return cmbVendas;
+	}
+
+	public void setCmbVendas(ComboBox cmbVendas) {
+		this.cmbVendas = cmbVendas;
+	}
+
+	public Checkbox getChkFinalidade() {
+		return chkFinalidade;
+	}
+
+	public void setChkFinalidade(Checkbox chkFinalidade) {
+		this.chkFinalidade = chkFinalidade;
 	}
 
 }
