@@ -291,6 +291,8 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 		venda.setComEcfVendaFechada(venda.getComEcfVendaCancelada());
 		if (Long.valueOf(venda.getComEcfVendaCpf()) != 0) {
 			venda.setComEcfVendaObservacao("Nome=" + venda.getComEcfVendaNome() + "-CPF=" + venda.getComEcfVendaCpf());
+		} else {
+			venda.setComEcfVendaObservacao("");
 		}
 		return venda;
 	}

@@ -10,7 +10,6 @@
 		<class>br.com.opensig.fiscal.shared.modelo.FisIncentivoEstado</class>
 		<class>br.com.opensig.fiscal.shared.modelo.FisSpedFiscal</class>
 		<class>br.com.opensig.fiscal.shared.modelo.FisSpedBloco</class>
-		<class>br.com.opensig.fiscal.shared.modelo.FisSpedBlocoEmpresa</class>
 		<class>br.com.opensig.empresa.shared.modelo.EmpContato</class>
 		<class>br.com.opensig.empresa.shared.modelo.EmpContatoTipo</class>
 		<class>br.com.opensig.empresa.shared.modelo.EmpEndereco</class>

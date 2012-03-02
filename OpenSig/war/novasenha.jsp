@@ -21,8 +21,7 @@
 	String nova = request.getParameter("nova");
 	String captcha = request.getParameter("captcha");
 	String msg = "";
-	String redir = "document.location = '" + request.getContextPath()
-			+ "';";
+	String redir = "document.location = '/';";
 
 	if (email == null || id == null || email.isEmpty() || id.isEmpty()) {
 		msg = "alert('Email ou Id inválidos');";
@@ -106,8 +105,7 @@
 		<form id="senha" name="senha" method="post"
 			action="novasenha.jsp?email=<%=email%>&id=<%=id%>"
 			onsubmit="return validar();">
-			<a href="http://opensig.com.br" title="OpenSIG"><img
-				src="img/logo.png" width="32px" height="32px" /> </a>
+			<a href="/" title="P&aacutegina Inicial"><img src="img/logo.png" width="32px" height="32px" /> </a>
 			<h1>Alterar Senha</h1>
 			<p>Este formulário &eacute; usado para alterar a senha no
 				sistema.</p>

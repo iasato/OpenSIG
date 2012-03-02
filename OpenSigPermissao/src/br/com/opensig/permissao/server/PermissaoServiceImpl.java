@@ -194,7 +194,7 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 			// gera a mensagem e envia o email
 			String msg = getMensagem(usuario.getSisUsuarioLogin(), usuario.getSisUsuarioSenha(), email);
 			MailServiceImpl mail = new MailServiceImpl();
-			mail.enviarEmail(null, email, "Altera&ccedil;&atilde;o de Senha!", msg);
+			mail.enviarEmail(null, email, "Alteração de Senha!", msg);
 		} catch (Exception e) {
 			throw new PermissaoException(e.getMessage());
 		}
@@ -205,8 +205,6 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 		Date hoje = new Date();
 		String data = UtilServer.formataData(hoje, "dd/MM/yyyy");
 		String hora = UtilServer.formataHora(hoje, "HH:mm:ss");
-		// onde
-		String ip = getThreadLocalRequest().getRemoteAddr();
 		// link
 		String link = getThreadLocalRequest().getRequestURL().toString().replace("/PermissaoService", "");
 		link += "/novasenha.jsp?email=" + email + "&id=" + senha;
@@ -215,7 +213,6 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 		msg = msg.replace("#link#", link);
 		msg = msg.replace("#data#", data);
 		msg = msg.replace("#hora#", hora);
-		msg = msg.replace("#ip#", ip);
 		return msg;
 	}
 

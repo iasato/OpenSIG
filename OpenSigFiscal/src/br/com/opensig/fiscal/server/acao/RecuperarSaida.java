@@ -13,7 +13,6 @@ import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.server.importar.IImportacao;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
-import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.server.NFe;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;

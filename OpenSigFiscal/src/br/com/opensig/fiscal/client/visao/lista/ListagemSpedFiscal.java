@@ -103,6 +103,7 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 				classe.setFisSpedFiscalFrete(classe.getFretes().length);
 				classe.setFisSpedFiscalVendas(classe.getVendas().length);
 				classe.setFisSpedFiscalEcf(classe.getEcfs().length);
+				classe.setFisSpedFiscalProtocolo("");
 
 				FiscalProxy<FisSpedFiscal> proxy = new FiscalProxy<FisSpedFiscal>(classe);
 				proxy.salvar(ASYNC);

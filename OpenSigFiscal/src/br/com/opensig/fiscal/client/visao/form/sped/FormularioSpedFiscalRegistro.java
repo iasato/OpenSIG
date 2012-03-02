@@ -7,21 +7,14 @@ import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
 import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
-import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.controlador.filtro.FiltroTexto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
-import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
-import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
-import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
-import br.com.opensig.fiscal.client.servico.FiscalProxy;
 import br.com.opensig.fiscal.client.visao.lista.ListagemSpedRegistro;
 import br.com.opensig.fiscal.shared.modelo.FisSpedBloco;
-import br.com.opensig.fiscal.shared.modelo.FisSpedBlocoEmpresa;
 import br.com.opensig.fiscal.shared.modelo.FisSpedFiscal;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.core.Position;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.Store;
@@ -35,7 +28,6 @@ public class FormularioSpedFiscalRegistro extends AFormulario<FisSpedBloco> {
 
 	private ListagemSpedRegistro gridRegistro;
 	private FisSpedFiscal spedFiscal;
-	private int[] preSelecionados;
 
 	public FormularioSpedFiscalRegistro(SisFuncao funcao) {
 		super(new FisSpedBloco(), funcao);
@@ -63,14 +55,6 @@ public class FormularioSpedFiscalRegistro extends AFormulario<FisSpedBloco> {
 				for (Record rec : records) {
 					if (rec.getAsBoolean("fisSpedBlocoObrigatorio")) {
 						selecionados.add(rec);
-					} else if (preSelecionados != null) {
-						int id = rec.getAsInteger("fisSpedBlocoId");
-						for (int i = 0; i < preSelecionados.length; i++) {
-							if (preSelecionados[i] == id) {
-								selecionados.add(rec);
-								break;
-							}
-						}
 					}
 				}
 				gridRegistro.getSelectionModel().selectRecords(selecionados.toArray(new Record[] {}));
@@ -109,26 +93,7 @@ public class FormularioSpedFiscalRegistro extends AFormulario<FisSpedBloco> {
 	@Override
 	public void mostrarDados() {
 		spedFiscal = (FisSpedFiscal) contexto.get("classe");
-		
-		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
-		FiscalProxy<FisSpedBlocoEmpresa> proxy = new FiscalProxy<FisSpedBlocoEmpresa>(new FisSpedBlocoEmpresa());
-		proxy.selecionar(fo, new AsyncCallback<Lista<FisSpedBlocoEmpresa>>() {
 
-			public void onSuccess(Lista<FisSpedBlocoEmpresa> result) {
-				preSelecionados = new int[result.getTotal()];
-				for (int i = 0; i < result.getTotal(); i++) {
-					preSelecionados[i] = Integer.valueOf(result.getDados()[i][1]);
-				}
-				mostrar();
-			}
-
-			public void onFailure(Throwable caught) {
-				mostrar();
-			}
-		});
-	}
-
-	private void mostrar() {
 		// filtro
 		GrupoFiltro gf = new GrupoFiltro();
 		FiltroBinario fb = new FiltroBinario(spedFiscal.getFisSpedFiscalTipo().contains("ICMS") ? "fisSpedBlocoIcmsIpi" : "fisSpedBlocoPisCofins", ECompara.IGUAL, 1);

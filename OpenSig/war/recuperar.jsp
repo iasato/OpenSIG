@@ -38,7 +38,7 @@
 <body onload="javascript:document.nfe.chave.focus();">
 	<div id="stylized" class="myform">
 		<form id="nfe" name="nfe" method="post">
-			<a href="/" title="OpenSIG"><img
+			<a href="/" title="P&aacutegina Inicial"><img
 				src="img/logo.png" width="32px" height="32px" /> </a>
 			<h1>Baixar Nota Fiscal Eletrônica</h1>
 			<p>Este formulário &eacute; usado para baixar os arquivos da NFe.</p>

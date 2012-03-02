@@ -135,6 +135,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			ent.setEmpEntidadePessoa(auth.getEmpresa()[4]);
 			ent.setEmpEntidadeDocumento1(auth.getEmpresa()[5]);
 			ent.setEmpEntidadeDocumento2(auth.getEmpresa()[6]);
+			ent.setEmpEntidadeObservacao("");
 			empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
 			empresa.setEmpEntidade(ent);
 		} else {
@@ -143,7 +144,6 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 	}
 
 	private void validarCompra() throws OpenSigException {
-
 		Ide ide = nfe.getInfNFe().getIde();
 		ICMSTot tot = nfe.getInfNFe().getTotal().getICMSTot();
 
@@ -186,6 +186,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			compra.setComCompraValorNota(Double.valueOf(tot.getVNF()));
 			compra.setComCompraPaga(nfe.getInfNFe().getCobr() != null);
 			compra.setFinPagar(getPagar());
+			compra.setComCompraObservacao("");
 		}
 	}
 
@@ -201,6 +202,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		List<FinPagamento> pagamentos = new ArrayList<FinPagamento>();
 		pagar.setFinConta(new FinConta(Integer.valueOf(auth.getConf().get("conta.padrao"))));
 		pagar.setFinPagamentos(pagamentos);
+		pagar.setFinPagarObservacao("");
 
 		if (nfe.getInfNFe().getCobr() != null) {
 			List<Dup> duplicatas = nfe.getInfNFe().getCobr().getDup();
@@ -229,6 +231,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 				pag.setFinPagamentoCadastro(new Date());
 				pag.setFinPagamentoVencimento(dtData);
 				pag.setFinPagar(pagar);
+				pag.setFinPagamentoObservacao("");
 				pagamentos.add(pag);
 				par++;
 			}
@@ -274,6 +277,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			enti.setEmpEntidadeDocumento2(emit.getIE());
 			enti.setEmpEntidadeAtivo(true);
 			enti.setEmpEntidadePessoa(auth.getConf().get("txtJuridica"));
+			enti.setEmpEntidadeObservacao("");
 
 			// seta o endereco
 			EmpEndereco endereco = new EmpEndereco();

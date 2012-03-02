@@ -465,19 +465,15 @@ public class GerarNfe extends Chain {
 			det.setNItem((i++) + "");
 			// cod produto
 			Prod prod = new Prod();
-			if (pp.getProdProdutoBarra().equals("")) {
+			if (pp.getProdProdutoBarra() == null) {
 				prod.setCProd(UtilServer.formataNumero(pp.getProdProdutoId(), 6, 0, false));
 			} else {
-				prod.setCProd(pp.getProdProdutoBarra().toString());
+				prod.setCProd(pp.getProdProdutoBarra());
 			}
 			// barra
-			prod.setCEAN(pp.getProdProdutoBarra());
+			prod.setCEAN(pp.getProdProdutoBarra() == null ? "" : pp.getProdProdutoBarra());
 			// descricao
-			if (pp.getProdProdutoReferencia() != null && !pp.getProdProdutoReferencia().equals("")) {
-				prod.setXProd(pp.getProdProdutoDescricao().trim() + " REF-" + pp.getProdProdutoReferencia().trim());
-			} else {
-				prod.setXProd(pp.getProdProdutoDescricao().trim());
-			}
+			prod.setXProd(pp.getProdProdutoDescricao().trim());
 			// ncm
 			prod.setNCM(pp.getProdProdutoNcm());
 			// cfop
@@ -493,7 +489,7 @@ public class GerarNfe extends Chain {
 			valorProd += Double.valueOf(strProd);
 			prod.setVProd(strProd);
 			// barra do tributo
-			prod.setCEANTrib(pp.getProdProdutoBarra());
+			prod.setCEANTrib(pp.getProdProdutoBarra() == null ? "" : pp.getProdProdutoBarra());
 			// unidade do tributo
 			prod.setUTrib(pp.getProdEmbalagem().getProdEmbalagemNome());
 			// quantidde do tributo
