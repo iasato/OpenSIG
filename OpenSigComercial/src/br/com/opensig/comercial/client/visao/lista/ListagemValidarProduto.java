@@ -474,7 +474,12 @@ public class ListagemValidarProduto {
 		final Store storeNatureza = new Store(proxy, new ArrayReader(new RecordDef(fdNatureza)), true);
 		storeNatureza.addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
-				cmbNatureza.setValue(records[0].getAsString("comNaturezaId"));
+				for(Record rec : records){
+					if(rec.getAsString("comNaturezaNome").equalsIgnoreCase(OpenSigCore.i18n.txtCompra())){
+						cmbNatureza.setValue(rec.getAsString("comNaturezaId"));
+						break;
+					}
+				}
 				txtFrete.setValue(compra.getComCompraValorFrete());
 				String data = DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(compra.getComCompraRecebimento());
 				dtRecebimento.setValue(data);

@@ -18,7 +18,7 @@
 		<init-param>
 			<description>url</description>
 			<param-name>eclipselink.jdbc.url</param-name>
-			<param-value>jdbc:mysql://127.0.0.1:3306/opensig_at</param-value>
+			<param-value>jdbc:mysql://127.0.0.1:3306/opensig</param-value>
 		</init-param>
 		<init-param>
 			<description>driver</description>
@@ -333,12 +333,6 @@
 		<description>Layout dos módulos [menu | lateral]</description>
 		<param-name>login.modulos</param-name>
 		<param-value>menu</param-value>
-	</context-param>
-	<context-param>
-		<description>A diferença entre o horário do servidor em relação ao
-			cliente!</description>
-		<param-name>sistema.verao</param-name>
-		<param-value>0</param-value>
 	</context-param>
 	<context-param>
 		<description>Chave mestre usada para criptografar outras senhas.</description>
