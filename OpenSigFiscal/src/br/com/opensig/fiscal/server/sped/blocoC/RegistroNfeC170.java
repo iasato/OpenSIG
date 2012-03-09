@@ -48,7 +48,7 @@ public class RegistroNfeC170 extends ARegistro<DadosC170, Det> {
 				}
 			}
 		} else {
-			d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
+			d.setCst_icms("0" + produto.getProdTributacao().getProdTributacaoCst());
 			if (d.getCst_icms().endsWith("00")) {
 				ICMS00 icms = dados.getImposto().getICMS().getICMS00();
 				if (icms != null) {

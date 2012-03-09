@@ -321,7 +321,7 @@ public class EditarFiltrados {
 
 			if (cc != null) {
 				String[] valor = new String[] { lista.getModelos().getColumnHeader(i), lista.getModelos().getDataIndex(i) };
-				if (!cc.getFixed() && (todos || lista.validarCampoNumero(valor[1])) && (!valor[1].contains(".") || (valor[1].split("\\.").length == 2 && lista.validarCampoInteiro(valor[1])))) {
+				if (!cc.getFixed() && (todos || lista.validarCampoNumero(valor[1])) && valor[1].split("\\.").length < 3) {
 					valores.add(valor);
 				}
 			}

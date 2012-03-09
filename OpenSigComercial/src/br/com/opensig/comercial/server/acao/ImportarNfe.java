@@ -435,13 +435,6 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 
 	private ProdProduto getProduto(Prod prod, MyIcms icms, String ipi) throws OpenSigException {
 		String ean = prod.getCEAN();
-		// ref + fornecedor
-		GrupoFiltro grupoRef = new GrupoFiltro();
-		FiltroTexto ft = new FiltroTexto("prodProdutoReferencia", ECompara.CONTEM, prod.getCProd());
-		grupoRef.add(ft, EJuncao.E);
-		FiltroObjeto fo = new FiltroObjeto("empFornecedor", ECompara.IGUAL, fornecedor);
-		grupoRef.add(fo);
-
 		// barra
 		GrupoFiltro grupoBarra = new GrupoFiltro();
 		FiltroTexto ft1 = new FiltroTexto("prodProdutoBarra", ECompara.IGUAL, ean);
@@ -451,17 +444,9 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		ft2.setCampoPrefixo("t2.");
 		grupoBarra.add(ft2, EJuncao.OU);
 
-		// filtro geral
-		GrupoFiltro gf = null;
-		if (ean != null) {
-			gf = new GrupoFiltro(EJuncao.OU, new IFiltro[] { grupoBarra, grupoRef });
-		} else {
-			gf = grupoRef;
-		}
-
 		// busca
 		ProdProduto produto = new ProdProduto();
-		Lista<ProdProduto> lista = servico.selecionar(produto, 0, 1, gf, false);
+		Lista<ProdProduto> lista = servico.selecionar(produto, 0, 1, grupoBarra, false);
 		// verifica se achou
 		if (lista.getTotal() == 1) {
 			produto = lista.getLista().get(0);

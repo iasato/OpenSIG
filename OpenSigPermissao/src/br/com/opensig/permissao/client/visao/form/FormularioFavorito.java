@@ -220,7 +220,7 @@ public class FormularioFavorito extends AFormulario<SisFavorito> {
 			campo.setSisFavoritoCampoFiltro2Compara("");
 			campo.setSisFavoritoCampoFiltro1Valor("");
 			campo.setSisFavoritoCampoFiltro2Valor("");
-			setCampoFiltro(campo);
+			setCampoFiltro(campo, lista.getProxy().getFiltroAtual().toArray());
 			campos.add(campo);
 		}
 
@@ -288,12 +288,14 @@ public class FormularioFavorito extends AFormulario<SisFavorito> {
 		txtNome.focus(true);
 	}
 
-	private void setCampoFiltro(SisFavoritoCampo campo) {
+	private void setCampoFiltro(SisFavoritoCampo campo, IFiltro[] filtros) {
 		boolean filtro1 = true;
 
 		try {
-			for (IFiltro filtro : lista.getProxy().getFiltroAtual().toArray()) {
-				if (campo.getSisFavoritoCampoNome().equals(filtro.getCampo())) {
+			for (IFiltro filtro : filtros) {
+				if (filtro instanceof GrupoFiltro) {
+					setCampoFiltro(campo, ((GrupoFiltro) filtro).toArray());
+				} else if (campo.getSisFavoritoCampoNome().equals(filtro.getCampo())) {
 					if (campo.getSisFavoritoCampoTipo().equals(IntegerFieldDef.class.getName()) || campo.getSisFavoritoCampoTipo().equals(FloatFieldDef.class.getName())) {
 						if (filtro1) {
 							campo.setSisFavoritoCampoFiltro1Compara(filtro.getCompara().name());

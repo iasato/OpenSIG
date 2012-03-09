@@ -195,7 +195,7 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 	@Override
 	public void setExportacao(final SisExpImp expimp, EModo modo, EModo modo2, final AsyncCallback<String> async) {
 		if (expimp.getSisExpImpClasse().equals("br.com.opensig.fiscal.server.acao.ExportarSped")) {
-			final Window wnd = new Window("", 360, 130, true, false);
+			final Window wnd = new Window("", 360, 125, true, false);
 			final FormularioSpedFiscalOperacao frm = new FormularioSpedFiscalOperacao(classe, funcao);
 			frm.setHeader(false);
 

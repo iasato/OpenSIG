@@ -5,6 +5,9 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.beanio.BeanWriter;
+import org.beanio.StreamFactory;
+
 import br.com.opensig.comercial.shared.modelo.ComEcfZ;
 import br.com.opensig.comercial.shared.modelo.ComEcfZTotais;
 import br.com.opensig.core.server.UtilServer;
@@ -14,7 +17,18 @@ public class RegistroC405 extends ARegistro<DadosC405, ComEcfZ> {
 
 	@Override
 	public void executar() {
-		super.executar();
+		// pega o Z
+		BeanWriter out = null;
+		try {
+			StreamFactory factory = StreamFactory.newInstance();
+			factory.load(getClass().getResourceAsStream(bean));
+			out = factory.createWriter("EFD", escritor);
+			bloco = getDados(dados);
+			normalizar(bloco);
+		} catch (Exception e) {
+			qtdLinhas = 0;
+			UtilServer.LOG.error("Erro na geracao do Registro -> " + bean, e);
+		}
 
 		// zera dos sub-totais os itens do analitico
 		for (ComEcfZTotais tot : dados.getComZTotais()) {
@@ -63,6 +77,18 @@ public class RegistroC405 extends ARegistro<DadosC405, ComEcfZ> {
 				}
 			}
 		}
+
+		// escreve o Z com o total arrumado
+		double totalZ = 0.00;
+		for (ComEcfZTotais tot : dados.getComZTotais()) {
+			if (tot.getComEcfZTotaisCodigo().contains("T") || tot.getComEcfZTotaisCodigo().endsWith("1")) {
+				totalZ += tot.getComEcfZTotaisValor();
+			}
+		}
+		dados.setComEcfZBruto(totalZ);
+		out.write(bloco);
+		out.flush();
+		qtdLinhas++;
 
 		// sub totais da leitura Z
 		RegistroC420 r420 = new RegistroC420();

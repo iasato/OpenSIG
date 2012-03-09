@@ -73,9 +73,11 @@ public class RegistroC400 extends ARegistro<DadosC400, ComEcf> {
 		r405.setEcfs(ecfs);
 
 		for (ComEcfZ z : ecfz.getLista()) {
-			r405.setDados(z);
-			r405.executar();
-			qtdLinhas += r405.getQtdLinhas();
+			if (z.getComEcfZBruto() > 0.00) {
+				r405.setDados(z);
+				r405.executar();
+				qtdLinhas += r405.getQtdLinhas();
+			}
 		}
 	}
 

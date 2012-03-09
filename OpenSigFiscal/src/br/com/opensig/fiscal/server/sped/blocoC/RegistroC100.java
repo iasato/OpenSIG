@@ -132,43 +132,46 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				out.write(obj);
 				out.flush();
 
-				// caso pagamento a prazo e nao NFe
-				if (!venda.getComVendaNfe() && obj.getInd_pgto().equals("1")) {
-					RegistroC140 r140 = new RegistroC140<FinReceber>();
-					r140.setDados(venda.getFinReceber());
-					r140.setEsquitor(escritor);
-					r140.setAuth(auth);
-					r140.executar();
-					qtdLinhas += r140.getQtdLinhas();
-				}
-
-				// produtos
-				if (venda.getComVendaNfe()) {
-					RegistroNfeC170 r170 = new RegistroNfeC170();
-					r170.setAuth(auth);
-					r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
-					r170.setNatureza(venda.getComNatureza().getComNaturezaId() + "");
-					int item = 0;
-					// para NFe de saida nao precisa
-					for (Det det : nfe.getInfNFe().getDet()) {
-						r170.setProduto(venda.getComVendaProdutos().get(item++).getProdProduto());
-						setAnalitico(r170.getDados(det));
+				// so para vendas nao canceladas
+				if (!venda.getComVendaCancelada()) {
+					// caso pagamento a prazo e nao NFe
+					if (!venda.getComVendaNfe() && obj.getInd_pgto().equals("1")) {
+						RegistroC140 r140 = new RegistroC140<FinReceber>();
+						r140.setDados(venda.getFinReceber());
+						r140.setEsquitor(escritor);
+						r140.setAuth(auth);
+						r140.executar();
+						qtdLinhas += r140.getQtdLinhas();
 					}
-				} else if (!venda.getComVendaCancelada()) {
-					RegistroC170<ComVendaProduto> r170 = new RegistroC170<ComVendaProduto>();
-					r170.setEsquitor(escritor);
-					r170.setAuth(auth);
-					r170.setSped(sped);
-					for (ComVendaProduto prod : venda.getComVendaProdutos()) {
-						r170.setDados(prod);
-						r170.executar();
-						setAnalitico(r170.getBloco());
-						qtdLinhas += r170.getQtdLinhas();
-					}
-				}
 
-				// analitico das vendas
-				getAnalitico();
+					// produtos
+					if (venda.getComVendaNfe()) {
+						RegistroNfeC170 r170 = new RegistroNfeC170();
+						r170.setAuth(auth);
+						r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
+						r170.setNatureza(venda.getComNatureza().getComNaturezaId() + "");
+						int item = 0;
+						// para NFe de saida nao precisa informar os produtos
+						for (Det det : nfe.getInfNFe().getDet()) {
+							r170.setProduto(venda.getComVendaProdutos().get(item++).getProdProduto());
+							setAnalitico(r170.getDados(det));
+						}
+					} else {
+						RegistroC170<ComVendaProduto> r170 = new RegistroC170<ComVendaProduto>();
+						r170.setEsquitor(escritor);
+						r170.setAuth(auth);
+						r170.setSped(sped);
+						for (ComVendaProduto prod : venda.getComVendaProdutos()) {
+							r170.setDados(prod);
+							r170.executar();
+							setAnalitico(r170.getBloco());
+							qtdLinhas += r170.getQtdLinhas();
+						}
+					}
+
+					// analitico da venda
+					getAnalitico();
+				}
 			}
 		} catch (Exception e) {
 			qtdLinhas = 0;
@@ -294,7 +297,8 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				// TODO em 01/07/2012 mudar pra 2
 				d.setInd_pgto("9");
 			}
-			d.setVl_desc(venda.getComVendaValorBruto() - venda.getComVendaValorLiquido());
+			double desc = venda.getComVendaValorBruto() - venda.getComVendaValorLiquido();
+			d.setVl_desc(desc > 0 ? desc : 0);
 			d.setVl_merc(venda.getComVendaValorLiquido());
 			// TODO em 01/07/2012 mudar
 			d.setInd_frt("9");
