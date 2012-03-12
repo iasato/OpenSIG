@@ -18,6 +18,7 @@ public class RegistroC405 extends ARegistro<DadosC405, ComEcfZ> {
 	@Override
 	public void executar() {
 		// pega o Z
+		qtdLinhas = 0;
 		BeanWriter out = null;
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
@@ -85,7 +86,7 @@ public class RegistroC405 extends ARegistro<DadosC405, ComEcfZ> {
 				totalZ += tot.getComEcfZTotaisValor();
 			}
 		}
-		dados.setComEcfZBruto(totalZ);
+		bloco.setVl_brt(totalZ);
 		out.write(bloco);
 		out.flush();
 		qtdLinhas++;

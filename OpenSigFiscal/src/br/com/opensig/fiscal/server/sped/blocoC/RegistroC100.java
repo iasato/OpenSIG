@@ -112,14 +112,18 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				String cod_sit = venda.getComVendaCancelada() ? "02" : "00";
 
 				if (venda.getComVendaNfe()) {
-					// pega a NFe
-					String xml = venda.getFisNotaSaida().getFisNotaSaidaXml();
-					int I = xml.indexOf("<infNFe");
-					int F = xml.indexOf("</NFe>") + 6;
-					String texto = "<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">" + xml.substring(I, F);
+					try {
+						// pega a NFe
+						String xml = venda.getFisNotaSaida().getFisNotaSaidaXml();
+						int I = xml.indexOf("<infNFe");
+						int F = xml.indexOf("</NFe>") + 6;
+						String texto = "<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">" + xml.substring(I, F);
 
-					nfe = UtilServer.xmlToObj(texto, "br.com.opensig.nfe");
-					obj = getDados(nfe, cod_sit, venda.getComVendaData());
+						nfe = UtilServer.xmlToObj(texto, "br.com.opensig.nfe");
+						obj = getDados(nfe, cod_sit, venda.getComVendaData());
+					} catch (Exception e) {
+						obj = getVenda(venda, cod_sit);
+					}
 				} else {
 					obj = getVenda(venda, cod_sit);
 				}
@@ -234,7 +238,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 		d.setDt_e_s(compra.getComCompraRecebimento());
 		d.setVl_doc(compra.getComCompraValorNota());
 		// verifica se teve pagamento
-		if (compra.getComCompraPaga()) {
+		if (compra.getComCompraPaga() && compra.getFinPagar() != null) {
 			if (compra.getFinPagar().getFinPagamentos().size() > 1 || compra.getFinPagar().getFinPagamentos().get(0).getFinForma().getFinFormaId() > 1) {
 				d.setInd_pgto("1");
 			} else {
