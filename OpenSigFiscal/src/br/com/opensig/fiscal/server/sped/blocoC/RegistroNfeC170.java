@@ -34,7 +34,11 @@ public class RegistroNfeC170 extends ARegistro<DadosC170, Det> {
 		d.setVl_item(Double.valueOf(prod.getVProd()));
 		d.setInd_mov("0");
 		int cfop = Integer.valueOf(prod.getCFOP());
-		d.setCfop(cfop >= 5000 ? cfop - 4000 : cfop);
+		if (cfop == 5929 || cfop == 6929) {
+			d.setCfop(cfop - 4827);
+		} else {
+			d.setCfop(cfop >= 5000 ? cfop - 4000 : cfop);
+		}
 		d.setCod_nat(natureza);
 
 		if (crt.equals("1")) {

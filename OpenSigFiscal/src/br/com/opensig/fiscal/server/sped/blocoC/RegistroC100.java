@@ -203,6 +203,13 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 		if (cod_sit.equals("00")) {
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 			d.setDt_doc(sdf.parse(ide.getDEmi()));
+			// data de saida/entrada
+			if (ide.getDSaiEnt() != null) {
+				Date e_s = sdf.parse(ide.getDSaiEnt());
+				data = e_s.compareTo(data) == 1 ? e_s : data;
+			} else {
+				data = d.getDt_doc().compareTo(data) == 1 ? d.getDt_doc() : data;
+			}
 			d.setDt_e_s(data);
 			d.setVl_doc(Double.valueOf(icms.getVNF()));
 			d.setInd_pgto(ide.getIndPag());

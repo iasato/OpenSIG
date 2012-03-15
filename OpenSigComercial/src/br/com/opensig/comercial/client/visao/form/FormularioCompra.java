@@ -541,7 +541,8 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 	private ComboBox getNatureza() {
 		FieldDef[] fdNatureza = new FieldDef[] { new IntegerFieldDef("comNaturezaId"), new IntegerFieldDef("empEmpresa.empEmpresaId"), new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"),
 				new StringFieldDef("comNaturezaNome"), new StringFieldDef("comNaturezaDescricao"), new IntegerFieldDef("comNaturezaCfopDentro"), new IntegerFieldDef("comNaturezaCfopFora") };
-		CoreProxy<ComNatureza> proxy = new CoreProxy<ComNatureza>(new ComNatureza());
+		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
+		CoreProxy<ComNatureza> proxy = new CoreProxy<ComNatureza>(new ComNatureza(), fo);
 		final Store storeNatureza = new Store(proxy, new ArrayReader(new RecordDef(fdNatureza)), true);
 		storeNatureza.addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
