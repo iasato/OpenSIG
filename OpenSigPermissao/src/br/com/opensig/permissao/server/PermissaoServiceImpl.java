@@ -66,13 +66,13 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 
 	private List<SisAcao> acoesPadroes = null;
 
-	public PermissaoServiceImpl(){
+	public PermissaoServiceImpl() {
 	}
-	
-	public PermissaoServiceImpl(Autenticacao auth){
+
+	public PermissaoServiceImpl(Autenticacao auth) {
 		super(auth);
 	}
-	
+
 	public Autenticacao entrar(String usuario, String senha, String captcha, int empresa, boolean permissao) throws PermissaoException {
 		// recupera a sessão atual
 		HttpSession sessao = getThreadLocalRequest().getSession();
@@ -136,11 +136,12 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 
 				// valida login se nao for somente para permissao
 				if (!permissao) {
-					// usuario de sistema podem ter mais de uma sessao logada
-					for (Entry<HttpSession, Autenticacao> entry : SessionManager.LOGIN.entrySet()) {
-						if (auth.equals(entry.getValue())) {
-							SessionManager.destruir(entry.getKey());
-							break;
+					if (!sisUsuario.getSistema()) {
+						for (Entry<HttpSession, Autenticacao> entry : SessionManager.LOGIN.entrySet()) {
+							if (auth.equals(entry.getValue())) {
+								SessionManager.destruir(entry.getKey());
+								break;
+							}
 						}
 					}
 

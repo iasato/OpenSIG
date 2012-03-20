@@ -64,14 +64,12 @@ public class AlterarSenha {
 		txtSenha.setInputType("password");
 		txtSenha.setInvalidText(OpenSigCore.i18n.msgCampoInvalido());
 		txtSenha.setValidator(new Validator() {
-
 			public boolean validate(String value) throws ValidationException {
 				String criptado = OpenSigCoreJS.sha1(value);
 				return criptado.equalsIgnoreCase(Ponte.getLogin().getSenha());
 			}
 		});
 		txtSenha.addKeyListener(EventObject.ENTER, new KeyListener() {
-
 			public void onKey(int key, EventObject e) {
 				entrar();
 			}
@@ -85,7 +83,6 @@ public class AlterarSenha {
 		txtNova.setMaxLength(40);
 		txtNova.setInputType("password");
 		txtNova.addKeyListener(EventObject.ENTER, new KeyListener() {
-
 			public void onKey(int key, EventObject e) {
 				entrar();
 			}
@@ -100,13 +97,11 @@ public class AlterarSenha {
 		txtConfirma.setInputType("password");
 		txtConfirma.setInvalidText(OpenSigCore.i18n.msgComparaSenha());
 		txtConfirma.setValidator(new Validator() {
-
 			public boolean validate(String value) throws ValidationException {
 				return value.toUpperCase().equals(txtNova.getValueAsString().toUpperCase());
 			}
 		});
 		txtConfirma.addKeyListener(EventObject.ENTER, new KeyListener() {
-
 			public void onKey(int key, EventObject e) {
 				entrar();
 			}

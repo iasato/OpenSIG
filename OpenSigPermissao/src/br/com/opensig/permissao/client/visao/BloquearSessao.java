@@ -58,14 +58,12 @@ public class BloquearSessao {
 		txtSenha.setInputType("password");
 		txtSenha.setInvalidText(OpenSigCore.i18n.msgCampoInvalido());
 		txtSenha.setValidator(new Validator() {
-
 			public boolean validate(String value) throws ValidationException {
 				String criptado = OpenSigCoreJS.sha1(value);
 				return criptado.equalsIgnoreCase(Ponte.getLogin().getSenha());
 			}
 		});
 		txtSenha.addKeyListener(EventObject.ENTER, new KeyListener() {
-
 			public void onKey(int key, EventObject e) {
 				entrar();
 			}

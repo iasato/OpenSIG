@@ -38,7 +38,6 @@ import com.gwtext.client.widgets.Toolbar;
 
 public class Ponte extends Observable {
 
-	private static final long serialVersionUID = 2405417076500929799L;
 	private static ILogin login;
 	private static IFavorito favorito;
 	private static Toolbar barraMenu;

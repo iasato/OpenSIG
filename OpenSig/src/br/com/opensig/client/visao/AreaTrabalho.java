@@ -66,7 +66,14 @@ public class AreaTrabalho extends Panel implements Observer, Visitable {
 		// seta o tema definido
 		String tema = RootPanel.get("tema").getElement().getInnerText();
 		CSS.swapStyleSheet("estilo", tema);
-		new EntrarSistema();
+		PermissaoProxy login = new PermissaoProxy();
+		login.sair(new AsyncCallback() {
+			public void onFailure(final Throwable caught) {
+			}
+			public void onSuccess(Object result) {
+				new EntrarSistema();
+			}
+		});
 	}
 
 	@Override
@@ -96,13 +103,12 @@ public class AreaTrabalho extends Panel implements Observer, Visitable {
 	public void accept(Visitor visitor) {
 	}
 
-	// mantenhem a sessao ativa
+	// mantem a sessao ativa
 	private void ativo() {
 		PermissaoProxy proxy = new PermissaoProxy();
 		proxy.isLogado(new AsyncCallback<Boolean>() {
 			public void onSuccess(Boolean result) {
 				if (!result) {
-					// caso a sessao tenha morrido
 					Window.Location.reload();
 				}
 			}

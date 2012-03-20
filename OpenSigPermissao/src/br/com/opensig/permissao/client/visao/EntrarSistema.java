@@ -36,6 +36,7 @@ import com.gwtext.client.widgets.form.event.FormPanelListenerAdapter;
 import com.gwtext.client.widgets.layout.ColumnLayoutData;
 import com.gwtext.client.widgets.layout.FitLayout;
 import com.gwtextux.client.widgets.image.Image;
+import com.gwtextux.client.widgets.image.ImageListenerAdapter;
 
 public class EntrarSistema {
 
@@ -66,7 +67,6 @@ public class EntrarSistema {
 		txtUsuario.setAllowBlank(false);
 		txtUsuario.setMaxLength(40);
 		txtUsuario.addKeyListener(EventObject.ENTER, new KeyListener() {
-
 			public void onKey(int key, EventObject e) {
 				entrar();
 			}
@@ -78,7 +78,6 @@ public class EntrarSistema {
 		txtSenha.setMaxLength(40);
 		txtSenha.setInputType("password");
 		txtSenha.addKeyListener(EventObject.ENTER, new KeyListener() {
-
 			public void onKey(int key, EventObject e) {
 				entrar();
 			}
@@ -92,6 +91,12 @@ public class EntrarSistema {
 
 		String captcha = RootPanel.get("captcha").getElement().getInnerText();
 		imgCaptcha = new Image("imgCaptcha", GWT.getHostPageBaseURL() + "PermissaoService?data=" + new Date().getTime());
+		imgCaptcha.setTooltip(OpenSigCore.i18n.msgRecarregar());
+		imgCaptcha.addListener(new ImageListenerAdapter(){
+			public void onClick(Image image, EventObject e) {
+				image.setSrc(GWT.getHostPageBaseURL() + "PermissaoService?data=" + new Date().getTime());
+			}
+		});
 
 		txtCaptcha = new TextField(OpenSigCore.i18n.txtImagem(), "captcha", 50);
 		txtCaptcha.setAllowBlank(false);
@@ -99,7 +104,6 @@ public class EntrarSistema {
 		txtCaptcha.setMaxLength(5);
 		txtCaptcha.setRegex("\\w");
 		txtCaptcha.addKeyListener(EventObject.ENTER, new KeyListener() {
-
 			public void onKey(int key, EventObject e) {
 				entrar();
 			}
