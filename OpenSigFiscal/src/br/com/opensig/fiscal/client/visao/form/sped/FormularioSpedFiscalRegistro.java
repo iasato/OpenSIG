@@ -40,8 +40,8 @@ public class FormularioSpedFiscalRegistro extends AFormulario<FisSpedBloco> {
 		setLabelAlign(Position.TOP);
 		setButtonAlign(Position.CENTER);
 		setMargins(1);
-		setWidth(800);
-		setHeight(600);
+		setWidth(1000);
+		setHeight(700);
 
 		add(new Hidden("id", "0"));
 		gridRegistro = new ListagemSpedRegistro(this);

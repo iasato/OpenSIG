@@ -11,10 +11,9 @@
 
 	<!-- Scripts do framework JQuery -->
 	<script src="../js/ext/adapter/jquery/jquery_mini.js" />
-	<script src="../js/date.js" />
 
 	<!-- Utilizando o SigCore, modulo principal do sistema -->
-	<inherits name='br.com.opensig.core.OpenSigCore' />
+	<inherits name="br.com.opensig.core.OpenSigCore" />
 	<inherits name="br.com.opensig.permissao.OpenSigPermissao" />
 
 	<!-- Modulos Sig -->

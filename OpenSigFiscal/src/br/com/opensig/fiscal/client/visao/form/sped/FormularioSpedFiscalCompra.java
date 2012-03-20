@@ -46,8 +46,8 @@ public class FormularioSpedFiscalCompra extends AFormulario<ComCompra> {
 		setLabelAlign(Position.TOP);
 		setButtonAlign(Position.CENTER);
 		setMargins(1);
-		setWidth(800);
-		setHeight(600);
+		setWidth(1000);
+		setHeight(700);
 
 		add(new Hidden("id", "0"));
 		gridCompra = new ListagemCompra(this) {
@@ -69,7 +69,7 @@ public class FormularioSpedFiscalCompra extends AFormulario<ComCompra> {
 				// seta atributos
 				setHeader(false);
 				setAutoScroll(true);
-				setHeight(600);
+				setHeight(660);
 				setMargins(0);
 				setLoadMask(true);
 				setStripeRows(true);

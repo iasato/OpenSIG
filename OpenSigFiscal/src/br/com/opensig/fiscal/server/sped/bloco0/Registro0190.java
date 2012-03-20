@@ -15,6 +15,7 @@ import br.com.opensig.comercial.shared.modelo.ComVendaProduto;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.fiscal.server.sped.ARegistro;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
+import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 public class Registro0190 extends ARegistro<Dados0190, ProdEmbalagem> {
 
@@ -60,6 +61,16 @@ public class Registro0190 extends ARegistro<Dados0190, ProdEmbalagem> {
 							out.flush();
 							embalagens.add(eProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
 						}
+					}
+				}
+			}
+			// estoque
+			if (estoque != null) {
+				for(ProdProduto prod : estoque){
+					if (!embalagens.contains(prod.getProdEmbalagem().getProdEmbalagemId())) {
+						out.write(getDados(prod.getProdEmbalagem()));
+						out.flush();
+						embalagens.add(prod.getProdEmbalagem().getProdEmbalagemId());
 					}
 				}
 			}

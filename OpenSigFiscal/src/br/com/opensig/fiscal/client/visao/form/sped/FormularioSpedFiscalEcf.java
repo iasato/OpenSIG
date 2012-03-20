@@ -40,8 +40,8 @@ public class FormularioSpedFiscalEcf extends AFormulario<ComEcf> {
 		setLabelAlign(Position.TOP);
 		setButtonAlign(Position.CENTER);
 		setMargins(1);
-		setWidth(600);
-		setHeight(200);
+		setWidth(1000);
+		setHeight(700);
 
 		add(new Hidden("id", "0"));
 		gridEcf = new ListagemEcf(this) {
@@ -63,7 +63,7 @@ public class FormularioSpedFiscalEcf extends AFormulario<ComEcf> {
 				// seta atributos
 				setHeader(false);
 				setAutoScroll(true);
-				setHeight(600);
+				setHeight(660);
 				setMargins(0);
 				setLoadMask(true);
 				setStripeRows(true);

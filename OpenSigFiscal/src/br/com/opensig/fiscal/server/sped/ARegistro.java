@@ -18,6 +18,7 @@ import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.fiscal.client.servico.FiscalService;
 import br.com.opensig.fiscal.shared.modelo.FisSpedBloco;
 import br.com.opensig.fiscal.shared.modelo.FisSpedFiscal;
+import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 
@@ -36,6 +37,7 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 	protected List<ComFrete> fretes;
 	protected List<ComVenda> vendas;
 	protected List<ComEcfVenda> ecfs;
+	protected List<ProdProduto> estoque;
 	protected E bloco;
 	protected T dados;
 
@@ -97,15 +99,15 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 	protected abstract E getDados(T dados) throws Exception;
 
 	@Override
-	public File getLeitor(){
+	public File getLeitor() {
 		return this.leitor;
 	}
-	
+
 	@Override
-	public void setLeitor(File leitor){
+	public void setLeitor(File leitor) {
 		this.leitor = leitor;
 	}
-	
+
 	@Override
 	public Writer getEscritor() {
 		return escritor;
@@ -234,6 +236,16 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 	@Override
 	public void setEcfs(List<ComEcfVenda> ecfs) {
 		this.ecfs = ecfs;
+	}
+
+	@Override
+	public List<ProdProduto> getEstoque() {
+		return this.estoque;
+	}
+
+	@Override
+	public void setEstoque(List<ProdProduto> estoque) {
+		this.estoque = estoque;
 	}
 
 	@Override

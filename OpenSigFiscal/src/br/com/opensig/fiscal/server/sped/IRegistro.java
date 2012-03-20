@@ -13,6 +13,7 @@ import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.fiscal.client.servico.FiscalService;
 import br.com.opensig.fiscal.shared.modelo.FisSpedBloco;
 import br.com.opensig.fiscal.shared.modelo.FisSpedFiscal;
+import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 public interface IRegistro<E,T> {
 
@@ -71,6 +72,10 @@ public interface IRegistro<E,T> {
 	public List<ComEcfVenda> getEcfs();
 	
 	public void setEcfs(List<ComEcfVenda> ecfs);
+	
+	public List<ProdProduto> getEstoque();
+	
+	public void setEstoque(List<ProdProduto> estoque);
 	
 	public T getDados();
 	

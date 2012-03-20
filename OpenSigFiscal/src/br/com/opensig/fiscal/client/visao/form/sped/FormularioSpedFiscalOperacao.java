@@ -81,7 +81,7 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 			cmbSped.setValue(classe.getFisSpedFiscalTipo());
 			cmbAno.setValue(classe.getFisSpedFiscalAno() + "");
 			cmbMes.setValue(classe.getFisSpedFiscalMes() > 9 ? classe.getFisSpedFiscalMes() + "" : "0" + classe.getFisSpedFiscalMes());
-		
+
 			cmbSped.disable();
 			cmbAno.disable();
 			cmbMes.disable();
@@ -103,9 +103,9 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 
 	private ComboBox getSped() {
 		final String valor1 = "ICMS_IPI";
-		// final String valor2 = "PIS_COFINS";
+		final String valor2 = "CONTRIBUICOES";
 
-		Store store = new SimpleStore(new String[] { "id", "valor" }, new String[][] { new String[] { valor1, valor1 } });
+		Store store = new SimpleStore(new String[] { "id", "valor" }, new String[][] { new String[] { valor1, valor1 }, new String[] { valor2, valor2 } });
 		store.addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
 				cmbSped.setValue(valor1);
@@ -153,7 +153,7 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 		List<String[]> meses = new ArrayList<String[]>();
 		for (int mes = 1; mes <= 12; mes++) {
 			String strMes = mes < 10 ? "0" + mes : mes + "";
-			String[] valor = new String[] { strMes + "", strMes };
+			String[] valor = new String[] { strMes, strMes };
 			meses.add(valor);
 		}
 
@@ -167,7 +167,7 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 		cmbMes.setMode(ComboBox.LOCAL);
 		cmbMes.setTriggerAction(ComboBox.ALL);
 		cmbMes.setAllowBlank(false);
-		
+
 		store.load();
 		return cmbMes;
 	}

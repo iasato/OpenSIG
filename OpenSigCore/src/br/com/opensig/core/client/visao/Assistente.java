@@ -33,7 +33,7 @@ public class Assistente extends Window {
 	 *            um mapa de contexto com as opcoes setadas da funcao.
 	 */
 	public Assistente(Map contexto) {
-		super("", 100, 100, true, false);
+		super("", 100, 100, true, true);
 		setLayout(new FitLayout());
 		setAutoHeight(true);
 		setAutoWidth(true);

@@ -211,6 +211,9 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				data = d.getDt_doc().compareTo(data) == 1 ? d.getDt_doc() : data;
 			}
 			d.setDt_e_s(data);
+			if (inicio.compareTo(d.getDt_doc()) == 1 || fim.compareTo(d.getDt_e_s()) == -1) {
+				d.setCod_sit("01");
+			}
 			d.setVl_doc(Double.valueOf(icms.getVNF()));
 			d.setInd_pgto(ide.getIndPag());
 
@@ -239,7 +242,11 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 		d.setSer(compra.getComCompraSerie() + "");
 		d.setCod_mod("01");
 		d.setChv_nfe("");
-		d.setCod_sit("00");
+		if (inicio.compareTo(compra.getComCompraEmissao()) == 1 || fim.compareTo(compra.getComCompraRecebimento()) == -1) {
+			d.setCod_sit("01");
+		} else {
+			d.setCod_sit("00");
+		}
 		d.setNum_doc(compra.getComCompraNumero());
 		d.setDt_doc(compra.getComCompraEmissao());
 		d.setDt_e_s(compra.getComCompraRecebimento());
@@ -294,6 +301,9 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 		d.setChv_nfe("");
 
 		if (cod_sit.equals("00")) {
+			if (inicio.compareTo(venda.getComVendaData()) == 1 || fim.compareTo(venda.getComVendaData()) == -1) {
+				d.setCod_sit("01");
+			}
 			d.setDt_doc(venda.getComVendaData());
 			d.setDt_e_s(venda.getComVendaData());
 			d.setVl_doc(venda.getComVendaValorLiquido());

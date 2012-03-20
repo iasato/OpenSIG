@@ -63,6 +63,16 @@ public class Registro0200 extends ARegistro<Dados0200, ProdProduto> {
 					}
 				}
 			}
+			// estoque
+			if (estoque != null) {
+				for (ProdProduto prod : estoque) {
+					if (!produtos.contains(prod.getProdProdutoId())) {
+						out.write(getDados(prod));
+						out.flush();
+						produtos.add(prod.getProdProdutoId());
+					}
+				}
+			}
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro na geracao do Registro -> " + bean, e);
 		}

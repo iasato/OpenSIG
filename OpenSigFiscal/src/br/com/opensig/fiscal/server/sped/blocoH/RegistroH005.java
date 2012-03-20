@@ -19,6 +19,7 @@ public class RegistroH005 extends ARegistro<DadosH005, Dados> {
 		r010.setAuth(auth);
 		r010.setService(service);
 		r010.setSped(sped);
+		r010.setEstoque(estoque);
 		r010.executar();
 
 		this.total = r010.getTotal();
@@ -36,7 +37,8 @@ public class RegistroH005 extends ARegistro<DadosH005, Dados> {
 	protected DadosH005 getDados(Dados dados) throws Exception {
 		DadosH005 d = new DadosH005();
 		d.setDt_inv(fim);
-		d.setMot_inv("01");
+		//TODO colocar em 01/07/2012 
+		//d.setMot_inv("01");
 		d.setVl_inv(total);
 		return d;
 	}

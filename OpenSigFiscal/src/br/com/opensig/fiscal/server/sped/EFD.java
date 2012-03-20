@@ -25,16 +25,19 @@ import br.com.opensig.core.client.controlador.filtro.FiltroData;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
+import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EComando;
+import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.client.servico.FiscalService;
 import br.com.opensig.fiscal.server.FiscalServiceImpl;
 import br.com.opensig.fiscal.shared.modelo.FisSpedBloco;
 import br.com.opensig.fiscal.shared.modelo.FisSpedFiscal;
+import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 public class EFD implements Runnable {
 
@@ -49,6 +52,7 @@ public class EFD implements Runnable {
 	private List<ComFrete> fretes;
 	private List<ComVenda> vendas;
 	private List<ComEcfVenda> ecfs;
+	private List<ProdProduto> estoque;
 
 	public EFD(File arquivo, FisSpedFiscal sped, Autenticacao auth) {
 		this.arquivo = arquivo;
@@ -62,18 +66,19 @@ public class EFD implements Runnable {
 		try {
 			// criando o arquivo novo
 			arquivo.createNewFile();
+			// setando a empresa no sped
+			FiltroNumero fn = new FiltroNumero("empEmpresaId", ECompara.IGUAL, sped.getEmpEmpresa().getEmpEmpresaId());
+			EmpEmpresa emp = (EmpEmpresa) service.selecionar(new EmpEmpresa(), fn, false);
+			sped.setEmpEmpresa(emp);
 			// prepara os dados
 			blocos = getBlocos();
 			compras = getCompras();
 			fretes = getFretes();
 			vendas = getVendas();
 			ecfs = getEcfs();
-			// setando a empresa no sped
-			FiltroNumero fn = new FiltroNumero("empEmpresaId", ECompara.IGUAL, sped.getEmpEmpresa().getEmpEmpresaId());
-			EmpEmpresa emp = (EmpEmpresa) service.selecionar(new EmpEmpresa(), fn, false);
-			sped.setEmpEmpresa(emp);
-			escreverRegistros();
+			estoque = getEstoque();
 			// lendo dados do arquivo
+			escreverRegistros();
 			InputStream is = new FileInputStream(arquivo);
 			byte[] obj = new byte[is.available()];
 			is.read(obj);
@@ -171,7 +176,7 @@ public class EFD implements Runnable {
 			cal.setTime(inicio);
 			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
 			fim = cal.getTime();
-			
+
 			// filtro da data
 			GrupoFiltro gfData = new GrupoFiltro();
 			FiltroData fd1 = new FiltroData("comEcfVendaData", ECompara.MAIOR_IGUAL, inicio);
@@ -193,6 +198,28 @@ public class EFD implements Runnable {
 			return service.selecionar(new ComEcfVenda(), 0, 0, gf, false).getLista();
 		} else {
 			return new ArrayList<ComEcfVenda>();
+		}
+	}
+
+	// metodo que recupera os produtos do estoque
+	private List<ProdProduto> getEstoque() throws Exception {
+		// valida se tem bloco H com itens
+		int tot = 0;
+		for (FisSpedBloco bl : blocos) {
+			if (bl.getFisSpedBlocoLetra().equals("H") && bl.getFisSpedBlocoNivel() > 1) {
+				tot++;
+			}
+		}
+
+		if (tot > 0) {
+			// seleciona todos os produtos com estoque maior que ZERO
+			FiltroObjeto fo = new FiltroObjeto("t1.empEmpresa", ECompara.IGUAL, sped.getEmpEmpresa());
+			FiltroNumero fn = new FiltroNumero("t1.prodEstoqueQuantidade", ECompara.MAIOR, 0);
+			GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, fn });
+			Lista<ProdProduto> lista = service.selecionar(new ProdProduto(), 0, 0, gf, false);
+			return lista.getLista();
+		} else {
+			return null;
 		}
 	}
 
@@ -221,6 +248,7 @@ public class EFD implements Runnable {
 					registro.setFretes(fretes);
 					registro.setVendas(vendas);
 					registro.setEcfs(ecfs);
+					registro.setEstoque(estoque);
 					registro.executar();
 					// marcando as qtds
 					qtdArquivo += registro.getQtdLinhas();

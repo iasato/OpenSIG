@@ -8,7 +8,7 @@ public class DadosH005 extends Bean {
 
 	private Date dt_inv;
 	private double vl_inv;
-	private String mot_inv;
+	//private String mot_inv;
 	
 	public DadosH005() {
 		reg = "H005";
@@ -30,6 +30,8 @@ public class DadosH005 extends Bean {
 		this.vl_inv = vl_inv;
 	}
 
+	/*
+	TODO colocar em 01/07/2012
 	public String getMot_inv() {
 		return mot_inv;
 	}
@@ -37,5 +39,5 @@ public class DadosH005 extends Bean {
 	public void setMot_inv(String mot_inv) {
 		this.mot_inv = mot_inv;
 	}
-
+	 */
 }
