@@ -32,6 +32,7 @@ public class RegistroNfeC170 extends ARegistro<DadosC170, Det> {
 		d.setQtd(Double.valueOf(prod.getQCom()));
 		d.setUnid(produto.getProdEmbalagem().getProdEmbalagemNome());
 		d.setVl_item(Double.valueOf(prod.getVProd()));
+		d.setVl_desc(Double.valueOf(prod.getVDesc()));
 		d.setInd_mov("0");
 		int cfop = Integer.valueOf(prod.getCFOP());
 		if (cfop == 5929 || cfop == 6929) {

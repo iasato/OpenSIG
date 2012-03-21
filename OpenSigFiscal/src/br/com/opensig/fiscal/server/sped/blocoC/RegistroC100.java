@@ -215,7 +215,13 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				d.setCod_sit("01");
 			}
 			d.setVl_doc(Double.valueOf(icms.getVNF()));
-			d.setInd_pgto(ide.getIndPag());
+
+			// TODO em 01/07/2012 pode remover
+			if (ide.getIndPag().equals("2")) {
+				d.setInd_pgto("9");
+			} else {
+				d.setInd_pgto(ide.getIndPag());
+			}
 
 			d.setVl_desc(Double.valueOf(icms.getVDesc()));
 			d.setVl_merc(Double.valueOf(icms.getVProd()));

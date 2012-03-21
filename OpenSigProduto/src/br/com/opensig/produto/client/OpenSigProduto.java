@@ -11,6 +11,7 @@ import br.com.opensig.produto.client.controlador.comando.ComandoEmbalagem;
 import br.com.opensig.produto.client.controlador.comando.ComandoIpi;
 import br.com.opensig.produto.client.controlador.comando.ComandoPesquisa;
 import br.com.opensig.produto.client.controlador.comando.ComandoProduto;
+import br.com.opensig.produto.client.controlador.comando.ComandoTipo;
 import br.com.opensig.produto.client.controlador.comando.ComandoTributacao;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -36,6 +37,7 @@ public class OpenSigProduto implements EntryPoint {
         fc.addComando(ComandoIpi.class.getName(), (IComando) GWT.create(ComandoIpi.class));
         fc.addComando(ComandoPesquisa.class.getName(), (IComando) GWT.create(ComandoPesquisa.class));
         fc.addComando(ComandoEmbalagem.class.getName(), (IComando) GWT.create(ComandoEmbalagem.class));
+        fc.addComando(ComandoTipo.class.getName(), (IComando) GWT.create(ComandoTipo.class));
 
         // ações que não devem ter na função de pesquisa
         Collection<Class> acoes = new ArrayList<Class>();

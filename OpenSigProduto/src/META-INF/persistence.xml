@@ -5,6 +5,7 @@
 	<persistence-unit name="pu_produto" transaction-type="RESOURCE_LOCAL">
 		<class>br.com.opensig.produto.shared.modelo.ProdTributacao</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdIpi</class>
+		<class>br.com.opensig.produto.shared.modelo.ProdTipo</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdProduto</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdEmbalagem</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdPreco</class>

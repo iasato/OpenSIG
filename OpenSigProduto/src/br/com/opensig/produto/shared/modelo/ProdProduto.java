@@ -92,6 +92,10 @@ public class ProdProduto extends Dados implements Serializable {
 	@JoinColumn(name = "prod_ipi_id")
 	private ProdIpi prodIpi;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "prod_tipo_id")
+	private ProdTipo prodTipo;
+
 	@JoinColumn(name = "emp_fornecedor_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private EmpFornecedor empFornecedor;
@@ -267,6 +271,14 @@ public class ProdProduto extends Dados implements Serializable {
 		this.prodIpi = prodIpi;
 	}
 
+	public ProdTipo getProdTipo() {
+		return prodTipo;
+	}
+
+	public void setProdTipo(ProdTipo prodTipo) {
+		this.prodTipo = prodTipo;
+	}
+
 	public EmpFornecedor getEmpFabricante() {
 		return empFabricante;
 	}
@@ -321,8 +333,9 @@ public class ProdProduto extends Dados implements Serializable {
 				empFornecedor.getEmpEntidade().getEmpEntidadeNome1(), empFabricante.getEmpFornecedorId() + "", empFabricante.getEmpEntidade().getEmpEntidadeNome1(),
 				prodTributacao.getProdTributacaoId() + "", prodTributacao.getProdTributacaoNome(), prodTributacao.getProdTributacaoCst(), prodTributacao.getProdTributacaoCfop() + "",
 				prodTributacao.getProdTributacaoDentro() + "", prodTributacao.getProdTributacaoFora() + "", prodTributacao.getProdTributacaoDecreto(), prodIpi.getProdIpiId() + "",
-				prodIpi.getProdIpiNome(), prodIpi.getProdIpiAliquota() + "", prodOrigem.getProdOrigemId() + "", prodOrigem.getProdOrigemDescricao(), UtilClient.getDataHoraGrid(prodProdutoCadastrado),
-				UtilClient.getDataHoraGrid(prodProdutoAlterado), getProdProdutoAtivo() + "", getProdProdutoIncentivo() + "", prodProdutoSinc + "" };
+				prodIpi.getProdIpiNome(), prodIpi.getProdIpiAliquota() + "", prodTipo.getProdTipoId() + "", prodTipo.getProdTipoValor(), prodTipo.getProdTipoDescricao(),
+				prodOrigem.getProdOrigemId() + "", prodOrigem.getProdOrigemDescricao(), UtilClient.getDataHoraGrid(prodProdutoCadastrado), UtilClient.getDataHoraGrid(prodProdutoAlterado),
+				getProdProdutoAtivo() + "", getProdProdutoIncentivo() + "", prodProdutoSinc + "" };
 	}
 
 	public Dados getObjeto(String campo) {
@@ -330,6 +343,8 @@ public class ProdProduto extends Dados implements Serializable {
 			return new ProdTributacao();
 		} else if (campo.startsWith("prodIpi")) {
 			return new ProdIpi();
+		} else if (campo.startsWith("prodTipo")) {
+			return new ProdTipo();
 		} else if (campo.startsWith("empFornecedor")) {
 			return new EmpFornecedor();
 		} else if (campo.startsWith("empFabricante")) {
@@ -348,6 +363,7 @@ public class ProdProduto extends Dados implements Serializable {
 		prodEstoques = null;
 		prodTributacao = null;
 		prodIpi = null;
+		prodTipo = null;
 		empFornecedor = null;
 		empFabricante = null;
 		prodOrigem = null;

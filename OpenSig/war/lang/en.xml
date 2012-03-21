@@ -198,6 +198,13 @@
 		<imagem>icon-embalagem</imagem>
 	</funcao>
 	<funcao>
+		<classe>br.com.opensig.produto.client.controlador.comando.ComandoTipo
+		</classe>
+		<nome>Type</nome>
+		<descricao>Administer the types of products.</descricao>
+		<imagem>icon-padrao</imagem>
+	</funcao>
+	<funcao>
 		<classe>br.com.opensig.comercial.client.controlador.comando.ComandoCompra
 		</classe>
 		<nome>Purchase</nome>

@@ -86,7 +86,7 @@ public class Registro0200 extends ARegistro<Dados0200, ProdProduto> {
 		d.setCod_barra(prod.getProdProdutoBarra());
 		d.setCod_ant_item("");
 		d.setUnid_inv(prod.getProdEmbalagem().getProdEmbalagemNome());
-		d.setTipo_item(0); // TODO colocar tabela auxiliar e habilitar no sistema
+		d.setTipo_item(Integer.valueOf(prod.getProdTipo().getProdTipoValor()));
 		if (prod.getProdProdutoNcm().length() == 8) {
 			d.setCod_ncm(prod.getProdProdutoNcm());
 			d.setCod_gen(prod.getProdProdutoNcm().substring(0, 2));
