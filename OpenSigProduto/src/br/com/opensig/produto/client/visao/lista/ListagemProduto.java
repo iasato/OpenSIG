@@ -20,6 +20,7 @@ import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdIpi;
 import br.com.opensig.produto.shared.modelo.ProdOrigem;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
+import br.com.opensig.produto.shared.modelo.ProdTipo;
 import br.com.opensig.produto.shared.modelo.ProdTributacao;
 
 import com.gwtext.client.data.ArrayReader;
@@ -57,9 +58,10 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 				new StringFieldDef("empFabricante.empEntidade.empEntidadeNome1"), new IntegerFieldDef("prodTributacao.prodTributacaoId"), new StringFieldDef("prodTributacao.prodTributacaoNome"),
 				new StringFieldDef("prodTributacao.prodTributacaoCst"), new IntegerFieldDef("prodTributacao.prodTributacaoCfop"), new IntegerFieldDef("prodTributacao.prodTributacaoDentro"),
 				new IntegerFieldDef("prodTributacao.prodTributacaoFora"), new StringFieldDef("prodTributacao.prodTributacaoDecreto"), new IntegerFieldDef("prodIpi.prodIpiId"),
-				new StringFieldDef("prodIpi.prodIpiNome"), new FloatFieldDef("prodIpi.prodIpiAliquota"), new IntegerFieldDef("prodOrigem.prodOrigemId"),
-				new StringFieldDef("prodOrigem.prodOrigemDescricao"), new DateFieldDef("prodProdutoCadastrado"), new DateFieldDef("prodProdutoAlterado"), new BooleanFieldDef("prodProdutoAtivo"),
-				new BooleanFieldDef("prodProdutoIncentivo"), new IntegerFieldDef("prodProdutoSinc") };
+				new StringFieldDef("prodIpi.prodIpiNome"), new FloatFieldDef("prodIpi.prodIpiAliquota"), new IntegerFieldDef("prodTipo.prodTipoId"), new StringFieldDef("prodTipo.prodTipoValor"),
+				new StringFieldDef("prodTipo.prodTipoDescricao"), new IntegerFieldDef("prodOrigem.prodOrigemId"), new StringFieldDef("prodOrigem.prodOrigemDescricao"),
+				new DateFieldDef("prodProdutoCadastrado"), new DateFieldDef("prodProdutoAlterado"), new BooleanFieldDef("prodProdutoAtivo"), new BooleanFieldDef("prodProdutoIncentivo"),
+				new IntegerFieldDef("prodProdutoSinc") };
 		campos = new RecordDef(fd);
 
 		// colunas
@@ -103,6 +105,12 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 		ccIpi.setHidden(true);
 		ColumnConfig ccAliquota = new ColumnConfig(OpenSigCore.i18n.txtIpi() + " " + OpenSigCore.i18n.txtAliquota(), "prodIpi.prodIpiAliquota", 75, true, PORCENTAGEM);
 		ccAliquota.setHidden(true);
+		ColumnConfig ccTipoId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtTipo(), "prodTipo.prodTipoId", 100, true);
+		ccTipoId.setHidden(true);
+		ColumnConfig ccTipo = new ColumnConfig(OpenSigCore.i18n.txtTipo() + " - " + OpenSigCore.i18n.txtValor(), "prodTipo.prodTipoValor", 100, true);
+		ccTipo.setHidden(true);
+		ColumnConfig ccTipoDesc = new ColumnConfig(OpenSigCore.i18n.txtTipo(), "prodTipo.prodTipoDescricao", 100, true);
+		ccTipoDesc.setHidden(true);
 		ColumnConfig ccOrigemId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtOrigem(), "prodOrigem.prodOrigemId", 100, true);
 		ccOrigemId.setHidden(true);
 		ColumnConfig ccOrigem = new ColumnConfig(OpenSigCore.i18n.txtOrigem(), "prodOrigem.prodOrigemDescricao", 100, true);
@@ -122,8 +130,8 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 
 		if (form != null) {
 			BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccNcm, ccBarra, ccDescricao, ccRef, ccCusto, ccPreco, ccEmbalagemId, ccEmbalagem, ccVolume, ccEstoque, ccCategoria, ccCodForn,
-					ccFornecedor, ccCodFabr, ccFabricante, ccTributacaoId, ccTributacao, ccCst, ccCfop, ccDentro, ccFora, ccDecreto, ccIpiId, ccIpi, ccAliquota, ccOrigemId, ccOrigem, ccCadastro,
-					ccAlterado, ccAtivo, ccIncentivo, ccSinc };
+					ccFornecedor, ccCodFabr, ccFabricante, ccTributacaoId, ccTributacao, ccCst, ccCfop, ccDentro, ccFora, ccDecreto, ccIpiId, ccIpi, ccAliquota, ccTipoId, ccTipo, ccTipoDesc,
+					ccOrigemId, ccOrigem, ccCadastro, ccAlterado, ccAtivo, ccIncentivo, ccSinc };
 			modelos = new ColumnModel(bcc);
 		} else {
 			BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccBarra, ccDescricao, ccRef, ccEmbalagem, ccVolume, ccPreco, ccEstoque, ccFornecedor };
@@ -170,11 +178,22 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 				CoreProxy<ProdIpi> proxy = new CoreProxy<ProdIpi>(new ProdIpi());
 				Store storeIpi = new Store(proxy, new ArrayReader(new RecordDef(fdIpi)), true);
 
-				GridListFilter fTributacao = new GridListFilter("prodIpi.prodIpiNome", storeIpi);
-				fTributacao.setLabelField("prodIpiNome");
-				fTributacao.setLabelValue("prodIpiNome");
-				fTributacao.setLoadingText(OpenSigCore.i18n.txtAguarde());
-				entry.setValue(fTributacao);
+				GridListFilter fIpi = new GridListFilter("prodIpi.prodIpiNome", storeIpi);
+				fIpi.setLabelField("prodIpiNome");
+				fIpi.setLabelValue("prodIpiNome");
+				fIpi.setLoadingText(OpenSigCore.i18n.txtAguarde());
+				entry.setValue(fIpi);
+			} else if (entry.getKey().equals("prodTipo.prodTipoDescricao")) {
+				// tipo
+				FieldDef[] fdTipo = new FieldDef[] { new IntegerFieldDef("prodTipoId"), new StringFieldDef("prodTipoValor"), new StringFieldDef("prodTipoDescricao") };
+				CoreProxy<ProdTipo> proxy = new CoreProxy<ProdTipo>(new ProdTipo());
+				Store storeTipo = new Store(proxy, new ArrayReader(new RecordDef(fdTipo)), true);
+
+				GridListFilter fTipo = new GridListFilter("prodTipo.prodTipoDescricao", storeTipo);
+				fTipo.setLabelField("prodTipoDescricao");
+				fTipo.setLabelValue("prodTipoDescricao");
+				fTipo.setLoadingText(OpenSigCore.i18n.txtAguarde());
+				entry.setValue(fTipo);
 			} else if (entry.getKey().equals("prodOrigem.prodOrigemDescricao")) {
 				// origem
 				FieldDef[] fdOrigem = new FieldDef[] { new IntegerFieldDef("prodOrigemId"), new StringFieldDef("prodOrigemDescricao") };
@@ -187,7 +206,7 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 				fOrigem.setLoadingText(OpenSigCore.i18n.txtAguarde());
 				entry.setValue(fOrigem);
 			} else if (entry.getKey().equals("prodEmbalagem.prodEmbalagemNome")) {
-				// tipo
+				// embalagem
 				FieldDef[] fdEmbalagem = new FieldDef[] { new IntegerFieldDef("prodEmbalagemId"), new StringFieldDef("prodEmbalagemNome") };
 				CoreProxy<ProdEmbalagem> proxy = new CoreProxy<ProdEmbalagem>(new ProdEmbalagem());
 				Store storeEmbalagem = new Store(proxy, new ArrayReader(new RecordDef(fdEmbalagem)), true);

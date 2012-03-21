@@ -12,11 +12,11 @@ import javax.persistence.Table;
 import br.com.opensig.core.shared.modelo.Dados;
 
 /**
- * Classe que representa uma tributação no sistema.
+ * Classe que representa o ipi  no sistema.
  * 
  * @author Pedro H. Lira
  * @version 1.0
- * @since 16/07/2009
+ * @since 01/02/2012
  */
 @Entity
 @Table(name = "prod_ipi")

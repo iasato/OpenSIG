@@ -23,25 +23,25 @@ public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 		}
 	}
 
-	private DadosC170 getCompra(ComCompraProduto compra) {
-		produto = compra.getProdProduto();
+	private DadosC170 getCompra(ComCompraProduto cp) {
+		produto = cp.getProdProduto();
 		DadosC170 d = new DadosC170();
 		d.setNum_item(item++);
 		d.setCod_item(produto.getProdProdutoId() + "");
 		d.setDescr_compl("");
-		d.setQtd(compra.getComCompraProdutoQuantidade());
+		d.setQtd(cp.getComCompraProdutoQuantidade());
 		d.setUnid(produto.getProdEmbalagem().getProdEmbalagemNome());
-		d.setVl_item(compra.getComCompraProdutoTotal());
+		d.setVl_item(cp.getComCompraProdutoTotal());
 		d.setInd_mov("0");
-		int cfop = compra.getComCompraProdutoCfop(); 
+		int cfop = cp.getComCompraProdutoCfop(); 
 		d.setCfop(cfop >= 5000 ? cfop - 4000 : cfop);
-		d.setCod_nat(compra.getComCompra().getComNatureza().getComNaturezaId() + "");
+		d.setCod_nat(cp.getComCompra().getComNatureza().getComNaturezaId() + "");
 		d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
 
 		// icms
-		if (compra.getComCompraProdutoIcms() > 0) {
-			d.setVl_bc_icms(compra.getComCompraProdutoTotal());
-			d.setAliq_icms(compra.getComCompraProdutoIcms());
+		if (cp.getComCompraProdutoIcms() > 0) {
+			d.setVl_bc_icms(cp.getComCompraProdutoTotal());
+			d.setAliq_icms(cp.getComCompraProdutoIcms());
 			d.setVl_icms(d.getVl_bc_icms() * d.getAliq_icms() / 100);
 		}
 
@@ -49,9 +49,9 @@ public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 		d.setInd_apur("0");
 		d.setCod_enq("");
 		d.setCst_ipi(produto.getProdIpi().getProdIpiCstEntrada());
-		d.setVl_bc_ipi(compra.getComCompraProdutoTotal());
-		d.setAliq_ipi(compra.getComCompraProdutoIpi());
-		double valor = compra.getComCompraProdutoTotal() * compra.getComCompraProdutoIpi() / 100;
+		d.setVl_bc_ipi(cp.getComCompraProdutoTotal());
+		d.setAliq_ipi(cp.getComCompraProdutoIpi());
+		double valor = cp.getComCompraProdutoTotal() * cp.getComCompraProdutoIpi() / 100;
 		d.setVl_ipi(valor);
 
 		// pis e cofins zerados, pois nao tem dados no manual
@@ -71,6 +71,7 @@ public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 		d.setQtd(vp.getComVendaProdutoQuantidade());
 		d.setUnid(produto.getProdEmbalagem().getProdEmbalagemNome());
 		d.setVl_item(vp.getComVendaProdutoTotalLiquido());
+		d.setVl_desc(vp.getComVendaProdutoDesconto() > 0 ? vp.getComVendaProdutoTotalBruto() - vp.getComVendaProdutoTotalLiquido() : 0);
 		d.setInd_mov("0");
 		int cfop = origem.equals(destino) ? produto.getProdTributacao().getProdTributacaoCfop() : produto.getProdTributacao().getProdTributacaoCfop() + 1000;
 		d.setCfop(cfop);
