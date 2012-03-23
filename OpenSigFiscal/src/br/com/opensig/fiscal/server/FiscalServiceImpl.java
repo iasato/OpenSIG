@@ -60,10 +60,15 @@ import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.client.servico.FiscalException;
 import br.com.opensig.fiscal.client.servico.FiscalService;
 import br.com.opensig.fiscal.server.acao.EnviarEmail;
-import br.com.opensig.fiscal.server.acao.EnviarNfeCancelada;
-import br.com.opensig.fiscal.server.acao.GerarNfeCancelada;
-import br.com.opensig.fiscal.server.acao.GerarNfeInutilizada;
-import br.com.opensig.fiscal.server.acao.RetornarNfe;
+import br.com.opensig.fiscal.server.acao.EnviarNfeCanceladaEntrada;
+import br.com.opensig.fiscal.server.acao.EnviarNfeCanceladaSaida;
+import br.com.opensig.fiscal.server.acao.GerarNfeCanceladaEntrada;
+import br.com.opensig.fiscal.server.acao.GerarNfeCanceladaSaida;
+import br.com.opensig.fiscal.server.acao.GerarNfeInutilizadaEntrada;
+import br.com.opensig.fiscal.server.acao.GerarNfeInutilizadaSaida;
+import br.com.opensig.fiscal.server.acao.RetornarNfeEntrada;
+import br.com.opensig.fiscal.server.acao.RetornarNfeSaida;
+import br.com.opensig.fiscal.server.acao.SalvarEntrada;
 import br.com.opensig.fiscal.server.acao.SalvarSaida;
 import br.com.opensig.fiscal.server.sped.EFD;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
@@ -397,7 +402,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		}
 	}
 
-	public Map<String, String> analisarNFe(FisNotaSaida saida) throws FiscalException {
+	public Map<String, String> analisarNFeSaida(FisNotaSaida saida) throws FiscalException {
 		String para = null;
 		Map<String, String> resp = new HashMap<String, String>();
 
@@ -410,7 +415,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			if (sit.getProtNFe() != null) {
 				InfProt inf = sit.getProtNFe().getInfProt();
 				if (inf.getCStat().equals("100")) {
-					saida.setFisNotaSaidaXml(RetornarNfe.montaProcNfe(saida.getFisNotaSaidaXml(), proc, getAuth().getConf().get("nfe.versao")));
+					saida.setFisNotaSaidaXml(RetornarNfeSaida.montaProcNfe(saida.getFisNotaSaidaXml(), proc, getAuth().getConf().get("nfe.versao")));
 					saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.AUTORIZADO));
 					saida.setFisNotaSaidaProtocolo(inf.getNProt());
 
@@ -423,7 +428,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			} else if (sit.getRetCancNFe() != null) {
 				InfCanc inf = sit.getRetCancNFe().getInfCanc();
 				if (inf.getCStat().equals("100")) {
-					saida.setFisNotaSaidaXml(EnviarNfeCancelada.montaProcCancNfe(saida.getFisNotaSaidaXml(), proc, getAuth().getConf().get("nfe.versao")));
+					saida.setFisNotaSaidaXml(EnviarNfeCanceladaSaida.montaProcCancNfe(saida.getFisNotaSaidaXml(), proc, getAuth().getConf().get("nfe.versao")));
 					saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.CANCELADO));
 					saida.setFisNotaSaidaProtocoloCancelado(inf.getNProt());
 
@@ -465,6 +470,63 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		return resp;
 	}
 
+	public Map<String, String> analisarNFeEntrada(FisNotaEntrada entrada) throws FiscalException {
+		Map<String, String> resp = new HashMap<String, String>();
+
+		// gerar o objeto
+		try {
+			String proc = situacao(Integer.valueOf(getAuth().getConf().get("nfe.tipoamb")), entrada.getFisNotaEntradaChave(), entrada.getEmpEmpresa().getEmpEmpresaId());
+			TRetConsSitNFe sit = UtilServer.xmlToObj(proc, "br.com.opensig.retconssitnfe");
+
+			// verifica se sucesso
+			if (sit.getProtNFe() != null) {
+				InfProt inf = sit.getProtNFe().getInfProt();
+				if (inf.getCStat().equals("100")) {
+					entrada.setFisNotaEntradaXml(RetornarNfeEntrada.montaProcNfe(entrada.getFisNotaEntradaXml(), proc, getAuth().getConf().get("nfe.versao")));
+					entrada.setFisNotaStatus(new FisNotaStatus(ENotaStatus.AUTORIZADO));
+					entrada.setFisNotaEntradaProtocolo(inf.getNProt());
+				} else {
+					entrada.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
+					entrada.setFisNotaEntradaErro(inf.getXMotivo());
+				}
+			} else if (sit.getRetCancNFe() != null) {
+				InfCanc inf = sit.getRetCancNFe().getInfCanc();
+				if (inf.getCStat().equals("100")) {
+					entrada.setFisNotaEntradaXml(EnviarNfeCanceladaEntrada.montaProcCancNfe(entrada.getFisNotaEntradaXml(), proc, getAuth().getConf().get("nfe.versao")));
+					entrada.setFisNotaStatus(new FisNotaStatus(ENotaStatus.CANCELADO));
+					entrada.setFisNotaEntradaProtocoloCancelado(inf.getNProt());
+				} else {
+					entrada.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
+					entrada.setFisNotaEntradaErro(inf.getXMotivo());
+				}
+			} else {
+				entrada.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
+				entrada.setFisNotaEntradaErro(sit.getXMotivo());
+			}
+		} catch (Exception e) {
+			entrada.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
+			entrada.setFisNotaEntradaErro(e.getMessage());
+		} finally {
+			if (entrada.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.getId()) {
+				resp.put("status", ENotaStatus.ERRO.name());
+				resp.put("msg", entrada.getFisNotaEntradaErro());
+
+			} else {
+				resp.put("status", ENotaStatus.AUTORIZADO.name());
+				resp.put("msg", ENotaStatus.AUTORIZADO.name());
+			}
+
+			try {
+				salvar((E) entrada, false);
+			} catch (OpenSigException e) {
+				UtilServer.LOG.error("Problemas ao salvar a entrada apos consultar situacao.", e);
+			}
+		}
+
+		return resp;
+	}
+
+	
 	public String receberNFe(String xml, int empresa, String recibo) throws FiscalException {
 		// gerar o objeto
 		try {
@@ -488,11 +550,11 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		}
 	}
 
-	public Map<String, String> cancelar(FisNotaSaida saida, String motivo) throws FiscalException {
+	public Map<String, String> cancelarSaida(FisNotaSaida saida, String motivo) throws FiscalException {
 		try {
-			GerarNfeCancelada gerar = new GerarNfeCancelada(null, this, saida, motivo, getAuth());
+			GerarNfeCanceladaSaida gerar = new GerarNfeCanceladaSaida(null, this, saida, motivo, getAuth());
 			gerar.execute();
-			saida = gerar.getSaida();
+			saida = gerar.getNota();
 
 			Map<String, String> resp = new HashMap<String, String>();
 			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.getId()) {
@@ -503,11 +565,31 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			resp.put("msg", saida.getFisNotaSaidaErro());
 			return resp;
 		} catch (OpenSigException e) {
-			UtilServer.LOG.error("Erro ao cancelar nfe.", e);
+			UtilServer.LOG.error("Erro ao cancelar nfe saida.", e);
 			throw new FiscalException(e.getMessage());
 		}
 	}
 
+	public Map<String, String> cancelarEntrada(FisNotaEntrada entrada, String motivo) throws FiscalException {
+		try {
+			GerarNfeCanceladaEntrada gerar = new GerarNfeCanceladaEntrada(null, this, entrada, motivo, getAuth());
+			gerar.execute();
+			entrada = gerar.getNota();
+
+			Map<String, String> resp = new HashMap<String, String>();
+			if (entrada.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.getId()) {
+				resp.put("status", ENotaStatus.ERRO.name());
+			} else {
+				resp.put("status", ENotaStatus.CANCELADO.name());
+			}
+			resp.put("msg", entrada.getFisNotaEntradaErro());
+			return resp;
+		} catch (OpenSigException e) {
+			UtilServer.LOG.error("Erro ao cancelar nfe entrada.", e);
+			throw new FiscalException(e.getMessage());
+		}
+	}
+	
 	public String cancelar(String xml, int empresa) throws FiscalException {
 		// gerar o objeto
 		try {
@@ -517,7 +599,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		}
 	}
 
-	public Map<String, String> inutilizar(FisNotaSaida saida, String motivo, int ini, int fim) throws FiscalException {
+	public Map<String, String> inutilizarSaida(FisNotaSaida saida, String motivo, int ini, int fim) throws FiscalException {
 		try {
 			// pega a ultima nfe para usar dados como referencia
 			if (saida == null) {
@@ -530,9 +612,9 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 				saida = (FisNotaSaida) selecionar(saida, fn, false);
 			}
 
-			GerarNfeInutilizada gerar = new GerarNfeInutilizada(null, this, saida, motivo, ini, fim, getAuth());
+			GerarNfeInutilizadaSaida gerar = new GerarNfeInutilizadaSaida(null, this, saida, motivo, ini, fim, getAuth());
 			gerar.execute();
-			saida = gerar.getSaida();
+			saida = gerar.getNota();
 
 			Map<String, String> resp = new HashMap<String, String>();
 			if (saida.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.getId()) {
@@ -541,6 +623,37 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 				resp.put("status", ENotaStatus.INUTILIZADO.name());
 			}
 			resp.put("msg", saida.getFisNotaSaidaErro());
+			return resp;
+		} catch (Exception e) {
+			UtilServer.LOG.error("Erro ao inutilizar nfe.", e);
+			throw new FiscalException(e.getMessage());
+		}
+	}
+	
+	public Map<String, String> inutilizarEntrada(FisNotaEntrada entrada, String motivo, int ini, int fim) throws FiscalException {
+		try {
+			// pega a ultima nfe para usar dados como referencia
+			if (entrada == null) {
+				entrada = new FisNotaEntrada();
+				FiltroObjeto fo = new FiltroObjeto("fisNotaStatus", ECompara.DIFERENTE, new FisNotaStatus(ENotaStatus.INUTILIZANDO));
+				FiltroObjeto fo1 = new FiltroObjeto("fisNotaStatus", ECompara.DIFERENTE, new FisNotaStatus(ENotaStatus.INUTILIZADO));
+				GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, fo1 });
+				Number max = buscar(entrada, "fisNotaEntradaNumero", EBusca.MAXIMO, gf);
+				FiltroNumero fn = new FiltroNumero("fisNotaEntradaNumero", ECompara.IGUAL, max);
+				entrada = (FisNotaEntrada) selecionar(entrada, fn, false);
+			}
+
+			GerarNfeInutilizadaEntrada gerar = new GerarNfeInutilizadaEntrada(null, this, entrada, motivo, ini, fim, getAuth());
+			gerar.execute();
+			entrada = gerar.getNota();
+
+			Map<String, String> resp = new HashMap<String, String>();
+			if (entrada.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.ERRO.getId()) {
+				resp.put("status", ENotaStatus.ERRO.name());
+			} else {
+				resp.put("status", ENotaStatus.INUTILIZADO.name());
+			}
+			resp.put("msg", entrada.getFisNotaEntradaErro());
 			return resp;
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro ao inutilizar nfe.", e);
@@ -566,6 +679,22 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			Map<String, String> resp = new HashMap<String, String>();
 			resp.put("status", saida.getFisNotaStatus().getFisNotaStatusDescricao());
 			resp.put("msg", saida.getFisNotaSaidaErro());
+			return resp;
+		} catch (Exception e) {
+			UtilServer.LOG.error("Erro ao inutilizar nfe.", e);
+			throw new FiscalException(e.getMessage());
+		}
+	}
+	
+	public Map<String, String> salvarEntrada(String xml, FisNotaStatus status, EmpEmpresa empresa) throws FiscalException {
+		try {
+			SalvarEntrada salvarEntrada = new SalvarEntrada(null, xml, status, getAuth());
+			salvarEntrada.execute();
+			FisNotaEntrada entrada = salvarEntrada.getNota();
+
+			Map<String, String> resp = new HashMap<String, String>();
+			resp.put("status", entrada.getFisNotaStatus().getFisNotaStatusDescricao());
+			resp.put("msg", entrada.getFisNotaEntradaErro());
 			return resp;
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro ao inutilizar nfe.", e);

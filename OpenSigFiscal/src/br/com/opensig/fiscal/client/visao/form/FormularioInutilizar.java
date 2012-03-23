@@ -6,6 +6,7 @@ import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.visao.abstrato.IListagem;
 import br.com.opensig.fiscal.client.servico.FiscalProxy;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
+import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -120,13 +121,13 @@ public class FormularioInutilizar {
 		taMotivo.setValue(taMotivo.getValueAsString().trim());
 		if (frmInut.getForm().isValid()) {
 			MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtInutilizar());
-			FiscalProxy<FisNotaSaida> proxy = new FiscalProxy<FisNotaSaida>();
-			proxy.inutilizar(null, taMotivo.getValueAsString(), txtIni.getValue().intValue(), txtFim.getValue().intValue(), new AsyncCallback<Map<String, String>>() {
+
+			AsyncCallback<Map<String, String>> async = new AsyncCallback<Map<String, String>>() {
 				public void onSuccess(Map<String, String> result) {
 					MessageBox.hide();
 					wndInut.close();
 					lista.getPanel().getStore().reload();
-					
+
 					ENotaStatus status = ENotaStatus.valueOf(result.get("status"));
 					String msg = status == ENotaStatus.ERRO ? OpenSigCore.i18n.errExcluir() : OpenSigCore.i18n.msgExcluirOK();
 					new ToastWindow(OpenSigCore.i18n.txtInutilizar(), msg).show();
@@ -136,7 +137,15 @@ public class FormularioInutilizar {
 					MessageBox.hide();
 					MessageBox.alert(OpenSigCore.i18n.txtInutilizar(), caught.getMessage());
 				}
-			});
+			};
+
+			if (lista.getClasse() instanceof FisNotaSaida) {
+				FiscalProxy<FisNotaSaida> proxy = new FiscalProxy<FisNotaSaida>();
+				proxy.inutilizarSaida(null, taMotivo.getValueAsString(), txtIni.getValue().intValue(), txtFim.getValue().intValue(), async);
+			} else {
+				FiscalProxy<FisNotaEntrada> proxy = new FiscalProxy<FisNotaEntrada>();
+				proxy.inutilizarEntrada(null, taMotivo.getValueAsString(), txtIni.getValue().intValue(), txtFim.getValue().intValue(), async);
+			}
 		}
 	}
 }

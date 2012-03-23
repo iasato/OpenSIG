@@ -22,7 +22,8 @@ import br.com.opensig.fiscal.client.controlador.comando.ComandoSpedFiscal;
 import br.com.opensig.fiscal.client.controlador.comando.ComandoStatus;
 import br.com.opensig.fiscal.client.controlador.comando.acao.ComandoBackupEntrada;
 import br.com.opensig.fiscal.client.controlador.comando.acao.ComandoBackupSaida;
-import br.com.opensig.fiscal.client.controlador.comando.acao.ComandoInutilizar;
+import br.com.opensig.fiscal.client.controlador.comando.acao.ComandoInutilizarEntrada;
+import br.com.opensig.fiscal.client.controlador.comando.acao.ComandoInutilizarSaida;
 import br.com.opensig.fiscal.client.controlador.comando.acao.ComandoValidar;
 
 import com.google.gwt.core.client.EntryPoint;
@@ -52,10 +53,12 @@ public class OpenSigFiscal implements EntryPoint {
 		fc.addComando(ComandoCadastro.class.getName(), (IComando) GWT.create(ComandoCadastro.class));
 		fc.addComando(ComandoIncentivo.class.getName(), (IComando) GWT.create(ComandoIncentivo.class));
 		fc.addComando(ComandoSpedFiscal.class.getName(), (IComando) GWT.create(ComandoSpedFiscal.class));
+		
 		// acoes
 		fc.addComando(ComandoBackupSaida.class.getName(), (IComando) GWT.create(ComandoBackupSaida.class));
 		fc.addComando(ComandoBackupEntrada.class.getName(), (IComando) GWT.create(ComandoBackupEntrada.class));
-		fc.addComando(ComandoInutilizar.class.getName(), (IComando) GWT.create(ComandoInutilizar.class));
+		fc.addComando(ComandoInutilizarSaida.class.getName(), (IComando) GWT.create(ComandoInutilizarSaida.class));
+		fc.addComando(ComandoInutilizarEntrada.class.getName(), (IComando) GWT.create(ComandoInutilizarEntrada.class));
 		fc.addComando(ComandoValidar.class.getName(), (IComando) GWT.create(ComandoValidar.class));
 
 		// acoes proibidas do certificado

@@ -9,10 +9,12 @@ import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvar;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
+import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.client.servico.FiscalProxy;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
+import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
 
@@ -30,14 +32,14 @@ import com.gwtext.client.widgets.form.event.FormPanelListenerAdapter;
 import com.gwtext.client.widgets.menu.Menu;
 import com.gwtextux.client.widgets.window.ToastWindow;
 
-public class FormularioErro extends AFormulario<FisNotaSaida> {
+public class FormularioErro<E extends Dados> extends AFormulario<E> {
 
 	private TextArea txtErro;
 	private TextArea txtXml;
 	private ToolbarButton btnSituacao;
 	private Window janela;
 
-	public FormularioErro(FisNotaSaida classe, SisFuncao funcao, Window janela) {
+	public FormularioErro(E classe, SisFuncao funcao, Window janela) {
 		super(classe, funcao);
 		this.janela = janela;
 		inicializar();
@@ -85,28 +87,58 @@ public class FormularioErro extends AFormulario<FisNotaSaida> {
 	}
 
 	public boolean setDados() {
-		if (classe.getFisNotaSaidaProtocolo().equals("")) {
-			classe.setFisNotaSaidaXml(txtXml.getValueAsString());
-			if (classe.getFisNotaSaidaChave().length() == 44) {
-				classe.setFisNotaStatus(new FisNotaStatus(ENotaStatus.AUTORIZANDO));
+		if (classe instanceof FisNotaSaida) {
+			FisNotaSaida nota = (FisNotaSaida) classe;
+			if (nota.getFisNotaSaidaProtocolo().equals("")) {
+				nota.setFisNotaSaidaXml(txtXml.getValueAsString());
+				if (nota.getFisNotaSaidaChave().length() == 44) {
+					nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.AUTORIZANDO));
+				} else {
+					nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.INUTILIZANDO));
+				}
 			} else {
-				classe.setFisNotaStatus(new FisNotaStatus(ENotaStatus.INUTILIZANDO));
+				nota.setFisNotaSaidaXmlCancelado(txtXml.getValueAsString());
+				nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.CANCELANDO));
 			}
+			nota.setFisNotaSaidaErro("");
+			nota.setEmpEmpresa(new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 		} else {
-			classe.setFisNotaSaidaXmlCancelado(txtXml.getValueAsString());
-			classe.setFisNotaStatus(new FisNotaStatus(ENotaStatus.CANCELANDO));
+			FisNotaEntrada nota = (FisNotaEntrada) classe;
+			if (nota.getFisNotaEntradaProtocolo().equals("")) {
+				nota.setFisNotaEntradaXml(txtXml.getValueAsString());
+				if (nota.getFisNotaEntradaChave().length() == 44) {
+					nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.AUTORIZANDO));
+				} else {
+					nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.INUTILIZANDO));
+				}
+			} else {
+				nota.setFisNotaEntradaXmlCancelado(txtXml.getValueAsString());
+				nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.CANCELANDO));
+			}
+			nota.setFisNotaEntradaErro("");
+			nota.setEmpEmpresa(new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 		}
-		classe.setFisNotaSaidaErro("");
-		classe.setEmpEmpresa(new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
+
 		return true;
 	}
 
 	public void mostrarDados() {
-		txtErro.setValue(classe.getFisNotaSaidaErro());
-		if (classe.getFisNotaSaidaProtocolo().equals("")) {
-			txtXml.setValue(classe.getFisNotaSaidaXml());
+		if (classe instanceof FisNotaSaida) {
+			FisNotaSaida nota = (FisNotaSaida) classe;
+			txtErro.setValue(nota.getFisNotaSaidaErro());
+			if (nota.getFisNotaSaidaProtocolo().equals("")) {
+				txtXml.setValue(nota.getFisNotaSaidaXml());
+			} else {
+				txtXml.setValue(nota.getFisNotaSaidaXmlCancelado());
+			}
 		} else {
-			txtXml.setValue(classe.getFisNotaSaidaXmlCancelado());
+			FisNotaEntrada nota = (FisNotaEntrada) classe;
+			txtErro.setValue(nota.getFisNotaEntradaErro());
+			if (nota.getFisNotaEntradaProtocolo().equals("")) {
+				txtXml.setValue(nota.getFisNotaEntradaXml());
+			} else {
+				txtXml.setValue(nota.getFisNotaEntradaXmlCancelado());
+			}
 		}
 	}
 
@@ -132,8 +164,8 @@ public class FormularioErro extends AFormulario<FisNotaSaida> {
 	private void situacao() {
 		MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtSituacao());
 		setDados();
-		FiscalProxy<FisNotaSaida> proxy = new FiscalProxy<FisNotaSaida>();
-		proxy.analisarNFe(classe, new AsyncCallback<Map<String, String>>() {
+
+		AsyncCallback<Map<String, String>> async = new AsyncCallback<Map<String, String>>() {
 
 			public void onSuccess(Map<String, String> result) {
 				MessageBox.hide();
@@ -146,14 +178,21 @@ public class FormularioErro extends AFormulario<FisNotaSaida> {
 				MessageBox.hide();
 				MessageBox.alert(OpenSigCore.i18n.txtSituacao(), caught.getMessage());
 			}
-		});
+		};
+
+		FiscalProxy<E> proxy = new FiscalProxy<E>();
+		if (classe instanceof FisNotaSaida) {
+			proxy.analisarNFeSaida((FisNotaSaida) classe, async);
+		} else {
+			proxy.analisarNFeEntrada((FisNotaEntrada) classe, async);
+		}
 	}
 
 	private void salvar() {
 		MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtSalvar());
 		setDados();
-		FiscalProxy<FisNotaSaida> proxy = new FiscalProxy<FisNotaSaida>();
-		proxy.salvarSaida(txtXml.getValueAsString(), classe.getFisNotaStatus(), classe.getEmpEmpresa(), new AsyncCallback<Map<String, String>>() {
+
+		AsyncCallback<Map<String, String>> asinc = new AsyncCallback<Map<String, String>>() {
 			public void onSuccess(Map<String, String> result) {
 				MessageBox.hide();
 				Timer tempo = new Timer() {
@@ -170,6 +209,13 @@ public class FormularioErro extends AFormulario<FisNotaSaida> {
 				MessageBox.hide();
 				MessageBox.alert(OpenSigCore.i18n.txtSalvar(), caught.getMessage());
 			}
-		});
+		};
+
+		FiscalProxy<E> proxy = new FiscalProxy<E>();
+		if (classe instanceof FisNotaSaida) {
+			proxy.salvarSaida(txtXml.getValueAsString(), ((FisNotaSaida) classe).getFisNotaStatus(), ((FisNotaSaida) classe).getEmpEmpresa(), asinc);
+		} else {
+			proxy.salvarEntrada(txtXml.getValueAsString(), ((FisNotaEntrada) classe).getFisNotaStatus(), ((FisNotaEntrada) classe).getEmpEmpresa(), asinc);
+		}
 	}
 }

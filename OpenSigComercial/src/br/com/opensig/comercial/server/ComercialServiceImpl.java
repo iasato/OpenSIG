@@ -15,7 +15,8 @@ import br.com.opensig.comercial.server.acao.FecharCompra;
 import br.com.opensig.comercial.server.acao.FecharEcfVenda;
 import br.com.opensig.comercial.server.acao.FecharFrete;
 import br.com.opensig.comercial.server.acao.FecharVenda;
-import br.com.opensig.comercial.server.acao.GerarNfe;
+import br.com.opensig.comercial.server.acao.GerarNfeEntrada;
+import br.com.opensig.comercial.server.acao.GerarNfeSaida;
 import br.com.opensig.comercial.server.acao.SalvarCompra;
 import br.com.opensig.comercial.server.acao.SalvarEcfVenda;
 import br.com.opensig.comercial.server.acao.SalvarEcfZ;
@@ -51,15 +52,27 @@ public class ComercialServiceImpl extends CoreServiceImpl implements ComercialSe
 	@Override
 	public FisNotaSaida gerarNfe(ComVenda venda, ComFrete frete) throws ComercialException {
 		try {
-			GerarNfe gerar = new GerarNfe(null, this, venda, frete, getAuth());
+			GerarNfeSaida gerar = new GerarNfeSaida(null, this, venda, frete, getAuth());
 			gerar.execute();
 			return gerar.getNota();
 		} catch (Exception e) {
-			UtilServer.LOG.error("Erro no comando gerarNfe.", e);
+			UtilServer.LOG.error("Erro no comando gerarNfeSaida.", e);
 			throw new ComercialException(e.getMessage());
 		}
 	}
 
+	@Override
+	public FisNotaEntrada gerarNfe(ComCompra compra, ComFrete frete) throws ComercialException{
+		try {
+			GerarNfeEntrada gerar = new GerarNfeEntrada(null, this, compra, frete, getAuth());
+			gerar.execute();
+			return gerar.getNota();
+		} catch (Exception e) {
+			UtilServer.LOG.error("Erro no comando gerarNfeEntrada.", e);
+			throw new ComercialException(e.getMessage());
+		}
+	}
+	
 	@Override
 	public void fecharCompra(ComCompra compra) throws ComercialException {
 		try {

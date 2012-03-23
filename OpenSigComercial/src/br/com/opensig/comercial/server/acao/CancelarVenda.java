@@ -28,8 +28,8 @@ import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.financeiro.shared.modelo.FinConta;
 import br.com.opensig.financeiro.shared.modelo.FinReceber;
 import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
-import br.com.opensig.fiscal.server.acao.GerarNfeCancelada;
-import br.com.opensig.fiscal.server.acao.GerarNfeInutilizada;
+import br.com.opensig.fiscal.server.acao.GerarNfeCanceladaSaida;
+import br.com.opensig.fiscal.server.acao.GerarNfeInutilizadaSaida;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
@@ -66,12 +66,12 @@ public class CancelarVenda extends Chain {
 				}
 
 				// cancela nota
-				GerarNfeCancelada canNota = new GerarNfeCancelada(next, servico, saida, venda.getComVendaObservacao(), auth);
+				GerarNfeCanceladaSaida canNota = new GerarNfeCanceladaSaida(next, servico, saida, venda.getComVendaObservacao(), auth);
 				atuVenda.setNext(canNota);
 			} else {
 				// inutiliza nota
 				int num = venda.getFisNotaSaida().getFisNotaSaidaNumero();
-				GerarNfeInutilizada inuNota = new GerarNfeInutilizada(next, servico, saida, venda.getComVendaObservacao(), num, num, auth);
+				GerarNfeInutilizadaSaida inuNota = new GerarNfeInutilizadaSaida(next, servico, saida, venda.getComVendaObservacao(), num, num, auth);
 				atuVenda.setNext(inuNota);
 			}
 		}

@@ -10,11 +10,14 @@ import br.com.opensig.comercial.shared.modelo.ComFrete;
 import br.com.opensig.comercial.shared.modelo.ComValorProduto;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.client.servico.CoreService;
+import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 
 public interface ComercialService extends CoreService {
 
 	public FisNotaSaida gerarNfe(ComVenda venda, ComFrete frete) throws ComercialException;
+	
+	public FisNotaEntrada gerarNfe(ComCompra compra, ComFrete frete) throws ComercialException;
 
 	public void fecharCompra(ComCompra compra) throws ComercialException;
 

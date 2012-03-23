@@ -18,7 +18,8 @@ import br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharCom
 import br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharEcfVenda;
 import br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharFrete;
 import br.com.opensig.comercial.client.controlador.comando.acao.ComandoFecharVenda;
-import br.com.opensig.comercial.client.controlador.comando.acao.ComandoGerarNfe;
+import br.com.opensig.comercial.client.controlador.comando.acao.ComandoGerarNfeEntrada;
+import br.com.opensig.comercial.client.controlador.comando.acao.ComandoGerarNfeSaida;
 import br.com.opensig.comercial.client.controlador.comando.acao.ComandoPagar;
 import br.com.opensig.comercial.client.controlador.comando.acao.ComandoPagarFrete;
 import br.com.opensig.comercial.client.controlador.comando.acao.ComandoReceber;
@@ -55,13 +56,14 @@ public class OpenSigComercial implements EntryPoint {
 		fc.addComando(ComandoCompraProduto.class.getName(), (IComando) GWT.create(ComandoCompraProduto.class));
 		fc.addComando(ComandoFecharCompra.class.getName(), (IComando) GWT.create(ComandoFecharCompra.class));
 		fc.addComando(ComandoPagar.class.getName(), (IComando) GWT.create(ComandoPagar.class));
+		fc.addComando(ComandoGerarNfeEntrada.class.getName(), (IComando) GWT.create(ComandoGerarNfeEntrada.class));
 
 		// venda
 		fc.addComando(ComandoVenda.class.getName(), (IComando) GWT.create(ComandoVenda.class));
 		fc.addComando(ComandoVendaProduto.class.getName(), (IComando) GWT.create(ComandoVendaProduto.class));
 		fc.addComando(ComandoFecharVenda.class.getName(), (IComando) GWT.create(ComandoFecharVenda.class));
 		fc.addComando(ComandoReceber.class.getName(), (IComando) GWT.create(ComandoReceber.class));
-		fc.addComando(ComandoGerarNfe.class.getName(), (IComando) GWT.create(ComandoGerarNfe.class));
+		fc.addComando(ComandoGerarNfeSaida.class.getName(), (IComando) GWT.create(ComandoGerarNfeSaida.class));
 
 		// ecf
 		fc.addComando(ComandoEcf.class.getName(), (IComando) GWT.create(ComandoEcf.class));

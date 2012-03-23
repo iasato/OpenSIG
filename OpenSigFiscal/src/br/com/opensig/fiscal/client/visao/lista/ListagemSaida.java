@@ -57,7 +57,7 @@ public class ListagemSaida extends AListagemNota<FisNotaSaida> {
 				classe.setId(id);
 
 				FiscalProxy<FisNotaSaida> proxy = new FiscalProxy<FisNotaSaida>();
-				proxy.cancelar(classe, motivo, new AsyncCallback<Map<String, String>>() {
+				proxy.cancelarSaida(classe, motivo, new AsyncCallback<Map<String, String>>() {
 					public void onFailure(Throwable caught) {
 						getPanel().getEl().unmask();
 						MessageBox.alert(OpenSigCore.i18n.txtCancelar(), OpenSigCore.i18n.errExcluir());
@@ -98,7 +98,7 @@ public class ListagemSaida extends AListagemNota<FisNotaSaida> {
 	
 	protected void mostrarErro(FisNotaSaida result) {
 		Window wnd = new Window(OpenSigCore.i18n.txtErro(), 800, 600, true, false);
-		FormularioErro frmErro = new FormularioErro(result, getFuncao(), wnd);
+		FormularioErro<FisNotaSaida> frmErro = new FormularioErro<FisNotaSaida>(result, getFuncao(), wnd);
 		frmErro.setLista(this);
 		frmErro.mostrarDados();
 		wnd.add(frmErro);

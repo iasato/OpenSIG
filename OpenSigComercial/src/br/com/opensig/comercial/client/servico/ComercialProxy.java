@@ -11,6 +11,7 @@ import br.com.opensig.comercial.shared.modelo.ComValorProduto;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.shared.modelo.Dados;
+import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 
 import com.google.gwt.core.client.GWT;
@@ -36,6 +37,11 @@ public class ComercialProxy<E extends Dados> extends CoreProxy<E> implements Com
 		async.gerarNfe(venda, frete, asyncCallback);
 	}
 
+	@Override
+	public void gerarNfe(ComCompra compra, ComFrete frete, AsyncCallback<FisNotaEntrada> asyncCallback) {
+		async.gerarNfe(compra, frete, asyncCallback);
+	}
+	
 	@Override
 	public void fecharCompra(ComCompra compra, AsyncCallback asyncCallback) {
 		async.fecharCompra(compra, asyncCallback);

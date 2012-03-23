@@ -11,6 +11,7 @@ import br.com.opensig.comercial.shared.modelo.ComValorProduto;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.client.servico.CoreServiceAsync;
 import br.com.opensig.core.shared.modelo.Dados;
+import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -18,6 +19,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public interface ComercialServiceAsync<E extends Dados> extends CoreServiceAsync<E> {
 
 	public abstract void gerarNfe(ComVenda venda, ComFrete frete, AsyncCallback<FisNotaSaida> asyncCallback);
+	
+	public abstract void gerarNfe(ComCompra compra, ComFrete frete, AsyncCallback<FisNotaEntrada> asyncCallback);
 
 	public abstract void fecharCompra(ComCompra compra, AsyncCallback asyncCallback);
 

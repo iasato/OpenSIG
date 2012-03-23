@@ -1,5 +1,6 @@
 package br.com.opensig.fiscal.server.acao;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -7,6 +8,7 @@ import java.util.Date;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
@@ -41,29 +43,67 @@ public class SalvarEntrada extends Chain {
 	private Document doc;
 	private String xml;
 	private FisNotaStatus status;
+	private EmpEmpresa empresa;
 	private FisNotaEntrada nota;
 	private FiscalServiceImpl<FisNotaEntrada> servico;
 	private Autenticacao auth;
-	private EmpEmpresa empresa;
 
 	public SalvarEntrada(Chain next, String xml, FisNotaStatus status, Autenticacao auth) throws OpenSigException {
 		super(next);
 		this.xml = xml;
 		this.status = status;
-		this.servico = new FiscalServiceImpl<FisNotaEntrada>(auth);
 		this.auth = auth;
 		this.empresa = new EmpEmpresa(Integer.valueOf(auth.getEmpresa()[0]));
+		this.servico = new FiscalServiceImpl<FisNotaEntrada>(auth);
 	}
 
 	@Override
 	public void execute() throws OpenSigException {
 		// valida o plano
-		
+		new ValidarPlano(null, servico, status, auth).execute();
+
 		doc = UtilServer.getXml(xml);
-		if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
-			salvar();
-		} else if (status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId()) {
-			atualizar();
+		IFiltro filtro;
+
+		// faz o filtro
+		if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.getId() || status.getFisNotaStatusId() == ENotaStatus.INUTILIZADO.getId()) {
+			GrupoFiltro gf = new GrupoFiltro();
+			FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
+			gf.add(fo, EJuncao.E);
+
+			String numero = UtilServer.getValorTag(doc.getDocumentElement(), "nNFIni", true);
+			FiltroNumero fn = new FiltroNumero("fisNotaEntradaNumero", ECompara.IGUAL, numero);
+			gf.add(fn);
+			filtro = gf;
+		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.getId()) {
+			String chave = doc.getElementsByTagName("infNFe").item(0).getAttributes().item(0).getNodeValue().replace("NFe", "");
+			filtro = new FiltroTexto("fisNotaEntradaChave", ECompara.IGUAL, chave);
+		} else {
+			String chave = UtilServer.getValorTag(doc.getDocumentElement(), "chNFe", true);
+			filtro = new FiltroTexto("fisNotaEntradaChave", ECompara.IGUAL, chave);
+		}
+
+		// faz a busca
+		nota = servico.selecionar(new FisNotaEntrada(), filtro, false);
+
+		// verifica se ja existe
+		if (nota != null) {
+			atualizar(filtro);
+		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.getId() || status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
+			salvarNota();
+		} else if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.getId() || status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId()) {
+			throw new FiscalException("Não foi encontrado no sistema a nota fiscal de entrada correspondente ao cancelamento!");
+		} else if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.getId() || status.getFisNotaStatusId() == ENotaStatus.INUTILIZADO.getId()) {
+			salvarInut();
+		}
+
+		// enviando para sefaz
+		if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.getId()) {
+			next = new EnviarNfeCanceladaEntrada(next, servico, nota, auth);
+		} else if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.getId()) {
+			next = new EnviarNfeInutilizadaEntrada(next, servico, nota, auth);
+		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.getId()) {
+			next = new EnviarNfeEntrada(next, servico, nota, auth);
 		}
 
 		if (next != null) {
@@ -71,27 +111,25 @@ public class SalvarEntrada extends Chain {
 		}
 	}
 
-	public FisNotaEntrada getNota(){
+	public FisNotaEntrada getNota() {
 		return nota;
 	}
-	
-	public void salvar() throws FiscalException {
+
+	private void salvarNota() throws FiscalException {
 		try {
 			// recupera a chave
-			String chave = UtilServer.getValorTag(doc.getDocumentElement(), "chNFe", true);
+			String chave = doc.getElementsByTagName("infNFe").item(0).getAttributes().item(0).getNodeValue().replace("NFe", "");
+			if (chave == null) {
+				UtilServer.LOG.debug("Nao achou a tag -> chNFe.");
+				throw new FiscalException(auth.getConf().get("errInvalido") + " -> chNFe");
+			}
 			// recupera o protocolo
-			String prot = UtilServer.getValorTag(doc.getDocumentElement(), "nProt", true);
+			String prot = UtilServer.getValorTag(doc.getDocumentElement(), "nProt", false);
+			if (prot == null) {
+				prot = "";
+			}
 			// recupera o numero
 			String numero = UtilServer.getValorTag(doc.getDocumentElement(), "nNF", true);
-			// recupera o cnpj
-			Element emit = (Element) doc.getElementsByTagName("emit").item(0);
-			String cnpj = UtilServer.getValorTag(emit, "CNPJ", true);
-			try {
-				cnpj = UtilServer.formataTexto(cnpj, "##.###.###/####-##");
-			} catch (ParseException e) {
-				UtilServer.LOG.debug("Cnpj invalido.");
-				throw new FiscalException(auth.getConf().get("errInvalido") + " -> CNPJ");
-			}
 			// recupera a data
 			String data = UtilServer.getValorTag(doc.getDocumentElement(), "dEmi", true);
 			Date dtData = null;
@@ -100,6 +138,15 @@ public class SalvarEntrada extends Chain {
 			} catch (ParseException e) {
 				UtilServer.LOG.debug("Data invalida.");
 				throw new FiscalException(auth.getConf().get("errInvalido") + " -> dEmi");
+			}
+			// recupera o cnpj
+			Element emit = (Element) doc.getElementsByTagName("emit").item(0);
+			String cnpj = UtilServer.getValorTag(emit, "CNPJ", true);
+			try {
+				cnpj = UtilServer.formataTexto(cnpj, "##.###.###/####-##");
+			} catch (ParseException e) {
+				UtilServer.LOG.debug("Cnpj invalido.");
+				throw new FiscalException(auth.getConf().get("errInvalido") + " -> CNPJ");
 			}
 			// recupera os totais
 			Element total = (Element) doc.getElementsByTagName("total").item(0);
@@ -125,6 +172,16 @@ public class SalvarEntrada extends Chain {
 			if (cofins == null) {
 				cofins = "0.00";
 			}
+			// valida a autorizada com protocolo
+			if (prot.equals("") && status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
+				UtilServer.LOG.debug("Nao achou o protocolo.");
+				throw new FiscalException(auth.getConf().get("errInvalido") + " -> nProt");
+			}
+			// em caso de contigencia com FS-DA
+			String tipoEmissao = UtilServer.getValorTag(doc.getDocumentElement(), "tpEmis", true);
+			if (tipoEmissao.equals("5")) {
+				status.setFisNotaStatusId(ENotaStatus.FS_DA.getId());
+			}
 
 			nota = new FisNotaEntrada();
 			nota.setFisNotaStatus(status);
@@ -146,102 +203,164 @@ public class SalvarEntrada extends Chain {
 			nota.setFisNotaEntradaErro("");
 
 			try {
-				// valida na sefaz
-				int amb = Integer.valueOf(auth.getConf().get("nfe.tipoamb"));
-				String resp = servico.situacao(amb, chave, empresa.getEmpEmpresaId());
-				TRetConsSitNFe situacao = UtilServer.xmlToObj(resp, "br.com.opensig.retconssitnfe");
+				if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId()) {
+					// verifica se tem o certificado pra validar
+					String pasta = auth.getEmpresa()[5].replaceAll("\\D", "");
+					String pfx = UtilServer.PATH_EMPRESA + pasta + "/certificado.pfx";
+					File arquivo = new File(pfx);
 
-				// verifica se o status na sefaz é igual ao informado
-				if (situacao.getCStat().equals("100")) {
-					if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId() && situacao.getProtNFe() != null) {
-						// valida se a data da nota ainda pode ser cancelada
-						int dias = Integer.valueOf(auth.getConf().get("nfe.tempo_cancela"));
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(nota.getFisNotaEntradaData());
-						cal.add(Calendar.DATE, dias);
+					if (arquivo.exists()) {
+						// valida na sefaz
+						int amb = Integer.valueOf(auth.getConf().get("nfe.tipoamb"));
+						String resp = servico.situacao(amb, chave, empresa.getEmpEmpresaId());
+						TRetConsSitNFe situacao = UtilServer.xmlToObj(resp, "br.com.opensig.retconssitnfe");
 
-						Date hoje = new Date();
-						if (hoje.compareTo(cal.getTime()) > 0) {
-							nota.setFisNotaEntradaRecibo("OK");
+						// verifica se o status na sefaz é igual ao informado
+						if (situacao.getCStat().equals("100")) {
+							if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId() && situacao.getProtNFe() != null) {
+								// valida se a data da nota ainda pode ser cancelada
+								int dias = Integer.valueOf(auth.getConf().get("nfe.tempo_cancela"));
+								Calendar cal = Calendar.getInstance();
+								cal.setTime(nota.getFisNotaEntradaData());
+								cal.add(Calendar.DATE, dias);
+
+								Date hoje = new Date();
+								if (hoje.compareTo(cal.getTime()) > 0) {
+									nota.setFisNotaEntradaRecibo("OK");
+								} else {
+									nota.setFisNotaEntradaRecibo("PROVISORIO");
+								}
+							} else if (status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId() && situacao.getRetCancNFe() != null) {
+								nota.setFisNotaEntradaRecibo("OK");
+							} else {
+								nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
+								nota.setFisNotaEntradaErro("A nota de entrada");
+							}
 						} else {
-							nota.setFisNotaEntradaRecibo("PROVISORIO");
+							nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
+							nota.setFisNotaEntradaErro("Nao achou a nota na sefaz ou problemas na hora do acesso ao servidor.");
 						}
-					} else if (status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId() && situacao.getRetCancNFe() != null) {
-						nota.setFisNotaEntradaRecibo("OK");
 					} else {
-						nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
-						nota.setFisNotaEntradaErro("A nota de entrada");
+						nota.setFisNotaEntradaRecibo("OK");
 					}
-				} else {
-					nota.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
-					nota.setFisNotaEntradaErro("Nao achou a nota na sefaz ou problemas na hora do acesso ao servidor.");
-				}
-				// salva a entrada
-				nota = servico.salvar(nota, false);
-
-				// integracao com OpenSIG
-				try {
-					// achando a compra referente a NFe
-					FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
-					FiltroTexto ft = new FiltroTexto("empFornecedor.empEntidade.empEntidadeDocumento1", ECompara.IGUAL, cnpj);
-					FiltroNumero fn = new FiltroNumero("comCompraNumero", ECompara.IGUAL, numero);
-					GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, ft, fn });
-					CoreServiceImpl<Dados> core = new CoreServiceImpl<Dados>();
-					Dados compra = (Dados) core.getResultado("pu_comercial", "SELECT t FROM ComCompra t", gf);
-
-					// atualiza a compra
-					if (compra != null) {
-						ParametroObjeto po = new ParametroObjeto("fisNotaEntrada", nota);
-						ParametroBinario pb = new ParametroBinario("comCompraNfe", 1);
-						GrupoParametro gp = new GrupoParametro(new IParametro[] { po, pb });
-						Sql sql = new Sql(compra, EComando.ATUALIZAR, gf, gp);
-						core.executar(new Sql[] { sql });
-					}
-				} catch (Exception e) {
-					UtilServer.LOG.info("Modulo Fiscal fora do OpenSIG.");
 				}
 			} catch (Exception e) {
-				UtilServer.LOG.error("Erro ao salvar a entrada com chave " + chave, e);
-				throw new FiscalException("Não foi possível salvar a NF de entrada ou ela já existe!", e);
+				nota.setFisNotaEntradaRecibo("OK");
+			} finally {
+				// salva a entrada
+				nota = servico.salvar(nota, false);
+			}
+
+			// integracao com OpenSIG
+			try {
+				// achando a compra referente a NFe
+				FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
+				FiltroTexto ft = new FiltroTexto("empFornecedor.empEntidade.empEntidadeDocumento1", ECompara.IGUAL, cnpj);
+				FiltroNumero fn = new FiltroNumero("comCompraNumero", ECompara.IGUAL, numero);
+				GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, ft, fn });
+				CoreServiceImpl<Dados> core = new CoreServiceImpl<Dados>();
+				Dados compra = (Dados) core.getResultado("pu_comercial", "SELECT t FROM ComCompra t", gf);
+
+				// atualiza a compra
+				if (compra != null) {
+					ParametroObjeto po = new ParametroObjeto("fisNotaEntrada", nota);
+					ParametroBinario pb = new ParametroBinario("comCompraNfe", 1);
+					GrupoParametro gp = new GrupoParametro(new IParametro[] { po, pb });
+					Sql sql = new Sql(compra, EComando.ATUALIZAR, gf, gp);
+					core.executar(new Sql[] { sql });
+				}
+			} catch (Exception e) {
+				UtilServer.LOG.info("Modulo Fiscal fora do OpenSIG.");
 			}
 		} catch (OpenSigException ope) {
-			UtilServer.LOG.error("Erro na indentificacao da entrada", ope);
 			throw new FiscalException(ope.getMessage());
 		}
 	}
 
-	public void atualizar() throws FiscalException {
+	private void salvarInut() throws FiscalException {
 		try {
-			// monta o filtro
-			GrupoFiltro gf = new GrupoFiltro();
-			FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, empresa);
-			gf.add(fo, EJuncao.E);
-
-			String chave = UtilServer.getValorTag(doc.getDocumentElement(), "chNFe", true);
-			FiltroTexto ft = new FiltroTexto("fisNotaEntradaChave", ECompara.IGUAL, chave);
-			gf.add(ft);
-
 			// recupera o protocolo
-			String prot = doc.getElementsByTagName("nProt").item(1).getFirstChild().getNodeValue();
+			String prot = UtilServer.getValorTag(doc.getDocumentElement(), "nProt", false);
+			if (prot == null) {
+				prot = "";
+			}
+			if (prot.equals("") && status.getFisNotaStatusId() == ENotaStatus.INUTILIZADO.getId()) {
+				UtilServer.LOG.debug("Nao achou o protocolo.");
+				throw new FiscalException(auth.getConf().get("errInvalido") + " -> nProt");
+			}
 
-			// cria o sql
-			ParametroTexto pt = new ParametroTexto("fisNotaEntradaProtocoloCancelado", prot);
-			ParametroTexto pt1 = new ParametroTexto("fisNotaEntradaXmlCancelado", xml);
-			ParametroObjeto po = new ParametroObjeto("fisNotaStatus", status);
-			GrupoParametro gp = new GrupoParametro(new IParametro[] { pt, pt1, po });
+			// recupera o numero inicial
+			String numeroIni = UtilServer.getValorTag(doc.getDocumentElement(), "nNFIni", true);
+			// recupera o numero final
+			String numeroFim = UtilServer.getValorTag(doc.getDocumentElement(), "nNFFin", true);
 
-			// atualiza a entrada
+			// cria a saida
+			nota = new FisNotaEntrada();
+			nota.setFisNotaStatus(status);
+			nota.setEmpEmpresa(empresa);
+			nota.setFisNotaEntradaNumero(Integer.valueOf(numeroIni));
+			nota.setFisNotaEntradaCadastro(new Date());
+			nota.setFisNotaEntradaData(new Date());
+			nota.setFisNotaEntradaValor(0.00);
+			nota.setFisNotaEntradaChave("Ini=" + numeroIni + " - Fim=" + numeroFim);
+			nota.setFisNotaEntradaIcms(0.00);
+			nota.setFisNotaEntradaIpi(0.00);
+			nota.setFisNotaEntradaPis(0.00);
+			nota.setFisNotaEntradaCofins(0.00);
+			nota.setFisNotaEntradaProtocolo(prot);
+			nota.setFisNotaEntradaXml(xml);
+			nota.setFisNotaEntradaProtocoloCancelado("");
+			nota.setFisNotaEntradaXmlCancelado("");
+			nota.setFisNotaEntradaErro("");
+
+			// salva a entrada
 			try {
-				Sql sql = new Sql(new FisNotaEntrada(), EComando.ATUALIZAR, gf, gp);
-				FiscalServiceImpl<FisNotaEntrada> service = new FiscalServiceImpl<FisNotaEntrada>(auth);
-				service.executar(new Sql[] { sql });
+				nota = servico.salvar(nota, false);
 			} catch (Exception e) {
-				UtilServer.LOG.error("Erro ao atualizar a entrada com chave " + chave, e);
-				throw new FiscalException("Não foi possível atualizar a NF de entrada!", e);
+				throw new FiscalException("Não foi possível salvar a Inutilização de nota ou ela já existe!", e);
 			}
 		} catch (OpenSigException ope) {
-			UtilServer.LOG.error("Erro na indentificacao da entrada", ope);
 			throw new FiscalException(ope.getMessage());
+		}
+	}
+	
+	private void atualizar(IFiltro filtro) throws FiscalException {
+		String prot;
+
+		// recupera o protocolo
+		try {
+			NodeList nl = doc.getElementsByTagName("nProt");
+			prot = nl.getLength() > 1 ? nl.item(1).getFirstChild().getNodeValue() : nl.item(0).getFirstChild().getNodeValue();
+		} catch (Exception e) {
+			prot = "";
+		}
+
+		if (prot.equals("") && status.getFisNotaStatusId() != ENotaStatus.INUTILIZANDO.getId() && status.getFisNotaStatusId() != ENotaStatus.AUTORIZANDO.getId()) {
+			UtilServer.LOG.debug("Nao achou o protocolo.");
+			throw new FiscalException(auth.getConf().get("errInvalido") + " -> nProt");
+		}
+
+		// cria o sql
+		ParametroTexto pt = null;
+		ParametroTexto pt1 = null;
+		if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.getId() || status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId()) {
+			pt = new ParametroTexto("fisNotaEntradaProtocoloCancelado", status.getFisNotaStatusId() == ENotaStatus.CANCELADO.getId() ? prot : "");
+			pt1 = new ParametroTexto("fisNotaEntradaXmlCancelado", xml);
+			nota.setFisNotaEntradaXmlCancelado(xml);
+		} else {
+			pt = new ParametroTexto("fisNotaEntradaProtocolo", prot);
+			pt1 = new ParametroTexto("fisNotaEntradaXml", xml);
+			nota.setFisNotaEntradaXml(xml);
+		}
+		ParametroObjeto po = new ParametroObjeto("fisNotaStatus", status);
+		GrupoParametro gp = new GrupoParametro(new IParametro[] { pt, pt1, po });
+
+		// atualiza a entrada
+		try {
+			Sql sql = new Sql(new FisNotaEntrada(), EComando.ATUALIZAR, filtro, gp);
+			servico.executar(new Sql[] { sql });
+		} catch (Exception e) {
+			throw new FiscalException("Não foi possível atualizar a NF de saída!", e);
 		}
 	}
 }

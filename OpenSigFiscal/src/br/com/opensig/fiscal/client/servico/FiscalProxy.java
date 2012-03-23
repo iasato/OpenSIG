@@ -7,6 +7,7 @@ import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.shared.modelo.FisCertificado;
+import br.com.opensig.fiscal.shared.modelo.FisNotaEntrada;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 import br.com.opensig.fiscal.shared.modelo.FisNotaStatus;
 
@@ -29,10 +30,15 @@ public class FiscalProxy<E extends Dados> extends CoreProxy<E> implements Fiscal
 	}
 	
 	@Override
-	public void analisarNFe(FisNotaSaida saida, AsyncCallback<Map<String, String>> asyncCallback) {
-		async.analisarNFe(saida, asyncCallback);
+	public void analisarNFeSaida(FisNotaSaida saida, AsyncCallback<Map<String, String>> asyncCallback) {
+		async.analisarNFeSaida(saida, asyncCallback);
 	}
-
+	
+	@Override
+	public void analisarNFeEntrada(FisNotaEntrada entrada, AsyncCallback<Map<String, String>> asyncCallback) {
+		async.analisarNFeEntrada(entrada, asyncCallback);
+	}
+	
 	@Override
 	public void exportar(String arquivo, String nome, String tipo, AsyncCallback<String> asyncCallback) {
 		async.exportar(arquivo, nome, tipo, asyncCallback);
@@ -74,10 +80,15 @@ public class FiscalProxy<E extends Dados> extends CoreProxy<E> implements Fiscal
 	}
 
 	@Override
-	public void cancelar(FisNotaSaida saida, String motivo, AsyncCallback<Map<String, String>> asyncCallback) {
-		async.cancelar(saida, motivo, asyncCallback);
+	public void cancelarSaida(FisNotaSaida saida, String motivo, AsyncCallback<Map<String, String>> asyncCallback) {
+		async.cancelarSaida(saida, motivo, asyncCallback);
 	};
 
+	@Override
+	public void cancelarEntrada(FisNotaEntrada entrada, String motivo, AsyncCallback<Map<String, String>> asyncCallback) {
+		async.cancelarEntrada(entrada, motivo, asyncCallback);
+	};
+	
 	@Override
 	public void cancelar(String xml, int empresa, AsyncCallback<String> asyncallback) {
 		async.cancelar(xml, empresa, asyncallback);
@@ -89,15 +100,25 @@ public class FiscalProxy<E extends Dados> extends CoreProxy<E> implements Fiscal
 	}
 
 	@Override
-	public void inutilizar(FisNotaSaida saida, String motivo, int ini, int fim, AsyncCallback<Map<String, String>> asyncCallback) {
-		async.inutilizar(saida, motivo, ini, fim, asyncCallback);
+	public void inutilizarSaida(FisNotaSaida saida, String motivo, int ini, int fim, AsyncCallback<Map<String, String>> asyncCallback) {
+		async.inutilizarSaida(saida, motivo, ini, fim, asyncCallback);
 	};
 
+	@Override
+	public void inutilizarEntrada(FisNotaEntrada entrada, String motivo, int ini, int fim, AsyncCallback<Map<String, String>> asyncCallback) {
+		async.inutilizarEntrada(entrada, motivo, ini, fim, asyncCallback);
+	};
+	
 	@Override
 	public void salvarSaida(String xml, FisNotaStatus status, EmpEmpresa empresa, AsyncCallback<Map<String, String>> asyncCallback) {
 		async.salvarSaida(xml, status, empresa, asyncCallback);
 	}
 
+	@Override
+	public void salvarEntrada(String xml, FisNotaStatus status, EmpEmpresa empresa, AsyncCallback<Map<String, String>> asyncCallback) {
+		async.salvarEntrada(xml, status, empresa, asyncCallback);
+	}
+	
 	@Override
 	public void salvarCertificado(FisCertificado certificado, AsyncCallback asyncCallback) {
 		async.salvarCertificado(certificado, asyncCallback);

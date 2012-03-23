@@ -1,14 +1,14 @@
-# bloco 1010 nao necessario
+-- bloco 1010 nao necessario
 UPDATE `fis_sped_bloco` SET `fis_sped_bloco_classe` = NULL WHERE `fis_sped_bloco_id`='179';
 DELETE FROM sis_configuracao WHERE sis_configuracao_chave LIKE 'SPED.1010%';
 
-# adicionando bloco 0500
+-- adicionando bloco 0500
 UPDATE `fis_sped_bloco` SET `fis_sped_bloco_classe`='br.com.opensig.fiscal.server.sped.bloco0.Registro0500' WHERE `fis_sped_bloco_id`='18';
 
 # removendo uma configuracao
 DELETE FROM sis_configuracao WHERE sis_configuracao_chave = 'NFE.TIPOOPER';
 
-# criando nova tabela de tipo de produto
+-- criando nova tabela de tipo de produto
 CREATE  TABLE `prod_tipo` (
   `prod_tipo_id` INT NOT NULL AUTO_INCREMENT ,
   `prod_tipo_valor` VARCHAR(2) NOT NULL ,
@@ -40,4 +40,12 @@ ALTER TABLE `prod_produto`
 , ADD INDEX `FK_prod_produto_7` USING BTREE (`prod_tipo_id` ASC) ;
 
 INSERT INTO `sis_funcao` (`sis_modulo_id`, `sis_funcao_classe`, `sis_funcao_ordem`, `sis_funcao_subordem`, `sis_funcao_ativo`) VALUES (4, 'br.com.opensig.produto.client.controlador.comando.ComandoTipo', 8, 0, 1);
-# lembrar de dar permissao aos grupos ou usuarios.
+
+-- colocando a acao de NFe de Entrada e Inutilzando
+UPDATE `sis_acao` SET `sis_acao_classe`='br.com.opensig.comercial.client.controlador.comando.acao.ComandoGerarNfeSaida' WHERE `sis_acao_classe`='br.com.opensig.comercial.client.controlador.comando.acao.ComandoGerarNfe';
+INSERT INTO `sis_acao` (`sis_funcao_id`, `sis_acao_classe`, `sis_acao_ordem`, `sis_acao_subordem`, `sis_acao_ativo`, `sis_acao_visivel`) VALUES (20, 'br.com.opensig.comercial.client.controlador.comando.acao.ComandoGerarNfeEntrada', 13, 0, 1, 1);
+UPDATE `sis_acao` SET `sis_acao_classe`='br.com.opensig.fiscal.client.controlador.comando.acao.ComandoInutilizarSaida' WHERE `sis_acao_classe`='br.com.opensig.fiscal.client.controlador.comando.acao.ComandoInutilizar';
+INSERT INTO `sis_acao` (`sis_funcao_id`, `sis_acao_classe`, `sis_acao_ordem`, `sis_acao_subordem`, `sis_acao_ativo`, `sis_acao_visivel`) VALUES (50, 'br.com.opensig.fiscal.client.controlador.comando.acao.ComandoInutilizarEntrada', 1, 0, 1, 1);
+UPDATE `sis_acao` SET `sis_acao_ordem`=16 WHERE `sis_acao_classe`='br.com.opensig.fiscal.client.controlador.comando.acao.ComandoValidar';
+
+-- lembrar de dar permissao aos grupos ou usuarios.

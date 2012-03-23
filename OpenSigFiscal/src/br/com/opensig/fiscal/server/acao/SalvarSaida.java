@@ -93,11 +93,11 @@ public class SalvarSaida extends Chain {
 
 		// enviando para sefaz
 		if (status.getFisNotaStatusId() == ENotaStatus.CANCELANDO.getId()) {
-			next = new EnviarNfeCancelada(next, servico, nota, auth);
+			next = new EnviarNfeCanceladaSaida(next, servico, nota, auth);
 		} else if (status.getFisNotaStatusId() == ENotaStatus.INUTILIZANDO.getId()) {
-			next = new EnviarNfeInutilizada(next, servico, nota, auth);
+			next = new EnviarNfeInutilizadaSaida(next, servico, nota, auth);
 		} else if (status.getFisNotaStatusId() == ENotaStatus.AUTORIZANDO.getId()) {
-			next = new EnviarNfe(next, servico, nota, auth);
+			next = new EnviarNfeSaida(next, servico, nota, auth);
 		}
 
 		if (next != null) {
