@@ -582,10 +582,6 @@ public class GerarNfeEntrada extends Chain {
 			icms00.setOrig(origem);
 			icms00.setCST(cst);
 			icms00.setModBC(auth.getConf().get("nfe.modocalc"));
-			// valor da base de calculo
-			String strBase = getValorNfe(comProd.getComCompraProdutoTotal());
-			double base = Double.valueOf(strBase);
-			icms00.setVBC(strBase);
 			// porcentagem icms
 			double porcento = 0.00;
 			if (comNatureza.getComNaturezaIcms()) {
@@ -595,6 +591,10 @@ public class GerarNfeEntrada extends Chain {
 					porcento = dentro ? prod.getProdTributacao().getProdTributacaoDentro() : prod.getProdTributacao().getProdTributacaoFora();
 				}
 			}
+			// valor da base de calculo
+			String strBase = porcento == 0.00 ? "0.00": getValorNfe(comProd.getComCompraProdutoTotal());
+			double base = Double.valueOf(strBase);
+			icms00.setVBC(strBase);
 			icms00.setPICMS(getValorNfe(porcento));
 			// valor icms
 			String strValor = getValorNfe(base * porcento / 100);

@@ -194,9 +194,9 @@ public class FormularioErro<E extends Dados> extends AFormulario<E> {
 
 		AsyncCallback<Map<String, String>> asinc = new AsyncCallback<Map<String, String>>() {
 			public void onSuccess(Map<String, String> result) {
-				MessageBox.hide();
 				Timer tempo = new Timer() {
 					public void run() {
+						MessageBox.hide();
 						getLista().getPanel().getStore().reload();
 						janela.close();
 					}
