@@ -33,8 +33,13 @@ public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 		d.setUnid(produto.getProdEmbalagem().getProdEmbalagemNome());
 		d.setVl_item(cp.getComCompraProdutoTotal());
 		d.setInd_mov("0");
-		int cfop = cp.getComCompraProdutoCfop(); 
-		d.setCfop(cfop >= 5000 ? cfop - 4000 : cfop);
+		int cfop = cp.getComCompraProdutoCfop();
+		if (cfop == 5929 || cfop == 6929) {
+			cfop -= 4827;
+		} else if (cfop >= 5000) {
+			cfop -= 4000;
+		}
+		d.setCfop(cfop);
 		d.setCod_nat(cp.getComCompra().getComNatureza().getComNaturezaId() + "");
 		d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
 

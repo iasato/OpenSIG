@@ -70,6 +70,12 @@ public class EFD implements Runnable {
 			FiltroNumero fn = new FiltroNumero("empEmpresaId", ECompara.IGUAL, sped.getEmpEmpresa().getEmpEmpresaId());
 			EmpEmpresa emp = (EmpEmpresa) service.selecionar(new EmpEmpresa(), fn, false);
 			sped.setEmpEmpresa(emp);
+			// datas
+			inicio = new SimpleDateFormat("ddMMyyyy").parse("01" + (sped.getFisSpedFiscalMes() > 9 ? sped.getFisSpedFiscalMes() : "0" + sped.getFisSpedFiscalMes()) + sped.getFisSpedFiscalAno());
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(inicio);
+			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+			fim = cal.getTime();
 			// prepara os dados
 			blocos = getBlocos();
 			compras = getCompras();
@@ -170,13 +176,6 @@ public class EFD implements Runnable {
 	// metodo que recupera as vendas das ecfs
 	private List<ComEcfVenda> getEcfs() throws Exception {
 		if (sped.getEcfs().length > 0) {
-			// datas
-			inicio = new SimpleDateFormat("ddMMyyyy").parse("01" + (sped.getFisSpedFiscalMes() > 9 ? sped.getFisSpedFiscalMes() : "0" + sped.getFisSpedFiscalMes()) + sped.getFisSpedFiscalAno());
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(inicio);
-			cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
-			fim = cal.getTime();
-
 			// filtro da data
 			GrupoFiltro gfData = new GrupoFiltro();
 			FiltroData fd1 = new FiltroData("comEcfVendaData", ECompara.MAIOR_IGUAL, inicio);

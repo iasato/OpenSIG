@@ -9,6 +9,8 @@ public class Registro0500 extends ARegistro<Dados0500, Dados> {
 	public void executar() {
 		if (estoque != null) {
 			super.executar();
+		} else {
+			qtdLinhas = 0;
 		}
 	}
 

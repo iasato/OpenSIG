@@ -177,22 +177,43 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 
 		if (validaCaptcha) {
 			try {
-				FiltroTexto ft = new FiltroTexto("fisNotaSaidaChave", ECompara.IGUAL, chave);
-				FisNotaSaida nota = (FisNotaSaida) selecionar(new FisNotaSaida(), ft, false);
+				int notaId = 0;
+				String notaXml = "";
+				String notaXmlCan = "";
 
-				if (nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.AUTORIZADO.getId() || nota.getFisNotaStatus().getFisNotaStatusId() == ENotaStatus.CANCELADO.getId()) {
+				// busca na saida
+				FiltroTexto ft = new FiltroTexto("fisNotaSaidaChave", ECompara.IGUAL, chave);
+				FisNotaSaida saida = (FisNotaSaida) selecionar(new FisNotaSaida(), ft, false);
+				if (saida != null) {
+					notaId = saida.getFisNotaStatus().getFisNotaStatusId();
+					notaXml = saida.getFisNotaSaidaXml();
+					notaXmlCan = saida.getFisNotaSaidaXmlCancelado();
+				} else {
+					// busca na entrada
+					ft = new FiltroTexto("fisNotaEntradaChave", ECompara.IGUAL, chave);
+					FisNotaEntrada entrada = (FisNotaEntrada) selecionar(new FisNotaEntrada(), ft, false);
+					if (entrada != null) {
+						notaId = entrada.getFisNotaStatus().getFisNotaStatusId();
+						notaXml = entrada.getFisNotaEntradaXml();
+						notaXmlCan = entrada.getFisNotaEntradaXmlCancelado();
+					} else {
+						throw new Exception("Nao achou nenhuma NFe.");
+					}
+				}
+
+				if (notaId == ENotaStatus.AUTORIZADO.getId() || notaId == ENotaStatus.CANCELADO.getId()) {
 					if (opcao.equals("2")) {
-						obj = nota.getFisNotaSaidaXml().getBytes();
+						obj = notaXml.getBytes();
 						nome = chave + "-procNFe.xml";
 					} else if (opcao.equals("4")) {
-						if (!nota.getFisNotaSaidaXmlCancelado().equals("")) {
-							obj = nota.getFisNotaSaidaXmlCancelado().getBytes();
+						if (!notaXmlCan.equals("")) {
+							obj = notaXmlCan.getBytes();
 							nome = chave + "-procCanNFe.xml";
 						} else {
 							throw new Exception("NFe nao esta cancelada.");
 						}
 					} else {
-						obj = getDanfe(nota.getFisNotaSaidaXml());
+						obj = getDanfe(notaXml);
 						nome = chave + ".pdf";
 					}
 					resp.addHeader("Content-Disposition", "attachment; filename=" + nome);
@@ -526,7 +547,6 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 		return resp;
 	}
 
-	
 	public String receberNFe(String xml, int empresa, String recibo) throws FiscalException {
 		// gerar o objeto
 		try {
@@ -589,7 +609,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			throw new FiscalException(e.getMessage());
 		}
 	}
-	
+
 	public String cancelar(String xml, int empresa) throws FiscalException {
 		// gerar o objeto
 		try {
@@ -629,7 +649,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			throw new FiscalException(e.getMessage());
 		}
 	}
-	
+
 	public Map<String, String> inutilizarEntrada(FisNotaEntrada entrada, String motivo, int ini, int fim) throws FiscalException {
 		try {
 			// pega a ultima nfe para usar dados como referencia
@@ -685,7 +705,7 @@ public class FiscalServiceImpl<E extends Dados> extends CoreServiceImpl<E> imple
 			throw new FiscalException(e.getMessage());
 		}
 	}
-	
+
 	public Map<String, String> salvarEntrada(String xml, FisNotaStatus status, EmpEmpresa empresa) throws FiscalException {
 		try {
 			SalvarEntrada salvarEntrada = new SalvarEntrada(null, xml, status, getAuth());

@@ -61,7 +61,7 @@ public class FormularioSpedFiscalVenda extends AFormulario<ComVenda> {
 				// selected
 				CheckboxSelectionModel model = new CheckboxSelectionModel();
 				CheckboxColumnConfig check = new CheckboxColumnConfig(model);
-				
+
 				BaseColumnConfig[] bcc = modelos.getColumnConfigs();
 				bcc[0] = check;
 				modelos = new ColumnModel(bcc);
@@ -121,16 +121,21 @@ public class FormularioSpedFiscalVenda extends AFormulario<ComVenda> {
 
 		// filtro
 		GrupoFiltro gf = new GrupoFiltro();
-		if (spedFiscal.getFisSpedFiscalVendas() > -1) {
-			FiltroBinario fb = new FiltroBinario("comVendaNfe", ECompara.IGUAL, spedFiscal.getFisSpedFiscalVendas());
-			gf.add(fb, EJuncao.E);
-		}
+		FiltroBinario fb = new FiltroBinario("comVendaNfe", ECompara.IGUAL, spedFiscal.getFisSpedFiscalCompras());
+		gf.add(fb, EJuncao.E);
 		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 		gf.add(fo, EJuncao.E);
-		FiltroData fdInicio = new FiltroData("comVendaData", ECompara.MAIOR_IGUAL, inicio);
-		gf.add(fdInicio, EJuncao.E);
-		FiltroData fdFim = new FiltroData("comVendaData", ECompara.MENOR, fim);
-		gf.add(fdFim);
+		if (spedFiscal.getFisSpedFiscalVendas() == 0) {
+			FiltroData fdInicio = new FiltroData("comVendaData", ECompara.MAIOR_IGUAL, inicio);
+			gf.add(fdInicio, EJuncao.E);
+			FiltroData fdFim = new FiltroData("comVendaData", ECompara.MENOR, fim);
+			gf.add(fdFim);
+		} else {
+			FiltroData fdInicio = new FiltroData("fisNotaSaida.fisNotaSaidaData", ECompara.MAIOR_IGUAL, inicio);
+			gf.add(fdInicio, EJuncao.E);
+			FiltroData fdFim = new FiltroData("fisNotaSaida.fisNotaSaidaData", ECompara.MENOR, fim);
+			gf.add(fdFim);
+		}
 
 		gridVenda.getProxy().setFiltroPadrao(gf);
 		gridVenda.getStore().reload();

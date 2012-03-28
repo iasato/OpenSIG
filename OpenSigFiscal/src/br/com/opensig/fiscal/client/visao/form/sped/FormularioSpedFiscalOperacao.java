@@ -173,10 +173,9 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 	}
 
 	private ComboBox getCompras() {
-		String valor0 = OpenSigCore.i18n.txtTudo();
 		String valor1 = OpenSigCore.i18n.txtNfe() + " = " + OpenSigCore.i18n.txtSim();
 		String valor2 = OpenSigCore.i18n.txtNfe() + " = " + OpenSigCore.i18n.txtNao();
-		Store store = new SimpleStore(new String[] { "id", "valor" }, new String[][] { new String[] { "-1", valor0 }, new String[] { "1", valor1 }, new String[] { "0", valor2 } });
+		Store store = new SimpleStore(new String[] { "id", "valor" }, new String[][] { new String[] { "1", valor1 }, new String[] { "0", valor2 } });
 		store.addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
 				cmbCompras.setValue("1");
@@ -198,10 +197,9 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 	}
 
 	private ComboBox getVendas() {
-		String valor0 = OpenSigCore.i18n.txtTudo();
 		String valor1 = OpenSigCore.i18n.txtNfe() + " = " + OpenSigCore.i18n.txtSim();
 		String valor2 = OpenSigCore.i18n.txtNfe() + " = " + OpenSigCore.i18n.txtNao();
-		Store store = new SimpleStore(new String[] { "id", "valor" }, new String[][] { new String[] { "-1", valor0 }, new String[] { "1", valor1 }, new String[] { "0", valor2 } });
+		Store store = new SimpleStore(new String[] { "id", "valor" }, new String[][] { new String[] { "1", valor1 }, new String[] { "0", valor2 } });
 		store.addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
 				cmbVendas.setValue("1");

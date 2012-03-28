@@ -121,10 +121,8 @@ public class FormularioSpedFiscalCompra extends AFormulario<ComCompra> {
 
 		// filtro
 		GrupoFiltro gf = new GrupoFiltro();
-		if (spedFiscal.getFisSpedFiscalCompras() > -1) {
-			FiltroBinario fb = new FiltroBinario("comCompraNfe", ECompara.IGUAL, spedFiscal.getFisSpedFiscalCompras());
-			gf.add(fb, EJuncao.E);
-		}
+		FiltroBinario fb = new FiltroBinario("comCompraNfe", ECompara.IGUAL, spedFiscal.getFisSpedFiscalCompras());
+		gf.add(fb, EJuncao.E);
 		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 		gf.add(fo, EJuncao.E);
 		FiltroData fdInicio = new FiltroData("comCompraRecebimento", ECompara.MAIOR_IGUAL, inicio);

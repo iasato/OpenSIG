@@ -5,7 +5,20 @@ import br.com.opensig.fiscal.server.sped.ARegistro;
 import br.com.opensig.nfe.TNFe.InfNFe.Det;
 import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.COFINS;
 import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS00;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS10;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS20;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS30;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS40;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS51;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS60;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS70;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMS90;
 import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN101;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN102;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN201;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN202;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN500;
+import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN900;
 import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.IPI;
 import br.com.opensig.nfe.TNFe.InfNFe.Det.Imposto.PIS;
 import br.com.opensig.nfe.TNFe.InfNFe.Det.Prod;
@@ -16,6 +29,7 @@ public class RegistroNfeC170 extends ARegistro<DadosC170, Det> {
 	private ProdProduto produto;
 	private String natureza;
 	private String crt;
+	private boolean venda;
 
 	public RegistroNfeC170() {
 		super("/br/com/opensig/fiscal/server/sped/blocoC/BeanC170.xml");
@@ -32,34 +46,145 @@ public class RegistroNfeC170 extends ARegistro<DadosC170, Det> {
 		d.setQtd(Double.valueOf(prod.getQCom()));
 		d.setUnid(produto.getProdEmbalagem().getProdEmbalagemNome());
 		d.setVl_item(Double.valueOf(prod.getVProd()));
-		d.setVl_desc(Double.valueOf(prod.getVDesc()));
+		d.setVl_desc(prod.getVDesc() == null ? 0.00 : Double.valueOf(prod.getVDesc()));
 		d.setInd_mov("0");
 		int cfop = Integer.valueOf(prod.getCFOP());
-		if (cfop == 5929 || cfop == 6929) {
-			d.setCfop(cfop - 4827);
-		} else {
-			d.setCfop(cfop >= 5000 ? cfop - 4000 : cfop);
+		if (!venda) {
+			if (cfop == 5929 || cfop == 6929) {
+				cfop -= 4827;
+			} else if (cfop >= 5000) {
+				cfop -= 4000;
+			}
 		}
+		d.setCfop(cfop);
 		d.setCod_nat(natureza);
 
 		if (crt.equals("1")) {
-			d.setCst_icms(produto.getProdTributacao().getProdTributacaoCson());
-			if (d.getCst_icms().equals("101")) {
-				ICMSSN101 icms = dados.getImposto().getICMS().getICMSSN101();
-				if (icms != null) {
-					d.setVl_bc_icms(d.getVl_item());
-					d.setAliq_icms(Double.valueOf(icms.getPCredSN()));
-					d.setVl_icms(Double.valueOf(icms.getVCredICMSSN()));
+			ICMSSN101 icms101 = dados.getImposto().getICMS().getICMSSN101();
+			if (icms101 != null) {
+				d.setCst_icms(icms101.getCSOSN());
+				d.setVl_bc_icms(d.getVl_item());
+				d.setAliq_icms(Double.valueOf(icms101.getPCredSN()));
+				d.setVl_icms(Double.valueOf(icms101.getVCredICMSSN()));
+			} else {
+				ICMSSN102 icms102 = dados.getImposto().getICMS().getICMSSN102();
+				if (icms102 != null) {
+					d.setCst_icms(icms102.getCSOSN());
+				} else {
+					ICMSSN201 icms201 = dados.getImposto().getICMS().getICMSSN201();
+					if (icms201 != null) {
+						d.setCst_icms(icms201.getCSOSN());
+						d.setVl_bc_icms_st(Double.valueOf(icms201.getVBCST()));
+						d.setAliq_st(Double.valueOf(icms201.getPICMSST()));
+						d.setVl_icms_st(Double.valueOf(icms201.getVICMSST()));
+					} else {
+						ICMSSN202 icms202 = dados.getImposto().getICMS().getICMSSN202();
+						if (icms202 != null) {
+							d.setCst_icms(icms202.getCSOSN());
+							d.setVl_bc_icms_st(Double.valueOf(icms202.getVBCST()));
+							d.setAliq_st(Double.valueOf(icms202.getPICMSST()));
+							d.setVl_icms_st(Double.valueOf(icms202.getVICMSST()));
+						} else {
+							ICMSSN500 icms500 = dados.getImposto().getICMS().getICMSSN500();
+							if (icms500 != null) {
+								d.setCst_icms(icms500.getCSOSN());
+								d.setVl_bc_icms_st(Double.valueOf(icms500.getVBCSTRet()));
+								d.setVl_icms_st(Double.valueOf(icms500.getVICMSSTRet()));
+								d.setAliq_st(d.getVl_icms_st() * 100 / d.getVl_bc_icms_st());
+							} else {
+								ICMSSN900 icms900 = dados.getImposto().getICMS().getICMSSN900();
+								d.setCst_icms(icms900.getCSOSN());
+								if (icms900.getModBC() != null) {
+									d.setVl_bc_icms(Double.valueOf(icms900.getVBC()));
+									d.setAliq_icms(Double.valueOf(icms900.getPICMS()));
+									d.setVl_icms(Double.valueOf(icms900.getVICMS()));
+								} else {
+									d.setVl_bc_icms(Double.valueOf(icms900.getVBCST()));
+									d.setAliq_icms(Double.valueOf(icms900.getPICMSST()));
+									d.setVl_icms(Double.valueOf(icms900.getVICMSST()));
+								}
+							}
+						}
+					}
 				}
 			}
 		} else {
-			d.setCst_icms("0" + produto.getProdTributacao().getProdTributacaoCst());
-			if (d.getCst_icms().endsWith("00")) {
-				ICMS00 icms = dados.getImposto().getICMS().getICMS00();
-				if (icms != null) {
-					d.setVl_bc_icms(Double.valueOf(icms.getVBC()));
-					d.setAliq_icms(Double.valueOf(icms.getPICMS()));
-					d.setVl_icms(Double.valueOf(icms.getVICMS()));
+			ICMS00 icms00 = dados.getImposto().getICMS().getICMS00();
+			if (icms00 != null) {
+				d.setCst_icms("0" + icms00.getCST());
+				d.setVl_bc_icms(Double.valueOf(icms00.getVBC()));
+				d.setAliq_icms(Double.valueOf(icms00.getPICMS()));
+				d.setVl_icms(Double.valueOf(icms00.getVICMS()));
+			} else {
+				ICMS10 icms10 = dados.getImposto().getICMS().getICMS10();
+				if (icms10 != null) {
+					d.setCst_icms("0" + icms10.getCST());
+					d.setVl_bc_icms_st(Double.valueOf(icms10.getVBCST()));
+					d.setAliq_st(Double.valueOf(icms10.getPICMSST()));
+					d.setVl_icms_st(Double.valueOf(icms10.getVICMSST()));
+				} else {
+					ICMS20 icms20 = dados.getImposto().getICMS().getICMS20();
+					if (icms20 != null) {
+						d.setCst_icms("0" + icms20.getCST());
+						d.setVl_bc_icms(Double.valueOf(icms20.getVBC()));
+						d.setAliq_icms(Double.valueOf(icms20.getPICMS()));
+						d.setVl_icms(Double.valueOf(icms20.getVICMS()));
+					} else {
+						ICMS30 icms30 = dados.getImposto().getICMS().getICMS30();
+						if (icms30 != null) {
+							d.setCst_icms("0" + icms30.getCST());
+							d.setVl_bc_icms_st(Double.valueOf(icms30.getVBCST()));
+							d.setAliq_st(Double.valueOf(icms30.getPICMSST()));
+							d.setVl_icms_st(Double.valueOf(icms30.getVICMSST()));
+						} else {
+							ICMS40 icms40 = dados.getImposto().getICMS().getICMS40();
+							if (icms40 != null) {
+								d.setCst_icms("0" + icms40.getCST());
+							} else {
+								ICMS51 icms51 = dados.getImposto().getICMS().getICMS51();
+								if (icms51 != null) {
+									d.setCst_icms("0" + icms51.getCST());
+									d.setVl_bc_icms(Double.valueOf(icms51.getVBC()));
+									d.setAliq_icms(Double.valueOf(icms51.getPICMS()));
+									d.setVl_icms(Double.valueOf(icms51.getVICMS()));
+								} else {
+									ICMS60 icms60 = dados.getImposto().getICMS().getICMS60();
+									if (icms60 != null) {
+										d.setCst_icms("0" + icms60.getCST());
+										d.setVl_bc_icms_st(Double.valueOf(icms60.getVBCSTRet()));
+										d.setVl_icms_st(Double.valueOf(icms60.getVICMSSTRet()));
+										d.setAliq_st(d.getVl_icms_st() * 100 / d.getVl_bc_icms_st());
+									} else {
+										ICMS70 icms70 = dados.getImposto().getICMS().getICMS70();
+										if (icms70 != null) {
+											d.setCst_icms("0" + icms70.getCST());
+											if (icms70.getModBC() != null) {
+												d.setVl_bc_icms(Double.valueOf(icms70.getVBC()));
+												d.setAliq_icms(Double.valueOf(icms70.getPICMS()));
+												d.setVl_icms(Double.valueOf(icms70.getVICMS()));
+											} else {
+												d.setVl_bc_icms_st(Double.valueOf(icms70.getVBCST()));
+												d.setVl_icms_st(Double.valueOf(icms70.getVICMSST()));
+												d.setAliq_st(Double.valueOf(icms70.getPICMSST()));
+											}
+										} else {
+											ICMS90 icms90 = dados.getImposto().getICMS().getICMS90();
+											d.setCst_icms("0" + icms90.getCST());
+											if (icms90.getModBC() != null) {
+												d.setVl_bc_icms(Double.valueOf(icms90.getVBC()));
+												d.setAliq_icms(Double.valueOf(icms90.getPICMS()));
+												d.setVl_icms(Double.valueOf(icms90.getVICMS()));
+											} else {
+												d.setVl_bc_icms_st(Double.valueOf(icms90.getVBCST()));
+												d.setVl_icms_st(Double.valueOf(icms90.getVICMSST()));
+												d.setAliq_st(Double.valueOf(icms90.getPICMSST()));
+											}
+										}
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}
@@ -78,7 +203,7 @@ public class RegistroNfeC170 extends ARegistro<DadosC170, Det> {
 				d.setCst_ipi(ipi.getIPINT().getCST());
 			} finally {
 				int cst_ipi = Integer.valueOf(d.getCst_ipi());
-				if (cst_ipi >= 50) {
+				if (!venda && cst_ipi >= 50) {
 					cst_ipi -= 50;
 				}
 				d.setCst_ipi(UtilServer.formataNumero(cst_ipi, 2, 0, false));
@@ -170,5 +295,13 @@ public class RegistroNfeC170 extends ARegistro<DadosC170, Det> {
 
 	public void setCrt(String crt) {
 		this.crt = crt;
+	}
+
+	public boolean getVenda() {
+		return this.venda;
+	}
+
+	public void setVenda(boolean venda) {
+		this.venda = venda;
 	}
 }

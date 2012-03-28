@@ -30,8 +30,20 @@ public class RecuperarEntrada implements IImportacao<FisNotaEntrada> {
 				String xml = new String(arquivo.getValue());
 				Document doc = UtilServer.getXml(xml);
 				String cnpj = UtilServer.normaliza(auth.getEmpresa()[5]);
-
 				ENotaStatus status = NFe.validarEntrada(doc, cnpj);
+				
+				// valida o xml com o xsd
+				if (status == ENotaStatus.AUTORIZANDO || status == ENotaStatus.CANCELANDO || status == ENotaStatus.INUTILIZANDO) {
+					// caso o xml nao esteja assinado
+					if (doc.getElementsByTagName("Signature").item(0) == null) {
+						// assina
+						xml = NFe.assinarXML(doc, status, auth);
+					}
+
+					String xsd = UtilServer.getRealPath(auth.getConf().get("nfe.xsd_" + status.toString().toLowerCase()));
+					NFe.validarXML(xml, xsd);
+				}
+				
 				FisNotaStatus nfStatus = new FisNotaStatus(status);
 				new SalvarEntrada(null, xml, nfStatus, auth).execute();
 			} catch (Exception ex) {

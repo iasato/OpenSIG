@@ -40,7 +40,6 @@ import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.client.servico.FiscalException;
-import br.com.opensig.fiscal.shared.modelo.ENotaOriem;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
 import br.com.opensig.fiscal.shared.modelo.FisCertificado;
 
@@ -77,7 +76,7 @@ public class NFe {
 			BasicTextEncryptor seguranca = new BasicTextEncryptor();
 			seguranca.setPassword(UtilServer.CHAVE);
 			String senha = seguranca.decrypt(cert.getFisCertificadoSenha());
-			
+
 			// trabalhando o certificado
 			XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
 			ArrayList<Transform> transformList = signatureFactory(fac);
@@ -134,11 +133,10 @@ public class NFe {
 		ENotaStatus status = validarStatus(doc);
 
 		// valida o status
-		if (status == ENotaStatus.AUTORIZADO) {
+		if (status == ENotaStatus.AUTORIZANDO || status == ENotaStatus.AUTORIZADO) {
 			// valida o cnpj
-			ENotaOriem origem = NFe.validarCNPJ(doc, cnpj);
-			if (origem != ENotaOriem.DESTINATARIO) {
-				throw new FiscalException("Arquivo de XML nao e valido, o destinatario nao e sua empresa!");
+			if (NFe.validarCNPJ(doc, cnpj, "dest") == false) {
+				throw new FiscalException("Arquivo de XML nao e valido, ou destinatario nao e sua empresa!");
 			}
 		} else if (status != ENotaStatus.CANCELADO) {
 			throw new FiscalException("Arquivo de XML nao e valido, pois entradas somente sao aceitas do tipo Autorizada ou Cancelada, as duas com protocolos!");
@@ -153,8 +151,7 @@ public class NFe {
 		// valida o status
 		if (status == ENotaStatus.AUTORIZANDO || status == ENotaStatus.AUTORIZADO) {
 			// valida o cnpj
-			ENotaOriem origem = NFe.validarCNPJ(doc, cnpj);
-			if (origem != ENotaOriem.EMISSOR) {
+			if (NFe.validarCNPJ(doc, cnpj, "emit") == false) {
 				throw new FiscalException("Arquivo de XML nao e valido, o emissor nao e sua empresa!");
 			}
 		}
@@ -192,32 +189,16 @@ public class NFe {
 		return status;
 	}
 
-	private static ENotaOriem validarCNPJ(Document doc, String cnpj) {
-		ENotaOriem resp;
-
+	private static boolean validarCNPJ(Document doc, String cnpj, String campo) {
 		try {
 			// recupera o cnpj do emitente
-			Element emit = (Element) doc.getElementsByTagName("emit").item(0);
-			String cnpjEmit = UtilServer.getValorTag(emit, "CNPJ", true);
-			// recupera o cnpj do destinatario
-			Element dest = (Element) doc.getElementsByTagName("dest").item(0);
-			String cnpjDest = UtilServer.getValorTag(dest, "CNPJ", true);
-			// remove caracteres diferentes especiais
+			Element ele = (Element) doc.getElementsByTagName(campo).item(0);
+			String cnpjXml = UtilServer.getValorTag(ele, "CNPJ", true);
 			cnpj = cnpj.replaceAll("\\D", "");
-
-			// compara
-			if (cnpj.equals(cnpjEmit)) {
-				resp = ENotaOriem.EMISSOR;
-			} else if (cnpj.equals(cnpjDest)) {
-				resp = ENotaOriem.DESTINATARIO;
-			} else {
-				resp = ENotaOriem.NENHUM;
-			}
+			return cnpj.equals(cnpjXml);
 		} catch (NullPointerException e) {
-			resp = ENotaOriem.NENHUM;
+			return false;
 		}
-
-		return resp;
 	}
 
 	public static ArrayList<Transform> signatureFactory(XMLSignatureFactory signatureFactory) throws Exception {

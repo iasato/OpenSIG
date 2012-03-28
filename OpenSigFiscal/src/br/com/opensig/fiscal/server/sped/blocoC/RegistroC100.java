@@ -82,6 +82,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 					r170.setAuth(auth);
 					r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
 					r170.setNatureza(compra.getComNatureza().getComNaturezaId() + "");
+					r170.setVenda(false);
 					int item = 0;
 					for (Det det : nfe.getInfNFe().getDet()) {
 						r170.setProduto(compra.getComCompraProdutos().get(item++).getProdProduto());
@@ -154,6 +155,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 						r170.setAuth(auth);
 						r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
 						r170.setNatureza(venda.getComNatureza().getComNaturezaId() + "");
+						r170.setVenda(true);
 						int item = 0;
 						// para NFe de saida nao precisa informar os produtos
 						for (Det det : nfe.getInfNFe().getDet()) {
@@ -211,9 +213,6 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				data = d.getDt_doc().compareTo(data) == 1 ? d.getDt_doc() : data;
 			}
 			d.setDt_e_s(data);
-			if (inicio.compareTo(d.getDt_doc()) == 1 || fim.compareTo(d.getDt_e_s()) == -1) {
-				d.setCod_sit("01");
-			}
 			d.setVl_doc(Double.valueOf(icms.getVNF()));
 
 			// TODO em 01/07/2012 pode remover
@@ -248,11 +247,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 		d.setSer(compra.getComCompraSerie() + "");
 		d.setCod_mod("01");
 		d.setChv_nfe("");
-		if (inicio.compareTo(compra.getComCompraEmissao()) == 1 || fim.compareTo(compra.getComCompraRecebimento()) == -1) {
-			d.setCod_sit("01");
-		} else {
-			d.setCod_sit("00");
-		}
+		d.setCod_sit("00");
 		d.setNum_doc(compra.getComCompraNumero());
 		d.setDt_doc(compra.getComCompraEmissao());
 		d.setDt_e_s(compra.getComCompraRecebimento());
@@ -307,9 +302,6 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 		d.setChv_nfe("");
 
 		if (cod_sit.equals("00")) {
-			if (inicio.compareTo(venda.getComVendaData()) == 1 || fim.compareTo(venda.getComVendaData()) == -1) {
-				d.setCod_sit("01");
-			}
 			d.setDt_doc(venda.getComVendaData());
 			d.setDt_e_s(venda.getComVendaData());
 			d.setVl_doc(venda.getComVendaValorLiquido());

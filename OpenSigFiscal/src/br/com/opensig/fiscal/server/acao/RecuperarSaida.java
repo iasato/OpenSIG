@@ -43,6 +43,7 @@ public class RecuperarSaida implements IImportacao<FisNotaSaida> {
 					String xsd = UtilServer.getRealPath(auth.getConf().get("nfe.xsd_" + status.toString().toLowerCase()));
 					NFe.validarXML(xml, xsd);
 				}
+				
 				FisNotaStatus nfStatus = new FisNotaStatus(status);
 				new SalvarSaida(null, xml, nfStatus, auth).execute();
 			} catch (Exception ex) {
