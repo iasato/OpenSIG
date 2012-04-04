@@ -56,6 +56,7 @@ import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdIpi;
 import br.com.opensig.produto.shared.modelo.ProdOrigem;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
+import br.com.opensig.produto.shared.modelo.ProdTipo;
 import br.com.opensig.produto.shared.modelo.ProdTributacao;
 
 public class ImportarNfe implements IImportacao<ComCompra> {
@@ -452,6 +453,8 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			produto = lista.getLista().get(0);
 			produto.anularDependencia();
 			produto.setProdEmbalagem(getEmbalagem(prod.getUCom()));
+			produto.setProdTipo(new ProdTipo(1));
+			produto.setProdIpi(getIpi(ipi));
 			produto.setProdOrigem(new ProdOrigem(Integer.valueOf(icms.getOrigem()) + 1));
 			produto.setEmpFornecedor(fornecedor);
 			produto.setEmpFabricante(fornecedor);
@@ -463,6 +466,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			produto.setProdProdutoReferencia(prod.getCProd());
 			produto.setProdProdutoDescricao(prod.getXProd());
 			produto.setProdEmbalagem(new ProdEmbalagem(1));
+			produto.setProdTipo(new ProdTipo(1));
 			produto.setProdProdutoVolume(1);
 			produto.setProdOrigem(new ProdOrigem(Integer.valueOf(icms.getOrigem()) + 1));
 			produto.setEmpFornecedor(fornecedor);
