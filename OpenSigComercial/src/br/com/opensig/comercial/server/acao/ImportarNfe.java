@@ -285,14 +285,11 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			endereco.setEmpEnderecoTipo(new EmpEnderecoTipo(Integer.valueOf(auth.getConf().get("nfe.tipoendecom"))));
 			endereco.setEmpEnderecoLogradouro(ende.getXLgr());
 			endereco.setEmpEnderecoNumero(Integer.valueOf(ende.getNro().replaceAll("\\D", "")));
-			if (ende.getXCpl() != null) {
-				endereco.setEmpEnderecoComplemento(ende.getXCpl());
-			}
+			endereco.setEmpEnderecoComplemento(ende.getXCpl() != null ? ende.getXCpl() : "");
 			endereco.setEmpEnderecoBairro(ende.getXBairro());
 			FiltroNumero fn = new FiltroNumero("empMunicipioIbge", ECompara.IGUAL, ende.getCMun());
 			EmpMunicipio empM = (EmpMunicipio) servico.selecionar(new EmpMunicipio(), fn, false);
 			endereco.setEmpMunicipio(empM);
-
 			String cep = ende.getCEP() != null ? ende.getCEP().substring(0, 5) + "-" + ende.getCEP().substring(5) : "00000-000";
 			endereco.setEmpEnderecoCep(cep);
 
@@ -304,10 +301,10 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			List<EmpContato> conts = new ArrayList<EmpContato>();
 			if (ende.getFone() != null) {
 				String fone = ende.getFone().substring(0, 2) + " " + ende.getFone().substring(2, 6) + "-" + ende.getFone().substring(6);
-
 				EmpContato contato = new EmpContato();
-				contato.setEmpContatoDescricao(fone);
 				contato.setEmpContatoTipo(new EmpContatoTipo(Integer.valueOf(auth.getConf().get("nfe.tipoconttel"))));
+				contato.setEmpContatoDescricao(fone);
+				contato.setEmpContatoPessoa("");
 				conts.add(contato);
 				enti.setEmpContatos(conts);
 			}
@@ -327,7 +324,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		// pega os ipis
 		Lista<ProdIpi> tributoIpi = servico.selecionar(new ProdIpi(), 0, 0, null, false);
 		ipis = tributoIpi.getLista();
-		
+
 		// pega as embalagens
 		Lista<ProdEmbalagem> emb = servico.selecionar(new ProdEmbalagem(), 0, 0, null, false);
 		embalagem = emb.getLista();
@@ -515,8 +512,8 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 
 		return resp;
 	}
-	
-	private ProdIpi getIpi(String cst){
+
+	private ProdIpi getIpi(String cst) {
 		// se nao achar colocar a padrao 00
 		ProdIpi resp = new ProdIpi(1);
 

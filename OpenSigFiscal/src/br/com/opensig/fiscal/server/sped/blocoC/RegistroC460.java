@@ -35,20 +35,25 @@ public class RegistroC460 extends ARegistro<DadosC460, ComEcfVenda> {
 			for (ComEcfVenda venda : ecfs) {
 				if (venda.getComEcfVendaLiquido() > 0.00 && venda.getComEcf().getComEcfId() == z.getComEcf().getComEcfId() && venda.getComEcfVendaData().compareTo(z.getComEcfZData()) == 0) {
 					bloco = getDados(venda);
-					out.write(bloco);
-					out.flush();
-
+					double valor = bloco.getVl_doc();
+					
 					// itens das vendas
 					if (!venda.getComEcfVendaCancelada()) {
+						valor = 0.00;
 						for (ComEcfVendaProduto vp : venda.getComEcfVendaProdutos()) {
 							if (!vp.getComEcfVendaProdutoCancelado()) {
 								r470.setDados(vp);
 								r470.executar();
+								valor += r470.getBloco().getVl_item();
 								qtdLinhas += r470.getQtdLinhas();
 								setAnalitico(r470.getBloco());
 							}
 						}
 					}
+					
+					bloco.setVl_doc(valor);
+					out.write(bloco);
+					out.flush();
 				}
 			}
 		} catch (Exception e) {

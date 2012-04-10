@@ -143,7 +143,7 @@ public class ListagemValidarProduto {
 		gridProdutos.addGridRowListener(new GridRowListenerAdapter() {
 			public void onRowContextMenu(GridPanel grid, int rowIndex, EventObject e) {
 				gridProdutos.getSelectionModel().selectRow(rowIndex);
-				ComandoPesquisa cmdPesquisa = new ComandoPesquisa(asyncPesquisa);
+				ComandoPesquisa cmdPesquisa = new ComandoPesquisa(asyncPesquisa); 
 				cmdPesquisa.execute(contexto);
 			}
 		});

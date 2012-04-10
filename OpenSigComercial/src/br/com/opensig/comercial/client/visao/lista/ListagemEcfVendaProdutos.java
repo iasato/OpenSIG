@@ -11,7 +11,6 @@ import br.com.opensig.core.client.visao.abstrato.IListagem;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
 
-import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.gwtext.client.core.Ext;
 import com.gwtext.client.data.BooleanFieldDef;
