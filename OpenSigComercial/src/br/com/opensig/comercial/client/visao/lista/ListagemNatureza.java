@@ -19,6 +19,7 @@ import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import com.gwtext.client.data.ArrayReader;
 import com.gwtext.client.data.BooleanFieldDef;
 import com.gwtext.client.data.FieldDef;
+import com.gwtext.client.data.FloatFieldDef;
 import com.gwtext.client.data.IntegerFieldDef;
 import com.gwtext.client.data.RecordDef;
 import com.gwtext.client.data.Store;
@@ -41,7 +42,7 @@ public class ListagemNatureza extends AListagem<ComNatureza> {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comNaturezaId"), new IntegerFieldDef("empEmpresa.empEmpresaId"), new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"),
 				new StringFieldDef("comNaturezaNome"), new StringFieldDef("comNaturezaDescricao"), new IntegerFieldDef("comNaturezaCfopTrib"), new IntegerFieldDef("comNaturezaCfopSub"),
-				new BooleanFieldDef("comNaturezaIcms"), new BooleanFieldDef("comNaturezaIpi"), new BooleanFieldDef("comNaturezaPis"), new BooleanFieldDef("comNaturezaCofins") };
+				new BooleanFieldDef("comNaturezaIcms"), new BooleanFieldDef("comNaturezaIpi"), new FloatFieldDef("comNaturezaPis"), new FloatFieldDef("comNaturezaCofins") };
 		campos = new RecordDef(fd);
 
 		// colunas
@@ -50,14 +51,14 @@ public class ListagemNatureza extends AListagem<ComNatureza> {
 		ccEmpresaId.setHidden(true);
 		ColumnConfig ccEmpresa = new ColumnConfig(OpenSigCore.i18n.txtEmpresa(), "empEmpresa.empEntidade.empEntidadeNome1", 100, true);
 		ccEmpresa.setHidden(true);
-		ColumnConfig ccNome = new ColumnConfig(OpenSigCore.i18n.txtNome(), "comNaturezaNome", 100, true);
-		ColumnConfig ccDescricao = new ColumnConfig(OpenSigCore.i18n.txtDescricao(), "comNaturezaDescricao", 200, true);
+		ColumnConfig ccNome = new ColumnConfig(OpenSigCore.i18n.txtNome(), "comNaturezaNome", 150, true);
+		ColumnConfig ccDescricao = new ColumnConfig(OpenSigCore.i18n.txtDescricao(), "comNaturezaDescricao", 300, true);
 		ColumnConfig ccTrib = new ColumnConfig(OpenSigCore.i18n.txtTributacao(), "comNaturezaCfopTrib", 75, true);
 		ColumnConfig ccSub = new ColumnConfig(OpenSigCore.i18n.txtSubstituicao(), "comNaturezaCfopSub", 75, true);
-		ColumnConfig ccIcms = new ColumnConfig(OpenSigCore.i18n.txtIcms(), "comNaturezaIcms", 75, true, BOLEANO);
-		ColumnConfig ccIpi = new ColumnConfig(OpenSigCore.i18n.txtIpi(), "comNaturezaIpi", 75, true, BOLEANO);
-		ColumnConfig ccPis = new ColumnConfig(OpenSigCore.i18n.txtPis(), "comNaturezaPis", 75, true, BOLEANO);
-		ColumnConfig ccCofins = new ColumnConfig(OpenSigCore.i18n.txtCofins(), "comNaturezaCofins", 75, true, BOLEANO);
+		ColumnConfig ccIcms = new ColumnConfig(OpenSigCore.i18n.txtIcms(), "comNaturezaIcms", 50, true, BOLEANO);
+		ColumnConfig ccIpi = new ColumnConfig(OpenSigCore.i18n.txtIpi(), "comNaturezaIpi", 50, true, BOLEANO);
+		ColumnConfig ccPis = new ColumnConfig(OpenSigCore.i18n.txtPis(), "comNaturezaPis", 50, true, PORCENTAGEM);
+		ColumnConfig ccCofins = new ColumnConfig(OpenSigCore.i18n.txtCofins(), "comNaturezaCofins", 50, true, PORCENTAGEM);
 
 		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccNome, ccDescricao, ccTrib, ccSub, ccIcms, ccIpi, ccPis, ccCofins };
 		modelos = new ColumnModel(bcc);
@@ -65,10 +66,10 @@ public class ListagemNatureza extends AListagem<ComNatureza> {
 		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteEmpresa.class) == null) {
 			filtroPadrao = new FiltroObjeto("empEmpresa", ECompara.IGUAL, new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 		}
-		
+
 		super.inicializar();
 	}
-	
+
 	public void setGridFiltro() {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
@@ -91,7 +92,7 @@ public class ListagemNatureza extends AListagem<ComNatureza> {
 				fEmpresa.setLoadingText(OpenSigCore.i18n.txtAguarde());
 				entry.setValue(fEmpresa);
 			}
-		} 
+		}
 	}
 
 	public void setFavorito(IFavorito favorito) {

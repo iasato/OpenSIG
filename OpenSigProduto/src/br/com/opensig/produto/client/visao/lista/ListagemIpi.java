@@ -24,7 +24,7 @@ public class ListagemIpi extends AListagem<ProdIpi> {
 	public void inicializar() {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("prodIpiId"), new StringFieldDef("prodIpiNome"), new StringFieldDef("prodIpiCstEntrada"), new StringFieldDef("prodIpiCstSaida"),
-				new FloatFieldDef("prodIpiAliquota"), new StringFieldDef("prodIpiDecreto"), };
+				new FloatFieldDef("prodIpiAliquota"), new StringFieldDef("prodIpiEnq"), new StringFieldDef("prodIpiDecreto") };
 		campos = new RecordDef(fd);
 
 		// colunas
@@ -33,9 +33,10 @@ public class ListagemIpi extends AListagem<ProdIpi> {
 		ColumnConfig ccCstEntrada = new ColumnConfig(OpenSigCore.i18n.txtCst() + " " + OpenSigCore.i18n.txtEntrada(), "prodIpiCstEntrada", 75, true);
 		ColumnConfig ccCstSaida = new ColumnConfig(OpenSigCore.i18n.txtCst() + " " + OpenSigCore.i18n.txtSaida(), "prodIpiCstSaida", 75, true);
 		ColumnConfig ccAliquota = new ColumnConfig(OpenSigCore.i18n.txtAliquota(), "prodIpiAliquota", 75, true, PORCENTAGEM);
+		ColumnConfig ccEnq = new ColumnConfig(OpenSigCore.i18n.txtEnq(), "prodIpiEnq", 100, true);
 		ColumnConfig ccDecreto = new ColumnConfig(OpenSigCore.i18n.txtDecreto(), "prodIpiDecreto", 200, true);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccNome, ccCstEntrada, ccCstSaida, ccAliquota, ccDecreto };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccNome, ccCstEntrada, ccCstSaida, ccAliquota, ccEnq, ccDecreto };
 		modelos = new ColumnModel(bcc);
 
 		super.inicializar();

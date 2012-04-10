@@ -14,7 +14,6 @@ import com.gwtext.client.widgets.form.MultiFieldPanel;
 import com.gwtext.client.widgets.form.NumberField;
 import com.gwtext.client.widgets.form.TextField;
 
-
 public class FormularioNatureza extends AFormulario<ComNatureza> {
 
 	private Hidden hdnCod;
@@ -25,8 +24,8 @@ public class FormularioNatureza extends AFormulario<ComNatureza> {
 	private NumberField txtSub;
 	private Checkbox chkIcms;
 	private Checkbox chkIpi;
-	private Checkbox chkPis;
-	private Checkbox chkCofins;
+	private NumberField txtPis;
+	private NumberField txtCofins;
 
 	public FormularioNatureza(SisFuncao funcao) {
 		super(new ComNatureza(), funcao);
@@ -41,14 +40,20 @@ public class FormularioNatureza extends AFormulario<ComNatureza> {
 		hdnEmpresa = new Hidden("empEmpresa.empEmpresaId", "0");
 		add(hdnEmpresa);
 
-		txtNome = new TextField(OpenSigCore.i18n.txtNome(), "comNaturezaNome", 100);
+		txtNome = new TextField(OpenSigCore.i18n.txtNome(), "comNaturezaNome", 200);
 		txtNome.setAllowBlank(false);
 		txtNome.setMaxLength(20);
 
-		txtDescricao = new TextField(OpenSigCore.i18n.txtDescricao(), "comNaturezaDescricao", 200);
+		txtDescricao = new TextField(OpenSigCore.i18n.txtDescricao(), "comNaturezaDescricao", 400);
 		txtDescricao.setAllowBlank(false);
 		txtDescricao.setMaxLength(60);
-		
+
+		MultiFieldPanel linha1 = new MultiFieldPanel();
+		linha1.setBorder(false);
+		linha1.addToRow(txtNome, 220);
+		linha1.addToRow(txtDescricao, 420);
+		add(linha1);
+
 		txtTrib = new NumberField(OpenSigCore.i18n.txtTributacao(), "comNaturezaCfopTrib", 50);
 		txtTrib.setAllowBlank(false);
 		txtTrib.setAllowDecimals(false);
@@ -63,28 +68,30 @@ public class FormularioNatureza extends AFormulario<ComNatureza> {
 		txtSub.setMaxLength(4);
 		txtSub.setMinLength(4);
 
-		MultiFieldPanel linha1 = new MultiFieldPanel();
-		linha1.setBorder(false);
-		linha1.addToRow(txtNome, 120);
-		linha1.addToRow(txtDescricao, 220);
-		linha1.addToRow(txtTrib, 100);
-		linha1.addToRow(txtSub, 100);
-		add(linha1);
-		
 		chkIcms = new Checkbox(OpenSigCore.i18n.txtIcms(), "comNaturezaIcms");
-		
+
 		chkIpi = new Checkbox(OpenSigCore.i18n.txtIpi(), "comNaturezaIpi");
-		
-		chkPis = new Checkbox(OpenSigCore.i18n.txtPis(), "comNaturezaPis");
-		
-		chkCofins = new Checkbox(OpenSigCore.i18n.txtCofins(), "comNaturezaCofins");
-		
+
+		txtPis = new NumberField(OpenSigCore.i18n.txtPis() + " %", "comNaturezaPis", 50);
+		txtPis.setAllowBlank(false);
+		txtPis.setAllowNegative(false);
+		txtPis.setDecimalPrecision(2);
+		txtPis.setMaxLength(5);
+
+		txtCofins = new NumberField(OpenSigCore.i18n.txtCofins() + " %", "comNaturezaCofins", 50);
+		txtCofins.setAllowBlank(false);
+		txtCofins.setAllowNegative(false);
+		txtCofins.setDecimalPrecision(2);
+		txtCofins.setMaxLength(5);
+
 		MultiFieldPanel linha2 = new MultiFieldPanel();
 		linha2.setBorder(false);
-		linha2.addToRow(chkIcms, 100);
-		linha2.addToRow(chkIpi, 100);
-		linha2.addToRow(chkPis, 100);
-		linha2.addToRow(chkCofins, 100);
+		linha2.addToRow(txtTrib, 100);
+		linha2.addToRow(txtSub, 100);
+		linha2.addToRow(chkIcms, 70);
+		linha2.addToRow(chkIpi, 70);
+		linha2.addToRow(txtPis, 100);
+		linha2.addToRow(txtCofins, 100);
 		add(linha2);
 	}
 
@@ -100,15 +107,18 @@ public class FormularioNatureza extends AFormulario<ComNatureza> {
 		}
 		classe.setComNaturezaIcms(chkIcms.getValue());
 		classe.setComNaturezaIpi(chkIpi.getValue());
-		classe.setComNaturezaPis(chkPis.getValue());
-		classe.setComNaturezaCofins(chkCofins.getValue());
-
+		if (txtPis.getValue() != null) {
+			classe.setComNaturezaPis(txtPis.getValue().doubleValue());
+		}
+		if (txtCofins.getValue() != null) {
+			classe.setComNaturezaCofins(txtCofins.getValue().doubleValue());
+		}
 		if (hdnEmpresa.getValueAsString().equals("0")) {
 			classe.setEmpEmpresa(new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 		} else {
 			classe.setEmpEmpresa(new EmpEmpresa(Integer.valueOf(hdnEmpresa.getValueAsString())));
 		}
-		
+
 		return true;
 	}
 
@@ -122,8 +132,8 @@ public class FormularioNatureza extends AFormulario<ComNatureza> {
 			getForm().loadRecord(rec);
 		}
 		txtNome.focus(true);
-		
-		if(duplicar){
+
+		if (duplicar) {
 			hdnCod.setValue("0");
 			hdnEmpresa.setValue("0");
 			duplicar = false;
@@ -197,19 +207,20 @@ public class FormularioNatureza extends AFormulario<ComNatureza> {
 		this.chkIpi = chkIpi;
 	}
 
-	public Checkbox getChkPis() {
-		return chkPis;
+	public NumberField getTxtPis() {
+		return txtPis;
 	}
 
-	public void setChkPis(Checkbox chkPis) {
-		this.chkPis = chkPis;
+	public void setTxtPis(NumberField txtPis) {
+		this.txtPis = txtPis;
 	}
 
-	public Checkbox getChkCofins() {
-		return chkCofins;
+	public NumberField getTxtCofins() {
+		return txtCofins;
 	}
 
-	public void setChkCofins(Checkbox chkCofins) {
-		this.chkCofins = chkCofins;
+	public void setTxtCofins(NumberField txtCofins) {
+		this.txtCofins = txtCofins;
 	}
+	
 }

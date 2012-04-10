@@ -1618,6 +1618,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtEndereco();
 
   /**
+   * Translated "Enquadramento".
+   * 
+   * @return translated "Enquadramento"
+   */
+  @DefaultMessage("Enquadramento")
+  @Key("txtEnq")
+  String txtEnq();
+
+  /**
    * Translated "Entidade".
    * 
    * @return translated "Entidade"

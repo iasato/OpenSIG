@@ -41,13 +41,13 @@ public class FormularioTributacao extends AFormulario<ProdTributacao> {
 
 		txtCst = new TextField(OpenSigCore.i18n.txtCst(), "prodTributacaoCst", 50);
 		txtCst.setAllowBlank(false);
-		txtCst.setRegex("\\d");
+		txtCst.setRegex("\\d{2}");
 		txtCst.setMinLength(2);
 		txtCst.setMaxLength(2);
 
 		txtCson = new TextField(OpenSigCore.i18n.txtCson(), "prodTributacaoCson", 50);
 		txtCson.setAllowBlank(false);
-		txtCson.setRegex("\\d");
+		txtCson.setRegex("\\d{3}");
 		txtCson.setMinLength(3);
 		txtCson.setMaxLength(3);
 

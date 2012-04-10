@@ -41,6 +41,9 @@ public class ProdIpi extends Dados implements Serializable {
 
 	@Column(name = "prod_ipi_cst_saida")
 	private String prodIpiCstSaida;
+	
+	@Column(name = "prod_ipi_enq")
+	private String prodIpiEnq;
 
 	public ProdIpi() {
 		this(0);
@@ -99,6 +102,14 @@ public class ProdIpi extends Dados implements Serializable {
 		this.prodIpiCstSaida = prodIpiCstSaida;
 	}
 
+	public String getProdIpiEnq() {
+		return prodIpiEnq;
+	}
+	
+	public void setProdIpiEnq(String prodIpiEnq) {
+		this.prodIpiEnq = prodIpiEnq;
+	}
+	
 	public Number getId() {
 		return this.prodIpiId;
 	}
@@ -108,7 +119,7 @@ public class ProdIpi extends Dados implements Serializable {
 	}
 
 	public String[] toArray() {
-		return new String[] { prodIpiId + "", prodIpiNome, prodIpiCstEntrada, prodIpiCstSaida, prodIpiAliquota + "", prodIpiDecreto };
+		return new String[] { prodIpiId + "", prodIpiNome, prodIpiCstEntrada, prodIpiCstSaida, prodIpiAliquota + "", prodIpiEnq, prodIpiDecreto };
 	}
 
 	public void anularDependencia() {

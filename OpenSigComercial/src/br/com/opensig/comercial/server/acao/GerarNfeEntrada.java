@@ -668,26 +668,19 @@ public class GerarNfeEntrada extends Chain {
 		ipi.setIPITrib(trib);
 
 		// enquadramento
-		ipi.setCEnq(auth.getConf().get("nfe.ipi_enq"));
+		ipi.setCEnq(comProd.getProdProduto().getProdIpi().getProdIpiEnq());
 		return ipi;
 	}
 
 	public PIS getPIS(ComCompraProduto comProd) {
 		PIS pis = new PIS();
-
-		// identifica pela natureza se cobra PIS
-		String porcento = "0.00";
-		if (comNatureza.getComNaturezaPis()) {
-			porcento = auth.getConf().get("nfe.pis");
-		}
-
 		// faz o calculo do valor e define
-		double valor = comProd.getComCompraProdutoTotal() * Double.valueOf(porcento) / 100;
+		double valor = comProd.getComCompraProdutoTotal() * comNatureza.getComNaturezaPis() / 100;
 		String strValor = getValorNfe(valor);
 		valorPis += Double.valueOf(strValor);
 
 		// isento ou simples nacional
-		if (porcento.equals("0.00")) {
+		if (comNatureza.getComNaturezaPis() == 0.00) {
 			PISOutr outr = new PISOutr();
 			outr.setCST("99");
 			outr.setVBC("0.00");
@@ -698,7 +691,7 @@ public class GerarNfeEntrada extends Chain {
 			PISAliq aliq = new PISAliq();
 			aliq.setCST("01");
 			aliq.setVBC(getValorNfe(comProd.getComCompraProdutoTotal()));
-			aliq.setPPIS(porcento);
+			aliq.setPPIS(comNatureza.getComNaturezaPis().toString());
 			aliq.setVPIS(strValor);
 			pis.setPISAliq(aliq);
 		}
@@ -708,20 +701,13 @@ public class GerarNfeEntrada extends Chain {
 
 	public COFINS getCOFINS(ComCompraProduto comProd) {
 		COFINS cofins = new COFINS();
-
-		// identifica pela natureza se cobra COFINS
-		String porcento = "0.00";
-		if (comNatureza.getComNaturezaCofins()) {
-			porcento = auth.getConf().get("nfe.cofins");
-		}
-
 		// faz o calculo do valor e define
-		double valor = comProd.getComCompraProdutoTotal() * Double.valueOf(porcento) / 100;
+		double valor = comProd.getComCompraProdutoTotal() * comNatureza.getComNaturezaCofins() / 100;
 		String strValor = getValorNfe(valor);
 		valorCofins += Double.valueOf(strValor);
 
 		// isento ou simples nacional
-		if (porcento.equals("0.00")) {
+		if (comNatureza.getComNaturezaCofins() == 0.00) {
 			COFINSOutr outr = new COFINSOutr();
 			outr.setCST("99");
 			outr.setVBC("0.00");
@@ -732,7 +718,7 @@ public class GerarNfeEntrada extends Chain {
 			COFINSAliq aliq = new COFINSAliq();
 			aliq.setCST("01");
 			aliq.setVBC(getValorNfe(comProd.getComCompraProdutoTotal()));
-			aliq.setPCOFINS(porcento);
+			aliq.setPCOFINS(comNatureza.getComNaturezaCofins().toString());
 			aliq.setVCOFINS(strValor);
 			cofins.setCOFINSAliq(aliq);
 		}

@@ -43,7 +43,7 @@ public class ComandoSituacao extends ComandoFuncao {
 
 		txtChave = new TextField(OpenSigCore.i18n.txtChave(), "txtChave", 300);
 		txtChave.setAllowBlank(false);
-		txtChave.setRegex("\\d");
+		txtChave.setRegex("\\d{44}");
 		txtChave.setInvalidText(OpenSigCore.i18n.msgCampoInvalido());
 		txtChave.setMaxLength(44);
 		txtChave.setMinLength(44);

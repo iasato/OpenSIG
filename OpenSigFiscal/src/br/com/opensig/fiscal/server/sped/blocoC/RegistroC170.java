@@ -111,7 +111,7 @@ public class RegistroC170<T extends Dados> extends ARegistro<DadosC170, T> {
 			d.setAliq_ipi(vp.getComVendaProdutoIpi());
 			d.setVl_ipi(d.getVl_bc_ipi() * d.getAliq_ipi() / 100);
 		} else if (auth.getConf().get("sped.0000.ind_ativ").equals("0")) {
-			d.setCod_enq(auth.getConf().get("nfe.ipi_enq"));
+			d.setCod_enq(produto.getProdIpi().getProdIpiEnq());
 			d.setVl_bc_ipi(vp.getComVendaProdutoTotalLiquido());
 			d.setAliq_ipi(produto.getProdIpi().getProdIpiAliquota());
 			d.setVl_ipi(d.getVl_bc_ipi() * d.getAliq_ipi() / 100);

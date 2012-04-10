@@ -19,6 +19,7 @@ public class FormularioIpi extends AFormulario<ProdIpi> {
 	private TextField txtCstEntrada;
 	private TextField txtCstSaida;
 	private NumberField txtAliquota;
+	private TextField txtEnq;
 	private TextArea txtDecreto;
 
 	public FormularioIpi(SisFuncao funcao) {
@@ -39,13 +40,13 @@ public class FormularioIpi extends AFormulario<ProdIpi> {
 
 		txtCstEntrada = new TextField(OpenSigCore.i18n.txtCst() + " " + OpenSigCore.i18n.txtEntrada(), "prodIpiCstEntrada", 50);
 		txtCstEntrada.setAllowBlank(false);
-		txtCstEntrada.setRegex("\\d");
+		txtCstEntrada.setRegex("\\d{2}");
 		txtCstEntrada.setMinLength(2);
 		txtCstEntrada.setMaxLength(2);
 
 		txtCstSaida = new TextField(OpenSigCore.i18n.txtCst() + " " + OpenSigCore.i18n.txtSaida(), "prodIpiCstSaida", 50);
 		txtCstSaida.setAllowBlank(false);
-		txtCstSaida.setRegex("\\d");
+		txtCstSaida.setRegex("\\d{2}");
 		txtCstSaida.setMinLength(2);
 		txtCstSaida.setMaxLength(2);
 
@@ -55,12 +56,19 @@ public class FormularioIpi extends AFormulario<ProdIpi> {
 		txtAliquota.setDecimalPrecision(2);
 		txtAliquota.setMaxLength(5);
 
+		txtEnq = new TextField(OpenSigCore.i18n.txtEnq(), "prodIpiEnq", 50);
+		txtEnq.setAllowBlank(false);
+		txtEnq.setRegex("\\d{3}");
+		txtEnq.setMinLength(3);
+		txtEnq.setMaxLength(3);
+		
 		MultiFieldPanel linha1 = new MultiFieldPanel();
 		linha1.setBorder(false);
 		linha1.addToRow(txtNome, 270);
 		linha1.addToRow(txtCstEntrada, 100);
 		linha1.addToRow(txtCstSaida, 100);
-		linha1.addToRow(txtAliquota, 70);
+		linha1.addToRow(txtAliquota, 100);
+		linha1.addToRow(txtEnq, 100);
 		add(linha1);
 
 		txtDecreto = new TextArea(OpenSigCore.i18n.txtDecreto(), "prodIpiDecreto");
@@ -74,6 +82,7 @@ public class FormularioIpi extends AFormulario<ProdIpi> {
 		classe.setProdIpiNome(txtNome.getValueAsString());
 		classe.setProdIpiCstEntrada(txtCstEntrada.getValueAsString());
 		classe.setProdIpiCstSaida(txtCstSaida.getValueAsString());
+		classe.setProdIpiEnq(txtEnq.getValueAsString());
 		if (txtAliquota.getValue() != null) {
 			classe.setProdIpiAliquota(txtAliquota.getValue().doubleValue());
 		}
@@ -139,6 +148,14 @@ public class FormularioIpi extends AFormulario<ProdIpi> {
 
 	public void setTxtAliquota(NumberField txtAliquota) {
 		this.txtAliquota = txtAliquota;
+	}
+
+	public TextField getTxtEnq() {
+		return txtEnq;
+	}
+
+	public void setTxtEnq(TextField txtEnq) {
+		this.txtEnq = txtEnq;
 	}
 
 	public TextArea getTxtDecreto() {
