@@ -2,12 +2,15 @@ package br.com.opensig.fiscal.server.acao;
 
 import org.w3c.dom.Document;
 
+import br.com.opensig.core.client.controlador.filtro.ECompara;
+import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.MailServiceImpl;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Anexo;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.empresa.shared.modelo.EmpContato;
+import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.server.FiscalServiceImpl;
 import br.com.opensig.fiscal.shared.modelo.ENotaStatus;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
@@ -27,9 +30,13 @@ public class EnviarEmail implements Runnable {
 	@Override
 	public void run() {
 		try {
+			// pega os dados completos da empresa
+			FiltroNumero fn = new FiltroNumero("empEmpresaId", ECompara.IGUAL, saida.getEmpEmpresa().getEmpEmpresaId());
+			EmpEmpresa empresa = (EmpEmpresa) servico.selecionar(new EmpEmpresa(), fn, false);
+			
 			// de
 			String de = null;
-			for (EmpContato cont : saida.getEmpEmpresa().getEmpEntidade().getEmpContatos()) {
+			for (EmpContato cont : empresa.getEmpEntidade().getEmpContatos()) {
 				if (auth.getConf().get("nfe.tipocontemail").equals(cont.getEmpContatoTipo().getEmpContatoTipoId() + "")) {
 					de = cont.getEmpContatoDescricao();
 					break;
@@ -69,7 +76,7 @@ public class EnviarEmail implements Runnable {
 			// inserindo parametros
 			msg = msg.replace("#numero#", saida.getFisNotaSaidaNumero() + "");
 			msg = msg.replace("#serie#", UtilServer.getValorTag(doc.getDocumentElement(), "serie", false));
-			msg = msg.replace("#emitente#", saida.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1());
+			msg = msg.replace("#emitente#", empresa.getEmpEntidade().getEmpEntidadeNome1());
 			msg = msg.replace("#chave#", saida.getFisNotaSaidaChave());
 
 			// enviando

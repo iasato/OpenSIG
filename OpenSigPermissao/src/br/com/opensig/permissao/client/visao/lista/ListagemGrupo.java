@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteEmpresa;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteUsuario;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
 import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
@@ -13,8 +14,8 @@ import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.client.visao.Ponte;
-import br.com.opensig.core.client.visao.abstrato.IFormulario;
 import br.com.opensig.core.client.visao.abstrato.AListagem;
+import br.com.opensig.core.client.visao.abstrato.IFormulario;
 import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.permissao.shared.modelo.SisGrupo;
@@ -32,7 +33,6 @@ import com.gwtext.client.widgets.grid.ColumnModel;
 import com.gwtextux.client.widgets.grid.plugins.GridBooleanFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridListFilter;
-import com.gwtextux.client.widgets.grid.plugins.GridLongFilter;
 
 public class ListagemGrupo extends AListagem<SisGrupo> {
 
@@ -52,17 +52,12 @@ public class ListagemGrupo extends AListagem<SisGrupo> {
 		ColumnConfig ccId = new ColumnConfig(OpenSigCore.i18n.txtCod(), "sisGrupoId", 50, true);
 		ColumnConfig ccEmpresaId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtEmpresa(), "empEmpresa.empEmpresaId", 100, true);
 		ccEmpresaId.setHidden(true);
-		ColumnConfig ccEmpresa = new ColumnConfig(OpenSigCore.i18n.txtEmpresa(), "empEmpresa.empEntidade.empEntidadeNome1", 100, true);
-		ccEmpresa.setHidden(true);
+		ColumnConfig ccEmpresa = new ColumnConfig(OpenSigCore.i18n.txtEmpresa(), "empEmpresa.empEntidade.empEntidadeNome1", 200, true);
 		ColumnConfig ccNome = new ColumnConfig(OpenSigCore.i18n.txtNome(), "sisGrupoNome", 200, true);
 		ColumnConfig ccDescricao = new ColumnConfig(OpenSigCore.i18n.txtDescricao(), "sisGrupoDescricao", 300, true);
 		ColumnConfig ccDesconto = new ColumnConfig(OpenSigCore.i18n.txtDesconto() + "_%", "sisGrupoDesconto", 75, true);
 		ColumnConfig ccAtivo = new ColumnConfig(OpenSigCore.i18n.txtAtivo(), "sisGrupoAtivo", 50, true, BOLEANO);
 		ColumnConfig ccSistema = new ColumnConfig(OpenSigCore.i18n.txtSistema(), "sisGrupoSistema", 75, true, BOLEANO);
-		if (Ponte.getLogin().getId() > 1) {
-			ccSistema.setHidden(true);
-			ccSistema.setFixed(true);
-		}
 
 		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccNome, ccDescricao, ccDesconto, ccAtivo, ccSistema };
 		modelos = new ColumnModel(bcc);
@@ -72,7 +67,8 @@ public class ListagemGrupo extends AListagem<SisGrupo> {
 			FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 			gf.add(fo, EJuncao.E);
 		}
-		if (Ponte.getLogin().getId() > 1) {
+		
+		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteUsuario.class) == null) {
 			FiltroBinario fb = new FiltroBinario("sisGrupoSistema", ECompara.IGUAL, 0);
 			gf.add(fb);
 		}
@@ -86,8 +82,6 @@ public class ListagemGrupo extends AListagem<SisGrupo> {
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
 			if (entry.getKey().equals("sisGrupoAtivo")) {
 				((GridBooleanFilter) entry.getValue()).setValue(true);
-			} else if (entry.getKey().equals("empEmpresa.empEmpresaId")) {
-				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
 			} else if (entry.getKey().equals("empEmpresa.empEntidade.empEntidadeNome1")) {
 				// empresa
 				FiltroNumero fn = null;
@@ -110,7 +104,6 @@ public class ListagemGrupo extends AListagem<SisGrupo> {
 
 	public void setFavorito(IFavorito favorito) {
 		filtros.get("sisGrupoAtivo").setActive(false, true);
-		filtros.get("empEmpresa.empEmpresaId").setActive(false, true);
 		super.setFavorito(favorito);
 	}
 }

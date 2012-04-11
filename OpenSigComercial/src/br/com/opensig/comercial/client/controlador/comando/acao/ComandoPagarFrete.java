@@ -126,7 +126,6 @@ public class ComandoPagarFrete extends ComandoAcao<ComFrete> {
 				formPagar.getTxtNfe().setValue(rec.getAsInteger("comFreteCtrc"));
 				formPagar.getTxtNfe().disable();
 				formPagar.getTxtValor().setValue(rec.getAsDouble("comFreteValor"));
-				formPagar.getTxtValor().disable();
 				String data = DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(rec.getAsDate("comFreteRecebimento"));
 				formPagar.getDtCadastro().setValue(data);
 				formPagar.getDtCadastro().disable();

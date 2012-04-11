@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteEmpresa;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteUsuario;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
 import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
@@ -110,9 +111,7 @@ public class FormularioUsuario extends AFormulario<SisUsuario> {
 		linha2.setBorder(false);
 		linha2.addToRow(txtEmail, 270);
 		linha2.addToRow(chkAtivo, 60);
-		if (Ponte.getLogin().getId() == 1) {
-			linha2.addToRow(chkSistema, 70);
-		}
+		linha2.addToRow(chkSistema, 70);
 
 		txtSenha = new TextField(OpenSigCore.i18n.txtSenha(), "sisUsuarioSenha1", 110);
 		txtSenha.setAllowBlank(false);
@@ -360,6 +359,10 @@ public class FormularioUsuario extends AFormulario<SisUsuario> {
 			txtSenha.setAllowBlank(false);
 			txtConfirma.setAllowBlank(false);
 			duplicar = false;
+		}
+		
+		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteUsuario.class) == null) {
+			chkSistema.disable();
 		}
 	}
 

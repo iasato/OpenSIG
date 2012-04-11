@@ -126,7 +126,6 @@ public class ComandoPagar extends ComandoAcao<ComCompra> {
 				formPagar.getTxtNfe().setValue(rec.getAsInteger("comCompraNumero"));
 				formPagar.getTxtNfe().disable();
 				formPagar.getTxtValor().setValue(rec.getAsDouble("comCompraValorNota"));
-				formPagar.getTxtValor().disable();
 				String data = DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(rec.getAsDate("comCompraRecebimento"));
 				formPagar.getDtCadastro().setValue(data);
 				formPagar.getDtCadastro().disable();

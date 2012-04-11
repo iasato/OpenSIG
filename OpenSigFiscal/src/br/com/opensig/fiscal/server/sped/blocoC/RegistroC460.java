@@ -1,5 +1,7 @@
 package br.com.opensig.fiscal.server.sped.blocoC;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +30,9 @@ public class RegistroC460 extends ARegistro<DadosC460, ComEcfVenda> {
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", escritor);
 
+			StringWriter sw = new StringWriter();
 			RegistroC470 r470 = new RegistroC470();
-			r470.setEsquitor(escritor);
+			r470.setEsquitor(sw);
 			r470.setAuth(auth);
 
 			for (ComEcfVenda venda : ecfs) {
@@ -51,9 +54,16 @@ public class RegistroC460 extends ARegistro<DadosC460, ComEcfVenda> {
 						}
 					}
 					
+					// escreve o bloco 460
 					bloco.setVl_doc(valor);
 					out.write(bloco);
 					out.flush();
+					// escreve o bloco 470
+					try {
+						escritor.write(sw.toString());
+					} catch (IOException e) {
+						UtilServer.LOG.error("Erro na geracao do Registro -> " + bean, e);
+					}
 				}
 			}
 		} catch (Exception e) {

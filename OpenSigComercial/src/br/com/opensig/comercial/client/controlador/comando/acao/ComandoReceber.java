@@ -124,7 +124,6 @@ public class ComandoReceber extends ComandoAcao<ComVenda> {
 				formReceber.getCmbEntidade().setValue(rec.getAsString("empCliente.empEntidade.empEntidadeNome1"));
 				formReceber.getCmbEntidade().disable();
 				formReceber.getTxtValor().setValue(rec.getAsDouble("comVendaValorLiquido"));
-				formReceber.getTxtValor().disable();
 				String data = DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).format(rec.getAsDate("comVendaData"));
 				formReceber.getDtCadastro().setValue(data);
 				formReceber.getDtCadastro().disable();

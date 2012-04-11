@@ -5,6 +5,9 @@ import java.util.Collection;
 
 import br.com.opensig.core.client.controlador.comando.FabricaComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoFavorito;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteEmpresa;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteUsuario;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoVisualizar;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.produto.client.controlador.comando.ComandoEmbalagem;
@@ -46,6 +49,9 @@ public class OpenSigProduto implements EntryPoint {
 				acoes.add(classe);
 			}
 		}
+		acoes.add(ComandoFavorito.class);
+		acoes.add(ComandoPermiteUsuario.class);
+		acoes.add(ComandoPermiteEmpresa.class);
         Ponte.setAcoesProibidas(ComandoPesquisa.class.getName(), acoes);
     }
 }

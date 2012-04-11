@@ -36,6 +36,7 @@ import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.Sql;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 /**
  * Classe que implementa na parte do servidor a resposta a chamada de procedimento do cliente, executando os comandos de persistencia no banco de dados.
@@ -713,7 +714,7 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 	 */
 	protected int atualizar(EntityManager em, Sql sql) throws CoreException {
 		int resultado = 0;
-		String nMet = sql.getParametro().getCampo().replaceAll("t\\d*\\.", "set");
+		String nMet = "set" + sql.getParametro().getCampo().replaceAll("t\\d*\\.", "");
 
 		// faz a selecao dos objetos
 		Dados dado = sql.getClasse();
@@ -738,7 +739,7 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 										// verifica se é set e tem o mesmo nome
 										if (UtilServer.isSetter(subMet) && subMet.getName().equalsIgnoreCase(nMet)) {
 											// seta o valor
-											subMet.invoke(subObj, new Object[] { sql.getParametro().getValor() });
+											setValor(subMet, subObj, sql);
 											break;
 										}
 									}
@@ -752,7 +753,8 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 						// verifica se é set e tem o mesmo nome
 					} else if (UtilServer.isSetter(met) && met.getName().equalsIgnoreCase(nMet)) {
 						// seta o valor
-						met.invoke(obj, new Object[] { sql.getParametro().getValor() });
+						setValor(met, obj, sql);
+						resultado++;
 						break;
 					}
 				}
@@ -763,6 +765,46 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 		}
 
 		return resultado;
+	}
+
+	/**
+	 * Metodo que faz o set do valor no objeto identificando o verdadeiro tipo.
+	 * 
+	 * @param sMet
+	 *            o Metodo a ser chamado.
+	 * @param obj
+	 *            o objeto a ser atingindo.
+	 * @param sql
+	 *            a instrucao que contem o valor.
+	 * @throws Exception
+	 *             caso ocorra alguma excecao.
+	 */
+	protected void setValor(Method sMet, E obj, Sql sql) throws Exception {
+		String nomeGet = sMet.getName().replace("set", "get");
+		Method gMet = obj.getClass().getMethod(nomeGet);
+		String valor = sql.getParametro().getValor().toString();
+
+		if (gMet.getReturnType() == Boolean.class || gMet.getReturnType() == boolean.class) {
+			sMet.invoke(obj, new Object[] { Boolean.valueOf(valor) });
+		} else if (gMet.getReturnType() == Byte.class || gMet.getReturnType() == byte.class) {
+			sMet.invoke(obj, new Object[] { Byte.valueOf(valor) });
+		} else if (gMet.getReturnType() == Short.class || gMet.getReturnType() == short.class) {
+			sMet.invoke(obj, new Object[] { Short.valueOf(valor) });
+		} else if (gMet.getReturnType() == Integer.class || gMet.getReturnType() == int.class) {
+			sMet.invoke(obj, new Object[] { Integer.valueOf(valor) });
+		} else if (gMet.getReturnType() == Long.class || gMet.getReturnType() == long.class) {
+			sMet.invoke(obj, new Object[] { Long.valueOf(valor) });
+		} else if (gMet.getReturnType() == Float.class || gMet.getReturnType() == float.class) {
+			sMet.invoke(obj, new Object[] { Float.valueOf(valor) });
+		} else if (gMet.getReturnType() == Double.class || gMet.getReturnType() == double.class) {
+			sMet.invoke(obj, new Object[] { Double.valueOf(valor) });
+		} else if (gMet.getReturnType() == Date.class) {
+			sMet.invoke(obj, new Object[] { (Date) sql.getParametro().getValor() });
+		} else if (gMet.getReturnType() == Character.class || gMet.getReturnType() == char.class) {
+			sMet.invoke(obj, new Object[] { valor.charAt(0) });
+		} else {
+			sMet.invoke(obj, new Object[] { valor });
+		}
 	}
 
 	/**

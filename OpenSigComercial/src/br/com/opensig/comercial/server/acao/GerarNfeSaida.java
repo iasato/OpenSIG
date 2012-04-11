@@ -725,7 +725,7 @@ public class GerarNfeSaida extends Chain {
 			PISAliq aliq = new PISAliq();
 			aliq.setCST("01");
 			aliq.setVBC(getValorNfe(venProd.getComVendaProdutoTotalLiquido()));
-			aliq.setPPIS(comNatureza.getComNaturezaPis().toString());
+			aliq.setPPIS(UtilServer.formataNumero(comNatureza.getComNaturezaPis(), 1, 2, false));
 			aliq.setVPIS(strValor);
 			pis.setPISAliq(aliq);
 		}
@@ -752,7 +752,7 @@ public class GerarNfeSaida extends Chain {
 			COFINSAliq aliq = new COFINSAliq();
 			aliq.setCST("01");
 			aliq.setVBC(getValorNfe(venProd.getComVendaProdutoTotalLiquido()));
-			aliq.setPCOFINS(comNatureza.getComNaturezaCofins().toString());
+			aliq.setPCOFINS(UtilServer.formataNumero(comNatureza.getComNaturezaCofins(), 1, 2, false));
 			aliq.setVCOFINS(strValor);
 			cofins.setCOFINSAliq(aliq);
 		}

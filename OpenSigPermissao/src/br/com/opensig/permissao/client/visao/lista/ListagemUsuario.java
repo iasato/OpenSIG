@@ -54,10 +54,6 @@ public class ListagemUsuario extends AListagem<SisUsuario> {
 		ColumnConfig ccGrupos = new ColumnConfig(OpenSigCore.i18n.txtGrupo(), "sisGrupos", 200, false);
 		ColumnConfig ccAtivo = new ColumnConfig(OpenSigCore.i18n.txtAtivo(), "sisUsuarioAtivo", 50, true, BOLEANO);
 		ColumnConfig ccSistema = new ColumnConfig(OpenSigCore.i18n.txtSistema(), "sisUsuarioSistema", 75, false, BOLEANO);
-		if (Ponte.getLogin().getId() > 1) {
-			ccSistema.setHidden(true);
-			ccSistema.setFixed(true);
-		}
 
 		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccLogin, ccSenha, ccDesconto, ccEmail, ccEmpresa, ccGrupos, ccAtivo, ccSistema };
 		modelos = new ColumnModel(bcc);
@@ -74,7 +70,7 @@ public class ListagemUsuario extends AListagem<SisUsuario> {
 			gf.add(fn, EJuncao.E);
 		}
 		
-		if (Ponte.getLogin().getId() > 1) {
+		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteUsuario.class) == null) {
 			FiltroBinario fb = new FiltroBinario("sisUsuarioSistema", ECompara.IGUAL, 0);
 			gf.add(fb);
 		}

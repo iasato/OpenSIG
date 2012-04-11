@@ -2,20 +2,22 @@ package br.com.opensig.permissao.client.visao.form;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import br.com.opensig.core.client.OpenSigCore;
+import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.ComandoExecutar;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.form.ComandoCancelar;
 import br.com.opensig.core.client.controlador.comando.form.ComandoSalvar;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteUsuario;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
 import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
+import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.client.visao.Arvore;
 import br.com.opensig.core.client.visao.Ponte;
@@ -51,7 +53,6 @@ public class FormularioAcesso extends AFormulario<SisPermissao> {
 	private Dados tipo;
 	private List<SisPermissao> nPermissoes;
 	private List<SisPermissao> vPermissoes;
-	private List<SisAcao> acoesPadroes;
 	private Arvore treeTipo;
 	private TreeNode nodeGrupo;
 	private TreeNode nodeUsuario;
@@ -162,7 +163,7 @@ public class FormularioAcesso extends AFormulario<SisPermissao> {
 		FiltroBinario fb1 = new FiltroBinario("sisGrupoAtivo", ECompara.IGUAL, 1);
 		gf.add(fb1, EJuncao.E);
 
-		if (Ponte.getLogin().getId() > 1) {
+		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteUsuario.class) == null) {
 			FiltroBinario fb2 = new FiltroBinario("sisGrupoSistema", ECompara.IGUAL, 0);
 			gf.add(fb2);
 		}
@@ -203,7 +204,7 @@ public class FormularioAcesso extends AFormulario<SisPermissao> {
 		FiltroBinario fb1 = new FiltroBinario("sisUsuarioAtivo", ECompara.IGUAL, 1);
 		gf.add(fb1, EJuncao.E);
 
-		if (Ponte.getLogin().getId() > 1) {
+		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteUsuario.class) == null) {
 			FiltroBinario fb2 = new FiltroBinario("sisUsuarioSistema", ECompara.IGUAL, 0);
 			gf.add(fb2);
 		}
@@ -230,68 +231,27 @@ public class FormularioAcesso extends AFormulario<SisPermissao> {
 	}
 
 	private void carregaModulos() {
-		navAcesso.getTreeAcesso().getEl().mask(OpenSigCore.i18n.txtAguarde());
-		CoreProxy<SisModulo> proxy = new CoreProxy<SisModulo>(new SisModulo());
-		proxy.selecionar(0, 0, null, false, new AsyncCallback<Lista<SisModulo>>() {
-
-			public void onFailure(Throwable caught) {
-				MessageBox.alert(OpenSigCore.i18n.txtModulos(), OpenSigCore.i18n.errRegistro());
-				navAcesso.getTreeAcesso().getEl().unmask();
+		List<SisModulo> modulos = Ponte.getLogin().getModulos();
+		for (SisModulo sisModulo : modulos) {
+			for (SisFuncao sisFuncao : sisModulo.getSisFuncoes()) {
+				filtraAcoes(sisFuncao);
 			}
+		}
 
-			public void onSuccess(Lista<SisModulo> result) {
-				// filtra os modulos
-				for (SisModulo sisModulo : result.getLista()) {
-					if (sisModulo.getAtivo()) {
-						if (sisModulo.getSisModuloId() == 0) {
-							acoesPadroes = sisModulo.getSisFuncoes().get(0).getSisAcoes();
-							Collections.sort(acoesPadroes);
-						} else {
-							// filtra as funcoes
-							for (SisFuncao sisFuncao : sisModulo.getSisFuncoes()) {
-								if (sisFuncao.getAtivo()) {
-									filtraAcoes(sisFuncao);
-								} else {
-									sisModulo.getSisFuncoes().remove(sisFuncao);
-								}
-							}
-						}
-					} else {
-						result.getLista().remove(sisModulo);
-					}
-				}
-
-				navAcesso.visit(result.getLista().toArray(new SisModulo[0]));
-				navAcesso.getTreeAcesso().getEl().unmask();
-			}
-		});
+		navAcesso.visit(modulos.toArray(new SisModulo[0]));
+		navAcesso.getTreeAcesso().getEl().unmask();
 	}
 
 	private void filtraAcoes(SisFuncao sisFuncao) {
 		Collection<Class> proibidas = Ponte.getAcoesProibidas(sisFuncao.getSisFuncaoClasse());
 		if (proibidas != null) {
-			for (SisAcao acao : acoesPadroes) {
-				boolean proibida = false;
-
-				for (Class acaoClasse : proibidas) {
+			for (Class acaoClasse : proibidas) {
+				for (SisAcao acao : sisFuncao.getSisAcoes()) {
 					if (acao.getSisAcaoClasse().equals(acaoClasse.getName())) {
-						proibida = true;
+						sisFuncao.getSisAcoes().remove(acao);
 						break;
 					}
 				}
-
-				if (!proibida) {
-					sisFuncao.getSisAcoes().add(acao);
-				}
-			}
-		} else {
-			sisFuncao.getSisAcoes().addAll(acoesPadroes);
-		}
-
-		// filtra as acoes
-		for (SisAcao acao : sisFuncao.getSisAcoes()) {
-			if (!acao.getAtivo()) {
-				sisFuncao.getSisAcoes().remove(acao);
 			}
 		}
 	}
@@ -391,10 +351,20 @@ public class FormularioAcesso extends AFormulario<SisPermissao> {
 			ComandoSalvar<SisPermissao> salvar = new ComandoSalvar<SisPermissao>();
 			salvar.setRegistros(nPermissoes);
 
-			// deleta as antigas e salva as novas
+			// deleta as antigas funcoes que tem permissao e salva as novas
 			String campo = tipo instanceof SisGrupo ? "sisGrupo" : "sisUsuario";
 			FiltroObjeto fo = new FiltroObjeto(campo, ECompara.IGUAL, tipo);
-			Sql sql = new Sql(new SisPermissao(), EComando.EXCLUIR, fo);
+
+			GrupoFiltro gFuncoes = new GrupoFiltro();
+			for (SisModulo modulo : Ponte.getLogin().getModulos()) {
+				for (SisFuncao funcao : modulo.getSisFuncoes()) {
+					FiltroNumero fn = new FiltroNumero("sisFuncaoId", ECompara.IGUAL, funcao.getId());
+					gFuncoes.add(fn, EJuncao.OU);
+				}
+			}
+
+			GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, gFuncoes });
+			Sql sql = new Sql(new SisPermissao(), EComando.EXCLUIR, gf);
 			comando = new ComandoExecutar<SisPermissao>(nPermissoes.size() > 0 ? salvar : salvar.getProximo(), new Sql[] { sql });
 		} else if (comando instanceof ComandoCancelar) {
 			tipo = null;
@@ -487,14 +457,6 @@ public class FormularioAcesso extends AFormulario<SisPermissao> {
 
 	public void setvPermissoes(List<SisPermissao> vPermissoes) {
 		this.vPermissoes = vPermissoes;
-	}
-
-	public List<SisAcao> getAcoesPadroes() {
-		return acoesPadroes;
-	}
-
-	public void setAcoesPadroes(List<SisAcao> acoesPadroes) {
-		this.acoesPadroes = acoesPadroes;
 	}
 
 	public Arvore getTreeTipo() {

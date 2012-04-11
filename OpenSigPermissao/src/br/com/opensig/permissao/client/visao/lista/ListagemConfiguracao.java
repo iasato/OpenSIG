@@ -5,6 +5,7 @@ import java.util.Map.Entry;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteEmpresa;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteUsuario;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
 import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
@@ -59,7 +60,7 @@ public class ListagemConfiguracao extends AListagem<SisConfiguracao> {
 		ColumnConfig ccDescricao = new ColumnConfig(OpenSigCore.i18n.txtDescricao(), "sisConfiguracaoDescricao", 300, true);
 		ColumnConfig ccAtivo = new ColumnConfig(OpenSigCore.i18n.txtAtivo(), "sisConfiguracaoAtivo", 50, true, BOLEANO);
 		ColumnConfig ccSistema = new ColumnConfig(OpenSigCore.i18n.txtSistema(), "sisConfiguracaoSistema", 75, false, BOLEANO);
-		if (Ponte.getLogin().getId() > 1) {
+		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteUsuario.class) == null) {
 			ccSistema.setHidden(true);
 			ccSistema.setFixed(true);
 		}
@@ -73,7 +74,7 @@ public class ListagemConfiguracao extends AListagem<SisConfiguracao> {
 			gf.add(fo, EJuncao.E);
 		}
 
-		if (Ponte.getLogin().getId() > 1) {
+		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteUsuario.class) == null) {
 			FiltroBinario fb = new FiltroBinario("sisConfiguracaoSistema", ECompara.IGUAL, 0);
 			gf.add(fb);
 		}
