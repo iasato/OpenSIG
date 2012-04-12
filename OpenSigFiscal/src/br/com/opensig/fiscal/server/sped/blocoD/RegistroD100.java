@@ -19,7 +19,7 @@ public class RegistroD100 extends ARegistro<DadosD100, ComFrete> {
 			BeanWriter out = factory.createWriter("EFD", escritor);
 
 			RegistroD190 r190 = new RegistroD190();
-			r190.setEsquitor(escritor);
+			r190.setEscritor(escritor);
 			r190.setAuth(auth);
 
 			for (ComFrete frete : fretes) {

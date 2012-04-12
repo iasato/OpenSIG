@@ -23,7 +23,7 @@ public interface IRegistro<E,T> {
 	
 	public Writer getEscritor();
 
-	public void setEsquitor(Writer escritor);
+	public void setEscritor(Writer escritor);
 
 	public FisSpedFiscal getSped();
 

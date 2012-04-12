@@ -43,7 +43,7 @@ public class RegistroC420 extends ARegistro<DadosC420, ComEcfZTotais> {
 			}
 
 			RegistroC425 r425 = new RegistroC425();
-			r425.setEsquitor(escritor);
+			r425.setEscritor(escritor);
 			r425.setAuth(auth);
 
 			for (ComEcfZTotais tot : totais) {

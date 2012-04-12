@@ -114,7 +114,7 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 	}
 
 	@Override
-	public void setEsquitor(Writer arquivo) {
+	public void setEscritor(Writer arquivo) {
 		this.escritor = arquivo;
 	}
 

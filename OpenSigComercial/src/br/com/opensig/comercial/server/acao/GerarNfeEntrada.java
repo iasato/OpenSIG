@@ -691,7 +691,7 @@ public class GerarNfeEntrada extends Chain {
 			PISAliq aliq = new PISAliq();
 			aliq.setCST("01");
 			aliq.setVBC(getValorNfe(comProd.getComCompraProdutoTotal()));
-			aliq.setPPIS(UtilServer.formataNumero(comNatureza.getComNaturezaPis(), 1, 2, false));
+			aliq.setPPIS(getValorNfe(comNatureza.getComNaturezaPis()));
 			aliq.setVPIS(strValor);
 			pis.setPISAliq(aliq);
 		}
@@ -718,7 +718,7 @@ public class GerarNfeEntrada extends Chain {
 			COFINSAliq aliq = new COFINSAliq();
 			aliq.setCST("01");
 			aliq.setVBC(getValorNfe(comProd.getComCompraProdutoTotal()));
-			aliq.setPCOFINS(UtilServer.formataNumero(comNatureza.getComNaturezaCofins(), 1, 2, false));
+			aliq.setPCOFINS(getValorNfe(comNatureza.getComNaturezaCofins()));
 			aliq.setVCOFINS(strValor);
 			cofins.setCOFINSAliq(aliq);
 		}

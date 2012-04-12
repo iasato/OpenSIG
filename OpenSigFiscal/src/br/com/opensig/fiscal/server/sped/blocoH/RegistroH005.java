@@ -15,7 +15,7 @@ public class RegistroH005 extends ARegistro<DadosH005, Dados> {
 	public void executar() {
 		StringWriter sw = new StringWriter(1000000);
 		RegistroH010 r010 = new RegistroH010();
-		r010.setEsquitor(sw);
+		r010.setEscritor(sw);
 		r010.setAuth(auth);
 		r010.setService(service);
 		r010.setSped(sped);

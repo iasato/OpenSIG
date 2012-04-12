@@ -21,6 +21,7 @@ import br.com.opensig.comercial.shared.modelo.ComFrete;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
+import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
 import br.com.opensig.core.client.controlador.filtro.FiltroData;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
@@ -181,7 +182,7 @@ public class EFD implements Runnable {
 			FiltroData fd1 = new FiltroData("comEcfVendaData", ECompara.MAIOR_IGUAL, inicio);
 			gfData.add(fd1, EJuncao.E);
 			FiltroData fd2 = new FiltroData("comEcfVendaData", ECompara.MENOR_IGUAL, fim);
-			gfData.add(fd2);
+			gfData.add(fd2, EJuncao.E);
 
 			// monta o filtro dos das ecfs
 			GrupoFiltro gfEcf = new GrupoFiltro();
@@ -189,8 +190,11 @@ public class EFD implements Runnable {
 				FiltroObjeto fo = new FiltroObjeto("comEcf", ECompara.IGUAL, new ComEcf(id));
 				gfEcf.add(fo, EJuncao.OU);
 			}
+			
+			FiltroBinario fb = new FiltroBinario("comEcfVendaFechada", ECompara.IGUAL, 1);
 			GrupoFiltro gf = new GrupoFiltro();
 			gf.add(gfData, EJuncao.E);
+			gf.add(fb, EJuncao.E);
 			gf.add(gfEcf);
 
 			// seleciona todos as vendas da ecf
@@ -236,7 +240,7 @@ public class EFD implements Runnable {
 					IRegistro registro = classe.newInstance();
 					registro.setQtdLInhas(bloco.getFisSpedBlocoClasse().endsWith("9999") ? qtdArquivo : qtdBloco);
 					registro.setLeitor(arquivo);
-					registro.setEsquitor(escritor);
+					registro.setEscritor(escritor);
 					registro.setSped(sped);
 					registro.setService(service);
 					registro.setAuth(auth);

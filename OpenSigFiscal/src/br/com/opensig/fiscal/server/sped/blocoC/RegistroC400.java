@@ -68,7 +68,7 @@ public class RegistroC400 extends ARegistro<DadosC400, ComEcf> {
 		Lista<ComEcfZ> ecfz = service.selecionar(new ComEcfZ(), 0, 0, gf, false);
 
 		RegistroC405 r405 = new RegistroC405();
-		r405.setEsquitor(escritor);
+		r405.setEscritor(escritor);
 		r405.setAuth(auth);
 		r405.setEcfs(ecfs);
 

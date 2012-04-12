@@ -49,7 +49,7 @@ public class RegistroC405 extends ARegistro<DadosC405, ComEcfZ> {
 
 		// vendas da leitura Z
 		RegistroC460 r460 = new RegistroC460();
-		r460.setEsquitor(sw);
+		r460.setEscritor(sw);
 		r460.setAuth(auth);
 		r460.setEcfs(ecfs);
 		r460.setZ(dados);
@@ -59,7 +59,7 @@ public class RegistroC405 extends ARegistro<DadosC405, ComEcfZ> {
 		// analitico
 		if (!r460.getAnalitico().isEmpty()) {
 			RegistroC490 r490 = new RegistroC490();
-			r490.setEsquitor(sw);
+			r490.setEscritor(sw);
 			r490.setAuth(auth);
 			for (Entry<String, List<DadosC470>> entry : r460.getAnalitico().entrySet()) {
 				r490.setDados(entry.getValue());
@@ -93,7 +93,7 @@ public class RegistroC405 extends ARegistro<DadosC405, ComEcfZ> {
 
 		// sub totais da leitura Z
 		RegistroC420 r420 = new RegistroC420();
-		r420.setEsquitor(escritor);
+		r420.setEscritor(escritor);
 		r420.setAuth(auth);
 		r420.setEcfs(ecfs);
 		r420.setTotais(dados.getComZTotais());

@@ -1,6 +1,5 @@
 package br.com.opensig.fiscal.server.sped.blocoC;
 
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,19 +29,19 @@ public class RegistroC460 extends ARegistro<DadosC460, ComEcfVenda> {
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", escritor);
 
-			StringWriter sw = new StringWriter();
 			RegistroC470 r470 = new RegistroC470();
-			r470.setEsquitor(sw);
 			r470.setAuth(auth);
+			StringWriter sw = null;
 
 			for (ComEcfVenda venda : ecfs) {
 				if (venda.getComEcfVendaLiquido() > 0.00 && venda.getComEcf().getComEcfId() == z.getComEcf().getComEcfId() && venda.getComEcfVendaData().compareTo(z.getComEcfZData()) == 0) {
 					bloco = getDados(venda);
-					double valor = bloco.getVl_doc();
-					
 					// itens das vendas
 					if (!venda.getComEcfVendaCancelada()) {
-						valor = 0.00;
+						double valor = 0.00;
+						sw = new StringWriter();
+						r470.setEscritor(sw);
+						
 						for (ComEcfVendaProduto vp : venda.getComEcfVendaProdutos()) {
 							if (!vp.getComEcfVendaProdutoCancelado()) {
 								r470.setDados(vp);
@@ -52,17 +51,20 @@ public class RegistroC460 extends ARegistro<DadosC460, ComEcfVenda> {
 								setAnalitico(r470.getBloco());
 							}
 						}
+
+						if (valor != bloco.getVl_doc()) {
+							bloco.setVl_doc(valor);
+						}
 					}
-					
+
 					// escreve o bloco 460
-					bloco.setVl_doc(valor);
 					out.write(bloco);
 					out.flush();
+
 					// escreve o bloco 470
-					try {
+					if (sw != null) {
 						escritor.write(sw.toString());
-					} catch (IOException e) {
-						UtilServer.LOG.error("Erro na geracao do Registro -> " + bean, e);
+						sw = null;
 					}
 				}
 			}

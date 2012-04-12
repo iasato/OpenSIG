@@ -69,7 +69,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				if (!compra.getComCompraNfe() && obj.getInd_pgto().equals("1")) {
 					RegistroC140 r140 = new RegistroC140<FinPagar>();
 					r140.setDados(compra.getFinPagar());
-					r140.setEsquitor(escritor);
+					r140.setEscritor(escritor);
 					r140.setAuth(auth);
 					r140.executar();
 					qtdLinhas += r140.getQtdLinhas();
@@ -78,7 +78,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				// produtos
 				if (compra.getComCompraNfe()) {
 					RegistroNfeC170 r170 = new RegistroNfeC170();
-					r170.setEsquitor(escritor);
+					r170.setEscritor(escritor);
 					r170.setAuth(auth);
 					r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
 					r170.setNatureza(compra.getComNatureza().getComNaturezaId() + "");
@@ -93,7 +93,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 					}
 				} else {
 					RegistroC170<ComCompraProduto> r170 = new RegistroC170<ComCompraProduto>();
-					r170.setEsquitor(escritor);
+					r170.setEscritor(escritor);
 					r170.setAuth(auth);
 					for (ComCompraProduto prod : compra.getComCompraProdutos()) {
 						r170.setDados(prod);
@@ -143,7 +143,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 					if (!venda.getComVendaNfe() && obj.getInd_pgto().equals("1")) {
 						RegistroC140 r140 = new RegistroC140<FinReceber>();
 						r140.setDados(venda.getFinReceber());
-						r140.setEsquitor(escritor);
+						r140.setEscritor(escritor);
 						r140.setAuth(auth);
 						r140.executar();
 						qtdLinhas += r140.getQtdLinhas();
@@ -164,7 +164,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 						}
 					} else {
 						RegistroC170<ComVendaProduto> r170 = new RegistroC170<ComVendaProduto>();
-						r170.setEsquitor(escritor);
+						r170.setEscritor(escritor);
 						r170.setAuth(auth);
 						r170.setSped(sped);
 						for (ComVendaProduto prod : venda.getComVendaProdutos()) {
@@ -359,7 +359,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 	private void getAnalitico() {
 		if (!analitico.isEmpty()) {
 			RegistroC190 r190 = new RegistroC190();
-			r190.setEsquitor(escritor);
+			r190.setEscritor(escritor);
 			r190.setAuth(auth);
 			for (Entry<String, List<DadosC170>> entry : analitico.entrySet()) {
 				r190.setDados(entry.getValue());
