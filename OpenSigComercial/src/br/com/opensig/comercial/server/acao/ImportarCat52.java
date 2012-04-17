@@ -141,7 +141,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 						} else if (rec instanceof ComEcfVendaProduto) {
 							ComEcfVendaProduto prod = (ComEcfVendaProduto) rec;
 							ComEcfVenda venda = mapVenda.get(prod.getComEcfVendaProdutoCoo());
-							prod = getProduto(prod, venda.getComEcfVendaDesconto());
+							prod = getProduto(prod);
 							if (venda.getComEcfVendaCancelada()) {
 								prod.setComEcfVendaProdutoCancelado(true);
 							}
@@ -250,6 +250,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 
 		if (ecf2 == null) {
 			ecf.setComEcfCodigo("2D");
+			ecf.setComEcfAtivo(true);
 			ecf.setEmpEmpresa(empresa);
 			service.salvar(ecf);
 		} else {
@@ -284,7 +285,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 		venda.setEmpCliente(cliente);
 		venda.setComEcfVendaBruto(venda.getComEcfVendaBruto() / 100);
 		double desc = venda.getComEcfVendaBruto() > 0 ? venda.getComEcfVendaDesconto() / venda.getComEcfVendaBruto() : 0.00;
-		venda.setComEcfVendaDesconto(desc);
+		venda.setComEcfVendaDesconto(desc > 0 ? desc : 0.00);
 		venda.setComEcfVendaLiquido(venda.getComEcfVendaLiquido() / 100);
 		venda.setComEcfVendaProdutos(new ArrayList<ComEcfVendaProduto>());
 		venda.setComEcfVendaCancelada(venda.getCancelada().equalsIgnoreCase("S"));
@@ -298,15 +299,14 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 	}
 
 	// coloco os dados do produto
-	private ComEcfVendaProduto getProduto(ComEcfVendaProduto prod, double desc) {
+	private ComEcfVendaProduto getProduto(ComEcfVendaProduto prod) {
 		prod.setProdEmbalagem(getEmbalagem(prod.getComEcfVendaProdutoUnd()));
 		prod.setComEcfVendaProdutoBruto(prod.getComEcfVendaProdutoBruto() / 100);
-		prod.setComEcfVendaProdutoDesconto(desc);
-		double liquido = desc > 0 ? prod.getComEcfVendaProdutoBruto() - (prod.getComEcfVendaProdutoBruto() / desc) : prod.getComEcfVendaProdutoBruto();
-		prod.setComEcfVendaProdutoLiquido(liquido);
+		double desc = prod.getComEcfVendaProdutoBruto() > 0 ? prod.getComEcfVendaProdutoDesconto() / prod.getComEcfVendaProdutoBruto() : 0.00;
+		prod.setComEcfVendaProdutoDesconto(desc > 0 ? desc : 0.00);
 		prod.setComEcfVendaProdutoQuantidade(prod.getComEcfVendaProdutoQuantidade() / 1000);
-		double total = liquido * prod.getComEcfVendaProdutoQuantidade();
-		prod.setComEcfVendaProdutoTotal(total);
+		prod.setComEcfVendaProdutoTotal(prod.getComEcfVendaProdutoTotal() / 100);
+		prod.setComEcfVendaProdutoLiquido(prod.getComEcfVendaProdutoTotal() / prod.getComEcfVendaProdutoQuantidade());
 		prod.setComEcfVendaProdutoCancelado(prod.getCancelado().equalsIgnoreCase("S"));
 		return prod;
 	}
@@ -376,6 +376,20 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 			// efetiva a transacao
 			total += rs.executeUpdate();
 			em.getTransaction().commit();
+			
+			// inicia a transacao
+			em.getTransaction().begin();
+			// atualiza pela descricao
+			sql = new StringBuffer();
+			sql.append("UPDATE com_ecf_venda_produto, prod_produto");
+			sql.append(" SET com_ecf_venda_produto.prod_produto_id = prod_produto.prod_produto_id");
+			sql.append(" WHERE com_ecf_venda_produto.prod_produto_id is null");
+			sql.append(" AND com_ecf_venda_produto.com_ecf_venda_produto_descricao = prod_produto.prod_produto_descricao");
+			rs = em.createNativeQuery(sql.toString());
+			// efetiva a transacao
+			total += rs.executeUpdate();
+			em.getTransaction().commit();
+			
 			UtilServer.LOG.debug("Total de produtos atualizados = " + total);
 		} catch (Exception ex) {
 			// volta ao estado anterior

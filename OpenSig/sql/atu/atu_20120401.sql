@@ -16,3 +16,11 @@ ALTER TABLE `prod_ipi` ADD COLUMN `prod_ipi_enq` VARCHAR(3) NOT NULL  AFTER `pro
 UPDATE prod_ipi, sis_configuracao SET prod_ipi_enq = sis_configuracao_valor WHERE  sis_configuracao_chave = 'NFE.IPI_ENQ';
 DELETE FROM sis_configuracao WHERE sis_configuracao_chave = 'NFE.IPI';
 DELETE FROM sis_configuracao WHERE sis_configuracao_chave = 'NFE.IPI_ENQ';
+
+# colocando campo de ativo na ecf
+ALTER TABLE `com_ecf` ADD COLUMN `com_ecf_ativo` TINYINT(1) NOT NULL  AFTER `com_ecf_caixa` ;
+UPDATE `com_ecf` SET `com_ecf_ativo` = 1;
+
+# colocando campo de observacao no produto
+ALTER TABLE `prod_produto` ADD COLUMN `prod_produto_observacao` VARCHAR(255) NOT NULL  AFTER `prod_produto_sinc` ;
+

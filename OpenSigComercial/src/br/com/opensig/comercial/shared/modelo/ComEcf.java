@@ -35,6 +35,9 @@ public class ComEcf extends Dados implements Serializable {
 
 	@Column(name = "com_ecf_serie")
 	private String comEcfSerie;
+	
+	@Column(name = "com_ecf_ativo")
+	private int comEcfAtivo;
 
 	@JoinColumn(name = "emp_empresa_id")
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -89,6 +92,14 @@ public class ComEcf extends Dados implements Serializable {
 		this.comEcfSerie = comEcfSerie;
 	}
 
+	public boolean getComEcfAtivo() {
+		return comEcfAtivo == 0 ? false : true;
+	}
+
+	public void setComEcfAtivo(boolean comEcfAtivo) {
+		this.comEcfAtivo = comEcfAtivo == false ? 0 : 1;
+	}
+	
 	public EmpEmpresa getEmpEmpresa() {
 		return empEmpresa;
 	}
@@ -106,7 +117,7 @@ public class ComEcf extends Dados implements Serializable {
 	}
 
 	public String[] toArray() {
-		return new String[] { comEcfId + "", empEmpresa.getEmpEmpresaId() + "", empEmpresa.getEmpEntidade().getEmpEntidadeNome1(), comEcfCodigo, comEcfModelo, comEcfSerie, comEcfCaixa + "" };
+		return new String[] { comEcfId + "", empEmpresa.getEmpEmpresaId() + "", empEmpresa.getEmpEntidade().getEmpEntidadeNome1(), comEcfCodigo, comEcfModelo, comEcfSerie, comEcfCaixa + "", getComEcfAtivo() + "" };
 	}
 
 	public Dados getObjeto(String campo) {

@@ -8,6 +8,7 @@ import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 
 import com.gwtext.client.data.Record;
+import com.gwtext.client.widgets.form.Checkbox;
 import com.gwtext.client.widgets.form.Hidden;
 import com.gwtext.client.widgets.form.MultiFieldPanel;
 import com.gwtext.client.widgets.form.NumberField;
@@ -21,6 +22,7 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 	private TextField txtModelo;
 	private TextField txtSerie;
 	private NumberField txtCaixa;
+	private Checkbox chkAtivo;
 
 	public FormularioEcf(SisFuncao funcao) {
 		super(new ComEcf(), funcao);
@@ -39,7 +41,7 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 		txtCodigo.setAllowBlank(false);
 		txtCodigo.setMaxLength(2);
 		txtCodigo.setMinLength(2);
-		
+
 		txtModelo = new TextField(OpenSigCore.i18n.txtModelo(), "comEcfModelo", 200);
 		txtModelo.setAllowBlank(false);
 		txtModelo.setMaxLength(20);
@@ -55,12 +57,16 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 		txtCaixa.setAllowNegative(false);
 		txtCaixa.setMaxLength(3);
 
+		chkAtivo = new Checkbox(OpenSigCore.i18n.txtAtivo(), "comEcfAtivo");
+		chkAtivo.setValue(true);
+
 		MultiFieldPanel linha1 = new MultiFieldPanel();
 		linha1.setBorder(false);
 		linha1.addToRow(txtCodigo, 70);
 		linha1.addToRow(txtModelo, 220);
 		linha1.addToRow(txtSerie, 220);
 		linha1.addToRow(txtCaixa, 70);
+		linha1.addToRow(chkAtivo, 70);
 		add(linha1);
 	}
 
@@ -69,6 +75,7 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 		classe.setComEcfCodigo(txtCodigo.getValueAsString());
 		classe.setComEcfModelo(txtModelo.getValueAsString());
 		classe.setComEcfSerie(txtSerie.getValueAsString());
+		classe.setComEcfAtivo(chkAtivo.getValue());
 		if (txtCaixa.getValue() != null) {
 			classe.setComEcfCaixa(txtCaixa.getValue().intValue());
 		}
@@ -115,7 +122,7 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 	public void setHdnEmpresa(Hidden hdnEmpresa) {
 		this.hdnEmpresa = hdnEmpresa;
 	}
-	
+
 	public TextField getTxtCodigo() {
 		return txtCodigo;
 	}
@@ -146,6 +153,14 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 
 	public void setTxtCaixa(NumberField txtCaixa) {
 		this.txtCaixa = txtCaixa;
+	}
+
+	public Checkbox getChkAtivo() {
+		return chkAtivo;
+	}
+
+	public void setChkAtivo(Checkbox chkAtivo) {
+		this.chkAtivo = chkAtivo;
 	}
 
 }

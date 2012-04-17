@@ -17,6 +17,7 @@ import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 
 import com.gwtext.client.data.ArrayReader;
+import com.gwtext.client.data.BooleanFieldDef;
 import com.gwtext.client.data.FieldDef;
 import com.gwtext.client.data.IntegerFieldDef;
 import com.gwtext.client.data.RecordDef;
@@ -25,6 +26,7 @@ import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.widgets.grid.BaseColumnConfig;
 import com.gwtext.client.widgets.grid.ColumnConfig;
 import com.gwtext.client.widgets.grid.ColumnModel;
+import com.gwtextux.client.widgets.grid.plugins.GridBooleanFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridListFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridLongFilter;
@@ -39,7 +41,7 @@ public class ListagemEcf extends AListagem<ComEcf> {
 	public void inicializar() {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comEcfId"), new IntegerFieldDef("empEmpresa.empEmpresaId"), new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"),
-				new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa") };
+				new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa"), new BooleanFieldDef("comEcfAtivo") };
 		campos = new RecordDef(fd);
 
 		// colunas
@@ -52,8 +54,9 @@ public class ListagemEcf extends AListagem<ComEcf> {
 		ColumnConfig ccModelo = new ColumnConfig(OpenSigCore.i18n.txtModelo(), "comEcfModelo", 200, true);
 		ColumnConfig ccSerie = new ColumnConfig(OpenSigCore.i18n.txtSerie(), "comEcfSerie", 200, true);
 		ColumnConfig ccCaixa = new ColumnConfig(OpenSigCore.i18n.txtCaixa(), "comEcfCaixa", 75, true);
+		ColumnConfig ccAtivo = new ColumnConfig(OpenSigCore.i18n.txtAtivo(), "comEcfAtivo", 50, true, BOLEANO);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccCodigo, ccModelo, ccSerie, ccCaixa };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccCodigo, ccModelo, ccSerie, ccCaixa, ccAtivo };
 		modelos = new ColumnModel(bcc);
 
 		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteEmpresa.class) == null) {
@@ -68,6 +71,8 @@ public class ListagemEcf extends AListagem<ComEcf> {
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
 			if (entry.getKey().equals("empEmpresa.empEmpresaId")) {
 				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
+			} else if (entry.getKey().equals("comEcfAtivo")) {
+				((GridBooleanFilter) entry.getValue()).setValue(true);
 			} else if (entry.getKey().equals("empEmpresa.empEntidade.empEntidadeNome1")) {
 				// empresa
 				FiltroNumero fn = null;
@@ -90,6 +95,7 @@ public class ListagemEcf extends AListagem<ComEcf> {
 
 	public void setFavorito(IFavorito favorito) {
 		filtros.get("empEmpresa.empEmpresaId").setActive(false, true);
+		filtros.get("comEcfAtivo").setActive(false, true);
 		super.setFavorito(favorito);
 	}
 }

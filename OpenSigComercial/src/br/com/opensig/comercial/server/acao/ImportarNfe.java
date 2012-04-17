@@ -475,6 +475,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			produto.setProdProdutoCadastrado(new Date());
 			produto.setProdProdutoCusto(Double.valueOf(prod.getVUnCom()));
 			produto.setProdProdutoPreco(0.00);
+			produto.setProdProdutoObservacao("");
 		}
 
 		return produto;

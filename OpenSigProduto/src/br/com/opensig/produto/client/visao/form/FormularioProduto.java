@@ -60,6 +60,7 @@ import com.gwtext.client.widgets.form.Field;
 import com.gwtext.client.widgets.form.Hidden;
 import com.gwtext.client.widgets.form.MultiFieldPanel;
 import com.gwtext.client.widgets.form.NumberField;
+import com.gwtext.client.widgets.form.TextArea;
 import com.gwtext.client.widgets.form.TextField;
 import com.gwtext.client.widgets.form.event.ComboBoxListenerAdapter;
 import com.gwtext.client.widgets.layout.ColumnLayout;
@@ -92,6 +93,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 	private Checkbox chkAtivo;
 	private Checkbox chkIncentivo;
 	private Arvore<ProdCategoria> treeCategoria;
+	private TextArea txtObservacao;
 	private Date dtCadastro;
 	private ListagemPreco gridPrecos;
 	private List<ProdPreco> precos;
@@ -207,6 +209,11 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		linha4.addToRow(chkIncentivo, 80);
 		coluna1.add(linha4);
 
+		txtObservacao = new TextArea(OpenSigCore.i18n.txtObservacao(), "prodProdutoObservacao");
+		txtObservacao.setMaxLength(255);
+		txtObservacao.setWidth("95%");
+		coluna1.add(txtObservacao);
+		
 		Panel formColuna = new Panel();
 		formColuna.setBorder(false);
 		formColuna.setLayout(new ColumnLayout());
@@ -317,7 +324,8 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 			estoques.add(estoque);
 			classe.setProdEstoques(estoques);
 		}
-
+		classe.setProdProdutoObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
+		
 		return retorno;
 	}
 
@@ -327,8 +335,6 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		gridPrecos.getProxy().setFiltroPadrao(fn);
 		gridPrecos.getStore().removeAll();
 		treeCategoria.getLblValidacao().hide();
-		treeCategoria.limpar();
-		treeCategoria.carregar(null, null);
 	}
 
 	public void mostrarDados() {
@@ -361,6 +367,8 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 			cmbIpi.setValue("7");
 			cmbEmbalagem.setValue("1");
 			cmbTipo.setValue("1");
+			treeCategoria.limpar();
+			treeCategoria.carregar(null, null);
 		}
 		txtNcm.focus(true);
 
@@ -606,7 +614,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		treeCategoria.setFiltrar(true);
 		treeCategoria.setEditar(true);
 		treeCategoria.setWidth(200);
-		treeCategoria.setHeight(150);
+		treeCategoria.setHeight(230);
 		treeCategoria.setBodyBorder(true);
 		treeCategoria.inicializar();
 		treeCategoria.getTxtFiltro().setMaxLength(20);
@@ -860,5 +868,13 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 
 	public void setTreeCategoria(Arvore<ProdCategoria> treeCategoria) {
 		this.treeCategoria = treeCategoria;
+	}
+
+	public TextArea getTxtObservacao() {
+		return txtObservacao;
+	}
+
+	public void setTxtObservacao(TextArea txtObservacao) {
+		this.txtObservacao = txtObservacao;
 	}
 }

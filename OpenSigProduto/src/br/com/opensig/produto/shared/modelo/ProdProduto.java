@@ -77,6 +77,9 @@ public class ProdProduto extends Dados implements Serializable {
 
 	@Column(name = "prod_produto_referencia")
 	private String prodProdutoReferencia;
+	
+	@Column(name = "prod_produto_observacao")
+	private String prodProdutoObservacao;
 
 	@OneToMany(mappedBy = "prodProduto", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<ProdPreco> prodPrecos;
@@ -239,6 +242,14 @@ public class ProdProduto extends Dados implements Serializable {
 		this.prodProdutoVolume = prodProdutoVolume;
 	}
 
+	public String getProdProdutoObservacao() {
+		return prodProdutoObservacao;
+	}
+
+	public void setProdProdutoObservacao(String prodProdutoObservacao) {
+		this.prodProdutoObservacao = prodProdutoObservacao;
+	}
+
 	public List<ProdPreco> getProdPrecos() {
 		return this.prodPrecos;
 	}
@@ -335,7 +346,7 @@ public class ProdProduto extends Dados implements Serializable {
 				prodTributacao.getProdTributacaoDentro() + "", prodTributacao.getProdTributacaoFora() + "", prodTributacao.getProdTributacaoDecreto(), prodIpi.getProdIpiId() + "",
 				prodIpi.getProdIpiNome(), prodIpi.getProdIpiAliquota() + "", prodTipo.getProdTipoId() + "", prodTipo.getProdTipoValor(), prodTipo.getProdTipoDescricao(),
 				prodOrigem.getProdOrigemId() + "", prodOrigem.getProdOrigemDescricao(), UtilClient.getDataHoraGrid(prodProdutoCadastrado), UtilClient.getDataHoraGrid(prodProdutoAlterado),
-				getProdProdutoAtivo() + "", getProdProdutoIncentivo() + "", prodProdutoSinc + "" };
+				getProdProdutoAtivo() + "", getProdProdutoIncentivo() + "", prodProdutoSinc + "", prodProdutoObservacao };
 	}
 
 	public Dados getObjeto(String campo) {

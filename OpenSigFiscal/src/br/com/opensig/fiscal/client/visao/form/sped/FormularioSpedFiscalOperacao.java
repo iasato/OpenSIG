@@ -40,12 +40,12 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 		setButtonAlign(Position.CENTER);
 		setPaddings(5);
 		setMargins(1);
-		setWidth(350);
+		setWidth(370);
 		setHeight(150);
 
 		MultiFieldPanel linha1 = new MultiFieldPanel();
 		linha1.setBorder(false);
-		linha1.addToRow(getSped(), 110);
+		linha1.addToRow(getSped(), 130);
 		linha1.addToRow(getAno(), 110);
 		linha1.addToRow(getMes(), 110);
 		add(linha1);
@@ -55,7 +55,7 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 
 		MultiFieldPanel linha2 = new MultiFieldPanel();
 		linha2.setBorder(false);
-		linha2.addToRow(getCompras(), 110);
+		linha2.addToRow(getCompras(), 130);
 		linha2.addToRow(getVendas(), 110);
 		linha2.addToRow(chkFinalidade, 110);
 		add(linha2);
@@ -112,7 +112,7 @@ public class FormularioSpedFiscalOperacao extends AFormulario<FisSpedFiscal> {
 			}
 		});
 
-		cmbSped = new ComboBox(OpenSigCore.i18n.txtSped(), "cmbSped", 90);
+		cmbSped = new ComboBox(OpenSigCore.i18n.txtSped(), "cmbSped", 110);
 		cmbSped.setForceSelection(true);
 		cmbSped.setEditable(false);
 		cmbSped.setStore(store);

@@ -61,7 +61,7 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 				new StringFieldDef("prodIpi.prodIpiNome"), new FloatFieldDef("prodIpi.prodIpiAliquota"), new IntegerFieldDef("prodTipo.prodTipoId"), new StringFieldDef("prodTipo.prodTipoValor"),
 				new StringFieldDef("prodTipo.prodTipoDescricao"), new IntegerFieldDef("prodOrigem.prodOrigemId"), new StringFieldDef("prodOrigem.prodOrigemDescricao"),
 				new DateFieldDef("prodProdutoCadastrado"), new DateFieldDef("prodProdutoAlterado"), new BooleanFieldDef("prodProdutoAtivo"), new BooleanFieldDef("prodProdutoIncentivo"),
-				new IntegerFieldDef("prodProdutoSinc") };
+				new IntegerFieldDef("prodProdutoSinc"), new StringFieldDef("prodProdutoObservacao") };
 		campos = new RecordDef(fd);
 
 		// colunas
@@ -127,14 +127,15 @@ public class ListagemProduto extends AListagem<ProdProduto> {
 		ColumnConfig ccSinc = new ColumnConfig("", "prodProdutoSinc", 10, false);
 		ccSinc.setHidden(true);
 		ccSinc.setFixed(true);
+		ColumnConfig ccObservacao = new ColumnConfig(OpenSigCore.i18n.txtObservacao(), "prodProdutoObservacao", 200, true);
 
 		if (form != null) {
 			BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccNcm, ccBarra, ccDescricao, ccRef, ccCusto, ccPreco, ccEmbalagemId, ccEmbalagem, ccVolume, ccEstoque, ccCategoria, ccCodForn,
 					ccFornecedor, ccCodFabr, ccFabricante, ccTributacaoId, ccTributacao, ccCst, ccCfop, ccDentro, ccFora, ccDecreto, ccIpiId, ccIpi, ccAliquota, ccTipoId, ccTipo, ccTipoDesc,
-					ccOrigemId, ccOrigem, ccCadastro, ccAlterado, ccAtivo, ccIncentivo, ccSinc };
+					ccOrigemId, ccOrigem, ccCadastro, ccAlterado, ccAtivo, ccIncentivo, ccSinc, ccObservacao };
 			modelos = new ColumnModel(bcc);
 		} else {
-			BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccBarra, ccDescricao, ccRef, ccEmbalagem, ccVolume, ccPreco, ccEstoque, ccFornecedor };
+			BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccBarra, ccDescricao, ccRef, ccEmbalagem, ccVolume, ccPreco, ccEstoque, ccFornecedor, ccObservacao };
 			modelos = new ColumnModel(bcc);
 			barraTarefa = false;
 			agrupar = false;

@@ -7,7 +7,10 @@ import br.com.opensig.comercial.client.visao.lista.ListagemEcf;
 import br.com.opensig.comercial.shared.modelo.ComEcf;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
+import br.com.opensig.core.client.controlador.filtro.EJuncao;
+import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
+import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
 import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
@@ -104,8 +107,12 @@ public class FormularioSpedFiscalEcf extends AFormulario<ComEcf> {
 		spedFiscal = (FisSpedFiscal) contexto.get("classe");
 
 		// filtro
+		GrupoFiltro gf = new GrupoFiltro();
 		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
-		gridEcf.getProxy().setFiltroPadrao(fo);
+		gf.add(fo, EJuncao.E);
+		FiltroBinario fb = new FiltroBinario("comEcfAtivo", ECompara.IGUAL, 1);
+		gf.add(fb);
+		gridEcf.getProxy().setFiltroPadrao(gf);
 		gridEcf.getStore().reload();
 	}
 
