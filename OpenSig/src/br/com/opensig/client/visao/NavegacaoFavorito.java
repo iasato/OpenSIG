@@ -3,7 +3,6 @@ package br.com.opensig.client.visao;
 import java.util.HashMap;
 import java.util.Map;
 
-import br.com.opensig.client.visao.layout.Info;
 import br.com.opensig.client.visao.portal.Portatil;
 import br.com.opensig.client.visao.portal.Principal;
 import br.com.opensig.core.client.OpenSigCore;
@@ -112,11 +111,6 @@ public class NavegacaoFavorito {
 		TreeNode node = new TreeNode(sisFavorito.getSisFavoritoNome(), sisFavorito.getSisFavoritoGrafico().isEmpty() ? "icon-padrao" : "icon-grafico");
 		node.setUserObject(sisFavorito);
 		node.addListener(new TreeNodeListenerAdapter() {
-
-			public void onClick(Node node, EventObject e) {
-				Info.getInstancia().clear();
-				Info.getInstancia().add(desc);
-			}
 
 			public void onDblClick(Node node, EventObject e) {
 				if (contexto.get("favorito") != null) {

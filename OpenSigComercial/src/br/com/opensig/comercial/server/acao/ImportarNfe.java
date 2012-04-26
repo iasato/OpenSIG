@@ -298,16 +298,15 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			enti.setEmpEnderecos(ends);
 
 			// seta o contato telefone
+			String fone = ende.getFone() != null ? ende.getFone().substring(0, 2) + " " + ende.getFone().substring(2, 6) + "-" + ende.getFone().substring(6) : "0000-0000";
+			EmpContato contato = new EmpContato();
+			contato.setEmpContatoTipo(new EmpContatoTipo(Integer.valueOf(auth.getConf().get("nfe.tipoconttel"))));
+			contato.setEmpContatoDescricao(fone);
+			contato.setEmpContatoPessoa("");
+			
 			List<EmpContato> conts = new ArrayList<EmpContato>();
-			if (ende.getFone() != null) {
-				String fone = ende.getFone().substring(0, 2) + " " + ende.getFone().substring(2, 6) + "-" + ende.getFone().substring(6);
-				EmpContato contato = new EmpContato();
-				contato.setEmpContatoTipo(new EmpContatoTipo(Integer.valueOf(auth.getConf().get("nfe.tipoconttel"))));
-				contato.setEmpContatoDescricao(fone);
-				contato.setEmpContatoPessoa("");
-				conts.add(contato);
-				enti.setEmpContatos(conts);
-			}
+			conts.add(contato);
+			enti.setEmpContatos(conts);
 
 			fornecedor = new EmpFornecedor();
 			fornecedor.setEmpEntidade(enti);

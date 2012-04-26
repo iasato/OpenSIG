@@ -117,7 +117,7 @@ public class ListagemValidarProduto {
 			public void onSuccess(Record result) {
 				Record rec = gridProdutos.getSelectionModel().getSelected();
 				rec.set("prodProdutoId", result.getAsInteger("prodProdutoId"));
-				rec.set("prodProduto.prodProdutoBarra", result.getAsString("prodProdutoBarra"));
+				rec.set("prodProduto.prodProdutoBarra", "".equals(result.getAsString("prodProdutoBarra")) ? null : result.getAsString("prodProdutoBarra"));
 				rec.set("prodProduto.prodProdutoDescricao", result.getAsString("prodProdutoDescricao"));
 				rec.set("prodProduto.prodProdutoReferencia", result.getAsString("prodProdutoReferencia"));
 				rec.set("prodProduto.prodProdutoIncentivo", result.getAsBoolean("prodProdutoIncentivo"));
@@ -143,11 +143,11 @@ public class ListagemValidarProduto {
 		gridProdutos.addGridRowListener(new GridRowListenerAdapter() {
 			public void onRowContextMenu(GridPanel grid, int rowIndex, EventObject e) {
 				gridProdutos.getSelectionModel().selectRow(rowIndex);
-				ComandoPesquisa cmdPesquisa = new ComandoPesquisa(asyncPesquisa); 
+				ComandoPesquisa cmdPesquisa = new ComandoPesquisa(asyncPesquisa);
 				cmdPesquisa.execute(contexto);
 			}
 		});
-		
+
 		ToolTip tip = new ToolTip(OpenSigCore.i18n.msgCompraProduto());
 		tip.applyTo(gridProdutos);
 
@@ -309,6 +309,9 @@ public class ListagemValidarProduto {
 			if (prod.getProdProdutoId() == 0) {
 				prod.setProdProdutoCategoria(cmbCategoria.getValue());
 			}
+			if ("".equals(prod.getProdProdutoBarra())) {
+				prod.setProdProdutoBarra(null);
+			}
 		}
 
 		if (validado) {
@@ -328,7 +331,7 @@ public class ListagemValidarProduto {
 		ProdProduto prod = comPro.getProdProduto();
 		// altera
 		prod.setProdProdutoId(rec.getAsInteger("prodProdutoId"));
-		prod.setProdProdutoBarra(rec.getAsString("prodProduto.prodProdutoBarra") != null ? rec.getAsString("prodProduto.prodProdutoBarra") : "");
+		prod.setProdProdutoBarra("".equals(rec.getAsString("prodProduto.prodProdutoBarra")) ? null : rec.getAsString("prodProduto.prodProdutoBarra"));
 		prod.setProdProdutoDescricao(rec.getAsString("prodProduto.prodProdutoDescricao"));
 		prod.setProdProdutoReferencia(rec.getAsString("prodProduto.prodProdutoReferencia"));
 		prod.setProdProdutoIncentivo(rec.getAsBoolean("prodProduto.prodProdutoIncentivo"));
@@ -474,8 +477,8 @@ public class ListagemValidarProduto {
 		final Store storeNatureza = new Store(proxy, new ArrayReader(new RecordDef(fdNatureza)), true);
 		storeNatureza.addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
-				for(Record rec : records){
-					if(rec.getAsString("comNaturezaNome").equalsIgnoreCase(OpenSigCore.i18n.txtCompra())){
+				for (Record rec : records) {
+					if (rec.getAsString("comNaturezaNome").equalsIgnoreCase(OpenSigCore.i18n.txtCompra())) {
 						cmbNatureza.setValue(rec.getAsString("comNaturezaId"));
 						break;
 					}

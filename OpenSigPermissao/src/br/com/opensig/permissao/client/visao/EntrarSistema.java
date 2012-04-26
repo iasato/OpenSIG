@@ -49,6 +49,7 @@ public class EntrarSistema {
 	protected ComboBox cmbEmpresa;
 	protected Button btnEntrar;
 	protected Button btnEsqueceu;
+	protected Button btnSobre;
 	protected PermissaoProxy permissao;
 
 	public EntrarSistema() {
@@ -133,6 +134,9 @@ public class EntrarSistema {
 				esqueceu();
 			}
 		});
+		
+		btnSobre = new Button(OpenSigCore.i18n.txtSobre());
+		btnSobre.setIconCls("icon-sobre");
 
 		Tool ajuda = new Tool(Tool.HELP, getAjuda() , "Video Ajuda!");
 		
@@ -146,6 +150,7 @@ public class EntrarSistema {
 		if (esqueceu.equalsIgnoreCase("true")) {
 			wndAcesso.addButton(btnEsqueceu);
 		}
+		wndAcesso.addButton(btnSobre);
 		wndAcesso.add(frmAcesso);
 		wndAcesso.addListener(new FormPanelListenerAdapter() {
 			public void onShow(Component component) {
@@ -295,6 +300,14 @@ public class EntrarSistema {
 
 	public void setBtnEsqueceu(Button btnEsqueceu) {
 		this.btnEsqueceu = btnEsqueceu;
+	}
+
+	public Button getBtnSobre() {
+		return btnSobre;
+	}
+
+	public void setBtnSobre(Button btnSobre) {
+		this.btnSobre = btnSobre;
 	}
 
 	public PermissaoProxy getPermissao() {

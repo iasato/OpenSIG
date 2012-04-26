@@ -4,8 +4,8 @@ import br.com.opensig.client.visao.layout.BarraMenu;
 import br.com.opensig.client.visao.layout.Centro;
 import br.com.opensig.client.visao.layout.Esquerda;
 import br.com.opensig.client.visao.layout.Favoritos;
-import br.com.opensig.client.visao.layout.Info;
 import br.com.opensig.client.visao.layout.Modulos;
+import br.com.opensig.client.visao.layout.Sobre;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.padroes.Observable;
 import br.com.opensig.core.client.padroes.Observer;
@@ -22,8 +22,11 @@ import com.google.gwt.core.client.Scheduler.RepeatingCommand;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.gwtext.client.core.EventObject;
 import com.gwtext.client.util.CSS;
+import com.gwtext.client.widgets.Button;
 import com.gwtext.client.widgets.Panel;
+import com.gwtext.client.widgets.event.ButtonListenerAdapter;
 import com.gwtext.client.widgets.layout.BorderLayout;
 
 /**
@@ -47,7 +50,6 @@ public class AreaTrabalho extends Panel implements Observer, Visitable {
 		// layout em borda
 		setLayout(new BorderLayout());
 		Ponte.getInstancia().addObserver(this);
-		Ponte.setInfo(Info.getInstancia());
 		// Norte
 		if (modulos.equalsIgnoreCase("menu")) {
 			setTopToolbar(BarraMenu.getInstancia());
@@ -70,8 +72,14 @@ public class AreaTrabalho extends Panel implements Observer, Visitable {
 		login.sair(new AsyncCallback() {
 			public void onFailure(final Throwable caught) {
 			}
+
 			public void onSuccess(Object result) {
-				new EntrarSistema();
+				EntrarSistema es = new EntrarSistema();
+				es.getBtnSobre().addListener(new ButtonListenerAdapter() {
+					public void onClick(Button button, EventObject e) {
+						new Sobre();
+					}
+				});
 			}
 		});
 	}

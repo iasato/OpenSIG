@@ -25,7 +25,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.data.Node;
 import com.gwtext.client.widgets.MessageBox;
 import com.gwtext.client.widgets.Panel;
-import com.gwtext.client.widgets.form.Label;
 import com.gwtext.client.widgets.layout.RowLayout;
 import com.gwtext.client.widgets.layout.RowLayoutData;
 import com.gwtext.client.widgets.tree.TreeNode;
@@ -103,12 +102,7 @@ public class Favoritos extends Panel implements Observer {
 		setIconCls("icon-favorito");
 		setLayout(new RowLayout());
 
-		Label saudacao = new Label(OpenSigCore.i18n.msgSaudacao());
-		Info.getInstancia().clear();
-		Info.getInstancia().add(saudacao);
-
 		add(navegacaoFav.getTreeTarefa(), new RowLayoutData());
-		add(Info.getInstancia(), new RowLayoutData(200));
 	}
 
 	@Override
