@@ -17,6 +17,7 @@ import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.controlador.parametro.GrupoParametro;
 import br.com.opensig.core.client.controlador.parametro.IParametro;
+import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.client.controlador.parametro.ParametroData;
 import br.com.opensig.core.client.controlador.parametro.ParametroFormula;
 import br.com.opensig.core.client.controlador.parametro.ParametroNumero;
@@ -36,7 +37,7 @@ public class FecharCompra extends Chain {
 	private CoreServiceImpl servico;
 	private ComCompra compra;
 	private List<ProdEmbalagem> embalagens;
-	
+
 	public FecharCompra(Chain next, CoreServiceImpl servico, ComCompra compra) throws OpenSigException {
 		super(null);
 		this.servico = servico;
@@ -75,7 +76,7 @@ public class FecharCompra extends Chain {
 		}
 		return unid;
 	}
-	
+
 	private class AtualizarEstoque extends Chain {
 
 		public AtualizarEstoque(Chain next) throws OpenSigException {
@@ -105,7 +106,7 @@ public class FecharCompra extends Chain {
 						qtd *= getQtdEmbalagem(comProd.getProdEmbalagem().getProdEmbalagemId());
 						qtd /= getQtdEmbalagem(comProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
 					}
-					
+
 					// formando o sql
 					ParametroFormula pf = new ParametroFormula("prodEstoqueQuantidade", qtd);
 					Sql sql = new Sql(new ProdEstoque(), EComando.ATUALIZAR, gf, pf);
@@ -197,32 +198,14 @@ public class FecharCompra extends Chain {
 
 		@Override
 		public void execute() throws OpenSigException {
-			EntityManagerFactory emf = null;
-			EntityManager em = null;
+			// atualiza o status para fechada
+			FiltroNumero fn = new FiltroNumero("comCompraId", ECompara.IGUAL, compra.getId());
+			ParametroBinario pb = new ParametroBinario("comCompraFechada", 1);
+			Sql sql = new Sql(compra, EComando.ATUALIZAR, fn, pb);
+			servico.executar(new Sql[] { sql });
 
-			try {
-				// recupera uma instância do gerenciador de entidades
-				emf = Conexao.getInstancia(compra.getPu());
-				em = emf.createEntityManager();
-				em.getTransaction().begin();
-				// atualiza o status para fechada
-				compra.setComCompraFechada(true);
-				servico.salvar(em, compra);
-
-				if (next != null) {
-					next.execute();
-				}
-				em.getTransaction().commit();
-			} catch (Exception ex) {
-				if (em != null && em.getTransaction().isActive()) {
-					em.getTransaction().rollback();
-				}
-
-				UtilServer.LOG.error("Erro ao atualizar a compra.", ex);
-				throw new ComercialException(ex.getMessage());
-			} finally {
-				em.close();
-				emf.close();
+			if (next != null) {
+				next.execute();
 			}
 		}
 	}

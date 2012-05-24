@@ -22,6 +22,7 @@ import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.produto.client.servico.ProdutoException;
 import br.com.opensig.produto.shared.modelo.ProdCategoria;
+import br.com.opensig.produto.shared.modelo.ProdComposicao;
 import br.com.opensig.produto.shared.modelo.ProdEstoque;
 import br.com.opensig.produto.shared.modelo.ProdPreco;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
@@ -53,15 +54,19 @@ public class SalvarProduto extends Chain {
 			// salva
 			List<ProdEstoque> estoques = produto.getProdEstoques();
 			List<ProdPreco> precos = produto.getProdPrecos();
+			List<ProdComposicao> composicoes = produto.getProdComposicoes();
 			boolean novo = produto.getProdProdutoId() == 0;
 			produto.setProdEstoques(null);
 			produto.setProdPrecos(null);
+			produto.setProdComposicoes(null);
 			servico.salvar(em, produto);
 
 			// estoque
 			salvarEstoques(em, estoques, novo);
 			// precos
 			salvarPrecos(em, precos);
+			// composicoes
+			salvarComposicoes(em, composicoes);
 			// categorias
 			if (categorias != null && !categorias.isEmpty()) {
 				servico.salvar(em, categorias);
@@ -85,19 +90,36 @@ public class SalvarProduto extends Chain {
 	}
 
 	private void salvarPrecos(EntityManager em, List<ProdPreco> precos) throws OpenSigException {
+		// deleta
+		if (produto.getProdProdutoId() > 0) {
+			FiltroObjeto fo = new FiltroObjeto("prodProduto", ECompara.IGUAL, produto);
+			Sql sql = new Sql(new ProdPreco(), EComando.EXCLUIR, fo);
+			servico.executar(em, sql);
+		}
+		
 		if (precos != null && !precos.isEmpty()) {
-			// deleta
-			if (produto.getProdProdutoId() > 0) {
-				FiltroObjeto fo = new FiltroObjeto("prodProduto", ECompara.IGUAL, produto);
-				Sql sql = new Sql(new ProdPreco(), EComando.EXCLUIR, fo);
-				servico.executar(em, sql);
-			}
-			
 			// insere
 			for (ProdPreco prodPre : precos) {
 				prodPre.setProdProduto(produto);
 			}
 			servico.salvar(em, precos);
+		}
+	}
+	
+	private void salvarComposicoes(EntityManager em, List<ProdComposicao> composicoes) throws OpenSigException {
+		// deleta
+		if (produto.getProdProdutoId() > 0) {
+			FiltroObjeto fo = new FiltroObjeto("prodProdutoPrincipal", ECompara.IGUAL, produto);
+			Sql sql = new Sql(new ProdComposicao(), EComando.EXCLUIR, fo);
+			servico.executar(em, sql);
+		}
+		
+		if (composicoes != null && !composicoes.isEmpty()) {
+			// insere
+			for (ProdComposicao prodComp : composicoes) {
+				prodComp.setProdProdutoPrincipal(produto);
+			}
+			servico.salvar(em, composicoes);
 		}
 	}
 

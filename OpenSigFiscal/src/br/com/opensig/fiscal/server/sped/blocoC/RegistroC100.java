@@ -168,10 +168,12 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 						r170.setAuth(auth);
 						r170.setSped(sped);
 						for (ComVendaProduto prod : venda.getComVendaProdutos()) {
-							r170.setDados(prod);
-							r170.executar();
-							setAnalitico(r170.getBloco());
-							qtdLinhas += r170.getQtdLinhas();
+							if (prod.getProdProduto().getProdComposicoes() == null) {
+								r170.setDados(prod);
+								r170.executar();
+								setAnalitico(r170.getBloco());
+								qtdLinhas += r170.getQtdLinhas();
+							}
 						}
 					}
 

@@ -11,20 +11,22 @@ import br.com.opensig.produto.shared.modelo.ProdProduto;
 public class RegistroH010 extends ARegistro<DadosH010, ProdProduto> {
 
 	private double total;
-	
+
 	@Override
 	public void executar() {
 		qtdLinhas = 0;
-		
+
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", escritor);
 
 			for (ProdProduto prod : estoque) {
-				bloco = getDados(prod);
-				out.write(bloco);
-				out.flush();
+				if (prod.getProdComposicoes() == null) {
+					bloco = getDados(prod);
+					out.write(bloco);
+					out.flush();
+				}
 			}
 		} catch (Exception e) {
 			qtdLinhas = 0;
@@ -57,11 +59,11 @@ public class RegistroH010 extends ARegistro<DadosH010, ProdProduto> {
 		qtdLinhas++;
 		return d;
 	}
-	
+
 	public double getTotal() {
 		return total;
 	}
-	
+
 	public void setTotal(double total) {
 		this.total = total;
 	}

@@ -83,6 +83,9 @@ public class ProdProduto extends Dados implements Serializable {
 
 	@OneToMany(mappedBy = "prodProduto", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<ProdPreco> prodPrecos;
+	
+	@OneToMany(mappedBy = "prodProdutoPrincipal", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private List<ProdComposicao> prodComposicoes;
 
 	@OneToMany(mappedBy = "prodProduto", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<ProdEstoque> prodEstoques;
@@ -127,7 +130,8 @@ public class ProdProduto extends Dados implements Serializable {
 		this.prodProdutoId = prodProdutoId;
 		Colecao col = new Colecao("ProdEstoque", "t.prodEstoques", "JOIN", "t1");
 		Colecao col1 = new Colecao("ProdPreco", "t.prodPrecos", "LEFT JOIN", "t2");
-		setColecao(new Colecao[] { col, col1 });
+		Colecao col2 = new Colecao("ProdComposicao", "t.prodComposicoes", "LEFT JOIN", "t3");
+		setColecao(new Colecao[] { col, col1, col2 });
 	}
 
 	public int getProdProdutoId() {
@@ -258,6 +262,14 @@ public class ProdProduto extends Dados implements Serializable {
 		this.prodPrecos = prodPrecos;
 	}
 
+	public List<ProdComposicao> getProdComposicoes() {
+		return prodComposicoes;
+	}
+
+	public void setProdComposicoes(List<ProdComposicao> prodComposicoes) {
+		this.prodComposicoes = prodComposicoes;
+	}
+
 	public List<ProdEstoque> getProdEstoques() {
 		return prodEstoques;
 	}
@@ -371,6 +383,7 @@ public class ProdProduto extends Dados implements Serializable {
 
 	public void anularDependencia() {
 		prodPrecos = null;
+		prodComposicoes = null;
 		prodEstoques = null;
 		prodTributacao = null;
 		prodIpi = null;

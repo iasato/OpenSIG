@@ -206,7 +206,7 @@ public abstract class AListagemEditor<E extends Dados> extends EditorGridPanel i
 		});
 	}
 
-	private void setCellFocus() {
+	protected void setCellFocus() {
 		int col = celula[1] + 1;
 		for (; col < modelos.getColumnCount(); col++) {
 			if (modelos.isCellEditable(col, celula[0]) && !modelos.isHidden(col)) {

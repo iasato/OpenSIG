@@ -56,19 +56,13 @@ public class SisExpImp extends Dados implements Serializable {
 
 	@Transient
 	private int inicio;
-	
+
 	@Transient
 	private int limite;
-	
+
 	@Transient
-	private int ende;
-	
-	@Transient
-	private int cont;
-	
-	@Transient
-	private String cargo;
-	
+	private String[] outros;
+
 	public SisExpImp() {
 		this(0);
 	}
@@ -167,28 +161,12 @@ public class SisExpImp extends Dados implements Serializable {
 		this.limite = limite;
 	}
 
-	public int getEnde() {
-		return ende;
+	public String[] getOutros() {
+		return outros;
 	}
 
-	public void setEnde(int ende) {
-		this.ende = ende;
-	}
-
-	public int getCont() {
-		return cont;
-	}
-
-	public void setCont(int cont) {
-		this.cont = cont;
-	}
-
-	public String getCargo() {
-		return cargo;
-	}
-
-	public void setCargo(String cargo) {
-		this.cargo = cargo;
+	public void setOutros(String[] outros) {
+		this.outros = outros;
 	}
 
 	public Number getId() {

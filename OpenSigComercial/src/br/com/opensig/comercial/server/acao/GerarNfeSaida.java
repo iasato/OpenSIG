@@ -85,6 +85,7 @@ import br.com.opensig.nfe.TNFe.InfNFe.Transp.Transporta;
 import br.com.opensig.nfe.TNFe.InfNFe.Transp.Vol;
 import br.com.opensig.nfe.TUf;
 import br.com.opensig.nfe.TUfEmi;
+import br.com.opensig.produto.shared.modelo.ProdComposicao;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 public class GerarNfeSaida extends Chain {
@@ -444,16 +445,43 @@ public class GerarNfeSaida extends Chain {
 		FiltroObjeto fo = new FiltroObjeto("comVenda", ECompara.IGUAL, venda);
 		Lista<ComVendaProduto> produtos = null;
 		try {
-			ComVendaProduto vendProd = new ComVendaProduto();
-			vendProd.setCampoOrdem("t.prodProduto.prodProdutoDescricao");
-			produtos = (Lista<ComVendaProduto>) servico.selecionar(vendProd, 0, 0, fo, false);
+			produtos = (Lista<ComVendaProduto>) servico.selecionar(new ComVendaProduto(), 0, 0, fo, false);
 		} catch (Exception ex) {
 			UtilServer.LOG.error("Erro nos produtos da venda.", ex);
 			throw new ComercialException("Erro nos produtos da venda!");
 		}
 
-		int i = 1;
+		// verifica se tem produtos com composicoes
+		List<ComVendaProduto> auxProdutos = new ArrayList<ComVendaProduto>();
 		for (ComVendaProduto venProd : produtos.getLista()) {
+			if (venProd.getProdProduto().getProdComposicoes() == null) {
+				auxProdutos.add(venProd);
+			} else {
+				for (ProdComposicao comp : venProd.getProdProduto().getProdComposicoes()) {
+					ComVendaProduto auxVenProd = new ComVendaProduto();
+					auxVenProd.setComVenda(venProd.getComVenda());
+					auxVenProd.setProdProduto(comp.getProdProduto());
+					auxVenProd.setProdEmbalagem(comp.getProdEmbalagem());
+					double qtd = venProd.getComVendaProdutoQuantidade() * comp.getProdComposicaoQuantidade();
+					auxVenProd.setComVendaProdutoQuantidade(qtd);
+					double bruto = comp.getProdComposicaoValor() / comp.getProdComposicaoQuantidade();
+					auxVenProd.setComVendaProdutoBruto(bruto);
+					double totBruto = bruto * qtd;
+					auxVenProd.setComVendaProdutoTotalBruto(totBruto);
+					double desc = venProd.getComVendaProdutoDesconto();
+					double liquido = bruto - (bruto * desc / 100);
+					auxVenProd.setComVendaProdutoLiquido(liquido);
+					double totLiquido = qtd * liquido;
+					auxVenProd.setComVendaProdutoTotalLiquido(totLiquido);
+					auxVenProd.setComVendaProdutoIcms(venProd.getComVendaProdutoIcms());
+					auxVenProd.setComVendaProdutoIpi(venProd.getComVendaProdutoIpi());
+					auxProdutos.add(auxVenProd);
+				}
+			}
+		}
+		
+		int i = 1;
+		for (ComVendaProduto venProd : auxProdutos) {
 			ProdProduto pp = venProd.getProdProduto();
 
 			// setando o item
@@ -527,9 +555,9 @@ public class GerarNfeSaida extends Chain {
 
 		// icms
 		if (auth.getConf().get("nfe.crt").equals("1")) {
-			imposto.setICMS(getSimples(venProd, prod));
+			imposto.setICMS(getSimples(venProd));
 		} else {
-			imposto.setICMS(getNormal(venProd, prod));
+			imposto.setICMS(getNormal(venProd));
 		}
 		// ipi
 		imposto.setIPI(getIpi(venProd));
@@ -541,10 +569,10 @@ public class GerarNfeSaida extends Chain {
 		return imposto;
 	}
 
-	public ICMS getSimples(ComVendaProduto venProd, ProdProduto prod) {
+	public ICMS getSimples(ComVendaProduto venProd) {
 		ICMS icms = new ICMS();
-		String cson = prod.getProdTributacao().getProdTributacaoCson();
-		String origem = String.valueOf(prod.getProdOrigem().getProdOrigemId() - 1);
+		String cson = venProd.getProdProduto().getProdTributacao().getProdTributacaoCson();
+		String origem = String.valueOf(venProd.getProdProduto().getProdOrigem().getProdOrigemId() - 1);
 
 		if (cson.equals("101")) {
 			ICMSSN101 icmssn101 = new ICMSSN101();
@@ -597,10 +625,10 @@ public class GerarNfeSaida extends Chain {
 		return icms;
 	}
 
-	public ICMS getNormal(ComVendaProduto venProd, ProdProduto prod) {
+	public ICMS getNormal(ComVendaProduto venProd) {
 		ICMS icms = new ICMS();
-		String cst = prod.getProdTributacao().getProdTributacaoCst();
-		String origem = String.valueOf(prod.getProdOrigem().getProdOrigemId() - 1);
+		String cst = venProd.getProdProduto().getProdTributacao().getProdTributacaoCst();
+		String origem = String.valueOf(venProd.getProdProduto().getProdOrigem().getProdOrigemId() - 1);
 
 		// se é 10 e muda pra 60
 		if (cst.equals("10")) {
@@ -622,7 +650,7 @@ public class GerarNfeSaida extends Chain {
 				if (venProd.getComVendaProdutoIcms() > 0) {
 					porcento = venProd.getComVendaProdutoIcms();
 				} else {
-					porcento = dentro ? prod.getProdTributacao().getProdTributacaoDentro() : prod.getProdTributacao().getProdTributacaoFora();
+					porcento = dentro ? venProd.getProdProduto().getProdTributacao().getProdTributacaoDentro() : venProd.getProdProduto().getProdTributacao().getProdTributacaoFora();
 				}
 			}
 			// valor da base de calculo

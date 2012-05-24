@@ -29,8 +29,10 @@ import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.empresa.shared.modelo.EmpFornecedor;
 import br.com.opensig.produto.client.servico.ProdutoProxy;
+import br.com.opensig.produto.client.visao.lista.ListagemComposicao;
 import br.com.opensig.produto.client.visao.lista.ListagemPreco;
 import br.com.opensig.produto.shared.modelo.ProdCategoria;
+import br.com.opensig.produto.shared.modelo.ProdComposicao;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdEstoque;
 import br.com.opensig.produto.shared.modelo.ProdIpi;
@@ -41,7 +43,6 @@ import br.com.opensig.produto.shared.modelo.ProdTipo;
 import br.com.opensig.produto.shared.modelo.ProdTributacao;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.gwtext.client.data.ArrayReader;
 import com.gwtext.client.data.FieldDef;
 import com.gwtext.client.data.IntegerFieldDef;
@@ -54,6 +55,7 @@ import com.gwtext.client.data.event.StoreListenerAdapter;
 import com.gwtext.client.widgets.MessageBox;
 import com.gwtext.client.widgets.MessageBox.ConfirmCallback;
 import com.gwtext.client.widgets.Panel;
+import com.gwtext.client.widgets.TabPanel;
 import com.gwtext.client.widgets.form.Checkbox;
 import com.gwtext.client.widgets.form.ComboBox;
 import com.gwtext.client.widgets.form.Field;
@@ -95,8 +97,11 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 	private Arvore<ProdCategoria> treeCategoria;
 	private TextArea txtObservacao;
 	private Date dtCadastro;
+	private TabPanel tabDados;
 	private ListagemPreco gridPrecos;
+	private ListagemComposicao gridComposicoes;
 	private List<ProdPreco> precos;
+	private List<ProdComposicao> composicoes;
 	private List<ProdCategoria> categorias;
 
 	public FormularioProduto(SisFuncao funcao) {
@@ -203,17 +208,17 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		MultiFieldPanel linha4 = new MultiFieldPanel();
 		linha4.setBorder(false);
 		linha4.addToRow(getFabricante(), 310);
-		linha4.addToRow(getTipo(), 80);
+		linha4.addToRow(getTipo(), 60);
 		linha4.addToRow(txtEstoque, 80);
 		linha4.addToRow(chkAtivo, 50);
-		linha4.addToRow(chkIncentivo, 80);
+		linha4.addToRow(chkIncentivo, 70);
 		coluna1.add(linha4);
 
 		txtObservacao = new TextArea(OpenSigCore.i18n.txtObservacao(), "prodProdutoObservacao");
 		txtObservacao.setMaxLength(255);
 		txtObservacao.setWidth("95%");
 		coluna1.add(txtObservacao);
-		
+
 		Panel formColuna = new Panel();
 		formColuna.setBorder(false);
 		formColuna.setLayout(new ColumnLayout());
@@ -221,11 +226,16 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		formColuna.add(getCategoria(), new ColumnLayoutData(.25));
 		add(formColuna);
 
-		add(new HTML("<br/>"));
+		tabDados = new TabPanel();
+		tabDados.setPlain(true);
+		tabDados.setHeight(150);
+		tabDados.setActiveTab(0);
 
 		gridPrecos = new ListagemPreco(true);
-		gridPrecos.setHeight(150);
-		add(gridPrecos);
+		gridComposicoes = new ListagemComposicao(true);
+		tabDados.add(gridPrecos);
+		tabDados.add(gridComposicoes);
+		add(tabDados);
 
 		super.inicializar();
 	}
@@ -247,7 +257,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 	}
 
 	public boolean setDados() {
-		precos = new ArrayList<ProdPreco>();
+		// valida as categorias
 		categorias = new ArrayList<ProdCategoria>();
 		Collection<String[]> valores = new ArrayList<String[]>();
 		boolean retorno = treeCategoria.validarCategoria(valores);
@@ -262,12 +272,36 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 			}
 		}
 
-		if (!gridPrecos.validar(precos)) {
+		// valida a composicao
+		composicoes = new ArrayList<ProdComposicao>();
+		if (!gridComposicoes.validar(composicoes)) {
+			retorno = false;
+			new ToastWindow(OpenSigCore.i18n.txtListagem(), OpenSigCore.i18n.errLista()).show();
+		}
+		
+		// valida os precos
+		precos = new ArrayList<ProdPreco>();
+		if (composicoes.size() > 0 && !gridPrecos.validar(precos)) {
 			retorno = false;
 			new ToastWindow(OpenSigCore.i18n.txtListagem(), OpenSigCore.i18n.errLista()).show();
 		}
 
+		// valida os valores
+		double parcial = 0.00;
+		for (ProdComposicao comp : composicoes) {
+			parcial += comp.getProdComposicaoValor();
+		}
+
+		String strTotal = UtilClient.formataNumero(txtPreco.getValue().doubleValue(), 1, 2, true);
+		String strParcial = UtilClient.formataNumero(parcial, 1, 2, true);
+
+		if (parcial > 0.00 && !strTotal.equals(strParcial)) {
+			retorno = false;
+			new ToastWindow(OpenSigCore.i18n.msgCampoInvalido(), OpenSigCore.i18n.txtParcial() + " = " + strParcial + " :: " + OpenSigCore.i18n.txtTotal() + " = " + strTotal).show();
+		}
+		
 		classe.setProdPrecos(precos);
+		classe.setProdComposicoes(composicoes);
 		classe.setProdProdutoId(Integer.valueOf(hdnCod.getValueAsString()));
 		classe.setProdProdutoNcm(txtNcm.getValueAsString());
 		classe.setProdProdutoBarra(txtBarra.getValueAsString().equals("") ? null : txtBarra.getValueAsString());
@@ -325,7 +359,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 			classe.setProdEstoques(estoques);
 		}
 		classe.setProdProdutoObservacao(txtObservacao.getValueAsString() == null ? "" : txtObservacao.getValueAsString());
-		
+
 		return retorno;
 	}
 
@@ -334,6 +368,9 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		FiltroNumero fn = new FiltroNumero("prodPrecoId", ECompara.IGUAL, 0);
 		gridPrecos.getProxy().setFiltroPadrao(fn);
 		gridPrecos.getStore().removeAll();
+		FiltroNumero fn1 = new FiltroNumero("prodComposicaoId", ECompara.IGUAL, 0);
+		gridComposicoes.getProxy().setFiltroPadrao(fn1);
+		gridComposicoes.getStore().removeAll();
 		treeCategoria.getLblValidacao().hide();
 	}
 
@@ -350,15 +387,20 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		Record rec = lista.getPanel().getSelectionModel().getSelected();
 		if (rec != null) {
 			getForm().loadRecord(rec);
+			classe.setProdProdutoId(rec.getAsInteger("prodProdutoId"));
 
 			dtCadastro = rec.getAsDate("prodProdutoCadastrado");
 			txtCusto.setValue(txtCusto.getValue().doubleValue());
 			txtPreco.setValue(txtPreco.getValue().doubleValue());
 
-			classe.setProdProdutoId(rec.getAsInteger("prodProdutoId"));
 			FiltroObjeto fo = new FiltroObjeto("prodProduto", ECompara.IGUAL, classe);
 			gridPrecos.getProxy().setFiltroPadrao(fo);
 			gridPrecos.getStore().reload();
+
+			FiltroObjeto fo1 = new FiltroObjeto("prodProdutoPrincipal", ECompara.IGUAL, classe);
+			gridComposicoes.getProxy().setFiltroPadrao(fo1);
+			gridComposicoes.getStore().reload();
+
 			String[] objs = rec.getAsString("prodProdutoCategoria").split("::");
 			treeCategoria.selecionar(objs);
 		} else {
@@ -592,7 +634,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 			}
 		});
 
-		cmbTipo = new ComboBox(OpenSigCore.i18n.txtTipo(), "prodTipo.prodTipoId", 50);
+		cmbTipo = new ComboBox(OpenSigCore.i18n.txtTipo(), "prodTipo.prodTipoId", 30);
 		cmbTipo.setAllowBlank(false);
 		cmbTipo.setStore(storeTipo);
 		cmbTipo.setTriggerAction(ComboBox.ALL);
@@ -649,7 +691,7 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		preco.setOrdemDirecao(EDirecao.valueOf(ordem.getDirection().getDirection()));
 		// filtro
 		int id = UtilClient.getSelecionado(lista.getPanel());
-		FiltroObjeto filtro = new FiltroObjeto("proProduto", ECompara.IGUAL, new ProdProduto(id));
+		FiltroObjeto filtro = new FiltroObjeto("prodProduto", ECompara.IGUAL, new ProdProduto(id));
 
 		ExpListagem<ProdPreco> precos = new ExpListagem<ProdPreco>();
 		precos.setClasse(preco);
@@ -657,9 +699,45 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		precos.setNome(gridPrecos.getTitle());
 		precos.setFiltro(filtro);
 
+		// composicoes
+		List<ExpMeta> metadados1 = new ArrayList<ExpMeta>();
+		for (int i = 0; i < gridComposicoes.getModelos().getColumnCount(); i++) {
+			if (gridComposicoes.getModelos().isHidden(i)) {
+				metadados.add(null);
+			} else {
+				ExpMeta meta = new ExpMeta(gridComposicoes.getModelos().getColumnHeader(i), gridComposicoes.getModelos().getColumnWidth(i), null);
+				if (gridComposicoes.getModelos().getColumnConfigs()[i] instanceof SummaryColumnConfig) {
+					SummaryColumnConfig col = (SummaryColumnConfig) gridComposicoes.getModelos().getColumnConfigs()[i];
+					String tp = col.getSummaryType().equals("average") ? "AVG" : col.getSummaryType().toUpperCase();
+					meta.setGrupo(EBusca.getBusca(tp));
+				}
+				metadados1.add(meta);
+			}
+		}
+
+		// alterando campos visiveis
+		metadados.set(2, metadados.get(1));
+		metadados.set(1, null);
+		metadados.set(4, metadados.get(3));
+		metadados.set(3, null);
+
+		SortState ordem1 = gridComposicoes.getStore().getSortState();
+		ProdComposicao composicao = new ProdComposicao();
+		composicao.setCampoOrdem(ordem1.getField());
+		composicao.setOrdemDirecao(EDirecao.valueOf(ordem1.getDirection().getDirection()));
+		// filtro
+		FiltroObjeto filtro1 = new FiltroObjeto("prodProdutoPrincipal", ECompara.IGUAL, new ProdProduto(id));
+
+		ExpListagem<ProdComposicao> composicoes = new ExpListagem<ProdComposicao>();
+		composicoes.setClasse(composicao);
+		composicoes.setMetadados(metadados);
+		composicoes.setNome(gridPrecos.getTitle());
+		composicoes.setFiltro(filtro1);
+
 		// sub listagens
 		expLista = new ArrayList<ExpListagem>();
 		expLista.add(precos);
+		expLista.add(composicoes);
 	}
 
 	public Hidden getHdnFornecedor() {
@@ -822,6 +900,26 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		return precos;
 	}
 
+	public void setPrecos(List<ProdPreco> precos) {
+		this.precos = precos;
+	}
+
+	public ListagemComposicao getGridComposicoes() {
+		return gridComposicoes;
+	}
+
+	public void setGridComposicoes(ListagemComposicao gridComposicoes) {
+		this.gridComposicoes = gridComposicoes;
+	}
+
+	public List<ProdComposicao> getComposicoes() {
+		return composicoes;
+	}
+
+	public void setComposicoes(List<ProdComposicao> composicoes) {
+		this.composicoes = composicoes;
+	}
+
 	public NumberField getTxtVolume() {
 		return txtVolume;
 	}
@@ -852,10 +950,6 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 
 	public void setChkIncentivo(Checkbox chkIncentivo) {
 		this.chkIncentivo = chkIncentivo;
-	}
-
-	public void setPrecos(List<ProdPreco> precos) {
-		this.precos = precos;
 	}
 
 	public List<ProdCategoria> getCategorias() {

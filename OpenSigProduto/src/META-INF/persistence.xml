@@ -9,6 +9,7 @@
 		<class>br.com.opensig.produto.shared.modelo.ProdProduto</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdEmbalagem</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdPreco</class>
+		<class>br.com.opensig.produto.shared.modelo.ProdComposicao</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdCategoria</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdEstoque</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdOrigem</class>

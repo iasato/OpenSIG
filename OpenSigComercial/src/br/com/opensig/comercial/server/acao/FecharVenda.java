@@ -1,5 +1,6 @@
 package br.com.opensig.comercial.server.acao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -14,6 +15,7 @@ import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
+import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.client.controlador.parametro.ParametroFormula;
 import br.com.opensig.core.client.padroes.Chain;
 import br.com.opensig.core.client.servico.OpenSigException;
@@ -24,6 +26,7 @@ import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
+import br.com.opensig.produto.shared.modelo.ProdComposicao;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdEstoque;
 
@@ -32,14 +35,12 @@ public class FecharVenda extends Chain {
 	private CoreServiceImpl servico;
 	private ComVenda venda;
 	private List<String[]> invalidos;
-	private Autenticacao auth;
 
 	public FecharVenda(Chain next, CoreServiceImpl servico, ComVenda venda, List<String[]> invalidos, Autenticacao auth) throws OpenSigException {
 		super(null);
 		this.servico = servico;
 		this.venda = venda;
 		this.invalidos = invalidos;
-		this.auth = auth;
 
 		// atualiza venda
 		AtualizarVenda atuVen = new AtualizarVenda(next);
@@ -73,6 +74,23 @@ public class FecharVenda extends Chain {
 
 		@Override
 		public void execute() throws OpenSigException {
+			// verifica se tem produtos com composicoes
+			List<ComVendaProduto> auxProdutos = new ArrayList<ComVendaProduto>();
+			for (ComVendaProduto venProd : venda.getComVendaProdutos()) {
+				auxProdutos.add(venProd);
+				if (venProd.getProdProduto().getProdComposicoes() != null) {
+					for (ProdComposicao comp : venProd.getProdProduto().getProdComposicoes()) {
+						ComVendaProduto auxVenProd = new ComVendaProduto();
+						auxVenProd.setProdProduto(comp.getProdProduto());
+						auxVenProd.setProdEmbalagem(comp.getProdEmbalagem());
+						double qtd = venProd.getComVendaProdutoQuantidade() * comp.getProdComposicaoQuantidade();
+						auxVenProd.setComVendaProdutoQuantidade(qtd);
+						auxProdutos.add(auxVenProd);
+					}
+				}
+			}
+			venda.setComVendaProdutos(auxProdutos);
+
 			try {
 				for (ComVendaProduto venProd : venda.getComVendaProdutos()) {
 					// formando o filtro
@@ -176,32 +194,14 @@ public class FecharVenda extends Chain {
 
 		@Override
 		public void execute() throws OpenSigException {
-			EntityManagerFactory emf = null;
-			EntityManager em = null;
+			// atualiza o status para fechada
+			FiltroNumero fn = new FiltroNumero("comVendaId", ECompara.IGUAL, venda.getId());
+			ParametroBinario pb = new ParametroBinario("comVendaFechada", 1);
+			Sql sql = new Sql(venda, EComando.ATUALIZAR, fn, pb);
+			servico.executar(new Sql[] { sql });
 
-			try {
-				// recupera uma instância do gerenciador de entidades
-				emf = Conexao.getInstancia(venda.getPu());
-				em = emf.createEntityManager();
-				em.getTransaction().begin();
-				// atualiza o status para fechada
-				venda.setComVendaFechada(true);
-				servico.salvar(em, venda);
-
-				if (next != null) {
-					next.execute();
-				}
-				em.getTransaction().commit();
-			} catch (Exception ex) {
-				if (em != null && em.getTransaction().isActive()) {
-					em.getTransaction().rollback();
-				}
-
-				UtilServer.LOG.error("Erro ao atualizar a venda.", ex);
-				throw new ComercialException(ex.getMessage());
-			} finally {
-				em.close();
-				emf.close();
+			if (next != null) {
+				next.execute();
 			}
 		}
 	}

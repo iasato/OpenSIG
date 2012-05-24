@@ -71,7 +71,7 @@ public class EnviarNfeSaida extends Chain {
 			retornar.start();
 		} catch (Exception e) {
 			saida.setFisNotaStatus(new FisNotaStatus(ENotaStatus.ERRO));
-			saida.setFisNotaSaidaErro(e.getMessage());
+			saida.setFisNotaSaidaErro(e.getMessage() == null ? "Erro no certificado, path dos arquivos ou conexão" : e.getMessage());
 		} finally {
 			servico.salvar(saida, false);
 		}

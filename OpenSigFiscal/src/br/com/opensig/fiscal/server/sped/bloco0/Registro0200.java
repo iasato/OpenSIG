@@ -43,7 +43,7 @@ public class Registro0200 extends ARegistro<Dados0200, ProdProduto> {
 			for (ComVenda venda : getVendas()) {
 				if (!venda.getComVendaCancelada() && !venda.getComVendaNfe()) {
 					for (ComVendaProduto vProd : venda.getComVendaProdutos()) {
-						if (!produtos.contains(vProd.getProdProduto().getProdProdutoId())) {
+						if (vProd.getProdProduto().getProdComposicoes() == null && !produtos.contains(vProd.getProdProduto().getProdProdutoId())) {
 							out.write(getDados(vProd.getProdProduto()));
 							out.flush();
 							produtos.add(vProd.getProdProduto().getProdProdutoId());
@@ -66,7 +66,7 @@ public class Registro0200 extends ARegistro<Dados0200, ProdProduto> {
 			// estoque
 			if (estoque != null) {
 				for (ProdProduto prod : estoque) {
-					if (!produtos.contains(prod.getProdProdutoId())) {
+					if (prod.getProdComposicoes() == null && !produtos.contains(prod.getProdProdutoId())) {
 						out.write(getDados(prod));
 						out.flush();
 						produtos.add(prod.getProdProdutoId());

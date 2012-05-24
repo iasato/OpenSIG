@@ -44,7 +44,7 @@ public class Registro0190 extends ARegistro<Dados0190, ProdEmbalagem> {
 			for (ComVenda venda : getVendas()) {
 				if (!venda.getComVendaCancelada() && !venda.getComVendaNfe()) {
 					for (ComVendaProduto vProd : venda.getComVendaProdutos()) {
-						if (!embalagens.contains(vProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
+						if (vProd.getProdProduto().getProdComposicoes() == null && !embalagens.contains(vProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
 							out.write(getDados(vProd.getProdProduto().getProdEmbalagem()));
 							out.flush();
 							embalagens.add(vProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
@@ -67,7 +67,7 @@ public class Registro0190 extends ARegistro<Dados0190, ProdEmbalagem> {
 			// estoque
 			if (estoque != null) {
 				for(ProdProduto prod : estoque){
-					if (!embalagens.contains(prod.getProdEmbalagem().getProdEmbalagemId())) {
+					if (prod.getProdComposicoes() == null && !embalagens.contains(prod.getProdEmbalagem().getProdEmbalagemId())) {
 						out.write(getDados(prod.getProdEmbalagem()));
 						out.flush();
 						embalagens.add(prod.getProdEmbalagem().getProdEmbalagemId());

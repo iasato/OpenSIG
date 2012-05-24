@@ -14,6 +14,7 @@ import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
+import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.client.controlador.parametro.ParametroFormula;
 import br.com.opensig.core.client.padroes.Chain;
 import br.com.opensig.core.client.servico.OpenSigException;
@@ -32,14 +33,12 @@ public class FecharEcfVenda extends Chain {
 	private CoreServiceImpl servico;
 	private ComEcfVenda venda;
 	private List<String[]> invalidos;
-	private Autenticacao auth;
 
 	public FecharEcfVenda(Chain next, CoreServiceImpl servico, ComEcfVenda venda, List<String[]> invalidos, Autenticacao auth) throws OpenSigException {
 		super(null);
 		this.servico = servico;
 		this.venda = venda;
 		this.invalidos = invalidos;
-		this.auth = auth;
 
 		// atualiza venda
 		AtualizarVenda atuVen = new AtualizarVenda(next);
@@ -51,7 +50,7 @@ public class FecharEcfVenda extends Chain {
 			this.next = valEst;
 		} else if (auth.getConf().get("estoque.ativo").equalsIgnoreCase("nao")) {
 			this.next = atuEst;
-		} else{
+		} else {
 			this.next = atuVen;
 		}
 	}
@@ -185,32 +184,14 @@ public class FecharEcfVenda extends Chain {
 
 		@Override
 		public void execute() throws OpenSigException {
-			EntityManagerFactory emf = null;
-			EntityManager em = null;
+			// atualiza o status para fechada
+			FiltroNumero fn = new FiltroNumero("comEcfVendaId", ECompara.IGUAL, venda.getId());
+			ParametroBinario pb = new ParametroBinario("comEcfVendaFechada", 1);
+			Sql sql = new Sql(venda, EComando.ATUALIZAR, fn, pb);
+			servico.executar(new Sql[] { sql });
 
-			try {
-				// recupera uma instância do gerenciador de entidades
-				emf = Conexao.getInstancia(venda.getPu());
-				em = emf.createEntityManager();
-				em.getTransaction().begin();
-				// atualiza o status para fechada
-				venda.setComEcfVendaFechada(true);
-				servico.salvar(em, venda);
-
-				if (next != null) {
-					next.execute();
-				}
-				em.getTransaction().commit();
-			} catch (Exception ex) {
-				if (em != null && em.getTransaction().isActive()) {
-					em.getTransaction().rollback();
-				}
-
-				UtilServer.LOG.error("Erro ao atualizar a venda.", ex);
-				throw new ComercialException(ex.getMessage());
-			} finally {
-				em.close();
-				emf.close();
+			if (next != null) {
+				next.execute();
 			}
 		}
 	}

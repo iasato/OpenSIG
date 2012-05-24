@@ -105,15 +105,8 @@ public class ProdPreco extends Dados implements Serializable {
 		return new String[] { prodPrecoId + "", prodEmbalagem.getProdEmbalagemId() + "", prodEmbalagem.getProdEmbalagemNome(), prodPrecoValor + "", prodPrecoBarra };
 	}
 
-	public Dados getObjeto(String campo) {
-		if (campo.startsWith("prodProduto")) {
-			return new ProdProduto();
-		} else {
-			return null;
-		}
-	}
-
 	public void anularDependencia() {
 		prodProduto = null;
+		prodEmbalagem = null;
 	}
 }
