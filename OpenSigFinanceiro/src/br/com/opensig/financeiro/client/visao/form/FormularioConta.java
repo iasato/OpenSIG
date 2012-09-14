@@ -51,7 +51,7 @@ public class FormularioConta extends AFormulario<FinConta> {
 		hdnEmpresa = new Hidden("empEmpresa.empEmpresaId", "0");
 		add(hdnEmpresa);
 
-		txtNome = new TextField(OpenSigCore.i18n.txtNome(), "finContaNome", 280);
+		txtNome = new TextField(OpenSigCore.i18n.txtNome(), "finContaNome", 180);
 		txtNome.setAllowBlank(false);
 		txtNome.setMaxLength(20);
 
@@ -73,7 +73,7 @@ public class FormularioConta extends AFormulario<FinConta> {
 
 		MultiFieldPanel linha1 = new MultiFieldPanel();
 		linha1.setBorder(false);
-		linha1.addToRow(txtNome, 300);
+		linha1.addToRow(txtNome, 200);
 		linha1.addToRow(txtNumero, 100);
 		linha1.addToRow(txtAgencia, 90);
 		linha1.addToRow(txtCarteira, 90);

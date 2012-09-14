@@ -60,11 +60,11 @@ public class ListagemEcfVendaProduto extends AListagem<ComEcfVendaProduto> {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comEcfVendaProdutoId"), new IntegerFieldDef("comEcfVenda.comEcfVendaId"), new IntegerFieldDef("comEcfVenda.comEcf.comEcfId"),
 				new StringFieldDef("comEcfVenda.comEcf.comEcfSerie"), new IntegerFieldDef("comEcfVenda.comEcf.empEmpresa.empEmpresaId"),
-				new StringFieldDef("comEcfVenda.comEcf.empEmpresa.empEntidade.empEntidadeNome1"), new StringFieldDef("comEcfVenda.empCliente.empEntidade.empEntidadeNome1"),
-				new StringFieldDef("prodProduto.empFornecedor.empEntidade.empEntidadeNome1"), new IntegerFieldDef("prodProduto.prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"),
-				new StringFieldDef("prodProduto.prodProdutoDescricao"), new StringFieldDef("prodProduto.prodProdutoReferencia"), new DateFieldDef("comEcfVenda.comEcfVendaData"),
-				new FloatFieldDef("comEcfVendaProdutoQuantidade"), new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"),
-				new FloatFieldDef("comEcfVendaProdutoBruto"), new FloatFieldDef("comEcfVendaProdutoDesconto"), new FloatFieldDef("comEcfVendaProdutoLiquido"),
+				new StringFieldDef("comEcfVenda.comEcf.empEmpresa.empEntidade.empEntidadeNome1"), new StringFieldDef("prodProduto.empFornecedor.empEntidade.empEntidadeNome1"),
+				new IntegerFieldDef("prodProduto.prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"), new StringFieldDef("prodProduto.prodProdutoDescricao"),
+				new StringFieldDef("prodProduto.prodProdutoReferencia"), new DateFieldDef("comEcfVenda.comEcfVendaData"), new FloatFieldDef("comEcfVendaProdutoQuantidade"),
+				new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"), new FloatFieldDef("comEcfVendaProdutoBruto"),
+				new FloatFieldDef("comEcfVendaProdutoDesconto"), new FloatFieldDef("comEcfVendaProdutoAcrescimo"), new FloatFieldDef("comEcfVendaProdutoLiquido"),
 				new FloatFieldDef("comEcfVendaProdutoTotal"), new BooleanFieldDef("comEcfVendaProdutoCancelado"), new IntegerFieldDef("comEcfVendaProdutoOrdem") };
 		campos = new RecordDef(fd);
 
@@ -81,8 +81,6 @@ public class ListagemEcfVendaProduto extends AListagem<ComEcfVendaProduto> {
 		ccEmpresaId.setHidden(true);
 		ColumnConfig ccEmpresa = new ColumnConfig(OpenSigCore.i18n.txtEmpresa(), "comEcfVenda.comEcf.empEmpresa.empEntidade.empEntidadeNome1", 200, true);
 		ccEmpresa.setHidden(true);
-		ColumnConfig ccCliente = new ColumnConfig(OpenSigCore.i18n.txtCliente(), "comEcfVenda.empCliente.empEntidade.empEntidadeNome1", 200, true);
-		ccCliente.setHidden(true);
 		ColumnConfig ccFornecedor = new ColumnConfig(OpenSigCore.i18n.txtFornecedor(), "prodProduto.empFornecedor.empEntidade.empEntidadeNome1", 200, true);
 		ColumnConfig ccBarra = new ColumnConfig(OpenSigCore.i18n.txtBarra(), "prodProduto.prodProdutoBarra", 100, true);
 		ColumnConfig ccProduto = new ColumnConfig(OpenSigCore.i18n.txtProduto(), "prodProduto.prodProdutoDescricao", 250, true);
@@ -93,6 +91,7 @@ public class ListagemEcfVendaProduto extends AListagem<ComEcfVendaProduto> {
 		ccEmbalagemId.setFixed(true);
 		ColumnConfig ccEmbalagem = new ColumnConfig(OpenSigCore.i18n.txtEmbalagem(), "prodEmbalagem.prodEmbalagemNome", 75, true);
 		ColumnConfig ccDesconto = new ColumnConfig(OpenSigCore.i18n.txtDesconto(), "comEcfVendaProdutoDesconto", 50, true, PORCENTAGEM);
+		ColumnConfig ccAcrescimo = new ColumnConfig(OpenSigCore.i18n.txtAcrescimo(), "comEcfVendaProdutoAcrescimo", 50, true, PORCENTAGEM);
 		ColumnConfig ccCancelado = new ColumnConfig(OpenSigCore.i18n.txtCancelada(), "comEcfVendaProdutoCancelado", 75, true, BOLEANO);
 		ColumnConfig ccOrdem = new ColumnConfig(OpenSigCore.i18n.txtOrdem(), "comVendaProdutoOrdem", 100, true);
 		ccOrdem.setHidden(true);
@@ -103,8 +102,8 @@ public class ListagemEcfVendaProduto extends AListagem<ComEcfVendaProduto> {
 		SummaryColumnConfig ccLiquido = new SummaryColumnConfig(SummaryColumnConfig.SUM, new ColumnConfig(OpenSigCore.i18n.txtLiquido(), "comEcfVendaProdutoLiquido", 75, true, DINHEIRO), DINHEIRO);
 		SummaryColumnConfig ccTotal = new SummaryColumnConfig(SummaryColumnConfig.SUM, new ColumnConfig(OpenSigCore.i18n.txtTotal(), "comEcfVendaProdutoTotal", 75, true, DINHEIRO), DINHEIRO);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccVendaEcfId, ccEcfId, ccEcf, ccEmpresaId, ccEmpresa, ccCliente, ccFornecedor, ccProdId, ccBarra, ccProduto, ccReferencia, ccData,
-				ccQuantidade, ccEmbalagemId, ccEmbalagem, ccBruto, ccDesconto, ccLiquido, ccTotal, ccCancelado, ccOrdem };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccVendaEcfId, ccEcfId, ccEcf, ccEmpresaId, ccEmpresa, ccFornecedor, ccProdId, ccBarra, ccProduto, ccReferencia, ccData,
+				ccQuantidade, ccEmbalagemId, ccEmbalagem, ccBruto, ccDesconto, ccAcrescimo, ccLiquido, ccTotal, ccCancelado, ccOrdem };
 		modelos = new ColumnModel(bcc);
 
 		GrupoFiltro gf = new GrupoFiltro();
@@ -163,7 +162,8 @@ public class ListagemEcfVendaProduto extends AListagem<ComEcfVendaProduto> {
 			} else if (entry.getKey().equals("comEcfVenda.comEcf.comEcfSerie")) {
 				// ecf
 				FieldDef[] fdEcf = new FieldDef[] { new IntegerFieldDef("comEcfId"), new IntegerFieldDef("empEmpresa.empEmpresaId"), new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"),
-						new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa") };
+						new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfMfAdicional"), new StringFieldDef("comEcfIdentificacao"), new StringFieldDef("comEcfTipo"),
+						new StringFieldDef("comEcfMarca"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa") };
 				CoreProxy<ComEcf> proxy = new CoreProxy<ComEcf>(new ComEcf());
 				Store storeEcf = new Store(proxy, new ArrayReader(new RecordDef(fdEcf)), true);
 

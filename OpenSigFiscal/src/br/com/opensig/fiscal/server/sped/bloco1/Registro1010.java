@@ -8,15 +8,15 @@ public class Registro1010 extends ARegistro<Dados1010, Dados> {
 	@Override
 	protected Dados1010 getDados(Dados dados) throws Exception {
 		Dados1010 d = new Dados1010();
-		d.setInd_exp(auth.getConf().get("sped.1010.ind_exp"));
-		d.setInd_ccrf(auth.getConf().get("sped.1010.ind_ccrf"));
-		d.setInd_comb(auth.getConf().get("sped.1010.ind_comb"));
-		d.setInd_usina(auth.getConf().get("sped.1010.ind_usina"));
-		d.setInd_va(auth.getConf().get("sped.1010.ind_va"));
-		d.setInd_ee(auth.getConf().get("sped.1010.ind_ee"));
-		d.setInd_cart(auth.getConf().get("sped.1010.ind_cart"));
-		d.setInd_form(auth.getConf().get("sped.1010.ind_form"));
-		d.setInd_aer(auth.getConf().get("sped.1010.ind_aer"));
+		d.setInd_exp("N");
+		d.setInd_ccrf("N");
+		d.setInd_comb("N");
+		d.setInd_usina("N");
+		d.setInd_va("N");
+		d.setInd_ee("N");
+		d.setInd_cart("N");
+		d.setInd_form("N");
+		d.setInd_aer("N");
 		return d;
 	}
 

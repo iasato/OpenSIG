@@ -12,15 +12,9 @@ import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
 
 import br.com.opensig.comercial.shared.modelo.ComCompra;
-import br.com.opensig.comercial.shared.modelo.ComCompraProduto;
-import br.com.opensig.comercial.shared.modelo.ComFrete;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
-import br.com.opensig.comercial.shared.modelo.ComVendaProduto;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.empresa.shared.modelo.EmpEstado;
-import br.com.opensig.financeiro.shared.modelo.FinPagar;
-import br.com.opensig.financeiro.shared.modelo.FinReceber;
 import br.com.opensig.fiscal.server.sped.ARegistro;
 import br.com.opensig.nfe.TNFe;
 import br.com.opensig.nfe.TNFe.InfNFe.Det;
@@ -34,8 +28,6 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 
 	@Override
 	public void executar() {
-		qtdLinhas = 0;
-
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
@@ -44,20 +36,13 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 
 			// processa as entradas / compras
 			for (ComCompra compra : compras) {
-				DadosC100 obj = null;
-				// caso tenha nfe usa os dados dela
-				if (compra.getComCompraNfe()) {
-					// pega a NFe
-					String xml = compra.getFisNotaEntrada().getFisNotaEntradaXml();
-					int I = xml.indexOf("<infNFe");
-					int F = xml.indexOf("</NFe>") + 6;
-					String texto = "<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">" + xml.substring(I, F);
-
-					nfe = UtilServer.xmlToObj(texto, "br.com.opensig.nfe");
-					obj = getDados(nfe, "00", compra.getComCompraRecebimento());
-				} else {
-					obj = getCompra(compra);
-				}
+				// pega a NFe
+				String xml = compra.getFisNotaEntrada().getFisNotaEntradaXml();
+				int I = xml.indexOf("<infNFe");
+				int F = xml.indexOf("</NFe>") + 6;
+				String texto = "<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">" + xml.substring(I, F);
+				nfe = UtilServer.xmlToObj(texto, "br.com.opensig.nfe");
+				DadosC100 obj = getDados(nfe, "00", compra.getComCompraRecebimento());
 				// seta os dados padrao
 				obj.setInd_oper("0");
 				obj.setInd_emit(compra.getEmpFornecedor().getEmpEntidade().getEmpEntidadeDocumento1() == compra.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento1() ? "0" : "1");
@@ -65,42 +50,28 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				out.write(obj);
 				out.flush();
 
-				// caso pagamento a prazo e nao for NFe
-				if (!compra.getComCompraNfe() && obj.getInd_pgto().equals("1")) {
-					RegistroC140 r140 = new RegistroC140<FinPagar>();
-					r140.setDados(compra.getFinPagar());
-					r140.setEscritor(escritor);
-					r140.setAuth(auth);
-					r140.executar();
-					qtdLinhas += r140.getQtdLinhas();
+				// informacoes da nota
+				if (!compra.getComCompraObservacao().equals("")) {
+					RegistroC110 r110 = new RegistroC110();
+					r110.setDados(compra.getComCompraObservacao());
+					r110.setEscritor(escritor);
+					r110.executar();
+					qtdLinhas += r110.getQtdLinhas();
 				}
 
 				// produtos
-				if (compra.getComCompraNfe()) {
-					RegistroNfeC170 r170 = new RegistroNfeC170();
-					r170.setEscritor(escritor);
-					r170.setAuth(auth);
-					r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
-					r170.setNatureza(compra.getComNatureza().getComNaturezaId() + "");
-					r170.setVenda(false);
-					int item = 0;
-					for (Det det : nfe.getInfNFe().getDet()) {
-						r170.setProduto(compra.getComCompraProdutos().get(item++).getProdProduto());
-						r170.setDados(det);
-						r170.executar();
-						setAnalitico(r170.getBloco());
-						qtdLinhas += r170.getQtdLinhas();
-					}
-				} else {
-					RegistroC170<ComCompraProduto> r170 = new RegistroC170<ComCompraProduto>();
-					r170.setEscritor(escritor);
-					r170.setAuth(auth);
-					for (ComCompraProduto prod : compra.getComCompraProdutos()) {
-						r170.setDados(prod);
-						r170.executar();
-						setAnalitico(r170.getBloco());
-						qtdLinhas += r170.getQtdLinhas();
-					}
+				RegistroC170 r170 = new RegistroC170();
+				r170.setEscritor(escritor);
+				r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
+				r170.setNatId(compra.getComNatureza().getComNaturezaId());
+				r170.setVenda(false);
+				int item = 0;
+				for (Det det : nfe.getInfNFe().getDet()) {
+					r170.setProduto(compra.getComCompraProdutos().get(item++).getProdProduto());
+					r170.setDados(det);
+					r170.executar();
+					setAnalitico(r170.getBloco());
+					qtdLinhas += r170.getQtdLinhas();
 				}
 
 				// analitico das compras
@@ -112,21 +83,18 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 				DadosC100 obj = null;
 				String cod_sit = venda.getComVendaCancelada() ? "02" : "00";
 
-				if (venda.getComVendaNfe()) {
-					try {
-						// pega a NFe
-						String xml = venda.getFisNotaSaida().getFisNotaSaidaXml();
-						int I = xml.indexOf("<infNFe");
-						int F = xml.indexOf("</NFe>") + 6;
-						String texto = "<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">" + xml.substring(I, F);
+				try {
+					// pega a NFe
+					String xml = venda.getFisNotaSaida().getFisNotaSaidaXml();
+					int I = xml.indexOf("<infNFe");
+					int F = xml.indexOf("</NFe>") + 6;
+					String texto = "<NFe xmlns=\"http://www.portalfiscal.inf.br/nfe\">" + xml.substring(I, F);
 
-						nfe = UtilServer.xmlToObj(texto, "br.com.opensig.nfe");
-						obj = getDados(nfe, cod_sit, venda.getComVendaData());
-					} catch (Exception e) {
-						obj = getVenda(venda, cod_sit);
-					}
-				} else {
-					obj = getVenda(venda, cod_sit);
+					nfe = UtilServer.xmlToObj(texto, "br.com.opensig.nfe");
+					obj = getDados(nfe, cod_sit, venda.getComVendaData());
+				} catch (Exception e) {
+					// TODO inutilizada
+					continue;
 				}
 
 				obj.setInd_oper("1");
@@ -139,42 +107,25 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 
 				// so para vendas nao canceladas
 				if (!venda.getComVendaCancelada()) {
-					// caso pagamento a prazo e nao NFe
-					if (!venda.getComVendaNfe() && obj.getInd_pgto().equals("1")) {
-						RegistroC140 r140 = new RegistroC140<FinReceber>();
-						r140.setDados(venda.getFinReceber());
-						r140.setEscritor(escritor);
-						r140.setAuth(auth);
-						r140.executar();
-						qtdLinhas += r140.getQtdLinhas();
+					// informacoes da nota
+					if (!venda.getComVendaObservacao().equals("")) {
+						RegistroC110 r110 = new RegistroC110();
+						r110.setDados(venda.getComVendaObservacao());
+						r110.setEscritor(escritor);
+						r110.executar();
+						qtdLinhas += r110.getQtdLinhas();
 					}
 
 					// produtos
-					if (venda.getComVendaNfe()) {
-						RegistroNfeC170 r170 = new RegistroNfeC170();
-						r170.setAuth(auth);
-						r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
-						r170.setNatureza(venda.getComNatureza().getComNaturezaId() + "");
-						r170.setVenda(true);
-						int item = 0;
-						// para NFe de saida nao precisa informar os produtos
-						for (Det det : nfe.getInfNFe().getDet()) {
-							r170.setProduto(venda.getComVendaProdutos().get(item++).getProdProduto());
-							setAnalitico(r170.getDados(det));
-						}
-					} else {
-						RegistroC170<ComVendaProduto> r170 = new RegistroC170<ComVendaProduto>();
-						r170.setEscritor(escritor);
-						r170.setAuth(auth);
-						r170.setSped(sped);
-						for (ComVendaProduto prod : venda.getComVendaProdutos()) {
-							if (prod.getProdProduto().getProdComposicoes() == null) {
-								r170.setDados(prod);
-								r170.executar();
-								setAnalitico(r170.getBloco());
-								qtdLinhas += r170.getQtdLinhas();
-							}
-						}
+					RegistroC170 r170 = new RegistroC170();
+					r170.setCrt(nfe.getInfNFe().getEmit().getCRT());
+					r170.setNatId(venda.getComNatureza().getComNaturezaId());
+					r170.setVenda(true);
+					int item = 0;
+					// para NFe de saida nao precisa informar os produtos
+					for (Det det : nfe.getInfNFe().getDet()) {
+						r170.setProduto(venda.getComVendaProdutos().get(item++).getProdProduto());
+						setAnalitico(r170.getDados(det));
 					}
 
 					// analitico da venda
@@ -216,14 +167,7 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 			}
 			d.setDt_e_s(data);
 			d.setVl_doc(Double.valueOf(icms.getVNF()));
-
-			// TODO em 01/07/2012 pode remover
-			if (ide.getIndPag().equals("2")) {
-				d.setInd_pgto("9");
-			} else {
-				d.setInd_pgto(ide.getIndPag());
-			}
-
+			d.setInd_pgto(ide.getIndPag());
 			d.setVl_desc(Double.valueOf(icms.getVDesc()));
 			d.setVl_merc(Double.valueOf(icms.getVProd()));
 			d.setInd_frt(transp.getModFrete());
@@ -237,108 +181,6 @@ public class RegistroC100 extends ARegistro<DadosC100, Dados> {
 			d.setVl_ipi(Double.valueOf(icms.getVIPI()));
 			d.setVl_pis(Double.valueOf(icms.getVPIS()));
 			d.setVl_cofins(Double.valueOf(icms.getVCOFINS()));
-		}
-
-		normalizar(d);
-		qtdLinhas++;
-		return d;
-	}
-
-	private DadosC100 getCompra(ComCompra compra) throws Exception {
-		DadosC100 d = new DadosC100();
-		d.setSer(compra.getComCompraSerie() + "");
-		d.setCod_mod("01");
-		d.setChv_nfe("");
-		d.setCod_sit("00");
-		d.setNum_doc(compra.getComCompraNumero());
-		d.setDt_doc(compra.getComCompraEmissao());
-		d.setDt_e_s(compra.getComCompraRecebimento());
-		d.setVl_doc(compra.getComCompraValorNota());
-		// verifica se teve pagamento
-		if (compra.getComCompraPaga() && compra.getFinPagar() != null) {
-			if (compra.getFinPagar().getFinPagamentos().size() > 1 || compra.getFinPagar().getFinPagamentos().get(0).getFinForma().getFinFormaId() > 1) {
-				d.setInd_pgto("1");
-			} else {
-				d.setInd_pgto("0");
-			}
-		} else {
-			// TODO em 01/07/2012 mudar pra 2
-			d.setInd_pgto("9");
-		}
-		d.setVl_desc(compra.getComCompraValorDesconto());
-		d.setVl_merc(compra.getComCompraValorProduto());
-		// definindo o frete
-		ComFrete frete_compra = null;
-		for (ComFrete frete : fretes) {
-			if (frete.getComFreteNota() == compra.getComCompraNumero() && frete.getEmpFornecedor().getEmpFornecedorId() == compra.getEmpFornecedor().getEmpFornecedorId()) {
-				frete_compra = frete;
-				break;
-			}
-		}
-		// TODO em 01/07/2012 mudar
-		if (frete_compra == null) {
-			d.setInd_frt("9");
-		} else {
-			d.setInd_frt(frete_compra.getComFretePaga() ? "2" : "1");
-		}
-		d.setVl_frt(compra.getComCompraValorFrete());
-		d.setVl_seg(compra.getComCompraValorSeguro());
-		d.setVl_out_da(compra.getComCompraValorOutros());
-		d.setVl_bc_icms(compra.getComCompraIcmsBase());
-		d.setVl_icms(compra.getComCompraIcmsValor());
-		d.setVl_bc_icms_st(compra.getComCompraIcmssubBase());
-		d.setVl_icms_st(compra.getComCompraIcmssubValor());
-		d.setVl_ipi(compra.getComCompraValorIpi());
-
-		normalizar(d);
-		qtdLinhas++;
-		return d;
-	}
-
-	private DadosC100 getVenda(ComVenda venda, String cod_sit) throws Exception {
-		DadosC100 d = new DadosC100();
-		d.setCod_sit(cod_sit);
-		d.setSer("");
-		d.setCod_mod("01");
-		d.setNum_doc(venda.getComVendaId());
-		d.setChv_nfe("");
-
-		if (cod_sit.equals("00")) {
-			d.setDt_doc(venda.getComVendaData());
-			d.setDt_e_s(venda.getComVendaData());
-			d.setVl_doc(venda.getComVendaValorLiquido());
-			// verifica se teve recebimento
-			if (venda.getComVendaRecebida()) {
-				if (venda.getFinReceber().getFinRecebimentos().size() > 1 || venda.getFinReceber().getFinRecebimentos().get(0).getFinForma().getFinFormaId() > 1) {
-					d.setInd_pgto("1");
-				} else {
-					d.setInd_pgto("0");
-				}
-			} else {
-				// TODO em 01/07/2012 mudar pra 2
-				d.setInd_pgto("9");
-			}
-			double desc = venda.getComVendaValorBruto() - venda.getComVendaValorLiquido();
-			d.setVl_desc(desc > 0 ? desc : 0);
-			d.setVl_merc(venda.getComVendaValorLiquido());
-			// TODO em 01/07/2012 mudar
-			d.setInd_frt("9");
-			if (venda.getComNatureza().getComNaturezaIcms()) {
-				EmpEstado origem = sped.getEmpEmpresa().getEmpEntidade().getEmpEnderecos().get(0).getEmpMunicipio().getEmpEstado();
-				EmpEstado destino = venda.getEmpCliente().getEmpEntidade().getEmpEnderecos().get(0).getEmpMunicipio().getEmpEstado();
-				double bc = 0;
-				double icms = 0;
-				for (ComVendaProduto vp : venda.getComVendaProdutos()) {
-					if (vp.getProdProduto().getProdTributacao().getProdTributacaoCst().equals("00")) {
-						double aliq = origem.equals(destino) ? vp.getProdProduto().getProdTributacao().getProdTributacaoDentro() : vp.getProdProduto().getProdTributacao().getProdTributacaoFora();
-						bc += vp.getComVendaProdutoTotalLiquido();
-						icms += vp.getComVendaProdutoTotalLiquido() * aliq / 100;
-					}
-				}
-
-				d.setVl_bc_icms(bc);
-				d.setVl_icms(icms);
-			}
 		}
 
 		normalizar(d);

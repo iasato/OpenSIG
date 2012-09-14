@@ -238,7 +238,7 @@ public class GerarNfeEntrada extends Chain {
 			FiltroTexto ft = new FiltroTexto("fisNotaEntradaChave", ECompara.CONTEM, empEmissao.getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("\\D", ""));
 			Number nfeNumero = servico.buscar(new FisNotaEntrada(), "t.fisNotaEntradaNumero", EBusca.MAXIMO, ft);
 			if (nfeNumero == null) {
-				nfeNumero = 0;
+				nfeNumero = Integer.valueOf(auth.getConf().get("nfe.numero"));
 			}
 			nNF = UtilServer.formataNumero(nfeNumero.intValue() + 1, 9, 0, false);
 		} catch (Exception ex) {

@@ -18,7 +18,6 @@ public class Registro0400 extends ARegistro<Dados0400, ComNatureza> {
 
 	@Override
 	public void executar() {
-		qtdLinhas = 0;
 		naturezas = new ArrayList<Integer>();
 
 		try {
@@ -26,7 +25,7 @@ public class Registro0400 extends ARegistro<Dados0400, ComNatureza> {
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", escritor);
 			// compras
-			for (ComCompra compra : getCompras()) {
+			for (ComCompra compra : compras) {
 				if (!naturezas.contains(compra.getComNatureza().getComNaturezaId())) {
 					out.write(getDados(compra.getComNatureza()));
 					out.flush();
@@ -34,7 +33,7 @@ public class Registro0400 extends ARegistro<Dados0400, ComNatureza> {
 				}
 			}
 			// vendas
-			for (ComVenda venda : getVendas()) {
+			for (ComVenda venda : vendas) {
 				if (!venda.getComVendaCancelada() && !venda.getComVendaNfe()) {
 					if (!naturezas.contains(venda.getComNatureza().getComNaturezaId())) {
 						out.write(getDados(venda.getComNatureza()));

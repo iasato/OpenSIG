@@ -20,7 +20,6 @@ public class RegistroC140<T extends Dados> extends ARegistro<DadosC140, T> {
 			FinReceber receber = (FinReceber) dados;
 			RegistroC141<FinRecebimento> r141 = new RegistroC141<FinRecebimento>();
 			r141.setEscritor(escritor);
-			r141.setAuth(auth);
 			Collections.sort(receber.getFinRecebimentos(), new Comparator<FinRecebimento>() {
 				public int compare(FinRecebimento o1, FinRecebimento o2) {
 					return o1.getFinRecebimentoParcela().compareTo(o2.getFinRecebimentoParcela());
@@ -35,7 +34,6 @@ public class RegistroC140<T extends Dados> extends ARegistro<DadosC140, T> {
 			FinPagar pagar = (FinPagar) dados;
 			RegistroC141<FinPagamento> r141 = new RegistroC141<FinPagamento>();
 			r141.setEscritor(escritor);
-			r141.setAuth(auth);
 			Collections.sort(pagar.getFinPagamentos(), new Comparator<FinPagamento>() {
 				public int compare(FinPagamento o1, FinPagamento o2) {
 					return o1.getFinPagamentoParcela().compareTo(o2.getFinPagamentoParcela());

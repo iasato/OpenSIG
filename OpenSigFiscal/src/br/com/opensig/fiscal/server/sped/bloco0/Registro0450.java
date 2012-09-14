@@ -18,7 +18,6 @@ public class Registro0450 extends ARegistro<Dados0450, ProdTributacao> {
 
 	@Override
 	public void executar() {
-		qtdLinhas = 0;
 		decreto = new ArrayList<Integer>();
 
 		try {
@@ -26,7 +25,7 @@ public class Registro0450 extends ARegistro<Dados0450, ProdTributacao> {
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", escritor);
 			// vendas
-			for (ComVenda venda : getVendas()) {
+			for (ComVenda venda : vendas) {
 				for (ComVendaProduto vProd : venda.getComVendaProdutos()) {
 					if (!decreto.contains(vProd.getProdProduto().getProdTributacao().getProdTributacaoId()) && !vProd.getProdProduto().getProdTributacao().getProdTributacaoDecreto().equals("")) {
 						out.write(getDados(vProd.getProdProduto().getProdTributacao()));

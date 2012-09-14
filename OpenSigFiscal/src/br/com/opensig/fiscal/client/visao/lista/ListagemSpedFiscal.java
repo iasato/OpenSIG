@@ -1,6 +1,5 @@
 package br.com.opensig.fiscal.client.visao.lista;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +22,6 @@ import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.client.servico.ExportacaoProxy;
 import br.com.opensig.core.client.servico.ImportacaoProxy;
-import br.com.opensig.core.client.visao.Assistente;
 import br.com.opensig.core.client.visao.JanelaUpload;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AListagem;
@@ -33,12 +31,7 @@ import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.fiscal.client.servico.FiscalProxy;
-import br.com.opensig.fiscal.client.visao.form.sped.FormularioSpedFiscalCompra;
-import br.com.opensig.fiscal.client.visao.form.sped.FormularioSpedFiscalEcf;
-import br.com.opensig.fiscal.client.visao.form.sped.FormularioSpedFiscalFrete;
-import br.com.opensig.fiscal.client.visao.form.sped.FormularioSpedFiscalOperacao;
-import br.com.opensig.fiscal.client.visao.form.sped.FormularioSpedFiscalRegistro;
-import br.com.opensig.fiscal.client.visao.form.sped.FormularioSpedFiscalVenda;
+import br.com.opensig.fiscal.client.visao.form.FormularioSpedFiscalOperacao;
 import br.com.opensig.fiscal.shared.modelo.FisSpedFiscal;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -54,12 +47,15 @@ import com.gwtext.client.data.RecordDef;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.widgets.Button;
+import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.MessageBox;
 import com.gwtext.client.widgets.Window;
 import com.gwtext.client.widgets.event.ButtonListenerAdapter;
+import com.gwtext.client.widgets.event.WindowListenerAdapter;
 import com.gwtext.client.widgets.grid.BaseColumnConfig;
 import com.gwtext.client.widgets.grid.ColumnConfig;
 import com.gwtext.client.widgets.grid.ColumnModel;
+import com.gwtext.client.widgets.layout.FitLayout;
 import com.gwtextux.client.widgets.grid.plugins.GridCellActionsPlugin;
 import com.gwtextux.client.widgets.grid.plugins.GridFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridListFilter;
@@ -69,7 +65,6 @@ import com.gwtextux.client.widgets.upload.UploadDialogListenerAdapter;
 
 public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 
-	private Assistente ass;
 	private IComando cmdSalvar;
 	private IComando cmdExcluir;
 
@@ -82,7 +77,6 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 	public void inicializar() {
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("fisSpedFiscalId"), new IntegerFieldDef("empEmpresa.empEmpresaId"), new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"),
 				new IntegerFieldDef("fisSpedFiscalAno"), new IntegerFieldDef("fisSpedFiscalMes"), new StringFieldDef("fisSpedFiscalTipo"), new DateFieldDef("fisSpedFiscalData"),
-				new IntegerFieldDef("fisSpedFiscalCompras"), new IntegerFieldDef("fisSpedFiscalFrete"), new IntegerFieldDef("fisSpedFiscalVendas"), new IntegerFieldDef("fisSpedFiscalEcf"),
 				new BooleanFieldDef("fisSpedFiscalAtivo"), new StringFieldDef("fisSpedFiscalProtocolo") };
 		campos = new RecordDef(fd);
 
@@ -96,14 +90,10 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 		ColumnConfig ccMes = new ColumnConfig(OpenSigCore.i18n.txtMes(), "fisSpedFiscalMes", 75, true);
 		ColumnConfig ccTipo = new ColumnConfig(OpenSigCore.i18n.txtTipo(), "fisSpedFiscalTipo", 75, true);
 		ColumnConfig ccData = new ColumnConfig(OpenSigCore.i18n.txtData(), "fisSpedFiscalData", 75, true, DATA);
-		ColumnConfig ccCompras = new ColumnConfig(OpenSigCore.i18n.txtCompra(), "fisSpedFiscalCompras", 75, true, NUMERO);
-		ColumnConfig ccFrete = new ColumnConfig(OpenSigCore.i18n.txtFrete(), "fisSpedFiscalFrete", 75, true, NUMERO);
-		ColumnConfig ccVendas = new ColumnConfig(OpenSigCore.i18n.txtVenda(), "fisSpedFiscalVendas", 75, true, NUMERO);
-		ColumnConfig ccEcf = new ColumnConfig(OpenSigCore.i18n.txtEcf(), "fisSpedFiscalEcf", 75, true, NUMERO);
 		ColumnConfig ccAtivo = new ColumnConfig(OpenSigCore.i18n.txtAtivo(), "fisSpedFiscalAtivo", 75, true, BOLEANO);
 		ColumnConfig ccProtocolo = new ColumnConfig(OpenSigCore.i18n.txtProtocolo(), "fisSpedFiscalProtocolo", 100, true);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccAno, ccMes, ccTipo, ccData, ccCompras, ccFrete, ccVendas, ccEcf, ccAtivo, ccProtocolo };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccAno, ccMes, ccTipo, ccData, ccAtivo, ccProtocolo };
 		modelos = new ColumnModel(bcc);
 
 		// salvar
@@ -113,15 +103,11 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 				classe = (FisSpedFiscal) contexto.get("classe");
 				classe.setEmpEmpresa(new EmpEmpresa(Ponte.getLogin().getEmpresaId()));
 				classe.setFisSpedFiscalData(new Date());
-				classe.setFisSpedFiscalCompras(classe.getCompras().length);
-				classe.setFisSpedFiscalFrete(classe.getFretes().length);
-				classe.setFisSpedFiscalVendas(classe.getVendas().length);
-				classe.setFisSpedFiscalEcf(classe.getEcfs().length);
 				classe.setFisSpedFiscalProtocolo("");
 
 				FiscalProxy<FisSpedFiscal> proxy = new FiscalProxy<FisSpedFiscal>(classe);
 				proxy.salvar(ASYNC);
-				ass.close();
+				getPaginador().getBtnAuto().toggle(true);
 			}
 		};
 
@@ -159,7 +145,7 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 			classe.setFisSpedFiscalTipo("");
 			classe.setFisSpedFiscalAno(0);
 			classe.setFisSpedFiscalMes(0);
-			abrirAssistente();
+			abrirSped();
 		} else if (comando instanceof ComandoEditar) {
 			comando = null;
 			if (rec != null) {
@@ -167,7 +153,7 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 				classe.setFisSpedFiscalTipo(rec.getAsString("fisSpedFiscalTipo"));
 				classe.setFisSpedFiscalAno(rec.getAsInteger("fisSpedFiscalAno"));
 				classe.setFisSpedFiscalMes(rec.getAsInteger("fisSpedFiscalMes"));
-				abrirAssistente();
+				abrirSped();
 			} else {
 				MessageBox.alert(OpenSigCore.i18n.txtSelecionar(), OpenSigCore.i18n.errSelecionar());
 			}
@@ -186,7 +172,6 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 			} else {
 				MessageBox.alert(OpenSigCore.i18n.txtSelecionar(), OpenSigCore.i18n.errSelecionar());
 			}
-
 		}
 
 		return comando;
@@ -195,36 +180,22 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 	@Override
 	public void setExportacao(final SisExpImp expimp, EModo modo, EModo modo2, final AsyncCallback<String> async) {
 		if (expimp.getSisExpImpClasse().equals("br.com.opensig.fiscal.server.acao.ExportarSped")) {
-			final Window wnd = new Window("", 360, 125, true, false);
-			final FormularioSpedFiscalOperacao frm = new FormularioSpedFiscalOperacao(classe, funcao);
-			frm.setHeader(false);
+			Record rec = getSelectionModel().getSelected();
+			if (rec != null) {
+				String nome = rec.getAsString("fisSpedFiscalTipo");
+				nome += rec.getAsString("fisSpedFiscalAno");
+				nome += rec.getAsInteger("fisSpedFiscalMes") > 9 ? rec.getAsString("fisSpedFiscalMes") : "0" + rec.getAsString("fisSpedFiscalMes");
 
-			Button btn = new Button(OpenSigCore.i18n.txtOk());
-			btn.setIconCls("icon-salvar");
-			btn.addListener(new ButtonListenerAdapter() {
-				public void onClick(Button button, EventObject e) {
-					if (frm.getForm().isValid()) {
-						String nome = frm.getCmbSped().getValueAsString();
-						nome += frm.getCmbAno().getValueAsString();
-						nome += frm.getCmbMes().getValueAsString();
+				ExpRegistro<FisSpedFiscal> exp = new ExpRegistro<FisSpedFiscal>();
+				exp.setClasse(classe);
+				exp.setNome(nome);
 
-						ExpRegistro<FisSpedFiscal> exp = new ExpRegistro<FisSpedFiscal>();
-						exp.setClasse(classe);
-						exp.setNome(nome);
-
-						getPanel().getEl().mask(OpenSigCore.i18n.txtAguarde());
-						ExportacaoProxy proxy = new ExportacaoProxy();
-						proxy.exportar(expimp, exp, async);
-						wnd.close();
-					}
-				}
-			});
-
-			wnd.setTitle(OpenSigCore.i18n.txtExportar(), "icon-sped");
-			wnd.add(frm);
-			wnd.addButton(btn);
-			wnd.setButtonAlign(Position.CENTER);
-			wnd.show();
+				getPanel().getEl().mask(OpenSigCore.i18n.txtAguarde());
+				ExportacaoProxy proxy = new ExportacaoProxy();
+				proxy.exportar(expimp, exp, async);
+			} else {
+				MessageBox.alert(OpenSigCore.i18n.txtSelecionar(), OpenSigCore.i18n.errSelecionar());
+			}
 		} else {
 			super.setExportacao(expimp, modo, modo2, async);
 		}
@@ -257,7 +228,7 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 	}
 
 	private void analisar(final SisExpImp modo, final List<String> arquivos) {
-		final Window wnd = new Window("", 360, 130, true, false);
+		final Window wnd = new Window("", 400, 130, true, false);
 		final FormularioSpedFiscalOperacao frm = new FormularioSpedFiscalOperacao(classe, funcao);
 		frm.setHeader(false);
 
@@ -299,12 +270,14 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 		wnd.setButtonAlign(Position.CENTER);
 		wnd.show();
 	}
-	
+
 	public void setGridFiltro() {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
 			if (entry.getKey().equals("empEmpresa.empEmpresaId")) {
 				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
+			} else if (entry.getKey().equals("fisSpedFiscalAno")) {
+				((GridLongFilter) entry.getValue()).setValueEquals(new Date().getYear() + 1900);
 			} else if (entry.getKey().equals("empEmpresa.empEntidade.empEntidadeNome1")) {
 				// empresa
 				FiltroNumero fn = null;
@@ -327,19 +300,37 @@ public class ListagemSpedFiscal extends AListagem<FisSpedFiscal> {
 
 	public void setFavorito(IFavorito favorito) {
 		filtros.get("empEmpresa.empEmpresaId").setActive(false, true);
+		filtros.get("fisSpedFiscalAno").setActive(false, true);
 		super.setFavorito(favorito);
 	}
 
-	private void abrirAssistente() {
-		List<IFormulario> forms = new ArrayList<IFormulario>();
-		forms.add(new FormularioSpedFiscalOperacao(classe, funcao));
-		forms.add(new FormularioSpedFiscalRegistro(funcao));
-		forms.add(new FormularioSpedFiscalCompra(funcao));
-		forms.add(new FormularioSpedFiscalFrete(funcao));
-		forms.add(new FormularioSpedFiscalVenda(funcao));
-		forms.add(new FormularioSpedFiscalEcf(funcao));
+	private void abrirSped() {
+		final Window wnd = new Window("", 400, 130, true, false);
+		final FormularioSpedFiscalOperacao frm = new FormularioSpedFiscalOperacao(classe, funcao);
+		frm.setHeader(false);
 
-		ass = new Assistente(contexto);
-		ass.iniciar(forms, cmdSalvar);
+		Button btn = new Button(OpenSigCore.i18n.txtOk());
+		btn.setIconCls("icon-salvar");
+		btn.addListener(new ButtonListenerAdapter() {
+			public void onClick(Button button, EventObject e) {
+				if (frm.getForm().isValid() && frm.setDados()) {
+					cmdSalvar.execute(frm.getContexto());
+					wnd.close();
+				}
+			}
+		});
+
+		wnd.setTitle(OpenSigCore.i18n.txtSped(), "icon-sped");
+		wnd.setLayout(new FitLayout());
+		wnd.add(frm);
+		wnd.addButton(btn);
+		wnd.setButtonAlign(Position.CENTER);
+		wnd.addListener(new WindowListenerAdapter() {
+			@Override
+			public void onShow(Component component) {
+				frm.mostrarDados();
+			}
+		});
+		wnd.show();
 	}
 }

@@ -189,7 +189,7 @@ public class ComercialServiceImpl extends CoreServiceImpl implements ComercialSe
 	@Override
 	public void excluirCompra(ComCompra compra) throws ComercialException {
 		try {
-			new ExcluirCompra(null, this, compra).execute();
+			new ExcluirCompra(null, this, compra, getAuth()).execute();
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro no comando excluirCompra.", e);
 			throw new ComercialException(e.getMessage());
@@ -218,7 +218,7 @@ public class ComercialServiceImpl extends CoreServiceImpl implements ComercialSe
 	@Override
 	public void excluirFrete(ComFrete frete) throws ComercialException {
 		try {
-			new ExcluirFrete(null, this, frete).execute();
+			new ExcluirFrete(null, this, frete, getAuth()).execute();
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro no comando excluirFrete.", e);
 			throw new ComercialException(e.getMessage());

@@ -44,6 +44,9 @@ public class ComEcfVenda extends Dados implements Serializable {
 	@Column(name = "com_ecf_venda_cancelada")
 	private int comEcfVendaCancelada;
 
+	@Column(name = "com_ecf_venda_ccf")
+	private int comEcfVendaCcf;
+
 	@Column(name = "com_ecf_venda_coo")
 	private int comEcfVendaCoo;
 
@@ -54,21 +57,21 @@ public class ComEcfVenda extends Dados implements Serializable {
 	@Column(name = "com_ecf_venda_desconto")
 	private Double comEcfVendaDesconto;
 
+	@Column(name = "com_ecf_venda_acrescimo")
+	private Double comEcfVendaAcrescimo;
+
 	@Column(name = "com_ecf_venda_liquido")
 	private Double comEcfVendaLiquido;
 
-	@Column(name = "com_ecf_venda_observacao")
-	private String comEcfVendaObservacao;
-
 	@Transient
 	private String cancelada;
-	
+
 	@Transient
-	private String comEcfVendaNome;
-	
-	@Transient 
-	private String comEcfVendaCpf;
-	
+	private String descIndicador;
+
+	@Transient
+	private String acresIndicador;
+
 	@JoinColumn(name = "sis_usuario_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private SisUsuario sisUsuario;
@@ -84,6 +87,10 @@ public class ComEcfVenda extends Dados implements Serializable {
 	@JoinColumn(name = "com_ecf_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ComEcf comEcf;
+
+	@JoinColumn(name = "com_ecf_z_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	private ComEcfZ comEcfZ;
 
 	@OneToMany(mappedBy = "comEcfVenda", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<ComEcfVendaProduto> comEcfVendaProdutos;
@@ -129,6 +136,14 @@ public class ComEcfVenda extends Dados implements Serializable {
 		this.comEcfVendaCancelada = comEcfVendaCancelada == false ? 0 : 1;
 	}
 
+	public int getComEcfVendaCcf() {
+		return comEcfVendaCcf;
+	}
+
+	public void setComEcfVendaCcf(int comEcfVendaCcf) {
+		this.comEcfVendaCcf = comEcfVendaCcf;
+	}
+
 	public int getComEcfVendaCoo() {
 		return this.comEcfVendaCoo;
 	}
@@ -153,20 +168,20 @@ public class ComEcfVenda extends Dados implements Serializable {
 		this.comEcfVendaDesconto = comEcfVendaDesconto;
 	}
 
+	public Double getComEcfVendaAcrescimo() {
+		return comEcfVendaAcrescimo;
+	}
+
+	public void setComEcfVendaAcrescimo(Double comEcfVendaAcrescimo) {
+		this.comEcfVendaAcrescimo = comEcfVendaAcrescimo;
+	}
+
 	public Double getComEcfVendaLiquido() {
 		return this.comEcfVendaLiquido;
 	}
 
 	public void setComEcfVendaLiquido(Double comEcfVendaLiquido) {
 		this.comEcfVendaLiquido = comEcfVendaLiquido;
-	}
-
-	public String getComEcfVendaObservacao() {
-		return this.comEcfVendaObservacao;
-	}
-
-	public void setComEcfVendaObservacao(String comEcfVendaObservacao) {
-		this.comEcfVendaObservacao = comEcfVendaObservacao;
 	}
 
 	public EmpCliente getEmpCliente() {
@@ -201,28 +216,36 @@ public class ComEcfVenda extends Dados implements Serializable {
 		this.comEcf = comEcf;
 	}
 
+	public ComEcfZ getComEcfZ() {
+		return comEcfZ;
+	}
+
+	public void setComEcfZ(ComEcfZ comEcfZ) {
+		this.comEcfZ = comEcfZ;
+	}
+
 	public String getCancelada() {
 		return cancelada;
 	}
-	
+
 	public void setCancelada(String cancelada) {
 		this.cancelada = cancelada;
 	}
-	
-	public String getComEcfVendaNome() {
-		return comEcfVendaNome;
+
+	public String getDescIndicador() {
+		return descIndicador;
 	}
 
-	public void setComEcfVendaNome(String comEcfVendaNome) {
-		this.comEcfVendaNome = comEcfVendaNome;
+	public void setDescIndicador(String descIndicador) {
+		this.descIndicador = descIndicador;
 	}
 
-	public String getComEcfVendaCpf() {
-		return comEcfVendaCpf;
+	public String getAcresIndicador() {
+		return acresIndicador;
 	}
 
-	public void setComEcfVendaCpf(String comEcfVendaCpf) {
-		this.comEcfVendaCpf = comEcfVendaCpf;
+	public void setAcresIndicador(String acresIndicador) {
+		this.acresIndicador = acresIndicador;
 	}
 
 	public List<ComEcfVendaProduto> getComEcfVendaProdutos() {
@@ -243,12 +266,12 @@ public class ComEcfVenda extends Dados implements Serializable {
 
 	public String[] toArray() {
 		int receberId = finReceber == null ? 0 : finReceber.getFinReceberId();
-		int contaId = finReceber == null ? 0 : finReceber.getFinConta().getFinContaId();
+		int clienteId = empCliente == null ? 0 : empCliente.getEmpClienteId();
 
-		return new String[] { comEcfVendaId + "", comEcf.getEmpEmpresa().getEmpEmpresaId() + "", comEcf.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(), sisUsuario.getSisUsuarioId() + "",
-				sisUsuario.getSisUsuarioLogin(), empCliente.getEmpClienteId() + "", empCliente.getEmpEntidade().getEmpEntidadeId() + "", empCliente.getEmpEntidade().getEmpEntidadeNome1(),
-				comEcf.getComEcfId() + "", comEcf.getComEcfSerie(), comEcfVendaCoo + "", UtilClient.getDataGrid(comEcfVendaData), comEcfVendaBruto.toString(), comEcfVendaDesconto.toString(),
-				comEcfVendaLiquido.toString(), getComEcfVendaFechada() + "", contaId + "", receberId + "", getComEcfVendaCancelada() + "", comEcfVendaObservacao };
+		return new String[] { comEcfVendaId + "", comEcfZ.getComEcfZId() + "", comEcf.getEmpEmpresa().getEmpEmpresaId() + "", comEcf.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(),
+				sisUsuario.getSisUsuarioId() + "", sisUsuario.getSisUsuarioLogin(), comEcf.getComEcfId() + "", comEcf.getComEcfSerie(), comEcfVendaCcf + "", comEcfVendaCoo + "",
+				UtilClient.getDataGrid(comEcfVendaData), comEcfVendaBruto.toString(), comEcfVendaDesconto.toString(), comEcfVendaAcrescimo.toString(), comEcfVendaLiquido.toString(),
+				getComEcfVendaFechada() + "", clienteId + "", receberId + "", getComEcfVendaCancelada() + "" };
 	}
 
 	public void anularDependencia() {
@@ -256,6 +279,7 @@ public class ComEcfVenda extends Dados implements Serializable {
 		empCliente = null;
 		finReceber = null;
 		comEcf = null;
+		comEcfZ = null;
 		comEcfVendaProdutos = null;
 	}
 }

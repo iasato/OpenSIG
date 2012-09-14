@@ -38,6 +38,7 @@ public class ReciboHtml extends Html implements IRecibo {
 		sb.append("<tr><td><b>Entidade :: </b>" + boleto.getFinReceber().getEmpEntidade().getEmpEntidadeNome1() + "<br /><br />");
 		sb.append("<b>Data Vencimento :: </b>" + UtilServer.formataData(boleto.getFinRecebimentoVencimento(), DateFormat.MEDIUM) + "<br /><br />");
 		sb.append("<b>Data Quitação :: </b>" + UtilServer.formataData(boleto.getFinRecebimentoRealizado(), DateFormat.MEDIUM) + "<br /><br />");
+		sb.append("<b>Data Conciliação :: </b>" + UtilServer.formataData(boleto.getFinRecebimentoConciliado(), DateFormat.MEDIUM) + "<br /><br />");
 		sb.append("<b>Valor :: </b>" + UtilServer.formataNumero(boleto.getFinRecebimentoValor(), 1, 2, true) + "<br /><br />");
 		if (boleto.getFinRecebimentoObservacao() != null && !boleto.getFinRecebimentoObservacao().equals("")) {
 			sb.append("<b>Observação :: </b>" + boleto.getFinRecebimentoObservacao() + "<br /><br />");

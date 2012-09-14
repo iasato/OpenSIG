@@ -15,7 +15,7 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/log4j-1.2.14.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/simplecaptcha.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/simplecaptcha.jar"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>

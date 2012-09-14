@@ -13,8 +13,8 @@ import br.com.opensig.core.client.controlador.comando.lista.ComandoNovo;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovoDuplicar;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.financeiro.client.controlador.comando.ComandoBanco;
-import br.com.opensig.financeiro.client.controlador.comando.ComandoBandeira;
 import br.com.opensig.financeiro.client.controlador.comando.ComandoConta;
+import br.com.opensig.financeiro.client.controlador.comando.ComandoForma;
 import br.com.opensig.financeiro.client.controlador.comando.ComandoPagamento;
 import br.com.opensig.financeiro.client.controlador.comando.ComandoPagar;
 import br.com.opensig.financeiro.client.controlador.comando.ComandoReceber;
@@ -29,6 +29,8 @@ import br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoRecibo
 import br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoReciboHtml;
 import br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoReciboImprimir;
 import br.com.opensig.financeiro.client.controlador.comando.boleto.ComandoReciboPdf;
+import br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoConciliarPagamento;
+import br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoConciliarRecebimento;
 import br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoEstornarPagamento;
 import br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoEstornarRecebimento;
 import br.com.opensig.financeiro.client.controlador.comando.financeiro.ComandoQuitarPagamento;
@@ -61,7 +63,7 @@ public class OpenSigFinanceiro implements EntryPoint {
         fc.addComando(ComandoRetorno.class.getName(), (IComando) GWT.create(ComandoRetorno.class));
         fc.addComando(ComandoBanco.class.getName(), (IComando) GWT.create(ComandoBanco.class));
         fc.addComando(ComandoConta.class.getName(), (IComando) GWT.create(ComandoConta.class));
-        fc.addComando(ComandoBandeira.class.getName(), (IComando) GWT.create(ComandoBandeira.class));
+        fc.addComando(ComandoForma.class.getName(), (IComando) GWT.create(ComandoForma.class));
         // gerar boleto
         fc.addComando(ComandoGerar.class.getName(), (IComando) GWT.create(ComandoGerarImprimir.class));
         fc.addComando(ComandoGerarImprimir.class.getName(), (IComando) GWT.create(ComandoGerarImprimir.class));
@@ -77,6 +79,8 @@ public class OpenSigFinanceiro implements EntryPoint {
         fc.addComando(ComandoQuitarRecebimento.class.getName(), (IComando) GWT.create(ComandoQuitarRecebimento.class));
         fc.addComando(ComandoEstornarPagamento.class.getName(), (IComando) GWT.create(ComandoEstornarPagamento.class));
         fc.addComando(ComandoEstornarRecebimento.class.getName(), (IComando) GWT.create(ComandoEstornarRecebimento.class));
+        fc.addComando(ComandoConciliarPagamento.class.getName(), (IComando) GWT.create(ComandoConciliarPagamento.class));
+        fc.addComando(ComandoConciliarRecebimento.class.getName(), (IComando) GWT.create(ComandoConciliarRecebimento.class));
         
 		// acoes proibidas do financeiro
 		Collection<Class> acoes = new ArrayList<Class>();

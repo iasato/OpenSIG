@@ -18,23 +18,26 @@ import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.parametro.GrupoParametro;
 import br.com.opensig.core.client.controlador.parametro.IParametro;
-import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.client.controlador.parametro.ParametroData;
 import br.com.opensig.core.client.controlador.parametro.ParametroFormula;
+import br.com.opensig.core.client.controlador.parametro.ParametroTexto;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.financeiro.shared.modelo.FinConta;
 import br.com.opensig.financeiro.shared.modelo.FinPagamento;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.i18n.client.DateTimeFormat.PredefinedFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.widgets.MessageBox;
+import com.gwtext.client.widgets.MessageBox.PromptCallback;
 
 public class ComandoQuitarPagamento extends ComandoAcao<FinPagamento> {
 
 	private Record[] recs;
 	private Date hoje;
-private IComando validaQuitar;
+	private IComando validaQuitar;
 
 	public ComandoQuitarPagamento() {
 		// finaliza e libera
@@ -46,7 +49,7 @@ private IComando validaQuitar;
 				for (Record rec : recs) {
 					int row = LISTA.getPanel().getStore().indexOf(rec);
 					LISTA.getPanel().getSelectionModel().deselectRow(row);
-					rec.set("finPagamentoQuitado", true);
+					rec.set("finPagamentoStatus", OpenSigCore.i18n.txtRealizado().toUpperCase());
 					rec.set("finPagamentoRealizado", hoje);
 				}
 			}
@@ -57,7 +60,11 @@ private IComando validaQuitar;
 				MessageBox.wait(OpenSigCore.i18n.txtQuitar(), OpenSigCore.i18n.txtAguarde());
 
 				// variaveis usadas
-				hoje = new Date();
+				try {
+					hoje = DateTimeFormat.getFormat(PredefinedFormat.DATE_MEDIUM).parse(contexto.get("data").toString());
+				} catch (Exception e) {
+					hoje = new Date();
+				}
 				GrupoFiltro gf = new GrupoFiltro();
 				Map<Integer, Double> contas = new HashMap<Integer, Double>();
 				List<Sql> sqls = new ArrayList<Sql>();
@@ -81,9 +88,9 @@ private IComando validaQuitar;
 				}
 
 				// atualizando pagamento
-				ParametroBinario pb = new ParametroBinario("finPagamentoQuitado", 1);
+				ParametroTexto pt = new ParametroTexto("finPagamentoStatus", OpenSigCore.i18n.txtRealizado().toUpperCase());
 				ParametroData pd = new ParametroData("finPagamentoRealizado", hoje);
-				GrupoParametro gp = new GrupoParametro(new IParametro[] { pb, pd });
+				GrupoParametro gp = new GrupoParametro(new IParametro[] { pt, pd });
 				Sql sqlForma = new Sql(new FinPagamento(), EComando.ATUALIZAR, gf, gp);
 				sqls.add(sqlForma);
 
@@ -99,7 +106,7 @@ private IComando validaQuitar;
 
 				// valida cada quitamento
 				for (Record rec : recs) {
-					if (rec.getAsBoolean("finPagamentoQuitado")) {
+					if (!rec.getAsString("finPagamentoStatus").equalsIgnoreCase(OpenSigCore.i18n.txtAberto())) {
 						int row = LISTA.getPanel().getStore().indexOf(rec);
 						LISTA.getPanel().getSelectionModel().deselectRow(row);
 					}
@@ -108,9 +115,10 @@ private IComando validaQuitar;
 				recs = LISTA.getPanel().getSelectionModel().getSelections();
 				// pede permissao ou mostra mensagem
 				if (recs.length > 0) {
-					MessageBox.confirm(OpenSigCore.i18n.txtQuitar(), OpenSigCore.i18n.msgConfirma(), new MessageBox.ConfirmCallback() {
-						public void execute(String btnID) {
-							if (btnID.equalsIgnoreCase("yes")) {
+					MessageBox.prompt(OpenSigCore.i18n.txtQuitar(), OpenSigCore.i18n.msgConfirma() + "<br>" + OpenSigCore.i18n.txtData() + ": <b>DD/MM/AAAA</b>", new PromptCallback() {
+						public void execute(String btnID, String text) {
+							if (btnID.equalsIgnoreCase("ok")) {
+								contexto.put("data", text);
 								comando.execute(contexto);
 							}
 						}

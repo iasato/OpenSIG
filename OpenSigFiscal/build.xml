@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <project name="OpenSigFiscal" basedir="." default="publicar">
 
 	<property name="src" location="./src" />
 	<property name="dist" location="./dist" />
 	<property name="pacote" value="br.com.opensig.fiscal.client" />
-	<property name="versao" value="1.04" />
+	<property name="versao" value="1.05" />
 	<property name="empresa" value="PhD - Systems Solutions" />
 	<property name="autor" value="Pedro H. Lira" />
 	<property name="url" value="http://phdss.com.br" />
@@ -21,7 +20,7 @@
 		<tstamp>
 			<format property="hoje" pattern="dd-MM-yyyy HH:mm:ss" />
 		</tstamp>
-		
+
 		<manifest file="${src}/META-INF/${ant.project.name}.MF">
 			<attribute name="Implementation-Title" value="${ant.project.name}" />
 			<attribute name="Implementation-Version" value="${versao}-b${build.number}" />

@@ -217,5 +217,6 @@ public class ComVendaProduto extends Dados implements Serializable {
 	public void anularDependencia() {
 		comVenda = null;
 		prodProduto = null;
+		prodEmbalagem = null;
 	}
 }

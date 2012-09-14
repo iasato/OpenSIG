@@ -20,6 +20,7 @@ import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.Conexao;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.financeiro.shared.modelo.FinConta;
@@ -32,11 +33,13 @@ public class ExcluirCompra extends Chain {
 
 	private CoreServiceImpl servico;
 	private ComCompra compra;
+	private Autenticacao auth;
 
-	public ExcluirCompra(Chain next, CoreServiceImpl servico, ComCompra compra) throws OpenSigException {
+	public ExcluirCompra(Chain next, CoreServiceImpl servico, ComCompra compra, Autenticacao auth) throws OpenSigException {
 		super(null);
 		this.servico = servico;
 		this.compra = compra;
+		this.auth = auth;
 
 		// deletar compra
 		DeletarCompra delComp = new DeletarCompra(next);
@@ -154,7 +157,7 @@ public class ExcluirCompra extends Chain {
 					conta = compra.getFinPagar().getFinConta();
 					double valPag = 0.00;
 					for (FinPagamento pag : compra.getFinPagar().getFinPagamentos()) {
-						if (pag.getFinPagamentoQuitado()) {
+						if (!pag.getFinPagamentoStatus().equalsIgnoreCase(auth.getConf().get("txtAberto"))) {
 							valPag += pag.getFinPagamentoValor();
 						}
 					}

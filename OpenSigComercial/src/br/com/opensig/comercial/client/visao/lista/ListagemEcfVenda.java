@@ -6,17 +6,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import br.com.opensig.comercial.client.controlador.comando.ComandoEcfVendaProduto;
-import br.com.opensig.comercial.client.servico.ComercialProxy;
+import br.com.opensig.comercial.client.controlador.comando.ComandoEcfZ;
 import br.com.opensig.comercial.shared.modelo.Cat52;
 import br.com.opensig.comercial.shared.modelo.ComEcf;
 import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
-import br.com.opensig.core.client.controlador.comando.AComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoEditar;
-import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluir;
-import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluirFinal;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteEmpresa;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoPermiteUsuario;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
@@ -34,7 +31,6 @@ import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
-import br.com.opensig.financeiro.client.controlador.comando.ComandoReceber;
 import br.com.opensig.permissao.shared.modelo.SisUsuario;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -65,7 +61,6 @@ import com.gwtextux.client.widgets.window.ToastWindow;
 public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 
 	protected JanelaUpload<ComEcfVenda> janela;
-	protected IComando cmdExcluir;
 
 	public ListagemEcfVenda(IFormulario<ComEcfVenda> formulario) {
 		super(formulario);
@@ -75,17 +70,19 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 
 	public void inicializar() {
 		// campos
-		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comEcfVendaId"), new IntegerFieldDef("comEcf.empEmpresa.empEmpresaId"),
+		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comEcfVendaId"), new IntegerFieldDef("comEcfZ.comEcfZId"), new IntegerFieldDef("comEcf.empEmpresa.empEmpresaId"),
 				new StringFieldDef("comEcf.empEmpresa.empEntidade.empEntidadeNome1"), new IntegerFieldDef("sisUsuario.sisUsuarioId"), new StringFieldDef("sisUsuario.sisUsuarioLogin"),
-				new IntegerFieldDef("empCliente.empClienteId"), new IntegerFieldDef("empCliente.empEntidade.empEntidadeId"), new StringFieldDef("empCliente.empEntidade.empEntidadeNome1"),
-				new IntegerFieldDef("comEcf.comEcfId"), new StringFieldDef("comEcf.comEcfSerie"), new IntegerFieldDef("comEcfVendaCoo"), new DateFieldDef("comEcfVendaData"),
-				new FloatFieldDef("comEcfVendaBruto"), new FloatFieldDef("comEcfVendaDesconto"), new FloatFieldDef("comEcfVendaLiquido"), new BooleanFieldDef("comEcfVendaFechada"),
-				new IntegerFieldDef("finReceber.finConta.finContaId"), new IntegerFieldDef("finReceber.finReceberId"), new BooleanFieldDef("comEcfVendaCancelada"),
-				new StringFieldDef("comEcfVendaObservacao") };
+				new IntegerFieldDef("comEcf.comEcfId"), new StringFieldDef("comEcf.comEcfSerie"), new IntegerFieldDef("comEcfVendaCcf"), new IntegerFieldDef("comEcfVendaCoo"),
+				new DateFieldDef("comEcfVendaData"), new FloatFieldDef("comEcfVendaBruto"), new FloatFieldDef("comEcfVendaDesconto"), new FloatFieldDef("comEcfVendaAcrescimo"),
+				new FloatFieldDef("comEcfVendaLiquido"), new BooleanFieldDef("comEcfVendaFechada"), new IntegerFieldDef("empCliente.empClienteId"), new IntegerFieldDef("finReceber.finReceberId"),
+				new BooleanFieldDef("comEcfVendaCancelada") };
 		campos = new RecordDef(fd);
 
 		// colunas
 		ColumnConfig ccId = new ColumnConfig(OpenSigCore.i18n.txtCod(), "comEcfVendaId", 75, true);
+		ColumnConfig ccZId = new ColumnConfig("", "comEcfZ.comEcfZId", 10, false);
+		ccZId.setHidden(true);
+		ccZId.setFixed(true);
 		ColumnConfig ccEmpresaId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtEmpresa(), "comEcf.empEmpresa.empEmpresaId", 100, false);
 		ccEmpresaId.setHidden(true);
 		ColumnConfig ccEmpresa = new ColumnConfig(OpenSigCore.i18n.txtEmpresa(), "comEcf.empEmpresa.empEntidade.empEntidadeNome1", 200, true);
@@ -94,45 +91,30 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 		ccUsuarioId.setHidden(true);
 		ColumnConfig ccLogin = new ColumnConfig(OpenSigCore.i18n.txtUsuario(), "sisUsuario.sisUsuarioLogin", 200, true);
 		ccLogin.setHidden(true);
-		ColumnConfig ccClienteId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtCliente(), "empCliente.empClienteId", 100, true);
-		ccClienteId.setHidden(true);
-		ColumnConfig ccEntidadeId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtEntidade(), "empCliente.empEntidade.empEntidadeId", 100, true);
-		ccEntidadeId.setHidden(true);
-		ColumnConfig ccNome = new ColumnConfig(OpenSigCore.i18n.txtCliente(), "empCliente.empEntidade.empEntidadeNome1", 200, true);
-		ccNome.setHidden(true);
 		ColumnConfig ccEcfId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtEcf(), "comEcf.comEcfId", 100, false);
 		ccEcfId.setHidden(true);
 		ColumnConfig ccEcf = new ColumnConfig(OpenSigCore.i18n.txtEcf(), "comEcf.comEcfSerie", 200, true);
+		ColumnConfig ccCcf = new ColumnConfig(OpenSigCore.i18n.txtCcf(), "comEcfVendaCcf", 75, true);
 		ColumnConfig ccCoo = new ColumnConfig(OpenSigCore.i18n.txtCoo(), "comEcfVendaCoo", 75, true);
 		ColumnConfig ccData = new ColumnConfig(OpenSigCore.i18n.txtData(), "comEcfVendaData", 75, true, DATA);
-		ColumnConfig ccFechada = new ColumnConfig(OpenSigCore.i18n.txtFechada(), "comEcfVendaFechada", 75, true, BOLEANO);
-		ColumnConfig ccContaId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtConta(), "finReceber.finConta.finContaId", 100, true);
-		ccContaId.setHidden(true);
-		ColumnConfig ccReceberId = new ColumnConfig(OpenSigCore.i18n.txtCod() + " - " + OpenSigCore.i18n.txtReceber(), "finReceber.finReceberId", 100, true);
-		ccReceberId.setHidden(true);
 		ColumnConfig ccDesconto = new ColumnConfig(OpenSigCore.i18n.txtDesconto(), "comEcfVendaDesconto", 75, true, PORCENTAGEM);
+		ColumnConfig ccAcrescimo = new ColumnConfig(OpenSigCore.i18n.txtAcrescimo(), "comEcfVendaAcrescimo", 75, true, PORCENTAGEM);
+		ColumnConfig ccFechada = new ColumnConfig(OpenSigCore.i18n.txtFechada(), "comEcfVendaFechada", 75, true, BOLEANO);
+		ColumnConfig ccClienteId = new ColumnConfig("", "empCliente.empClienteId", 10, false);
+		ccClienteId.setHidden(true);
+		ccClienteId.setFixed(true);
+		ColumnConfig ccReceberId = new ColumnConfig("", "finReceber.finReceberId", 10, false);
+		ccReceberId.setHidden(true);
+		ccReceberId.setFixed(true);
 		ColumnConfig ccCancelada = new ColumnConfig(OpenSigCore.i18n.txtCancelada(), "comEcfVendaCancelada", 75, true, BOLEANO);
-		ColumnConfig ccObs = new ColumnConfig(OpenSigCore.i18n.txtObservacao(), "comEcfVendaObservacao", 200, true);
 
 		// sumarios
 		SummaryColumnConfig sumBruto = new SummaryColumnConfig(SummaryColumnConfig.SUM, new ColumnConfig(OpenSigCore.i18n.txtBruto(), "comEcfVendaBruto", 75, true, DINHEIRO), DINHEIRO);
 		SummaryColumnConfig sumLiquido = new SummaryColumnConfig(SummaryColumnConfig.SUM, new ColumnConfig(OpenSigCore.i18n.txtLiquido(), "comEcfVendaLiquido", 75, true, DINHEIRO), DINHEIRO);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccUsuarioId, ccLogin, ccClienteId, ccEntidadeId, ccNome, ccEcfId, ccEcf, ccCoo, ccData, sumBruto, ccDesconto,
-				sumLiquido, ccFechada, ccContaId, ccReceberId, ccCancelada, ccObs };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccZId, ccEmpresaId, ccEmpresa, ccUsuarioId, ccLogin, ccEcfId, ccEcf, ccCcf, ccCoo, ccData, sumBruto, ccDesconto, ccAcrescimo,
+				sumLiquido, ccFechada, ccClienteId, ccReceberId, ccCancelada };
 		modelos = new ColumnModel(bcc);
-
-		// excluindo
-		cmdExcluir = new AComando(new ComandoExcluirFinal()) {
-			public void execute(Map contexto) {
-				super.execute(contexto);
-				int id = UtilClient.getSelecionado(getPanel());
-				classe.setId(id);
-
-				ComercialProxy proxy = new ComercialProxy();
-				proxy.excluirEcfVenda(classe, ASYNC);
-			}
-		};
 
 		GrupoFiltro gf = new GrupoFiltro();
 		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteEmpresa.class) == null) {
@@ -158,20 +140,6 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 			if (rec != null && rec.getAsBoolean("comEcfVendaFechada")) {
 				MessageBox.alert(OpenSigCore.i18n.txtAcesso(), OpenSigCore.i18n.txtAcessoNegado());
 				comando = null;
-			}
-		}
-		// valida se pode excluir
-		else if (comando instanceof ComandoExcluir) {
-			comando = null;
-			if (rec != null) {
-				MessageBox.confirm(OpenSigCore.i18n.txtExcluir(), OpenSigCore.i18n.msgExcluir(), new MessageBox.ConfirmCallback() {
-					public void execute(String btnID) {
-						if (btnID.equalsIgnoreCase("yes")) {
-							MessageBox.wait(OpenSigCore.i18n.txtAguarde(), OpenSigCore.i18n.txtExcluir());
-							cmdExcluir.execute(contexto);
-						}
-					}
-				});
 			}
 		}
 
@@ -204,7 +172,8 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 			} else if (entry.getKey().equals("comEcf.comEcfSerie")) {
 				// ecf
 				FieldDef[] fdEcf = new FieldDef[] { new IntegerFieldDef("comEcfId"), new IntegerFieldDef("empEmpresa.empEmpresaId"), new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"),
-						new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa") };
+						new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfMfAdicional"), new StringFieldDef("comEcfIdentificacao"), new StringFieldDef("comEcfTipo"),
+						new StringFieldDef("comEcfMarca"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa") };
 				CoreProxy<ComEcf> proxy = new CoreProxy<ComEcf>(new ComEcf());
 				Store storeEcf = new Store(proxy, new ArrayReader(new RecordDef(fdEcf)), true);
 
@@ -297,6 +266,13 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 	public void irPara() {
 		Menu mnuContexto = new Menu();
 
+		// reducao Z
+		SisFuncao ecfZ = UtilClient.getFuncaoPermitida(ComandoEcfZ.class);
+		MenuItem itemZ = gerarFuncao(ecfZ, "comEcfZId", "comEcfZ.comEcfZId");
+		if (itemZ != null) {
+			mnuContexto.addItem(itemZ);
+		}
+		
 		// produtos venda
 		SisFuncao produto = UtilClient.getFuncaoPermitida(ComandoEcfVendaProduto.class);
 		MenuItem itemProduto = gerarFuncao(produto, "comEcfVenda.comEcfVendaId", "comEcfVendaId");

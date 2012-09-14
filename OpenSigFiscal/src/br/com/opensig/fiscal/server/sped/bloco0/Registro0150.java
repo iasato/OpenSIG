@@ -7,6 +7,9 @@ import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
 
 import br.com.opensig.comercial.shared.modelo.ComCompra;
+import br.com.opensig.comercial.shared.modelo.ComEcfNota;
+import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
+import br.com.opensig.comercial.shared.modelo.ComEcfZ;
 import br.com.opensig.comercial.shared.modelo.ComFrete;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.server.UtilServer;
@@ -20,7 +23,6 @@ public class Registro0150 extends ARegistro<Dados0150, EmpEntidade> {
 
 	@Override
 	public void executar() {
-		qtdLinhas = 0;
 		entidades = new ArrayList<Integer>();
 
 		try {
@@ -28,7 +30,7 @@ public class Registro0150 extends ARegistro<Dados0150, EmpEntidade> {
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", escritor);
 			// compras
-			for (ComCompra compra : getCompras()) {
+			for (ComCompra compra : compras) {
 				if (!entidades.contains(compra.getEmpFornecedor().getEmpEntidade().getEmpEntidadeId())) {
 					out.write(getDados(compra.getEmpFornecedor().getEmpEntidade()));
 					out.flush();
@@ -36,7 +38,7 @@ public class Registro0150 extends ARegistro<Dados0150, EmpEntidade> {
 				}
 			}
 			// fretes
-			for (ComFrete frete : getFretes()) {
+			for (ComFrete frete : fretes) {
 				if (!entidades.contains(frete.getEmpTransportadora().getEmpEntidade().getEmpEntidadeId())) {
 					out.write(getDados(frete.getEmpTransportadora().getEmpEntidade()));
 					out.flush();
@@ -44,12 +46,34 @@ public class Registro0150 extends ARegistro<Dados0150, EmpEntidade> {
 				}
 			}
 			// vendas
-			for (ComVenda venda : getVendas()) {
+			for (ComVenda venda : vendas) {
 				if (!venda.getComVendaCancelada()) {
 					if (!entidades.contains(venda.getEmpCliente().getEmpEntidade().getEmpEntidadeId())) {
 						out.write(getDados(venda.getEmpCliente().getEmpEntidade()));
 						out.flush();
 						entidades.add(venda.getEmpCliente().getEmpEntidade().getEmpEntidadeId());
+					}
+				}
+			}
+			// notas
+			for (ComEcfNota nota : notas) {
+				if (nota.getEmpCliente() != null) {
+					if (!entidades.contains(nota.getEmpCliente().getEmpEntidade().getEmpEntidadeId())) {
+						out.write(getDados(nota.getEmpCliente().getEmpEntidade()));
+						out.flush();
+						entidades.add(nota.getEmpCliente().getEmpEntidade().getEmpEntidadeId());
+					}
+				}
+			}
+			// zs
+			for (ComEcfZ z : zs) {
+				for (ComEcfVenda venda : z.getComEcfVendas()) {
+					if (venda.getComEcfVendaFechada() && venda.getEmpCliente() != null) {
+						if (!entidades.contains(venda.getEmpCliente().getEmpEntidade().getEmpEntidadeId())) {
+							out.write(getDados(venda.getEmpCliente().getEmpEntidade()));
+							out.flush();
+							entidades.add(venda.getEmpCliente().getEmpEntidade().getEmpEntidadeId());
+						}
 					}
 				}
 			}
@@ -63,15 +87,13 @@ public class Registro0150 extends ARegistro<Dados0150, EmpEntidade> {
 		Dados0150 d = new Dados0150();
 		d.setCod_part(ent.getEmpEntidadeId() + "");
 		d.setNome(ent.getEmpEntidadeNome1());
-
 		if (ent.getEmpEntidadeDocumento1().length() == 18) {
 			d.setCnpj(ent.getEmpEntidadeDocumento1().replaceAll("\\D", ""));
 			d.setIe(ent.getEmpEntidadeDocumento2().replaceAll("\\D", ""));
 		} else {
 			d.setCpf(ent.getEmpEntidadeDocumento1().replaceAll("\\D", ""));
 		}
-
-		// TODO suframa adicionar ao sistema isso
+		d.setSuframa(auth.getConf().get("sped.0000.suframa"));
 
 		for (EmpEndereco end : ent.getEmpEnderecos()) {
 			d.setEnd(end.getEmpEnderecoLogradouro());

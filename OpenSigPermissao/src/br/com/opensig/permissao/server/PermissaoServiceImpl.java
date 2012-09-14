@@ -90,7 +90,7 @@ public class PermissaoServiceImpl extends CoreServiceImpl implements PermissaoSe
 			// valida o captcha
 			if (!captcha.isEmpty()) {
 				Captcha cap = (Captcha) sessao.getAttribute(Captcha.NAME);
-				if (!cap.isCorrect(captcha)) {
+				if (cap == null || !cap.isCorrect(captcha)) {
 					UtilServer.LOG.debug("cod de imagem invalido");
 					throw new PermissaoException("Codigo da imagem invalido!");
 				} else {

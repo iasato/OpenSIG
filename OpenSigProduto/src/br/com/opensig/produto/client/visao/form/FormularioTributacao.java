@@ -19,6 +19,7 @@ public class FormularioTributacao extends AFormulario<ProdTributacao> {
 	private TextField txtCst;
 	private TextField txtCson;
 	private NumberField txtCfop;
+	private TextField txtEcf;
 	private NumberField txtDentro;
 	private NumberField txtFora;
 	private TextArea txtDecreto;
@@ -58,6 +59,10 @@ public class FormularioTributacao extends AFormulario<ProdTributacao> {
 		txtCfop.setMinLength(4);
 		txtCfop.setMaxLength(4);
 
+		txtEcf = new TextField(OpenSigCore.i18n.txtEcf(), "prodTributacaoEcf", 50);
+		txtEcf.setMinLength(2);
+		txtEcf.setMaxLength(7);
+
 		txtDentro = new NumberField(OpenSigCore.i18n.txtDentro() + " %", "prodTributacaoDentro", 50);
 		txtDentro.setAllowBlank(false);
 		txtDentro.setAllowNegative(false);
@@ -76,6 +81,7 @@ public class FormularioTributacao extends AFormulario<ProdTributacao> {
 		linha1.addToRow(txtCst, 70);
 		linha1.addToRow(txtCson, 70);
 		linha1.addToRow(txtCfop, 70);
+		linha1.addToRow(txtEcf, 70);
 		linha1.addToRow(txtDentro, 70);
 		linha1.addToRow(txtFora, 70);
 		add(linha1);
@@ -91,6 +97,7 @@ public class FormularioTributacao extends AFormulario<ProdTributacao> {
 		classe.setProdTributacaoNome(txtNome.getValueAsString());
 		classe.setProdTributacaoCst(txtCst.getValueAsString());
 		classe.setProdTributacaoCson(txtCson.getValueAsString());
+		classe.setProdTributacaoEcf(txtEcf.getValueAsString());
 		if (txtCfop.getValue() != null) {
 			classe.setProdTributacaoCfop(txtCfop.getValue().intValue());
 		}
@@ -162,6 +169,14 @@ public class FormularioTributacao extends AFormulario<ProdTributacao> {
 
 	public void setTxtCfop(NumberField txtCfop) {
 		this.txtCfop = txtCfop;
+	}
+
+	public TextField getTxtEcf() {
+		return txtEcf;
+	}
+
+	public void setTxtEcf(TextField txtEcf) {
+		this.txtEcf = txtEcf;
 	}
 
 	public NumberField getTxtDentro() {

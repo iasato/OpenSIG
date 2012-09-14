@@ -272,6 +272,13 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 			}
 		}
 
+		// valida os precos
+		precos = new ArrayList<ProdPreco>();
+		if (!gridPrecos.validar(precos)) {
+			retorno = false;
+			new ToastWindow(OpenSigCore.i18n.txtListagem(), OpenSigCore.i18n.errLista()).show();
+		}
+		
 		// valida a composicao
 		composicoes = new ArrayList<ProdComposicao>();
 		if (!gridComposicoes.validar(composicoes)) {
@@ -279,13 +286,6 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 			new ToastWindow(OpenSigCore.i18n.txtListagem(), OpenSigCore.i18n.errLista()).show();
 		}
 		
-		// valida os precos
-		precos = new ArrayList<ProdPreco>();
-		if (composicoes.size() > 0 && !gridPrecos.validar(precos)) {
-			retorno = false;
-			new ToastWindow(OpenSigCore.i18n.txtListagem(), OpenSigCore.i18n.errLista()).show();
-		}
-
 		// valida os valores
 		double parcial = 0.00;
 		for (ProdComposicao comp : composicoes) {
@@ -716,9 +716,9 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 		}
 
 		// alterando campos visiveis
-		metadados.set(2, metadados.get(1));
+		metadados.set(2, metadados1.get(1));
 		metadados.set(1, null);
-		metadados.set(4, metadados.get(3));
+		metadados.set(4, metadados1.get(3));
 		metadados.set(3, null);
 
 		SortState ordem1 = gridComposicoes.getStore().getSortState();
@@ -730,8 +730,8 @@ public class FormularioProduto extends AFormulario<ProdProduto> {
 
 		ExpListagem<ProdComposicao> composicoes = new ExpListagem<ProdComposicao>();
 		composicoes.setClasse(composicao);
-		composicoes.setMetadados(metadados);
-		composicoes.setNome(gridPrecos.getTitle());
+		composicoes.setMetadados(metadados1);
+		composicoes.setNome(gridComposicoes.getTitle());
 		composicoes.setFiltro(filtro1);
 
 		// sub listagens

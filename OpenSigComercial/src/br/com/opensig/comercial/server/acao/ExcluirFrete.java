@@ -12,6 +12,7 @@ import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.Conexao;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.financeiro.shared.modelo.FinConta;
 import br.com.opensig.financeiro.shared.modelo.FinPagamento;
 
@@ -19,11 +20,13 @@ public class ExcluirFrete extends Chain {
 
 	private CoreServiceImpl servico;
 	private ComFrete frete;
+	private Autenticacao auth;
 
-	public ExcluirFrete(Chain next, CoreServiceImpl servico, ComFrete frete) throws OpenSigException {
+	public ExcluirFrete(Chain next, CoreServiceImpl servico, ComFrete frete, Autenticacao auth) throws OpenSigException {
 		super(null);
 		this.servico = servico;
 		this.frete = frete;
+		this.auth = auth;
 		
 		// atualiza frete
 		DeletarFrete delFrete = new DeletarFrete(next);
@@ -63,7 +66,7 @@ public class ExcluirFrete extends Chain {
 					conta = frete.getFinPagar().getFinConta();
 					double valPag = 0.00;
 					for (FinPagamento pag : frete.getFinPagar().getFinPagamentos()) {
-						if (pag.getFinPagamentoQuitado()) {
+						if (!pag.getFinPagamentoStatus().equalsIgnoreCase(auth.getConf().get("txtAberto"))) {
 							valPag += pag.getFinPagamentoValor();
 						}
 					}

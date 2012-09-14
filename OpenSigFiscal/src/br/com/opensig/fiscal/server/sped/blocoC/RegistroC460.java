@@ -1,6 +1,5 @@
 package br.com.opensig.fiscal.server.sped.blocoC;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,60 +10,34 @@ import org.beanio.StreamFactory;
 
 import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
 import br.com.opensig.comercial.shared.modelo.ComEcfVendaProduto;
-import br.com.opensig.comercial.shared.modelo.ComEcfZ;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.fiscal.server.sped.ARegistro;
 
 public class RegistroC460 extends ARegistro<DadosC460, ComEcfVenda> {
 
-	private ComEcfZ z;
 	private Map<String, List<DadosC470>> analitico = new HashMap<String, List<DadosC470>>();
 
 	@Override
 	public void executar() {
-		qtdLinhas = 0;
-
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", escritor);
+			bloco = getDados(dados);
+			out.write(bloco);
+			out.flush();
 
-			RegistroC470 r470 = new RegistroC470();
-			r470.setAuth(auth);
-			StringWriter sw = null;
+			// itens das vendas
+			if (!dados.getComEcfVendaCancelada()) {
+				RegistroC470 r470 = new RegistroC470();
+				r470.setEscritor(escritor);
 
-			for (ComEcfVenda venda : ecfs) {
-				if (venda.getComEcfVendaLiquido() > 0.00 && venda.getComEcf().getComEcfId() == z.getComEcf().getComEcfId() && venda.getComEcfVendaData().compareTo(z.getComEcfZData()) == 0) {
-					bloco = getDados(venda);
-					// itens das vendas
-					if (!venda.getComEcfVendaCancelada()) {
-						double valor = 0.00;
-						sw = new StringWriter();
-						r470.setEscritor(sw);
-						
-						for (ComEcfVendaProduto vp : venda.getComEcfVendaProdutos()) {
-							if (!vp.getComEcfVendaProdutoCancelado()) {
-								r470.setDados(vp);
-								r470.executar();
-								valor += r470.getBloco().getVl_item();
-								qtdLinhas += r470.getQtdLinhas();
-								setAnalitico(r470.getBloco());
-							}
-						}
-
-						if (valor != bloco.getVl_doc()) {
-							bloco.setVl_doc(valor);
-						}
-					}
-
-					// escreve o bloco 460
-					out.write(bloco);
-					out.flush();
-
-					// escreve o bloco 470
-					if (sw != null) {
-						escritor.write(sw.toString());
-						sw = null;
+				for (ComEcfVendaProduto vp : dados.getComEcfVendaProdutos()) {
+					if (!vp.getComEcfVendaProdutoCancelado()) {
+						r470.setDados(vp);
+						r470.executar();
+						qtdLinhas += r470.getQtdLinhas();
+						setAnalitico(r470.getBloco());
 					}
 				}
 			}
@@ -74,7 +47,6 @@ public class RegistroC460 extends ARegistro<DadosC460, ComEcfVenda> {
 		}
 	}
 
-	@Override
 	protected DadosC460 getDados(ComEcfVenda dados) throws Exception {
 		DadosC460 d = new DadosC460();
 		d.setCod_mod(dados.getComEcf().getComEcfCodigo());
@@ -83,10 +55,12 @@ public class RegistroC460 extends ARegistro<DadosC460, ComEcfVenda> {
 		if (dados.getComEcfVendaCancelada() == false) {
 			d.setDt_doc(dados.getComEcfVendaData());
 			d.setVl_doc(dados.getComEcfVendaLiquido());
-			d.setVl_pis(0.00);
-			d.setVl_cofins(0.00);
-			d.setCpf_cnpj(dados.getComEcfVendaCpf());
-			d.setNom_adq(dados.getComEcfVendaNome());
+			d.setVl_pis(dados.getComEcfVendaLiquido() * pis / 100);
+			d.setVl_cofins(dados.getComEcfVendaLiquido() * cofins / 100);
+			if (dados.getEmpCliente() != null) {
+				d.setCpf_cnpj(dados.getEmpCliente().getEmpEntidade().getEmpEntidadeDocumento1().replaceAll("[^0-9]", ""));
+				d.setNom_adq(dados.getEmpCliente().getEmpEntidade().getEmpEntidadeNome1());
+			}
 		} else {
 			d.setDt_doc(null);
 			d.setVl_doc(null);
@@ -99,14 +73,6 @@ public class RegistroC460 extends ARegistro<DadosC460, ComEcfVenda> {
 		normalizar(d);
 		qtdLinhas++;
 		return d;
-	}
-
-	public ComEcfZ getZ() {
-		return z;
-	}
-
-	public void setZ(ComEcfZ z) {
-		this.z = z;
 	}
 
 	private void setAnalitico(DadosC470 d) {
@@ -122,6 +88,6 @@ public class RegistroC460 extends ARegistro<DadosC460, ComEcfVenda> {
 	}
 
 	public Map<String, List<DadosC470>> getAnalitico() {
-		return this.analitico;
+		return analitico;
 	}
 }

@@ -10,7 +10,8 @@ import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
 
 import br.com.opensig.comercial.shared.modelo.ComCompra;
-import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
+import br.com.opensig.comercial.shared.modelo.ComEcfNota;
+import br.com.opensig.comercial.shared.modelo.ComEcfZ;
 import br.com.opensig.comercial.shared.modelo.ComFrete;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.server.UtilServer;
@@ -22,22 +23,25 @@ import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 
+	protected static FisSpedFiscal sped;
+	protected static FiscalService service;
+	protected static Autenticacao auth;
+	protected static Date inicio;
+	protected static Date fim;
+	protected static double pis;
+	protected static double cofins;
+	protected static List<FisSpedBloco> blocos;
+	protected static List<ComCompra> compras;
+	protected static List<ComFrete> fretes;
+	protected static List<ComVenda> vendas;
+	protected static List<ComEcfZ> zs;
+	protected static List<ComEcfNota> notas;
+	protected static List<ProdProduto> estoque;
 	protected File leitor;
 	protected Writer escritor;
-	protected FisSpedFiscal sped;
-	protected FiscalService service;
-	protected Autenticacao auth;
 	protected String bean;
 	protected int qtdLinhas;
 	protected boolean fimBloco;
-	protected Date inicio;
-	protected Date fim;
-	protected List<FisSpedBloco> blocos;
-	protected List<ComCompra> compras;
-	protected List<ComFrete> fretes;
-	protected List<ComVenda> vendas;
-	protected List<ComEcfVenda> ecfs;
-	protected List<ProdProduto> estoque;
 	protected E bloco;
 	protected T dados;
 
@@ -125,7 +129,7 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 
 	@Override
 	public void setSped(FisSpedFiscal sped) {
-		this.sped = sped;
+		ARegistro.sped = sped;
 	}
 
 	@Override
@@ -135,7 +139,7 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 
 	@Override
 	public void setService(FiscalService service) {
-		this.service = service;
+		ARegistro.service = service;
 	}
 
 	@Override
@@ -145,7 +149,7 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 
 	@Override
 	public void setAuth(Autenticacao auth) {
-		this.auth = auth;
+		ARegistro.auth = auth;
 	}
 
 	@Override
@@ -170,82 +174,112 @@ public abstract class ARegistro<E extends Bean, T> implements IRegistro<E, T> {
 
 	@Override
 	public Date getInicio() {
-		return this.inicio;
+		return inicio;
 	}
 
 	@Override
 	public void setInicio(Date inicio) {
-		this.inicio = inicio;
+		ARegistro.inicio = inicio;
 	}
 
 	@Override
 	public Date getFim() {
-		return this.fim;
+		return fim;
 	}
 
 	@Override
 	public void setFim(Date fim) {
-		this.fim = fim;
+		ARegistro.fim = fim;
+	}
+
+	@Override
+	public double getPis() {
+		return pis;
+	}
+
+	@Override
+	public void setPis(double pis) {
+		ARegistro.pis = pis;
+	}
+
+	@Override
+	public double getCofins() {
+		return cofins;
+	}
+
+	@Override
+	public void setCofins(double cofins) {
+		ARegistro.cofins = cofins;
 	}
 
 	@Override
 	public List<FisSpedBloco> getBlocos() {
-		return this.blocos;
+		return blocos;
 	}
 
 	@Override
 	public void setBlocos(List<FisSpedBloco> blocos) {
-		this.blocos = blocos;
+		ARegistro.blocos = blocos;
 	}
 
 	@Override
 	public List<ComCompra> getCompras() {
-		return this.compras;
+		return compras;
 	}
 
 	@Override
 	public void setCompras(java.util.List<ComCompra> compras) {
-		this.compras = compras;
+		ARegistro.compras = compras;
 	}
 
 	@Override
 	public List<ComFrete> getFretes() {
-		return this.fretes;
+		return fretes;
 	}
 
 	@Override
 	public void setFretes(List<ComFrete> fretes) {
-		this.fretes = fretes;
+		ARegistro.fretes = fretes;
 	}
 
 	@Override
 	public List<ComVenda> getVendas() {
-		return this.vendas;
+		return vendas;
 	}
 
 	@Override
 	public void setVendas(List<ComVenda> vendas) {
-		this.vendas = vendas;
+		ARegistro.vendas = vendas;
 	}
 
 	@Override
-	public List<ComEcfVenda> getEcfs() {
-		return this.ecfs;
+	public List<ComEcfZ> getZs() {
+		return zs;
 	}
 
 	@Override
-	public void setEcfs(List<ComEcfVenda> ecfs) {
-		this.ecfs = ecfs;
+	public void setZs(List<ComEcfZ> zs) {
+		ARegistro.zs = zs;
+	}
+
+	@Override
+	public List<ComEcfNota> getNotas() {
+		return notas;
+	}
+
+	@Override
+	public void setNotas(List<ComEcfNota> notas) {
+		ARegistro.notas = notas;
 	}
 
 	@Override
 	public List<ProdProduto> getEstoque() {
-		return this.estoque;
+		return estoque;
 	}
 
 	@Override
 	public void setEstoque(List<ProdProduto> estoque) {
-		this.estoque = estoque;
+		ARegistro.estoque = estoque;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import br.com.opensig.comercial.shared.modelo.ComCompra;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
@@ -27,7 +28,6 @@ import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
-import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
@@ -258,16 +258,19 @@ public class SalvarEntrada extends Chain {
 				FiltroTexto ft = new FiltroTexto("empFornecedor.empEntidade.empEntidadeDocumento1", ECompara.IGUAL, cnpj);
 				FiltroNumero fn = new FiltroNumero("comCompraNumero", ECompara.IGUAL, numero);
 				GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, ft, fn });
-				CoreServiceImpl<Dados> core = new CoreServiceImpl<Dados>();
-				Dados compra = (Dados) core.getResultado("pu_comercial", "SELECT t FROM ComCompra t", gf);
+				CoreServiceImpl<ComCompra> service = new CoreServiceImpl<ComCompra>();
+				ComCompra compra = service.selecionar(new ComCompra(), gf, false);
 
-				// atualiza a compra
 				if (compra != null) {
+					// atualiza a compra
 					ParametroObjeto po = new ParametroObjeto("fisNotaEntrada", nota);
 					ParametroBinario pb = new ParametroBinario("comCompraNfe", 1);
 					GrupoParametro gp = new GrupoParametro(new IParametro[] { po, pb });
 					Sql sql = new Sql(compra, EComando.ATUALIZAR, gf, gp);
-					core.executar(new Sql[] { sql });
+					service.executar(new Sql[] { sql });
+					// atualiza a data de recebimento
+					nota.setFisNotaEntradaCadastro(compra.getComCompraRecebimento());
+					nota = servico.salvar(nota, false);
 				}
 			} catch (Exception e) {
 				UtilServer.LOG.info("Modulo Fiscal fora do OpenSIG.");
@@ -323,7 +326,7 @@ public class SalvarEntrada extends Chain {
 			throw new FiscalException(ope.getMessage());
 		}
 	}
-	
+
 	private void atualizar(IFiltro filtro) throws FiscalException {
 		String prot;
 

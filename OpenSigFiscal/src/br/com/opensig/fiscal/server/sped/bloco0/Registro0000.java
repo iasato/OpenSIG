@@ -9,7 +9,7 @@ public class Registro0000 extends ARegistro<Dados0000, Dados> {
 	@Override
 	protected Dados0000 getDados(Dados dados) throws Exception {
 		Dados0000 d = new Dados0000();
-		d.setCod_ver(sped.getFisSpedFiscalAno() % 2008 + 1);
+		d.setCod_ver(Integer.valueOf(auth.getConf().get("sped.0000.cod_ver")));
 		d.setCod_fin(sped.getFinalidade());
 		d.setDt_ini(inicio);
 		d.setDt_fin(fim);
@@ -25,9 +25,8 @@ public class Registro0000 extends ARegistro<Dados0000, Dados> {
 		d.setUf(mun.getEmpEstado().getEmpEstadoSigla());
 		d.setIe(sped.getEmpEmpresa().getEmpEntidade().getEmpEntidadeDocumento2());
 		d.setCod_mun(mun.getEmpMunicipioIbge());
-		
-		//TODO im e suframa adicionar ao sistema isso
-		
+		//TODO im adicionar ao sistema isso
+		d.setSuframa(auth.getConf().get("sped.0000.suframa"));
 		d.setInd_perfil(auth.getConf().get("sped.0000.ind_perfil"));
 		d.setInd_ativ(Integer.valueOf(auth.getConf().get("sped.0000.ind_ativ")));
 		return d;

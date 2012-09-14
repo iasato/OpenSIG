@@ -271,7 +271,7 @@ public class GerarNfeSaida extends Chain {
 			FiltroNumero fn = new FiltroNumero("empEmpresa.empEmpresaId", ECompara.IGUAL, id);
 			Number nfeNumero = servico.buscar(new FisNotaSaida(), "t.fisNotaSaidaNumero", EBusca.MAXIMO, fn);
 			if (nfeNumero == null) {
-				nfeNumero = 0;
+				nfeNumero = Integer.valueOf(auth.getConf().get("nfe.numero"));
 			}
 			nNF = UtilServer.formataNumero(nfeNumero.intValue() + 1, 9, 0, false);
 		} catch (Exception ex) {
@@ -454,7 +454,7 @@ public class GerarNfeSaida extends Chain {
 		// verifica se tem produtos com composicoes
 		List<ComVendaProduto> auxProdutos = new ArrayList<ComVendaProduto>();
 		for (ComVendaProduto venProd : produtos.getLista()) {
-			if (venProd.getProdProduto().getProdComposicoes() == null) {
+			if (venProd.getProdProduto().getProdComposicoes().size() == 0) {
 				auxProdutos.add(venProd);
 			} else {
 				for (ProdComposicao comp : venProd.getProdProduto().getProdComposicoes()) {

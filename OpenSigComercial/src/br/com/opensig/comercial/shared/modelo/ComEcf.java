@@ -30,12 +30,24 @@ public class ComEcf extends Dados implements Serializable {
 	@Column(name = "com_ecf_codigo")
 	private String comEcfCodigo;
 
+	@Column(name = "com_ecf_mfadicional")
+	private String comEcfMfAdicional;
+
+	@Column(name = "com_ecf_identificacao")
+	private String comEcfIdentificacao;
+
+	@Column(name = "com_ecf_tipo")
+	private String comEcfTipo;
+
+	@Column(name = "com_ecf_marca")
+	private String comEcfMarca;
+
 	@Column(name = "com_ecf_modelo")
 	private String comEcfModelo;
 
 	@Column(name = "com_ecf_serie")
 	private String comEcfSerie;
-	
+
 	@Column(name = "com_ecf_ativo")
 	private int comEcfAtivo;
 
@@ -58,6 +70,38 @@ public class ComEcf extends Dados implements Serializable {
 
 	public void setComEcfId(int comEcfId) {
 		this.comEcfId = comEcfId;
+	}
+
+	public String getComEcfMfAdicional() {
+		return comEcfMfAdicional;
+	}
+
+	public void setComEcfMfAdicional(String comEcfMfAdicional) {
+		this.comEcfMfAdicional = comEcfMfAdicional;
+	}
+
+	public String getComEcfIdentificacao() {
+		return comEcfIdentificacao;
+	}
+
+	public void setComEcfIdentificacao(String comEcfIdentificacao) {
+		this.comEcfIdentificacao = comEcfIdentificacao;
+	}
+
+	public String getComEcfTipo() {
+		return comEcfTipo;
+	}
+
+	public void setComEcfTipo(String comEcfTipo) {
+		this.comEcfTipo = comEcfTipo;
+	}
+
+	public String getComEcfMarca() {
+		return comEcfMarca;
+	}
+
+	public void setComEcfMarca(String comEcfMarca) {
+		this.comEcfMarca = comEcfMarca;
 	}
 
 	public int getComEcfCaixa() {
@@ -99,7 +143,7 @@ public class ComEcf extends Dados implements Serializable {
 	public void setComEcfAtivo(boolean comEcfAtivo) {
 		this.comEcfAtivo = comEcfAtivo == false ? 0 : 1;
 	}
-	
+
 	public EmpEmpresa getEmpEmpresa() {
 		return empEmpresa;
 	}
@@ -117,7 +161,8 @@ public class ComEcf extends Dados implements Serializable {
 	}
 
 	public String[] toArray() {
-		return new String[] { comEcfId + "", empEmpresa.getEmpEmpresaId() + "", empEmpresa.getEmpEntidade().getEmpEntidadeNome1(), comEcfCodigo, comEcfModelo, comEcfSerie, comEcfCaixa + "", getComEcfAtivo() + "" };
+		return new String[] { comEcfId + "", empEmpresa.getEmpEmpresaId() + "", empEmpresa.getEmpEntidade().getEmpEntidadeNome1(), comEcfCodigo, comEcfMfAdicional, comEcfIdentificacao, comEcfTipo,
+				comEcfMarca, comEcfModelo, comEcfSerie, comEcfCaixa + "", getComEcfAtivo() + "" };
 	}
 
 	public Dados getObjeto(String campo) {

@@ -43,8 +43,8 @@ public class FinPagamento extends Dados implements Serializable {
 	@Column(name = "fin_pagamento_parcela")
 	private String finPagamentoParcela;
 
-	@Column(name = "fin_pagamento_quitado")
-	private int finPagamentoQuitado;
+	@Column(name = "fin_pagamento_status")
+	private String finPagamentoStatus;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fin_pagamento_cadastro")
@@ -60,6 +60,10 @@ public class FinPagamento extends Dados implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fin_pagamento_vencimento")
 	private Date finPagamentoVencimento;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "fin_pagamento_conciliado")
+	private Date finPagamentoConciliado;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "fin_pagar_id")
@@ -110,12 +114,12 @@ public class FinPagamento extends Dados implements Serializable {
 		this.finPagamentoParcela = finPagamentoParcela;
 	}
 
-	public boolean getFinPagamentoQuitado() {
-		return this.finPagamentoQuitado == 0 ? false : true;
+	public String getFinPagamentoStatus() {
+		return this.finPagamentoStatus;
 	}
 
-	public void setFinPagamentoQuitado(boolean finPagamentoQuitado) {
-		this.finPagamentoQuitado = finPagamentoQuitado == false ? 0 : 1;
+	public void setFinPagamentoStatus(String finPagamentoStatus) {
+		this.finPagamentoStatus = finPagamentoStatus;
 	}
 
 	public Date getFinPagamentoRealizado() {
@@ -148,6 +152,14 @@ public class FinPagamento extends Dados implements Serializable {
 
 	public void setFinPagamentoVencimento(Date finPagamentoVencimento) {
 		this.finPagamentoVencimento = finPagamentoVencimento;
+	}
+
+	public Date getFinPagamentoConciliado() {
+		return finPagamentoConciliado;
+	}
+
+	public void setFinPagamentoConciliado(Date finPagamentoConciliado) {
+		this.finPagamentoConciliado = finPagamentoConciliado;
 	}
 
 	public FinPagar getFinPagar() {
@@ -192,7 +204,7 @@ public class FinPagamento extends Dados implements Serializable {
 	public String[] toArray() {
 		return new String[] { finPagamentoId + "", finPagar.getFinPagarId() + "", finPagar.getEmpEmpresa().getEmpEmpresaId() + "", finPagar.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(),
 				finPagar.getEmpEntidade().getEmpEntidadeNome1(), finPagar.getFinConta().getFinContaId() + "", finForma.getFinFormaId() + "", finForma.getFinFormaDescricao(), finPagamentoDocumento,
-				finPagamentoValor.toString(), finPagamentoParcela, UtilClient.getDataGrid(finPagamentoCadastro), UtilClient.getDataGrid(finPagamentoVencimento), getFinPagamentoQuitado() + "",
-				UtilClient.getDataGrid(finPagamentoRealizado), finPagar.getFinPagarNfe() + "", finPagamentoObservacao };
+				finPagamentoValor.toString(), finPagamentoParcela, UtilClient.getDataGrid(finPagamentoCadastro), UtilClient.getDataGrid(finPagamentoVencimento), finPagamentoStatus,
+				UtilClient.getDataGrid(finPagamentoRealizado), UtilClient.getDataGrid(finPagamentoConciliado), finPagar.getFinPagarNfe() + "", finPagamentoObservacao };
 	}
 }

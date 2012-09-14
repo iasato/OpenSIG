@@ -12,14 +12,12 @@ import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.client.visao.abstrato.AListagemEditor;
 import br.com.opensig.core.client.visao.abstrato.IListagem;
 import br.com.opensig.core.shared.modelo.Dados;
-import br.com.opensig.financeiro.shared.modelo.FinBandeira;
 import br.com.opensig.financeiro.shared.modelo.FinForma;
 import br.com.opensig.financeiro.shared.modelo.FinPagamento;
 import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
 
 import com.gwtext.client.core.Ext;
 import com.gwtext.client.data.ArrayReader;
-import com.gwtext.client.data.BooleanFieldDef;
 import com.gwtext.client.data.DateFieldDef;
 import com.gwtext.client.data.FieldDef;
 import com.gwtext.client.data.FloatFieldDef;
@@ -28,10 +26,8 @@ import com.gwtext.client.data.Record;
 import com.gwtext.client.data.RecordDef;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
-import com.gwtext.client.data.event.StoreListenerAdapter;
 import com.gwtext.client.widgets.Component;
 import com.gwtext.client.widgets.MessageBox;
-import com.gwtext.client.widgets.form.Checkbox;
 import com.gwtext.client.widgets.form.ComboBox;
 import com.gwtext.client.widgets.form.DateField;
 import com.gwtext.client.widgets.form.NumberField;
@@ -47,12 +43,10 @@ import com.gwtext.client.widgets.grid.Renderer;
 import com.gwtext.client.widgets.grid.event.EditorGridListenerAdapter;
 import com.gwtextux.client.widgets.grid.plugins.GridSummaryPlugin;
 import com.gwtextux.client.widgets.grid.plugins.SummaryColumnConfig;
-import com.gwtextux.client.widgets.window.ToastWindow;
 
 public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 
 	private Store storeForma;
-	private String cartoes = "";
 
 	public ListagemFinanciados(E classe, boolean barraTarefa) {
 		super(classe, barraTarefa);
@@ -64,8 +58,8 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("id"), new IntegerFieldDef("financeiroId"), new IntegerFieldDef("empresaId"), new StringFieldDef("empresaNome"),
 				new StringFieldDef("nome"), new IntegerFieldDef("conta"), new IntegerFieldDef("finFormaId"), new StringFieldDef("finFormaDescricao"), new StringFieldDef("documento"),
-				new FloatFieldDef("valor"), new StringFieldDef("parcela"), new DateFieldDef("cadastro"), new DateFieldDef("vencimento"), new BooleanFieldDef("quitado"), new DateFieldDef("realizado"),
-				new IntegerFieldDef("nfe"), new StringFieldDef("observacao") };
+				new FloatFieldDef("valor"), new StringFieldDef("parcela"), new DateFieldDef("cadastro"), new DateFieldDef("vencimento"), new StringFieldDef("status"), new DateFieldDef("realizado"),
+				new DateFieldDef("conciliado"), new IntegerFieldDef("nfe"), new StringFieldDef("observacao") };
 		campos = new RecordDef(fd);
 
 		FieldDef[] fdForma = new FieldDef[] { new IntegerFieldDef("finFormaId"), new StringFieldDef("finFormaDescricao") };
@@ -127,12 +121,15 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 		ColumnConfig ccVencimento = new ColumnConfig(OpenSigCore.i18n.txtVencimento(), "vencimento", 100, false, IListagem.DATA);
 		ccVencimento.setEditor(new GridEditor(getVencimento()));
 
-		ColumnConfig ccQuitado = new ColumnConfig(OpenSigCore.i18n.txtQuitado(), "quitado", 75, false, IListagem.BOLEANO);
-		ccQuitado.setEditor(new GridEditor(new Checkbox()));
+		ColumnConfig ccStatus = new ColumnConfig(OpenSigCore.i18n.txtStatus(), "status", 100, false);
 
 		ColumnConfig ccRealizado = new ColumnConfig("", "realizado", 10, false);
 		ccRealizado.setHidden(true);
 		ccRealizado.setFixed(true);
+		
+		ColumnConfig ccConciliado = new ColumnConfig("", "conciliado", 10, false);
+		ccConciliado.setHidden(true);
+		ccConciliado.setFixed(true);
 
 		ColumnConfig ccNfe = new ColumnConfig("", "nfe", 10, false);
 		ccNfe.setHidden(true);
@@ -148,44 +145,19 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 		SummaryColumnConfig sumValor = new SummaryColumnConfig(SummaryColumnConfig.SUM, ccValor, IListagem.DINHEIRO);
 
 		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccFinanceiroId, ccEmpresaId, ccEmpresaNome, ccNome, ccConta, ccTipoId, ccTipo, ccDocumento, sumValor, ccParcela, ccCadastro,
-				ccVencimento, ccQuitado, ccRealizado, ccNfe, ccObservacao };
+				ccVencimento, ccStatus, ccRealizado, ccConciliado, ccNfe, ccObservacao };
 		modelos = new ColumnModel(bcc);
 
 		addEditorGridListener(new EditorGridListenerAdapter() {
 			public boolean doBeforeEdit(GridPanel grid, Record record, String field, Object value, int rowIndex, int colIndex) {
-				if ((record.getAsBoolean("quitado") || field.equalsIgnoreCase("quitado")) && record.getAsInteger("id") > 0) {
+				if (!record.getAsString("status").equalsIgnoreCase(OpenSigCore.i18n.txtAberto())) {
 					MessageBox.alert(OpenSigCore.i18n.txtAcesso(), OpenSigCore.i18n.txtAcessoNegado());
 					return false;
 				} else {
 					return true;
 				}
 			}
-
-			public void onAfterEdit(GridPanel grid, Record record, String field, Object newValue, Object oldValue, int rowIndex, int colIndex) {
-				if (field.equalsIgnoreCase("quitado")) {
-					if (Boolean.valueOf(newValue.toString())) {
-						record.set("realizado", new Date());
-					} else {
-						record.set("realizado", (Date) null);
-					}
-				}
-			}
 		});
-
-		// cartoes
-		if (cartoes == null || cartoes.equals("")) {
-			FieldDef[] fdBandeira = new FieldDef[] { new IntegerFieldDef("finBandeiraId"), new StringFieldDef("finBandeiraDescricao") };
-			CoreProxy<FinBandeira> proxy1 = new CoreProxy<FinBandeira>(new FinBandeira());
-			Store storeBandeira = new Store(proxy1, new ArrayReader(new RecordDef(fdBandeira)), false);
-			storeBandeira.addStoreListener(new StoreListenerAdapter() {
-				public void onLoad(Store store, Record[] records) {
-					for (Record rec : records) {
-						cartoes += rec.getAsString("finBandeiraDescricao") + " | ";
-					}
-				}
-			});
-			storeBandeira.load();
-		}
 
 		filtroPadrao = new FiltroNumero(classe.getCampoId(), ECompara.IGUAL, 0);
 		setTitle(OpenSigCore.i18n.txtParcela(), "icon-preco");
@@ -206,14 +178,12 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 				double valor = rec.getAsDouble("valor");
 				String parcela = rec.getAsString("parcela");
 				Date vencimento = rec.getAsDate("vencimento");
-				boolean quitado = rec.getAsBoolean("quitado");
+				String status = rec.getAsString("status");
 				Date realizado = rec.getAsDate("realizado");
+				Date conciliado = rec.getAsDate("conciliado");
 				String obs = rec.getAsString("observacao");
 
 				if (formaId < 1 || documento == null || valor < 0.01 || parcela.equals("") || vencimento == null) {
-					throw new Exception();
-				} else if (formaId == 2 && !cartoes.contains(documento.toUpperCase())) {
-					new ToastWindow(OpenSigCore.i18n.msgCampoInvalido(), OpenSigCore.i18n.txtDocumento() + " = " + cartoes).show();
 					throw new Exception();
 				}
 
@@ -226,8 +196,9 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 					fin.setFinPagamentoParcela(parcela);
 					fin.setFinPagamentoCadastro(new Date());
 					fin.setFinPagamentoVencimento(vencimento);
-					fin.setFinPagamentoQuitado(quitado);
+					fin.setFinPagamentoStatus(status);
 					fin.setFinPagamentoRealizado(realizado);
+					fin.setFinPagamentoConciliado(conciliado);
 					fin.setFinPagamentoObservacao(obs == null ? "" : obs);
 					lista.add((E) fin);
 				} else {
@@ -239,8 +210,9 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 					fin.setFinRecebimentoParcela(parcela);
 					fin.setFinRecebimentoCadastro(new Date());
 					fin.setFinRecebimentoVencimento(vencimento);
-					fin.setFinRecebimentoQuitado(quitado);
+					fin.setFinRecebimentoStatus(status);
 					fin.setFinRecebimentoRealizado(realizado);
+					fin.setFinRecebimentoConciliado(conciliado);
 					fin.setFinRecebimentoObservacao(obs == null ? "" : obs);
 					lista.add((E) fin);
 				}
@@ -313,13 +285,5 @@ public class ListagemFinanciados<E extends Dados> extends AListagemEditor<E> {
 
 	public void setStoreForma(Store storeForma) {
 		this.storeForma = storeForma;
-	}
-
-	public String getCartoes() {
-		return cartoes;
-	}
-
-	public void setCartoes(String cartoes) {
-		this.cartoes = cartoes;
 	}
 }

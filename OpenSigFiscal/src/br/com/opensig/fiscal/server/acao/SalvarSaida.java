@@ -233,6 +233,7 @@ public class SalvarSaida extends Chain {
 			nota.setFisNotaSaidaXml(xml);
 			nota.setFisNotaSaidaProtocoloCancelado("");
 			nota.setFisNotaSaidaXmlCancelado("");
+			nota.setFisNotaSaidaRecibo("");
 			nota.setFisNotaSaidaErro("");
 
 			// salva a saida

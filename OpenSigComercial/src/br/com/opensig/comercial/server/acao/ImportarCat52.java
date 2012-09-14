@@ -18,6 +18,7 @@ import org.beanio.StreamFactory;
 import br.com.opensig.comercial.server.ComercialServiceImpl;
 import br.com.opensig.comercial.shared.modelo.Cat52;
 import br.com.opensig.comercial.shared.modelo.ComEcf;
+import br.com.opensig.comercial.shared.modelo.ComEcfDocumento;
 import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
 import br.com.opensig.comercial.shared.modelo.ComEcfVendaProduto;
 import br.com.opensig.comercial.shared.modelo.ComEcfZ;
@@ -39,7 +40,6 @@ import br.com.opensig.core.server.importar.IImportacao;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
-import br.com.opensig.empresa.shared.modelo.EmpCliente;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 import br.com.opensig.permissao.shared.modelo.SisUsuario;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
@@ -49,7 +49,6 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 	private List<ProdEmbalagem> embalagem;
 	private ComercialServiceImpl service;
 	private Autenticacao auth;
-	private EmpCliente cliente;
 	private SisUsuario usuario;
 	private List<Cat52> oks;
 	private List<Cat52> err;
@@ -72,10 +71,6 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 			Lista<ProdEmbalagem> emb = service.selecionar(new ProdEmbalagem(), 0, 0, null, false);
 			embalagem = emb.getLista();
 
-			// pega o cliente padrao
-			FiltroNumero fn = new FiltroNumero("empClienteId", ECompara.IGUAL, auth.getConf().get("cliente.padrao"));
-			cliente = (EmpCliente) service.selecionar(new EmpCliente(), fn, false);
-
 			// pega o usuario atual
 			usuario = new SisUsuario(Integer.valueOf(auth.getUsuario()[0]));
 
@@ -85,6 +80,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 			ComEcfZ ecfZ;
 			BeanReader in;
 			Map<Integer, ComEcfVenda> mapVenda;
+			List<ComEcfDocumento> docs;
 
 			for (Entry<String, byte[]> arquivo : arquivos.entrySet()) {
 				Cat52 cat52 = new Cat52();
@@ -96,6 +92,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 				in = null;
 				primeiraVenda = 0;
 				mapVenda = new HashMap<Integer, ComEcfVenda>();
+				docs = new ArrayList<ComEcfDocumento>();
 
 				try {
 					// lendo os dados do arquivo
@@ -118,34 +115,32 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 							ecf = getEcf((ComEcf) rec);
 							// leitura z
 						} else if (rec instanceof ComEcfZ) {
+							ecfZ = getEcfZ((ComEcfZ) rec, ecf, cat52);
 							if (ecfZ == null) {
-								ecfZ = (ComEcfZ) rec;
-							} else {
-								ecfZ = getEcfZ((ComEcfZ) rec, ecf, ecfZ.getComEcfZTotal());
-								if (ecfZ == null) {
-									break;
-								}
+								break;
 							}
 							// totais da leitura z
 						} else if (rec instanceof ComEcfZTotais) {
 							ComEcfZTotais total = (ComEcfZTotais) rec;
 							if (total.getComEcfZTotaisValor() > 0.00) {
 								total.setComEcfZTotaisValor(total.getComEcfZTotaisValor() / 100);
-								ecfZ.getComZTotais().add(total);
+								ecfZ.getComEcfZTotais().add(total);
 							}
 							// venda
 						} else if (rec instanceof ComEcfVenda) {
-							ComEcfVenda venda = getVenda((ComEcfVenda) rec, ecf);
+							ComEcfVenda venda = getVenda((ComEcfVenda) rec, ecf, ecfZ);
 							mapVenda.put(venda.getComEcfVendaCoo(), venda);
 							// produtos
 						} else if (rec instanceof ComEcfVendaProduto) {
-							ComEcfVendaProduto prod = (ComEcfVendaProduto) rec;
-							ComEcfVenda venda = mapVenda.get(prod.getComEcfVendaProdutoCoo());
-							prod = getProduto(prod);
-							if (venda.getComEcfVendaCancelada()) {
-								prod.setComEcfVendaProdutoCancelado(true);
-							}
-							venda.getComEcfVendaProdutos().add(prod);
+							ComEcfVendaProduto vp = (ComEcfVendaProduto) rec;
+							ComEcfVenda venda = mapVenda.get(vp.getComEcfVendaProdutoCoo());
+							setProduto(vp, venda);
+							// documento
+						} else if (rec instanceof ComEcfDocumento) {
+							ComEcfDocumento doc = (ComEcfDocumento) rec;
+							doc.setComEcfDocumentoUsuario(0);
+							doc.setComEcf(ecf);
+							docs.add(doc);
 						}
 					} catch (Exception e) {
 						// faz nada, pois sao linhas nao reconhecidas
@@ -158,12 +153,14 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 				System.gc();
 
 				// valida ecfZ
-				if (ecfZ != null && ecfZ.getComZTotais() != null && !ecfZ.getComZTotais().isEmpty()) {
+				if (ecfZ != null && ecfZ.getComEcfZTotais() != null && !ecfZ.getComEcfZTotais().isEmpty()) {
 					// salva z
 					service.salvarEcfZ(ecfZ);
 					// salva as vendas
 					salvaVendas(mapVenda, cat52);
-					// atauliza os produtos das vendas
+					// salva os documentos
+					service.salvar(docs);
+					// atualiza os produtos das vendas
 					atualizarProdutos();
 					// recupera as vendas salvas
 					FiltroNumero fnVenda = new FiltroNumero("comEcfVendaId", ECompara.MAIOR_IGUAL, primeiraVenda);
@@ -250,6 +247,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 
 		if (ecf2 == null) {
 			ecf.setComEcfCodigo("2D");
+			ecf.setComEcfIdentificacao("000000");
 			ecf.setComEcfAtivo(true);
 			ecf.setEmpEmpresa(empresa);
 			service.salvar(ecf);
@@ -261,54 +259,85 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 	}
 
 	// seta os dados da Z
-	private ComEcfZ getEcfZ(ComEcfZ ecfZ, ComEcf ecf, double total) throws ParametroException, CoreException {
+	private ComEcfZ getEcfZ(ComEcfZ ecfZ, ComEcf ecf, Cat52 cat52) throws ParametroException, CoreException {
 		ecfZ.setComEcf(ecf);
+		ecfZ.setComEcfZUsuario(0);
 		ecfZ.setComEcfZBruto(ecfZ.getComEcfZBruto() / 100);
-		ecfZ.setComEcfZTotal(total / 100);
-		ecfZ.setComZTotais(new ArrayList<ComEcfZTotais>());
+		ecfZ.setComEcfZIssqn(ecfZ.getIssqn().equalsIgnoreCase("S"));
+		ecfZ.setComEcfZTotais(new ArrayList<ComEcfZTotais>());
 
 		// valida Z
 		FiltroObjeto fo = new FiltroObjeto("comEcf", ECompara.IGUAL, ecf);
-		FiltroData fd = new FiltroData("comEcfZData", ECompara.IGUAL, ecfZ.getComEcfZData());
+		FiltroData fd = new FiltroData("comEcfZMovimento", ECompara.IGUAL, ecfZ.getComEcfZMovimento());
 		GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, fd });
-		if (total == 0 || service.selecionar(ecfZ, gf, false) != null) {
+		if (service.selecionar(ecfZ, gf, false) != null) {
 			ecfZ = null;
+		} else {
+			// seta o coo inicial
+			Lista<ComEcfZ> zs = service.selecionar(ecfZ, 0, 1, fo, false);
+			if (!zs.getLista().isEmpty()) {
+				ecfZ.setComEcfZCooIni(zs.getLista().get(0).getComEcfZCooFin() + 1);
+				ecfZ.setComEcfZGt(zs.getLista().get(0).getComEcfZGt() + ecfZ.getComEcfZBruto());
+			} else {
+				ecfZ.setComEcfZCooIni(1);
+				ecfZ.setComEcfZGt(ecfZ.getComEcfZBruto());
+				// coloca um aviso para alterar
+				cat52.setErro("ATENCAO: alterar o COO_INI e o Total (GT) do registro da reducao Z, usando as informacoes impressas.");
+				err.add(cat52);
+			}
 		}
 
 		return ecfZ;
 	}
 
 	// coloca os dados da venda
-	private ComEcfVenda getVenda(ComEcfVenda venda, ComEcf ecf) {
+	private ComEcfVenda getVenda(ComEcfVenda venda, ComEcf ecf, ComEcfZ z) {
 		venda.setComEcf(ecf);
+		venda.setComEcfZ(z);
 		venda.setSisUsuario(usuario);
-		venda.setEmpCliente(cliente);
+		venda.setEmpCliente(null);
+		venda.setFinReceber(null);
 		venda.setComEcfVendaBruto(venda.getComEcfVendaBruto() / 100);
-		double desc = venda.getComEcfVendaBruto() > 0 ? venda.getComEcfVendaDesconto() / venda.getComEcfVendaBruto() : 0.00;
+		// desconto
+		double desc;
+		if (venda.getDescIndicador().equalsIgnoreCase("V")) {
+			desc = venda.getComEcfVendaBruto() > 0 ? venda.getComEcfVendaDesconto() / venda.getComEcfVendaBruto() : 0.00;
+		} else {
+			desc = venda.getComEcfVendaDesconto() / 100;
+		}
 		venda.setComEcfVendaDesconto(desc > 0 ? desc : 0.00);
+		// acrescimo
+		double acres;
+		if (venda.getAcresIndicador().equalsIgnoreCase("V")) {
+			acres = venda.getComEcfVendaBruto() > 0 ? venda.getComEcfVendaAcrescimo() / venda.getComEcfVendaBruto() : 0.00;
+		} else {
+			acres = venda.getComEcfVendaAcrescimo() / 100;
+		}
+		venda.setComEcfVendaAcrescimo(acres > 0 ? acres : 0.00);
 		venda.setComEcfVendaLiquido(venda.getComEcfVendaLiquido() / 100);
 		venda.setComEcfVendaProdutos(new ArrayList<ComEcfVendaProduto>());
 		venda.setComEcfVendaCancelada(venda.getCancelada().equalsIgnoreCase("S"));
 		venda.setComEcfVendaFechada(venda.getComEcfVendaCancelada());
-		if (Long.valueOf(venda.getComEcfVendaCpf()) != 0) {
-			venda.setComEcfVendaObservacao("Nome=" + venda.getComEcfVendaNome() + "-CPF=" + venda.getComEcfVendaCpf());
-		} else {
-			venda.setComEcfVendaObservacao("");
-		}
 		return venda;
 	}
 
 	// coloco os dados do produto
-	private ComEcfVendaProduto getProduto(ComEcfVendaProduto prod) {
-		prod.setProdEmbalagem(getEmbalagem(prod.getComEcfVendaProdutoUnd()));
-		prod.setComEcfVendaProdutoBruto(prod.getComEcfVendaProdutoBruto() / 100);
-		double desc = prod.getComEcfVendaProdutoBruto() > 0 ? prod.getComEcfVendaProdutoDesconto() / prod.getComEcfVendaProdutoBruto() : 0.00;
-		prod.setComEcfVendaProdutoDesconto(desc > 0 ? desc : 0.00);
-		prod.setComEcfVendaProdutoQuantidade(prod.getComEcfVendaProdutoQuantidade() / 1000);
-		prod.setComEcfVendaProdutoTotal(prod.getComEcfVendaProdutoTotal() / 100);
-		prod.setComEcfVendaProdutoLiquido(prod.getComEcfVendaProdutoTotal() / prod.getComEcfVendaProdutoQuantidade());
-		prod.setComEcfVendaProdutoCancelado(prod.getCancelado().equalsIgnoreCase("S"));
-		return prod;
+	private void setProduto(ComEcfVendaProduto vp, ComEcfVenda venda) {
+		vp.setProdEmbalagem(getEmbalagem(vp.getComEcfVendaProdutoUnd()));
+		vp.setComEcfVendaProdutoBruto(vp.getComEcfVendaProdutoBruto() / 100);
+		vp.setComEcfVendaProdutoDesconto(venda.getComEcfVendaDesconto());
+		double desc = vp.getComEcfVendaProdutoBruto() * venda.getComEcfVendaDesconto() / 100;
+		vp.setComEcfVendaProdutoAcrescimo(venda.getComEcfVendaAcrescimo());
+		double acres = vp.getComEcfVendaProdutoBruto() * venda.getComEcfVendaAcrescimo() / 100;
+		vp.setComEcfVendaProdutoQuantidade(vp.getComEcfVendaProdutoQuantidade() / 1000);
+		vp.setComEcfVendaProdutoLiquido(vp.getComEcfVendaProdutoBruto() - desc + acres);
+		vp.setComEcfVendaProdutoTotal(vp.getComEcfVendaProdutoLiquido() * vp.getComEcfVendaProdutoQuantidade());
+		if (venda.getComEcfVendaCancelada()) {
+			vp.setComEcfVendaProdutoCancelado(true);
+		} else {
+			vp.setComEcfVendaProdutoCancelado(vp.getCancelado().equalsIgnoreCase("S"));
+		}
+		venda.getComEcfVendaProdutos().add(vp);
 	}
 
 	// salva as vendas no sistema
@@ -343,7 +372,6 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 
 	// atualiza os produtos pelo codigo
 	private void atualizarProdutos() {
-		// TODO exececao para ser removida
 		EntityManagerFactory emf = null;
 		EntityManager em = null;
 		try {
@@ -376,7 +404,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 			// efetiva a transacao
 			total += rs.executeUpdate();
 			em.getTransaction().commit();
-			
+
 			// inicia a transacao
 			em.getTransaction().begin();
 			// atualiza pela descricao
@@ -389,7 +417,7 @@ public class ImportarCat52 implements IImportacao<Cat52> {
 			// efetiva a transacao
 			total += rs.executeUpdate();
 			em.getTransaction().commit();
-			
+
 			UtilServer.LOG.debug("Total de produtos atualizados = " + total);
 		} catch (Exception ex) {
 			// volta ao estado anterior

@@ -8,8 +8,11 @@ import org.beanio.StreamFactory;
 
 import br.com.opensig.comercial.shared.modelo.ComCompra;
 import br.com.opensig.comercial.shared.modelo.ComCompraProduto;
+import br.com.opensig.comercial.shared.modelo.ComEcfNota;
+import br.com.opensig.comercial.shared.modelo.ComEcfNotaProduto;
 import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
 import br.com.opensig.comercial.shared.modelo.ComEcfVendaProduto;
+import br.com.opensig.comercial.shared.modelo.ComEcfZ;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.comercial.shared.modelo.ComVendaProduto;
 import br.com.opensig.core.server.UtilServer;
@@ -23,7 +26,6 @@ public class Registro0220 extends ARegistro<Dados0220, ProdEmbalagem> {
 
 	@Override
 	public void executar() {
-		qtdLinhas = 0;
 		embalagens = new ArrayList<Integer>();
 
 		try {
@@ -31,7 +33,7 @@ public class Registro0220 extends ARegistro<Dados0220, ProdEmbalagem> {
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", escritor);
 			// compras
-			for (ComCompra compra : getCompras()) {
+			for (ComCompra compra : compras) {
 				for (ComCompraProduto cProd : compra.getComCompraProdutos()) {
 					if (!embalagens.contains(cProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
 						out.write(getDados(cProd.getProdProduto().getProdEmbalagem()));
@@ -41,10 +43,10 @@ public class Registro0220 extends ARegistro<Dados0220, ProdEmbalagem> {
 				}
 			}
 			// vendas
-			for (ComVenda venda : getVendas()) {
+			for (ComVenda venda : vendas) {
 				if (!venda.getComVendaCancelada() && !venda.getComVendaNfe()) {
 					for (ComVendaProduto vProd : venda.getComVendaProdutos()) {
-						if (vProd.getProdProduto().getProdComposicoes() == null && !embalagens.contains(vProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
+						if (vProd.getProdProduto().getProdComposicoes().size() == 0 && !embalagens.contains(vProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
 							out.write(getDados(vProd.getProdProduto().getProdEmbalagem()));
 							out.flush();
 							embalagens.add(vProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
@@ -52,11 +54,25 @@ public class Registro0220 extends ARegistro<Dados0220, ProdEmbalagem> {
 					}
 				}
 			}
-			// ecfs
-			for (ComEcfVenda venda : getEcfs()) {
-				if (!venda.getComEcfVendaCancelada()) {
-					for (ComEcfVendaProduto eProd : venda.getComEcfVendaProdutos()) {
-						if (!eProd.getComEcfVendaProdutoCancelado() && !embalagens.contains(eProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
+			// zs
+			for (ComEcfZ z : zs) {
+				for (ComEcfVenda venda : z.getComEcfVendas()) {
+					if (venda.getComEcfVendaFechada() && !venda.getComEcfVendaCancelada() && venda.getEmpCliente() != null) {
+						for (ComEcfVendaProduto eProd : venda.getComEcfVendaProdutos()) {
+							if (!eProd.getComEcfVendaProdutoCancelado() && !embalagens.contains(eProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
+								out.write(getDados(eProd.getProdProduto().getProdEmbalagem()));
+								out.flush();
+								embalagens.add(eProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
+							}
+						}
+					}
+				}
+			}
+			// notas
+			for (ComEcfNota nota : notas) {
+				if (!nota.getComEcfNotaCancelada()) {
+					for (ComEcfNotaProduto eProd : nota.getComEcfNotaProdutos()) {
+						if (!embalagens.contains(eProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId())) {
 							out.write(getDados(eProd.getProdProduto().getProdEmbalagem()));
 							out.flush();
 							embalagens.add(eProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());

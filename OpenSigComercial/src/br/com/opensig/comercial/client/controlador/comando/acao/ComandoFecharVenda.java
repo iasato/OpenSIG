@@ -46,7 +46,7 @@ public class ComandoFecharVenda extends ComandoAcao {
 											rec.set("comVendaFechada", true);
 											new ToastWindow(OpenSigCore.i18n.txtFechar(), OpenSigCore.i18n.msgSalvarOK()).show();
 										} else {
-											new ListagemValidarEstoque(result);
+											validarEstoque(result);
 										}
 									};
 								});
@@ -61,5 +61,9 @@ public class ComandoFecharVenda extends ComandoAcao {
 			public void onFailure(Throwable caught) {
 			}
 		});
+	}
+	
+	private void validarEstoque(String[][] result) {
+		new ListagemValidarEstoque(result, this, contexto);
 	}
 }

@@ -2,6 +2,8 @@ package br.com.opensig.comercial.client.visao.lista;
 
 import java.util.Map.Entry;
 
+import br.com.opensig.comercial.client.controlador.comando.ComandoEcfDocumento;
+import br.com.opensig.comercial.client.controlador.comando.ComandoEcfZ;
 import br.com.opensig.comercial.shared.modelo.ComEcf;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
@@ -14,6 +16,7 @@ import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AListagem;
 import br.com.opensig.core.client.visao.abstrato.IFormulario;
 import br.com.opensig.core.shared.modelo.IFavorito;
+import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 
 import com.gwtext.client.data.ArrayReader;
@@ -26,6 +29,8 @@ import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.widgets.grid.BaseColumnConfig;
 import com.gwtext.client.widgets.grid.ColumnConfig;
 import com.gwtext.client.widgets.grid.ColumnModel;
+import com.gwtext.client.widgets.menu.Menu;
+import com.gwtext.client.widgets.menu.MenuItem;
 import com.gwtextux.client.widgets.grid.plugins.GridBooleanFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridFilter;
 import com.gwtextux.client.widgets.grid.plugins.GridListFilter;
@@ -41,7 +46,8 @@ public class ListagemEcf extends AListagem<ComEcf> {
 	public void inicializar() {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comEcfId"), new IntegerFieldDef("empEmpresa.empEmpresaId"), new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"),
-				new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa"), new BooleanFieldDef("comEcfAtivo") };
+				new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfMfAdicional"), new StringFieldDef("comEcfIdentificacao"), new StringFieldDef("comEcfTipo"),
+				new StringFieldDef("comEcfMarca"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa"), new BooleanFieldDef("comEcfAtivo") };
 		campos = new RecordDef(fd);
 
 		// colunas
@@ -51,12 +57,16 @@ public class ListagemEcf extends AListagem<ComEcf> {
 		ColumnConfig ccEmpresa = new ColumnConfig(OpenSigCore.i18n.txtEmpresa(), "empEmpresa.empEntidade.empEntidadeNome1", 200, true);
 		ccEmpresa.setHidden(true);
 		ColumnConfig ccCodigo = new ColumnConfig(OpenSigCore.i18n.txtCodigo(), "comEcfCodigo", 75, true);
-		ColumnConfig ccModelo = new ColumnConfig(OpenSigCore.i18n.txtModelo(), "comEcfModelo", 200, true);
-		ColumnConfig ccSerie = new ColumnConfig(OpenSigCore.i18n.txtSerie(), "comEcfSerie", 200, true);
-		ColumnConfig ccCaixa = new ColumnConfig(OpenSigCore.i18n.txtCaixa(), "comEcfCaixa", 75, true);
+		ColumnConfig ccMF = new ColumnConfig(OpenSigCore.i18n.txtMfAdicional(), "comEcfMfAdicional", 100, true);
+		ColumnConfig ccIdent = new ColumnConfig(OpenSigCore.i18n.txtIdentificacao(), "comEcfIdentificacao", 100, true);
+		ColumnConfig ccTipo = new ColumnConfig(OpenSigCore.i18n.txtTipo(), "comEcfTipo", 100, true);
+		ColumnConfig ccMarca = new ColumnConfig(OpenSigCore.i18n.txtMarca(), "comEcfMarca", 100, true);
+		ColumnConfig ccModelo = new ColumnConfig(OpenSigCore.i18n.txtModelo(), "comEcfModelo", 150, true);
+		ColumnConfig ccSerie = new ColumnConfig(OpenSigCore.i18n.txtSerie(), "comEcfSerie", 150, true);
+		ColumnConfig ccCaixa = new ColumnConfig(OpenSigCore.i18n.txtCaixa(), "comEcfCaixa", 50, true);
 		ColumnConfig ccAtivo = new ColumnConfig(OpenSigCore.i18n.txtAtivo(), "comEcfAtivo", 50, true, BOLEANO);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccCodigo, ccModelo, ccSerie, ccCaixa, ccAtivo };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccCodigo, ccMF, ccIdent, ccTipo, ccMarca, ccModelo, ccSerie, ccCaixa, ccAtivo };
 		modelos = new ColumnModel(bcc);
 
 		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteEmpresa.class) == null) {
@@ -97,5 +107,32 @@ public class ListagemEcf extends AListagem<ComEcf> {
 		filtros.get("empEmpresa.empEmpresaId").setActive(false, true);
 		filtros.get("comEcfAtivo").setActive(false, true);
 		super.setFavorito(favorito);
+	}
+	
+	@Override
+	public void irPara() {
+		Menu mnuContexto = new Menu();
+
+		// z
+		SisFuncao ecfZ = UtilClient.getFuncaoPermitida(ComandoEcfZ.class);
+		MenuItem itemEcfZ = gerarFuncao(ecfZ, "comEcf.comEcfId", "comEcfId");
+		if (itemEcfZ != null) {
+			mnuContexto.addItem(itemEcfZ);
+		}
+
+		// docs
+		SisFuncao doc = UtilClient.getFuncaoPermitida(ComandoEcfDocumento.class);
+		MenuItem itemDoc = gerarFuncao(doc, "comEcf.comEcfId", "comEcfId");
+		if (itemDoc != null) {
+			mnuContexto.addItem(itemDoc);
+		}
+		
+		if (mnuContexto.getItems().length > 0) {
+			MenuItem mnuItem = getIrPara();
+			mnuItem.setMenu(mnuContexto);
+
+			getMenu().addSeparator();
+			getMenu().addItem(mnuItem);
+		}
 	}
 }

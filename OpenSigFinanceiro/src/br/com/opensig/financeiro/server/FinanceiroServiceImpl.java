@@ -87,7 +87,9 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 		FiltroNumero fn1 = new FiltroNumero("finContaId", ECompara.IGUAL, conta.getFinContaId());
 		try {
 			conta = (FinConta) selecionar(conta, fn1, false);
-			return FabricaCobranca.getInstancia().getCobranca(conta);
+			ICobranca cobranca = FabricaCobranca.getInstancia().getCobranca(conta);
+			cobranca.setAuth(getAuth());
+			return cobranca;
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro ao gerar cobranca", e);
 			throw new FinanceiroException(e.getMessage());
@@ -96,7 +98,7 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 
 	public void excluirRetorno(FinRetorno retorno) throws FinanceiroException {
 		try {
-			new ExcluirRetorno(null, this, retorno).execute();
+			new ExcluirRetorno(null, this, retorno, getAuth()).execute();
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro ao excluir retorno", e);
 			throw new FinanceiroException(e.getMessage());
@@ -105,7 +107,7 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 
 	public void excluirReceber(FinReceber receber) throws FinanceiroException {
 		try {
-			new ExcluirReceber(null, this, receber).execute();
+			new ExcluirReceber(null, this, receber, getAuth()).execute();
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro ao excluir receber", e);
 			throw new FinanceiroException(e.getMessage());
@@ -114,7 +116,7 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 
 	public void excluirPagar(FinPagar pagar) throws FinanceiroException {
 		try {
-			new ExcluirPagar(null, this, pagar).execute();
+			new ExcluirPagar(null, this, pagar, getAuth()).execute();
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro ao excluir pagar", e);
 			throw new FinanceiroException(e.getMessage());
@@ -145,7 +147,7 @@ public class FinanceiroServiceImpl extends CoreServiceImpl implements Financeiro
 
 	public FinRetorno salvarRetorno(FinRetorno retorno, List<FinRecebimento> recebimentos) throws FinanceiroException {
 		try {
-			new SalvarRetorno(null, this, retorno, recebimentos).execute();
+			new SalvarRetorno(null, this, retorno, recebimentos, getAuth()).execute();
 			retorno.anularDependencia();
 			return retorno;
 		} catch (Exception e) {

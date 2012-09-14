@@ -30,6 +30,27 @@ public class FinForma extends Dados implements Serializable {
 	@Column(name = "fin_forma_descricao")
 	private String finFormaDescricao;
 
+	@Column(name = "fin_forma_codigo")
+	private String finFormaCodigo;
+
+	@Column(name = "fin_forma_tef")
+	private int finFormaTef;
+
+	@Column(name = "fin_forma_vinculado")
+	private int finFormaVinculado;
+
+	@Column(name = "fin_forma_debito")
+	private int finFormaDebito;
+
+	@Column(name = "fin_forma_rede")
+	private String finFormaRede;
+
+	@Column(name = "fin_forma_pagar")
+	private int finFormaPagar;
+
+	@Column(name = "fin_forma_receber")
+	private int finFormaReceber;
+
 	public FinForma() {
 		this(0);
 	}
@@ -63,7 +84,64 @@ public class FinForma extends Dados implements Serializable {
 		finFormaId = id.intValue();
 	}
 
+	public String getFinFormaCodigo() {
+		return finFormaCodigo;
+	}
+
+	public void setFinFormaCodigo(String finFormaCodigo) {
+		this.finFormaCodigo = finFormaCodigo;
+	}
+
+	public boolean getFinFormaTef() {
+		return finFormaTef == 0 ? false : true;
+	}
+
+	public void setFinFormaTef(boolean finFormaTef) {
+		this.finFormaTef = finFormaTef == false ? 0 : 1;
+	}
+
+	public boolean getFinFormaVinculado() {
+		return finFormaVinculado == 0 ? false : true;
+	}
+
+	public void setFinFormaVinculado(boolean finFormaVinculado) {
+		this.finFormaVinculado = finFormaVinculado == false ? 0 : 1;
+	}
+
+	public boolean getFinFormaDebito() {
+		return finFormaDebito == 0 ? false : true;
+	}
+
+	public void setFinFormaDebito(boolean finFormaDebito) {
+		this.finFormaDebito = finFormaDebito == false ? 0 : 1;
+	}
+
+	public String getFinFormaRede() {
+		return finFormaRede;
+	}
+
+	public void setFinFormaRede(String finFormaRede) {
+		this.finFormaRede = finFormaRede;
+	}
+
+	public boolean getFinFormaPagar() {
+		return finFormaPagar == 0 ? false : true;
+	}
+
+	public void setFinFormaPagar(boolean finFormaPagar) {
+		this.finFormaPagar = finFormaPagar == false ? 0 : 1;
+	}
+
+	public boolean getFinFormaReceber() {
+		return finFormaReceber == 0 ? false : true;
+	}
+
+	public void setFinFormaReceber(boolean finFormaReceber) {
+		this.finFormaReceber = finFormaReceber == false ? 0 : 1;
+	}
+
 	public String[] toArray() {
-		return new String[] { finFormaId + "", finFormaDescricao };
+		return new String[] { finFormaId + "", finFormaDescricao, finFormaCodigo, getFinFormaTef() + "", getFinFormaVinculado() + "", getFinFormaDebito() + "", finFormaRede, getFinFormaPagar() + "",
+				getFinFormaReceber() + "" };
 	}
 }

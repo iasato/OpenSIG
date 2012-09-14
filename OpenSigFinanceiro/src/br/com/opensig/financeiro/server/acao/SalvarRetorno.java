@@ -9,7 +9,6 @@ import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.parametro.GrupoParametro;
 import br.com.opensig.core.client.controlador.parametro.IParametro;
-import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.client.controlador.parametro.ParametroData;
 import br.com.opensig.core.client.controlador.parametro.ParametroFormula;
 import br.com.opensig.core.client.controlador.parametro.ParametroNumero;
@@ -19,6 +18,7 @@ import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.Conexao;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
+import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.financeiro.client.servico.FinanceiroException;
@@ -31,12 +31,14 @@ public class SalvarRetorno extends Chain {
 	private CoreServiceImpl servico;
 	private FinRetorno retorno;
 	private List<FinRecebimento> recebimentos;
+	private Autenticacao auth;
 
-	public SalvarRetorno(Chain next, CoreServiceImpl servico, FinRetorno retorno, List<FinRecebimento> recebimentos) throws OpenSigException {
+	public SalvarRetorno(Chain next, CoreServiceImpl servico, FinRetorno retorno, List<FinRecebimento> recebimentos, Autenticacao auth) throws OpenSigException {
 		super(next);
 		this.servico = servico;
 		this.retorno = retorno;
 		this.recebimentos = recebimentos;
+		this.auth = auth;
 	}
 
 	@Override
@@ -60,12 +62,12 @@ public class SalvarRetorno extends Chain {
 				ids += fin.getFinRecebimentoId() + " ";
 
 				FiltroNumero fn = new FiltroNumero("finRecebimentoId", ECompara.IGUAL, fin.getFinRecebimentoId());
-
 				ParametroNumero pn = new ParametroNumero("finRecebimentoValor", fin.getFinRecebimentoValor());
-				ParametroData pd = new ParametroData("finRecebimentoRealizado", fin.getFinRecebimentoRealizado());
-				ParametroBinario pb = new ParametroBinario("finRecebimentoQuitado", 1);
-				ParametroTexto pt = new ParametroTexto("finRecebimentoObservacao", "Auto");
-				GrupoParametro gp = new GrupoParametro(new IParametro[] { pn, pd, pb, pt });
+				ParametroTexto pt = new ParametroTexto("finRecebimentoStatus", fin.getFinRecebimentoConciliado() == null ? auth.getConf().get("txtRealizado").toUpperCase() : auth.getConf().get("txtConciliado").toUpperCase());
+				ParametroData pd1 = new ParametroData("finRecebimentoRealizado", fin.getFinRecebimentoRealizado());
+				ParametroData pd2 = new ParametroData("finRecebimentoConciliado", fin.getFinRecebimentoConciliado());
+				ParametroTexto pt2 = new ParametroTexto("finRecebimentoObservacao", "Auto");
+				GrupoParametro gp = new GrupoParametro(new IParametro[] { pn, pt, pd1, pd2, pt2 });
 
 				Sql sql = new Sql(fin, EComando.ATUALIZAR, fn, gp);
 				servico.executar(em, sql);

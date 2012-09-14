@@ -18,6 +18,9 @@
 		<class>br.com.opensig.comercial.shared.modelo.ComEcfZTotais</class>
 		<class>br.com.opensig.comercial.shared.modelo.ComEcfVenda</class>
 		<class>br.com.opensig.comercial.shared.modelo.ComEcfVendaProduto</class>
+		<class>br.com.opensig.comercial.shared.modelo.ComEcfNota</class>
+		<class>br.com.opensig.comercial.shared.modelo.ComEcfNotaProduto</class>
+		<class>br.com.opensig.comercial.shared.modelo.ComEcfDocumento</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdProduto</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdEstoque</class>
 		<class>br.com.opensig.produto.shared.modelo.ProdTributacao</class>
@@ -52,7 +55,6 @@
 		<class>br.com.opensig.financeiro.shared.modelo.FinForma</class>
 		<class>br.com.opensig.financeiro.shared.modelo.FinConta</class>
 		<class>br.com.opensig.financeiro.shared.modelo.FinCategoria</class>
-		<class>br.com.opensig.financeiro.shared.modelo.FinBandeira</class>
 		<class>br.com.opensig.financeiro.shared.modelo.FinBanco</class>
 		<class>br.com.opensig.fiscal.shared.modelo.FisNotaEntrada</class>
 		<class>br.com.opensig.fiscal.shared.modelo.FisNotaSaida</class>

@@ -13,23 +13,23 @@ public class RegistroH005 extends ARegistro<DadosH005, Dados> {
 
 	@Override
 	public void executar() {
-		StringWriter sw = new StringWriter(1000000);
-		RegistroH010 r010 = new RegistroH010();
-		r010.setEscritor(sw);
-		r010.setAuth(auth);
-		r010.setService(service);
-		r010.setSped(sped);
-		r010.setEstoque(estoque);
-		r010.executar();
 
-		this.total = r010.getTotal();
-		super.executar();
-		qtdLinhas += r010.getQtdLinhas();
-		try {
-			escritor.append(sw.getBuffer());
-			escritor.flush();
-		} catch (IOException e) {
-			UtilServer.LOG.error("Erro na geracao do Registro -> " + bean, e);
+		if (sped.getFisSpedFiscalMes() == 2) {
+			try {
+				StringWriter sw = new StringWriter(1000000);
+				RegistroH010 r010 = new RegistroH010();
+				r010.setEscritor(sw);
+				r010.executar();
+
+				this.total = r010.getTotal();
+				super.executar();
+				qtdLinhas += r010.getQtdLinhas();
+				escritor.append(sw.getBuffer());
+				escritor.flush();
+			} catch (IOException e) {
+				qtdLinhas = 0;
+				UtilServer.LOG.error("Erro na geracao do Registro -> " + bean, e);
+			}
 		}
 	}
 
@@ -37,8 +37,7 @@ public class RegistroH005 extends ARegistro<DadosH005, Dados> {
 	protected DadosH005 getDados(Dados dados) throws Exception {
 		DadosH005 d = new DadosH005();
 		d.setDt_inv(fim);
-		//TODO colocar em 01/07/2012 
-		//d.setMot_inv("01");
+		d.setMot_inv("01");
 		d.setVl_inv(total);
 		return d;
 	}

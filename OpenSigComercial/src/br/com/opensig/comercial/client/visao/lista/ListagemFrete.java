@@ -147,7 +147,7 @@ public class ListagemFrete extends AListagem<ComFrete> {
 		}// valida se pode excluir
 		else if (comando instanceof ComandoExcluir) {
 			comando = null;
-			if (rec != null && !rec.getAsBoolean("comFreteFechada")) {
+			if (rec != null) {
 				MessageBox.confirm(OpenSigCore.i18n.txtExcluir(), OpenSigCore.i18n.msgExcluir(), new MessageBox.ConfirmCallback() {
 					public void execute(String btnID) {
 						if (btnID.equalsIgnoreCase("yes")) {
@@ -156,8 +156,6 @@ public class ListagemFrete extends AListagem<ComFrete> {
 						}
 					}
 				});
-			} else if (rec != null) {
-				MessageBox.alert(OpenSigCore.i18n.txtAcesso(), OpenSigCore.i18n.txtAcessoNegado());
 			}
 		}
 

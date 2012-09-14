@@ -10,7 +10,6 @@
 		<class>br.com.opensig.financeiro.shared.modelo.FinForma</class>
 		<class>br.com.opensig.financeiro.shared.modelo.FinConta</class>
 		<class>br.com.opensig.financeiro.shared.modelo.FinCategoria</class>
-		<class>br.com.opensig.financeiro.shared.modelo.FinBandeira</class>
 		<class>br.com.opensig.financeiro.shared.modelo.FinBanco</class>
 		<class>br.com.opensig.empresa.shared.modelo.EmpContato</class>
 		<class>br.com.opensig.empresa.shared.modelo.EmpContatoTipo</class>

@@ -24,8 +24,8 @@ public class ListagemTributacao extends AListagem<ProdTributacao> {
 	public void inicializar() {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("prodTributacaoId"), new StringFieldDef("prodTributacaoNome"), new StringFieldDef("prodTributacaoCst"),
-				new StringFieldDef("prodTributacaoCson"), new IntegerFieldDef("prodTributacaoCfop"), new FloatFieldDef("prodTributacaoDentro"), new FloatFieldDef("prodTributacaoFora"),
-				new StringFieldDef("prodTributacaoDecreto"), };
+				new StringFieldDef("prodTributacaoCson"), new IntegerFieldDef("prodTributacaoCfop"), new StringFieldDef("prodTributacaoEcf"), new FloatFieldDef("prodTributacaoDentro"),
+				new FloatFieldDef("prodTributacaoFora"), new StringFieldDef("prodTributacaoDecreto"), };
 		campos = new RecordDef(fd);
 
 		// colunas
@@ -34,11 +34,12 @@ public class ListagemTributacao extends AListagem<ProdTributacao> {
 		ColumnConfig ccCst = new ColumnConfig(OpenSigCore.i18n.txtCst(), "prodTributacaoCst", 50, true);
 		ColumnConfig ccCson = new ColumnConfig(OpenSigCore.i18n.txtCson(), "prodTributacaoCson", 50, true);
 		ColumnConfig ccCfop = new ColumnConfig(OpenSigCore.i18n.txtCfop(), "prodTributacaoCfop", 50, true);
+		ColumnConfig ccEcf = new ColumnConfig(OpenSigCore.i18n.txtEcf(), "prodTributacaoEcf", 50, true);
 		ColumnConfig ccDentro = new ColumnConfig(OpenSigCore.i18n.txtDentro(), "prodTributacaoDentro", 50, true, PORCENTAGEM);
 		ColumnConfig ccFora = new ColumnConfig(OpenSigCore.i18n.txtFora(), "prodTributacaoFora", 50, true, PORCENTAGEM);
 		ColumnConfig ccDecreto = new ColumnConfig(OpenSigCore.i18n.txtDecreto(), "prodTributacaoDecreto", 200, true);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccNome, ccCst, ccCson, ccCfop, ccDentro, ccFora, ccDecreto };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccNome, ccCst, ccCson, ccCfop, ccEcf, ccDentro, ccFora, ccDecreto };
 		modelos = new ColumnModel(bcc);
 
 		super.inicializar();

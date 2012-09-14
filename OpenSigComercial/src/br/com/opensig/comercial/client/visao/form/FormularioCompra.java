@@ -525,6 +525,13 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 			FiltroObjeto fo = new FiltroObjeto("comCompra", ECompara.IGUAL, classe);
 			gridProdutos.getProxy().setFiltroPadrao(fo);
 			gridProdutos.getStore().reload();
+		} else {
+			for (Record rec2 : cmbNatureza.getStore().getRecords()) {
+				if (rec2.getAsString("comNaturezaNome").equalsIgnoreCase("Compra")) {
+					cmbNatureza.setValue(rec2.getAsString("comNaturezaId"));
+					break;
+				}
+			}
 		}
 		txtSerie.focus(true);
 
@@ -645,8 +652,8 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 		}
 
 		// trocando campos visiveis
-		metadados.set(11, metadados.get(10));
-		metadados.set(10, null);
+		metadados.set(14, metadados.get(13));
+		metadados.set(13, null);
 
 		SortState ordem = gridProdutos.getStore().getSortState();
 		ComCompraProduto comProd = new ComCompraProduto();
@@ -655,7 +662,7 @@ public class FormularioCompra extends AFormulario<ComCompra> {
 		// filtro
 		int id = UtilClient.getSelecionado(lista.getPanel());
 		FiltroObjeto filtro = new FiltroObjeto("comCompra", ECompara.IGUAL, new ComCompra(id));
-		
+
 		ExpListagem<ComCompraProduto> produtos = new ExpListagem<ComCompraProduto>();
 		produtos.setClasse(comProd);
 		produtos.setMetadados(metadados);

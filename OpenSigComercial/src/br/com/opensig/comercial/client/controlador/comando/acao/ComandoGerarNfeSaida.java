@@ -188,7 +188,6 @@ public class ComandoGerarNfeSaida extends ComandoAcao {
 	private void setCampos(FormPanel frm) {
 		rdEmitente = new Radio(OpenSigCore.i18n.txtOrigem(), "tipo");
 		rdEmitente.setChecked(true);
-
 		rdDestinatario = new Radio(OpenSigCore.i18n.txtDestino(), "tipo");
 		rdTerceiro = new Radio(OpenSigCore.i18n.txtTerceiro(), "tipo");
 		rdSemFrete = new Radio(OpenSigCore.i18n.txtSemFrete(), "tipo");

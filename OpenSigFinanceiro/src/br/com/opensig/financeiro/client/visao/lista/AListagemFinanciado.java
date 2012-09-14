@@ -28,6 +28,7 @@ import com.gwtext.client.data.FloatFieldDef;
 import com.gwtext.client.data.IntegerFieldDef;
 import com.gwtext.client.data.Record;
 import com.gwtext.client.data.RecordDef;
+import com.gwtext.client.data.SimpleStore;
 import com.gwtext.client.data.Store;
 import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.widgets.MessageBox;
@@ -59,8 +60,8 @@ public class AListagemFinanciado<E extends Dados> extends AListagem<E> {
 				new StringFieldDef(nomes.get("financeiroEmpresa") + ".empEntidade.empEntidadeNome1"), new StringFieldDef(nomes.get("financeiroNome")),
 				new IntegerFieldDef(nomes.get("financeiroConta")), new IntegerFieldDef("finForma.finFormaId"), new StringFieldDef("finForma.finFormaDescricao"),
 				new StringFieldDef(nomes.get("documento")), new FloatFieldDef(nomes.get("valor")), new StringFieldDef(nomes.get("parcela")), new DateFieldDef(nomes.get("cadastro")),
-				new DateFieldDef(nomes.get("vencimento")), new BooleanFieldDef(nomes.get("quitado")), new DateFieldDef(nomes.get("realizado")), new IntegerFieldDef(nomes.get("financeiroNfe")),
-				new StringFieldDef(nomes.get("observacao")) };
+				new DateFieldDef(nomes.get("vencimento")), new StringFieldDef(nomes.get("status")), new DateFieldDef(nomes.get("realizado")), new DateFieldDef(nomes.get("conciliado")),
+				new IntegerFieldDef(nomes.get("financeiroNfe")), new StringFieldDef(nomes.get("observacao")) };
 		campos = new RecordDef(fd);
 
 		// selected
@@ -85,8 +86,9 @@ public class AListagemFinanciado<E extends Dados> extends AListagem<E> {
 		ColumnConfig ccParcela = new ColumnConfig(OpenSigCore.i18n.txtParcela(), nomes.get("parcela"), 50, true);
 		ColumnConfig ccCadastro = new ColumnConfig(OpenSigCore.i18n.txtCadastro(), nomes.get("cadastro"), 75, true, DATA);
 		ColumnConfig ccVencimento = new ColumnConfig(OpenSigCore.i18n.txtVencimento(), nomes.get("vencimento"), 75, true, DATA);
-		ColumnConfig ccQuitado = new ColumnConfig(OpenSigCore.i18n.txtQuitado(), nomes.get("quitado"), 75, true, BOLEANO);
+		ColumnConfig ccStatus = new ColumnConfig(OpenSigCore.i18n.txtStatus(), nomes.get("status"), 100, true);
 		ColumnConfig ccRealizado = new ColumnConfig(OpenSigCore.i18n.txtRealizado(), nomes.get("realizado"), 75, true, DATA);
+		ColumnConfig ccConciliado = new ColumnConfig(OpenSigCore.i18n.txtConciliado(), nomes.get("conciliado"), 75, true, DATA);
 		ColumnConfig ccNfe = new ColumnConfig(OpenSigCore.i18n.txtNota(), nomes.get("financeiroNfe"), 75, true);
 		ColumnConfig ccObservacao = new ColumnConfig(OpenSigCore.i18n.txtObservacao(), nomes.get("observacao"), 200, true);
 
@@ -94,7 +96,7 @@ public class AListagemFinanciado<E extends Dados> extends AListagem<E> {
 		SummaryColumnConfig sumValor = new SummaryColumnConfig(SummaryColumnConfig.SUM, new ColumnConfig(OpenSigCore.i18n.txtValor(), nomes.get("valor"), 75, true, DINHEIRO), DINHEIRO);
 
 		BaseColumnConfig[] bcc = new BaseColumnConfig[] { check, ccId, ccFinanceiroId, ccEmpresaId, ccEmpresa, ccNome, ccContaId, ccFormaId, ccDescricao, ccDocumento, sumValor, ccParcela, ccCadastro,
-				ccVencimento, ccQuitado, ccRealizado, ccNfe, ccObservacao };
+				ccVencimento, ccStatus, ccRealizado, ccConciliado, ccNfe, ccObservacao };
 		modelos = new ColumnModel(bcc);
 
 		if (UtilClient.getAcaoPermitida(funcao, ComandoPermiteEmpresa.class) == null) {
@@ -114,7 +116,7 @@ public class AListagemFinanciado<E extends Dados> extends AListagem<E> {
 			if (recs != null && recs.length > 1) {
 				comando = null;
 				MessageBox.alert(OpenSigCore.i18n.txtAtencao(), OpenSigCore.i18n.errSelecionar());
-			} else if (recs != null && recs[0].getAsBoolean(nomes.get("quitado"))) {
+			} else if (recs != null && !recs[0].getAsString(nomes.get("status")).equalsIgnoreCase(OpenSigCore.i18n.txtAberto())) {
 				comando = null;
 				MessageBox.alert(OpenSigCore.i18n.txtAcesso(), OpenSigCore.i18n.txtAcessoNegado());
 			}
@@ -126,9 +128,15 @@ public class AListagemFinanciado<E extends Dados> extends AListagem<E> {
 	public void setGridFiltro() {
 		super.setGridFiltro();
 		for (Entry<String, GridFilter> entry : filtros.entrySet()) {
-			if (entry.getKey().equals(nomes.get("quitado"))) {
-				((GridBooleanFilter) entry.getValue()).setValue(false);
-				entry.getValue().setActive(true, true);
+			if (entry.getKey().equals(nomes.get("status"))) {
+				// status
+				Store storeStatus = new SimpleStore("status", new String[] { OpenSigCore.i18n.txtAberto().toUpperCase(), OpenSigCore.i18n.txtRealizado().toUpperCase(), OpenSigCore.i18n.txtConciliado().toUpperCase() });
+				GridListFilter fTipo = new GridListFilter(nomes.get("status"), storeStatus);
+				fTipo.setLabelField("status");
+				fTipo.setLabelValue("status");
+				fTipo.setValue(new String[] { OpenSigCore.i18n.txtAberto().toUpperCase() });
+				fTipo.setActive(true, true);
+				entry.setValue(fTipo);
 			} else if (entry.getKey().equals(nomes.get("financeiroEmpresa") + ".empEmpresaId")) {
 				((GridLongFilter) entry.getValue()).setValueEquals(Ponte.getLogin().getEmpresaId());
 			} else if (entry.getKey().equals(nomes.get("financeiroEmpresa") + ".empEntidade.empEntidadeNome1")) {
@@ -164,7 +172,7 @@ public class AListagemFinanciado<E extends Dados> extends AListagem<E> {
 	}
 
 	public void setFavorito(IFavorito favorito) {
-		filtros.get(nomes.get("quitado")).setActive(false, true);
+		filtros.get(nomes.get("status")).setActive(false, true);
 		filtros.get(nomes.get("financeiroEmpresa") + ".empEmpresaId").setActive(false, true);
 		super.setFavorito(favorito);
 	}

@@ -13,7 +13,6 @@ import br.com.opensig.financeiro.shared.modelo.FinReceber;
 import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
 
 import com.google.gwt.core.client.GWT;
-import com.gwtext.client.data.BooleanFieldDef;
 import com.gwtext.client.data.DateFieldDef;
 import com.gwtext.client.data.FieldDef;
 import com.gwtext.client.data.FloatFieldDef;
@@ -41,6 +40,7 @@ public class ListagemBoletos extends AListagemEditor<FinRecebimento> {
 	private NumberField txtId;
 	private NumberField txtValor;
 	private DateField dtRealizado;
+	private DateField dtConciliado;
 
 	public ListagemBoletos() {
 		super(new FinRecebimento(), false);
@@ -51,7 +51,7 @@ public class ListagemBoletos extends AListagemEditor<FinRecebimento> {
 	public void inicializar() {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("id"), new StringFieldDef("nome"), new StringFieldDef("documento"), new FloatFieldDef("valor"), new StringFieldDef("parcela"),
-				new DateFieldDef("vencimento"), new BooleanFieldDef("quitado"), new DateFieldDef("realizado"), new StringFieldDef("status"), new StringFieldDef("Observacao"),  new IntegerFieldDef("contaId") };
+				new DateFieldDef("vencimento"), new StringFieldDef("status"), new DateFieldDef("realizado"), new DateFieldDef("conciliado"), new StringFieldDef("situacao"), new StringFieldDef("Observacao"),  new IntegerFieldDef("contaId") };
 		campos = new RecordDef(fd);
 		
 		// editores
@@ -71,6 +71,9 @@ public class ListagemBoletos extends AListagemEditor<FinRecebimento> {
 
 		dtRealizado = new DateField();
 		dtRealizado.setAllowBlank(false);
+		
+		dtConciliado = new DateField();
+		dtConciliado.setAllowBlank(false);
 
 		// colunas
 		ColumnConfig ccId = new ColumnConfig(OpenSigCore.i18n.txtCod(), "id", 75, true);
@@ -87,12 +90,15 @@ public class ListagemBoletos extends AListagemEditor<FinRecebimento> {
 
 		ColumnConfig ccVencimento = new ColumnConfig(OpenSigCore.i18n.txtVencimento(), "vencimento", 75, true, IListagem.DATA);
 
-		ColumnConfig ccQuitado = new ColumnConfig(OpenSigCore.i18n.txtQuitado(), "quitado", 75, true, IListagem.BOLEANO);
+		ColumnConfig ccStatus = new ColumnConfig(OpenSigCore.i18n.txtStatus(), "status", 100, true);
 
 		ColumnConfig ccRealizado = new ColumnConfig(OpenSigCore.i18n.txtRealizado(), "realizado", 75, true, IListagem.DATA);
 		ccRealizado.setEditor(new GridEditor(dtRealizado));
+		
+		ColumnConfig ccConciliado = new ColumnConfig(OpenSigCore.i18n.txtConciliado(), "conciliado", 75, true, IListagem.DATA);
+		ccConciliado.setEditor(new GridEditor(dtConciliado));
 
-		ColumnConfig ccStatus = new ColumnConfig(OpenSigCore.i18n.txtStatus(), "status", 50, false, new Renderer() {
+		ColumnConfig ccSituacao = new ColumnConfig(OpenSigCore.i18n.txtSituacao(), "situacao", 50, false, new Renderer() {
 
 			public String render(Object value, CellMetadata cellMetadata, Record record, int rowIndex, int colNum, Store store) {
 				cellMetadata.setCssClass("colCentro");
@@ -112,12 +118,12 @@ public class ListagemBoletos extends AListagemEditor<FinRecebimento> {
 		SummaryColumnConfig contCod = new SummaryColumnConfig(SummaryColumnConfig.COUNT, ccId, IListagem.CONTADOR);
 		SummaryColumnConfig sumValor = new SummaryColumnConfig(SummaryColumnConfig.SUM, ccValor, IListagem.DINHEIRO);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { contCod, ccNome, sumValor, ccDocumento, ccParcela, ccVencimento, ccQuitado, ccRealizado, ccStatus, ccObservacao };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { contCod, ccNome, sumValor, ccDocumento, ccParcela, ccVencimento, ccStatus, ccRealizado, ccConciliado, ccSituacao, ccObservacao };
 		modelos = new ColumnModel(bcc);
 
 		addEditorGridListener(new EditorGridListenerAdapter() {
 			public boolean doBeforeEdit(GridPanel grid, Record record, String field, Object value, int rowIndex, int colIndex) {
-				if (record.getAsBoolean("quitado")) {
+				if (!record.getAsString("status").equalsIgnoreCase(OpenSigCore.i18n.txtAberto())) {
 					MessageBox.alert(OpenSigCore.i18n.txtAcesso(), OpenSigCore.i18n.txtAcessoNegado());
 					return false;
 				} else {
@@ -127,7 +133,7 @@ public class ListagemBoletos extends AListagemEditor<FinRecebimento> {
 
 			public void onAfterEdit(GridPanel grid, Record record, String field, Object newValue, Object oldValue, int rowIndex, int colIndex) {
 				if (field.equals("id")) {
-					record.set("status", "1");
+					record.set("situacao", "1");
 				}
 			}
 		});
@@ -150,13 +156,15 @@ public class ListagemBoletos extends AListagemEditor<FinRecebimento> {
 				int id = rec.getAsInteger("id");
 				double valor = rec.getAsDouble("valor");
 				Date realizado = rec.getAsDate("realizado");
-				String status = rec.getAsString("status");
+				Date conciliado = rec.getAsDate("conciliado");
+				String situacao = rec.getAsString("situacao");
 				int contaId = rec.getAsInteger("contaId");
 
-				if (status.equals("1")) {
+				if (situacao.equals("1")) {
 					FinRecebimento fin = new FinRecebimento(id);
 					fin.setFinRecebimentoValor(valor);
 					fin.setFinRecebimentoRealizado(realizado);
+					fin.setFinRecebimentoConciliado(conciliado);
 					
 					FinReceber receber = new FinReceber();
 					FinConta conta = new FinConta(contaId);
@@ -197,5 +205,13 @@ public class ListagemBoletos extends AListagemEditor<FinRecebimento> {
 
 	public void setDtRealizado(DateField dtRealizado) {
 		this.dtRealizado = dtRealizado;
+	}
+	
+	public DateField getDtConciliado() {
+		return dtConciliado;
+	}
+	
+	public void setDtConciliado(DateField dtConciliado) {
+		this.dtConciliado = dtConciliado;
 	}
 }

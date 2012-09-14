@@ -22,7 +22,6 @@ import br.com.opensig.core.server.Conexao;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
-import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
@@ -83,7 +82,7 @@ public class FecharEcfVenda extends Chain {
 						FiltroObjeto fo1 = new FiltroObjeto("prodProduto", ECompara.IGUAL, venProd.getProdProduto());
 						GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, fo1 });
 						// busca o item
-						double estQtd = servico.buscar(new ProdEstoque(), "t.prodEstoqueQuantidade", EBusca.SOMA, gf).doubleValue();
+						ProdEstoque est = (ProdEstoque) servico.selecionar(new ProdEstoque(), gf, false);
 						// fatorando a quantida no estoque
 						double qtd = venProd.getComEcfVendaProdutoQuantidade();
 						if (venProd.getProdEmbalagem().getProdEmbalagemId() != venProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId()) {
@@ -91,13 +90,13 @@ public class FecharEcfVenda extends Chain {
 							qtd /= getQtdEmbalagem(venProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
 						}
 						// verificar a qtd do estoque
-						if (qtd > estQtd) {
-							invalidos.add(new String[] { venProd.getProdProduto().getProdProdutoDescricao(), venProd.getProdProduto().getProdProdutoReferencia(), estQtd + "", qtd + "" });
+						if (qtd > est.getProdEstoqueQuantidade()) {
+							invalidos.add(new String[] { est.getProdEstoqueId() + "", venProd.getProdProduto().getProdProdutoDescricao(), venProd.getProdProduto().getProdProdutoReferencia(), est.getProdEstoqueQuantidade().toString(), qtd + "" });
 						} else {
 							venProd.setComEcfVendaProdutoQuantidade(qtd);
 						}
 					} else {
-						invalidos.add(new String[] { venProd.getComEcfVendaProdutoDescricao(), "", 0 + "", venProd.getComEcfVendaProdutoQuantidade() + "" });
+						invalidos.add(new String[] { "0", venProd.getComEcfVendaProdutoDescricao(), "", "0", venProd.getComEcfVendaProdutoQuantidade() + "" });
 					}
 				}
 			} catch (Exception ex) {

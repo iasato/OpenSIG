@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,9 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.opensig.comercial.shared.modelo.ComCompra;
-import br.com.opensig.comercial.shared.modelo.ComEcf;
-import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
+import br.com.opensig.comercial.shared.modelo.ComEcfNota;
+import br.com.opensig.comercial.shared.modelo.ComEcfZ;
 import br.com.opensig.comercial.shared.modelo.ComFrete;
+import br.com.opensig.comercial.shared.modelo.ComNatureza;
 import br.com.opensig.comercial.shared.modelo.ComVenda;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
@@ -25,12 +25,14 @@ import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
 import br.com.opensig.core.client.controlador.filtro.FiltroData;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
+import br.com.opensig.core.client.controlador.filtro.FiltroTexto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
 import br.com.opensig.core.shared.modelo.EComando;
+import br.com.opensig.core.shared.modelo.EDirecao;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
@@ -48,11 +50,14 @@ public class EFD implements Runnable {
 	private Autenticacao auth;
 	private Date inicio;
 	private Date fim;
+	private double pis;
+	private double cofins;
 	private List<FisSpedBloco> blocos;
 	private List<ComCompra> compras;
 	private List<ComFrete> fretes;
 	private List<ComVenda> vendas;
-	private List<ComEcfVenda> ecfs;
+	private List<ComEcfNota> notas;
+	private List<ComEcfZ> zs;
 	private List<ProdProduto> estoque;
 
 	public EFD(File arquivo, FisSpedFiscal sped, Autenticacao auth) {
@@ -82,8 +87,14 @@ public class EFD implements Runnable {
 			compras = getCompras();
 			fretes = getFretes();
 			vendas = getVendas();
-			ecfs = getEcfs();
+			notas = getNotas();
+			zs = getZs();
 			estoque = getEstoque();
+			// pis/cofins
+			FiltroNumero fn1 = new FiltroNumero("comNaturezaCfopTrib", ECompara.IGUAL, 5102);
+			ComNatureza nat = (ComNatureza) service.selecionar(new ComNatureza(), fn1, true);
+			pis = nat.getComNaturezaPis();
+			cofins = nat.getComNaturezaCofins();
 			// lendo dados do arquivo
 			escreverRegistros();
 			InputStream is = new FileInputStream(arquivo);
@@ -100,9 +111,9 @@ public class EFD implements Runnable {
 			os.flush();
 			os.close();
 			// atualizando o status do registro
-			FiltroNumero fn1 = new FiltroNumero("fisSpedFiscalId", ECompara.IGUAL, sped.getFisSpedFiscalId());
+			FiltroNumero fn2 = new FiltroNumero("fisSpedFiscalId", ECompara.IGUAL, sped.getFisSpedFiscalId());
 			ParametroBinario pb = new ParametroBinario("fisSpedFiscalAtivo", 1);
-			Sql sql = new Sql(new FisSpedFiscal(), EComando.ATUALIZAR, fn1, pb);
+			Sql sql = new Sql(new FisSpedFiscal(), EComando.ATUALIZAR, fn2, pb);
 			service.executar(new Sql[] { sql });
 		} catch (Exception e) {
 			UtilServer.LOG.error("Nao gerou o efd.", e);
@@ -114,107 +125,99 @@ public class EFD implements Runnable {
 
 	// metodo que recupera os blocos
 	private List<FisSpedBloco> getBlocos() throws Exception {
-		// monta o filtro dos blocos/registros
+		// caso nao seja mes Fevereiro, nao pegar o H005 e H010
 		GrupoFiltro gf = new GrupoFiltro();
-		for (Integer id : sped.getRegistros()) {
-			FiltroNumero fn = new FiltroNumero("fisSpedBlocoId", ECompara.IGUAL, id);
-			gf.add(fn, EJuncao.OU);
-		}
-		FiltroNumero fn = new FiltroNumero("fisSpedBlocoId", ECompara.IGUAL, 0);
-		gf.add(fn);
-		// seleciona todos os registros
+		FiltroBinario fb = new FiltroBinario(sped.getFisSpedFiscalTipo().contains("ICMS") ? "fisSpedBlocoIcmsIpi" : "fisSpedBlocoPisCofins", ECompara.IGUAL, 1);
+		gf.add(fb, EJuncao.E);
+		FiltroTexto ft = new FiltroTexto("fisSpedBlocoClasse", ECompara.DIFERENTE, "NULL");
+		gf.add(ft);
+		// seleciona os blocos
 		return service.selecionar(new FisSpedBloco(), 0, 0, gf, false).getLista();
 	}
 
 	// metodo que recupera as compras
 	private List<ComCompra> getCompras() throws Exception {
-		if (sped.getCompras().length > 0) {
-			// monta o filtro dos blocos/registros
-			GrupoFiltro gf = new GrupoFiltro();
-			for (Integer id : sped.getCompras()) {
-				FiltroNumero fn = new FiltroNumero("comCompraId", ECompara.IGUAL, id);
-				gf.add(fn, EJuncao.OU);
-			}
-			// seleciona as compras
-			return service.selecionar(new ComCompra(), 0, 0, gf, false).getLista();
-		} else {
-			return new ArrayList<ComCompra>();
-		}
+		// monta o filtro
+		GrupoFiltro gf = new GrupoFiltro();
+		FiltroBinario fb = new FiltroBinario("comCompraNfe", ECompara.IGUAL, 1);
+		gf.add(fb, EJuncao.E);
+		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, sped.getEmpEmpresa());
+		gf.add(fo, EJuncao.E);
+		FiltroData fdInicio = new FiltroData("fisNotaEntrada.fisNotaEntradaCadastro", ECompara.MAIOR_IGUAL, inicio);
+		gf.add(fdInicio, EJuncao.E);
+		FiltroData fdFim = new FiltroData("fisNotaEntrada.fisNotaEntradaCadastro", ECompara.MENOR_IGUAL, fim);
+		gf.add(fdFim);
+		// seleciona as compras
+		return service.selecionar(new ComCompra(), 0, 0, gf, false).getLista();
 	}
 
 	// metodo que recupera os fretes
 	private List<ComFrete> getFretes() throws Exception {
-		if (sped.getFretes().length > 0) {
-			// monta o filtro dos blocos/registros
-			GrupoFiltro gf = new GrupoFiltro();
-			for (Integer id : sped.getFretes()) {
-				FiltroNumero fn = new FiltroNumero("comFreteId", ECompara.IGUAL, id);
-				gf.add(fn, EJuncao.OU);
-			}
-			// seleciona os fretes
-			return service.selecionar(new ComFrete(), 0, 0, gf, false).getLista();
-		} else {
-			return new ArrayList<ComFrete>();
-		}
+		// monta o filtro
+		GrupoFiltro gf = new GrupoFiltro();
+		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, sped.getEmpEmpresa());
+		gf.add(fo, EJuncao.E);
+		FiltroData fdInicio = new FiltroData("comFreteRecebimento", ECompara.MAIOR_IGUAL, inicio);
+		gf.add(fdInicio, EJuncao.E);
+		FiltroData fdFim = new FiltroData("comFreteRecebimento", ECompara.MENOR_IGUAL, fim);
+		gf.add(fdFim);
+		// seleciona os fretes
+		return service.selecionar(new ComFrete(), 0, 0, gf, false).getLista();
 	}
 
 	// metodo que recupera as vendas
 	private List<ComVenda> getVendas() throws Exception {
-		if (sped.getVendas().length > 0) {
-			// monta o filtro dos blocos/registros
-			GrupoFiltro gf = new GrupoFiltro();
-			for (Integer id : sped.getVendas()) {
-				FiltroNumero fn = new FiltroNumero("comVendaId", ECompara.IGUAL, id);
-				gf.add(fn, EJuncao.OU);
-			}
-			// seleciona todos as vendas
-			return service.selecionar(new ComVenda(), 0, 0, gf, false).getLista();
-		} else {
-			return new ArrayList<ComVenda>();
-		}
+		// monta o filtro
+		GrupoFiltro gf = new GrupoFiltro();
+		FiltroBinario fb = new FiltroBinario("comVendaNfe", ECompara.IGUAL, 1);
+		gf.add(fb, EJuncao.E);
+		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, sped.getEmpEmpresa());
+		gf.add(fo, EJuncao.E);
+		FiltroData fdInicio = new FiltroData("fisNotaSaida.fisNotaSaidaData", ECompara.MAIOR_IGUAL, inicio);
+		gf.add(fdInicio, EJuncao.E);
+		FiltroData fdFim = new FiltroData("fisNotaSaida.fisNotaSaidaData", ECompara.MENOR_IGUAL, fim);
+		gf.add(fdFim);
+		// seleciona todos as vendas
+		return service.selecionar(new ComVenda(), 0, 0, gf, false).getLista();
 	}
 
-	// metodo que recupera as vendas das ecfs
-	private List<ComEcfVenda> getEcfs() throws Exception {
-		if (sped.getEcfs().length > 0) {
-			// filtro da data
-			GrupoFiltro gfData = new GrupoFiltro();
-			FiltroData fd1 = new FiltroData("comEcfVendaData", ECompara.MAIOR_IGUAL, inicio);
-			gfData.add(fd1, EJuncao.E);
-			FiltroData fd2 = new FiltroData("comEcfVendaData", ECompara.MENOR_IGUAL, fim);
-			gfData.add(fd2, EJuncao.E);
+	// metodo que recupera as notas do consumidor
+	private List<ComEcfNota> getNotas() throws Exception {
+		// monta o filtro
+		GrupoFiltro gf = new GrupoFiltro();
+		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, sped.getEmpEmpresa());
+		gf.add(fo, EJuncao.E);
+		FiltroData fdInicio = new FiltroData("comEcfNotaData", ECompara.MAIOR_IGUAL, inicio);
+		gf.add(fdInicio, EJuncao.E);
+		FiltroData fdFim = new FiltroData("comEcfNotaData", ECompara.MENOR_IGUAL, fim);
+		gf.add(fdFim);
+		// seleciona os fretes
+		return service.selecionar(new ComEcfNota(), 0, 0, gf, false).getLista();
+	}
 
-			// monta o filtro dos das ecfs
-			GrupoFiltro gfEcf = new GrupoFiltro();
-			for (Integer id : sped.getEcfs()) {
-				FiltroObjeto fo = new FiltroObjeto("comEcf", ECompara.IGUAL, new ComEcf(id));
-				gfEcf.add(fo, EJuncao.OU);
-			}
-			
-			FiltroBinario fb = new FiltroBinario("comEcfVendaFechada", ECompara.IGUAL, 1);
-			GrupoFiltro gf = new GrupoFiltro();
-			gf.add(gfData, EJuncao.E);
-			gf.add(fb, EJuncao.E);
-			gf.add(gfEcf);
+	// metodo que recupera as leituras Zs
+	private List<ComEcfZ> getZs() throws Exception {
+		// monta o filtro
+		GrupoFiltro gf = new GrupoFiltro();
+		FiltroData fd1 = new FiltroData("comEcfZMovimento", ECompara.MAIOR_IGUAL, inicio);
+		gf.add(fd1, EJuncao.E);
+		FiltroData fd2 = new FiltroData("comEcfZMovimento", ECompara.MENOR_IGUAL, fim);
+		gf.add(fd2, EJuncao.E);
+		FiltroBinario fb = new FiltroBinario("comEcf.comEcfAtivo", ECompara.IGUAL, 1);
+		gf.add(fb);
 
-			// seleciona todos as vendas da ecf
-			return service.selecionar(new ComEcfVenda(), 0, 0, gf, false).getLista();
-		} else {
-			return new ArrayList<ComEcfVenda>();
-		}
+		// modificando a ordem
+		ComEcfZ z = new ComEcfZ();
+		z.setCampoOrdem("t.comEcf.comEcfId,t.comEcfZMovimento");
+		z.setOrdemDirecao(EDirecao.ASC);
+
+		// seleciona todos as vendas da ecf
+		return service.selecionar(z, 0, 0, gf, false).getLista();
 	}
 
 	// metodo que recupera os produtos do estoque
 	private List<ProdProduto> getEstoque() throws Exception {
-		// valida se tem bloco H com itens
-		int tot = 0;
-		for (FisSpedBloco bl : blocos) {
-			if (bl.getFisSpedBlocoLetra().equals("H") && bl.getFisSpedBlocoNivel() > 1) {
-				tot++;
-			}
-		}
-
-		if (tot > 0) {
+		if (sped.getFisSpedFiscalMes() == 2) {
 			// seleciona todos os produtos com estoque maior que ZERO
 			FiltroObjeto fo = new FiltroObjeto("t1.empEmpresa", ECompara.IGUAL, sped.getEmpEmpresa());
 			FiltroNumero fn = new FiltroNumero("t1.prodEstoqueQuantidade", ECompara.MAIOR, 0);
@@ -237,25 +240,34 @@ public class EFD implements Runnable {
 			if (bloco.getFisSpedBlocoNivel() < 3) {
 				try {
 					Class<IRegistro> classe = (Class<IRegistro>) Class.forName(bloco.getFisSpedBlocoClasse());
-					IRegistro registro = classe.newInstance();
-					registro.setQtdLInhas(bloco.getFisSpedBlocoClasse().endsWith("9999") ? qtdArquivo : qtdBloco);
-					registro.setLeitor(arquivo);
-					registro.setEscritor(escritor);
-					registro.setSped(sped);
-					registro.setService(service);
-					registro.setAuth(auth);
-					registro.setInicio(inicio);
-					registro.setFim(fim);
-					registro.setBlocos(blocos);
-					registro.setCompras(compras);
-					registro.setFretes(fretes);
-					registro.setVendas(vendas);
-					registro.setEcfs(ecfs);
-					registro.setEstoque(estoque);
-					registro.executar();
+					IRegistro reg = classe.newInstance();
+					if (bloco.getFisSpedBlocoClasse().endsWith("9999")) {
+						reg.setQtdLInhas(qtdArquivo);
+					} else if (bloco.getFisSpedBlocoClasse().endsWith("990")) {
+						reg.setQtdLInhas(qtdBloco);
+					} else {
+						reg.setQtdLInhas(0);
+					}
+					reg.setLeitor(arquivo);
+					reg.setEscritor(escritor);
+					reg.setSped(sped);
+					reg.setService(service);
+					reg.setAuth(auth);
+					reg.setInicio(inicio);
+					reg.setFim(fim);
+					reg.setBlocos(blocos);
+					reg.setCompras(compras);
+					reg.setFretes(fretes);
+					reg.setVendas(vendas);
+					reg.setNotas(notas);
+					reg.setZs(zs);
+					reg.setEstoque(estoque);
+					reg.setPis(pis);
+					reg.setCofins(cofins);
+					reg.executar();
 					// marcando as qtds
-					qtdArquivo += registro.getQtdLinhas();
-					qtdBloco = registro.getFimBloco() ? 0 : qtdBloco + registro.getQtdLinhas();
+					qtdArquivo += reg.getQtdLinhas();
+					qtdBloco = reg.getFimBloco() ? 0 : qtdBloco + reg.getQtdLinhas();
 				} catch (Exception e) {
 					UtilServer.LOG.error("Erro na execucao do registro " + bloco.getFisSpedBlocoClasse(), e);
 				}

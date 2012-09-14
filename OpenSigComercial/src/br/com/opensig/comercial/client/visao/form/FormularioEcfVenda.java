@@ -1,7 +1,6 @@
 package br.com.opensig.comercial.client.visao.form;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import br.com.opensig.comercial.client.servico.ComercialProxy;
@@ -9,6 +8,7 @@ import br.com.opensig.comercial.client.visao.lista.ListagemEcfVendaProdutos;
 import br.com.opensig.comercial.shared.modelo.ComEcf;
 import br.com.opensig.comercial.shared.modelo.ComEcfVenda;
 import br.com.opensig.comercial.shared.modelo.ComEcfVendaProduto;
+import br.com.opensig.comercial.shared.modelo.ComEcfZ;
 import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.comando.IComando;
@@ -18,7 +18,6 @@ import br.com.opensig.core.client.controlador.comando.lista.ComandoAdicionar;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
-import br.com.opensig.core.client.servico.CoreProxy;
 import br.com.opensig.core.client.visao.PermitirSistema;
 import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.core.client.visao.abstrato.AFormulario;
@@ -29,32 +28,24 @@ import br.com.opensig.core.shared.modelo.ExpMeta;
 import br.com.opensig.core.shared.modelo.ILogin;
 import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.empresa.shared.modelo.EmpCliente;
+import br.com.opensig.financeiro.shared.modelo.FinReceber;
 import br.com.opensig.permissao.shared.modelo.SisUsuario;
 import br.com.opensig.produto.client.controlador.comando.ComandoPesquisa;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.gwtext.client.core.EventObject;
-import com.gwtext.client.data.ArrayReader;
-import com.gwtext.client.data.FieldDef;
-import com.gwtext.client.data.IntegerFieldDef;
 import com.gwtext.client.data.Record;
-import com.gwtext.client.data.RecordDef;
 import com.gwtext.client.data.SortState;
 import com.gwtext.client.data.Store;
-import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.data.event.StoreListenerAdapter;
 import com.gwtext.client.widgets.MessageBox;
-import com.gwtext.client.widgets.MessageBox.ConfirmCallback;
 import com.gwtext.client.widgets.ToolTip;
-import com.gwtext.client.widgets.form.ComboBox;
-import com.gwtext.client.widgets.form.Field;
+import com.gwtext.client.widgets.form.DateField;
 import com.gwtext.client.widgets.form.Hidden;
 import com.gwtext.client.widgets.form.Label;
 import com.gwtext.client.widgets.form.MultiFieldPanel;
 import com.gwtext.client.widgets.form.NumberField;
-import com.gwtext.client.widgets.form.TextArea;
-import com.gwtext.client.widgets.form.event.ComboBoxListenerAdapter;
 import com.gwtext.client.widgets.grid.GridPanel;
 import com.gwtext.client.widgets.grid.event.EditorGridListenerAdapter;
 import com.gwtext.client.widgets.grid.event.GridRowListenerAdapter;
@@ -66,13 +57,16 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 	private Hidden hdnCod;
 	private Hidden hdnCliente;
 	private Hidden hdnUsuario;
+	private Hidden hdnReceber;
 	private Hidden hdnEcf;
-	private ComboBox cmbEcf;
+	private Hidden hdnEcfZ;
+	private DateField dtData;
+	private NumberField txtCcf;
 	private NumberField txtCoo;
 	private NumberField txtBruto;
 	private NumberField txtDesc;
+	private NumberField txtAcres;
 	private NumberField txtLiquido;
-	private TextArea txtObservacao;
 	private Label lblRegistros;
 	private ListagemEcfVendaProdutos gridProdutos;
 	private List<ComEcfVendaProduto> produtos;
@@ -84,7 +78,6 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 	private AsyncCallback asyncSalvar;
 	private AsyncCallback<ILogin> asyncLogin;
 	private ComandoPesquisa cmdPesquisa;
-	private Date data;
 
 	public FormularioEcfVenda(SisFuncao funcao) {
 		super(new ComEcfVenda(), funcao);
@@ -98,16 +91,27 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 		add(hdnCod);
 		hdnEcf = new Hidden("comEcf.comEcfId", "0");
 		add(hdnEcf);
+		hdnEcfZ = new Hidden("comEcfZ.comEcfZId", "0");
+		add(hdnEcfZ);
 		hdnUsuario = new Hidden("sisUsuario.sisUsuarioId", "0");
 		add(hdnUsuario);
 		hdnCliente = new Hidden("empCliente.empClienteId", "0");
 		add(hdnCliente);
+		hdnReceber = new Hidden("finReceber.finReceberId", "0");
+		add(hdnReceber);
+
+		dtData = new DateField(OpenSigCore.i18n.txtData(), "comEcfVendaData", 80);
+		dtData.setVisible(false);
+		dtData.setHideLabel(true);
+		add(dtData);
+
+		txtCcf = new NumberField(OpenSigCore.i18n.txtCcf(), "comEcfVendaCcf", 60);
+		txtCcf.setDecimalPrecision(0);
+		txtCcf.setReadOnly(true);
 
 		txtCoo = new NumberField(OpenSigCore.i18n.txtCoo(), "comEcfVendaCoo", 60);
-		txtCoo.setAllowBlank(false);
-		txtCoo.setAllowDecimals(false);
-		txtCoo.setAllowNegative(false);
-		txtCoo.setMaxLength(6);
+		txtCoo.setDecimalPrecision(0);
+		txtCoo.setReadOnly(true);
 
 		txtBruto = new NumberField(OpenSigCore.i18n.txtBruto(), "comEcfVendaBruto", 100, 0);
 		txtBruto.setReadOnly(true);
@@ -115,15 +119,19 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 		txtDesc = new NumberField(OpenSigCore.i18n.txtDesconto() + "%", "comEcfVendaDesconto", 50, 0);
 		txtDesc.setReadOnly(true);
 
+		txtAcres = new NumberField(OpenSigCore.i18n.txtAcrescimo() + "%", "comEcfVendaAcrescimo", 50, 0);
+		txtAcres.setReadOnly(true);
+
 		txtLiquido = new NumberField(OpenSigCore.i18n.txtLiquido(), "comEcfVendaLiquido", 100, 0);
 		txtLiquido.setReadOnly(true);
 
 		MultiFieldPanel linha1 = new MultiFieldPanel();
 		linha1.setBorder(false);
-		linha1.addToRow(getEcf(), 180);
+		linha1.addToRow(txtCcf, 80);
 		linha1.addToRow(txtCoo, 80);
 		linha1.addToRow(txtBruto, 110);
 		linha1.addToRow(txtDesc, 60);
+		linha1.addToRow(txtAcres, 60);
 		linha1.addToRow(txtLiquido, 110);
 		add(linha1);
 		lblRegistros = new Label();
@@ -142,10 +150,8 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 					reg.set("prodProduto.prodProdutoDescricao", result.getAsString("prodProdutoDescricao"));
 					reg.set("prodProduto.prodProdutoReferencia", result.getAsString("prodProdutoReferencia"));
 				} else {
-
 					gridProdutos.stopEditing();
 					int pos;
-
 					for (pos = 0; pos < gridProdutos.getStore().getCount(); pos++) {
 						if (gridProdutos.getStore().getAt(pos).getAsInteger("prodProdutoId") == result.getAsInteger("prodProdutoId")) {
 							break;
@@ -166,6 +172,7 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 						reg.set("prodEmbalagem.prodEmbalagemNome", result.getAsString("prodEmbalagem.prodEmbalagemNome"));
 						reg.set("comEcfVendaProdutoBruto", bruto);
 						reg.set("comEcfVendaProdutoDesconto", 0);
+						reg.set("comEcfVendaProdutoAcrescimo", 0);
 						reg.set("comEcfVendaProdutoLiquido", bruto);
 						reg.set("comEcfVendaProdutoTotal", 0);
 						gridProdutos.getStore().add(reg);
@@ -208,11 +215,6 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 		gridProdutos.getTopToolbar().addElement(lblRegistros.getElement());
 		gridProdutos.getTopToolbar().addSpacer();
 		add(gridProdutos);
-
-		txtObservacao = new TextArea(OpenSigCore.i18n.txtObservacao(), "comEcfVendaObservacao");
-		txtObservacao.setMaxLength(255);
-		txtObservacao.setWidth("95%");
-		add(txtObservacao);
 
 		gridProdutos.addEditorGridListener(new EditorGridListenerAdapter() {
 			public void onAfterEdit(GridPanel grid, Record record, String field, Object newValue, Object oldValue, int rowIndex, int colIndex) {
@@ -346,30 +348,25 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 		classe.setComEcfVendaProdutos(produtos);
 		classe.setComEcfVendaId(Integer.valueOf(hdnCod.getValueAsString()));
 		classe.setComEcf(new ComEcf(Integer.valueOf(hdnEcf.getValueAsString())));
-
-		if (hdnCliente.getValueAsString().equals("0")) {
-			EmpCliente cliente = new EmpCliente(Integer.valueOf(UtilClient.CONF.get("cliente.padrao")));
-			classe.setEmpCliente(cliente);
-		} else {
-			EmpCliente cliente = new EmpCliente(Integer.valueOf(hdnCliente.getValueAsString()));
-			classe.setEmpCliente(cliente);
-		}
-
-		if (hdnUsuario.getValueAsString().equals("0")) {
-			classe.setSisUsuario(new SisUsuario(Ponte.getLogin().getId()));
-		} else {
-			classe.setSisUsuario(new SisUsuario(Integer.valueOf(hdnUsuario.getValueAsString())));
-		}
-
-		if (txtCoo.getValue() != null) {
-			classe.setComEcfVendaCoo(txtCoo.getValue().intValue());
-		}
-		classe.setComEcfVendaData(data);
+		classe.setComEcfZ(new ComEcfZ(Integer.valueOf(hdnEcfZ.getValueAsString())));
+		classe.setSisUsuario(new SisUsuario(Integer.valueOf(hdnUsuario.getValueAsString())));
+		classe.setComEcfVendaCcf(txtCcf.getValue().intValue());
+		classe.setComEcfVendaCoo(txtCoo.getValue().intValue());
+		classe.setComEcfVendaData(dtData.getValue());
 		classe.setComEcfVendaBruto(txtBruto.getValue().doubleValue());
 		classe.setComEcfVendaDesconto(txtDesc.getValue().doubleValue());
+		classe.setComEcfVendaAcrescimo(txtAcres.getValue().doubleValue());
 		classe.setComEcfVendaLiquido(txtLiquido.getValue().doubleValue());
-		classe.setComEcfVendaObservacao(txtObservacao.getValueAsString());
-
+		if (hdnCliente.getValueAsString().equals("0")) {
+			classe.setEmpCliente(null);
+		} else {
+			classe.setEmpCliente(new EmpCliente(Integer.valueOf(hdnCliente.getValueAsString())));
+		}
+		if (hdnReceber.getValueAsString().equals("0")) {
+			classe.setFinReceber(null);
+		} else {
+			classe.setFinReceber(new FinReceber(Integer.valueOf(hdnReceber.getValueAsString())));
+		}
 		return retorno;
 	}
 
@@ -383,83 +380,15 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 	}
 
 	public void mostrarDados() {
-		if (cmbEcf.getStore().getRecords().length == 0) {
-			cmbEcf.getStore().load();
-		} else {
-			mostrar();
-		}
-	}
-
-	private void mostrar() {
 		MessageBox.hide();
 		Record rec = lista.getPanel().getSelectionModel().getSelected();
 		if (rec != null) {
-			data = rec.getAsDate("comEcfVendaData");
 			getForm().loadRecord(rec);
 			classe.setComEcfVendaId(Integer.valueOf(hdnCod.getValueAsString()));
 			FiltroObjeto fo = new FiltroObjeto("comEcfVenda", ECompara.IGUAL, classe);
 			gridProdutos.getProxy().setFiltroPadrao(fo);
 			gridProdutos.getStore().reload();
-		} else {
-			data = new Date();
-			gridProdutos.getTopToolbar().show();
 		}
-		cmbEcf.focus(true);
-
-		if (duplicar) {
-			hdnCod.setValue("0");
-			hdnUsuario.setValue("0");
-			classe.setComEcfVendaFechada(false);
-			classe.setComEcfVendaCancelada(false);
-			duplicar = false;
-		}
-	}
-
-	private ComboBox getEcf() {
-		FieldDef[] fdEcf = new FieldDef[] { new IntegerFieldDef("comEcfId"), new IntegerFieldDef("empEmpresa.empEmpresaId"), new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"),
-				new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa") };
-		CoreProxy<ComEcf> proxy = new CoreProxy<ComEcf>(new ComEcf());
-		final Store storeEcf = new Store(proxy, new ArrayReader(new RecordDef(fdEcf)), true);
-		storeEcf.addStoreListener(new StoreListenerAdapter() {
-			public void onLoadException(Throwable error) {
-				MessageBox.confirm(OpenSigCore.i18n.txtEcf(), OpenSigCore.i18n.msgRecarregar(), new ConfirmCallback() {
-					public void execute(String btnID) {
-						if (btnID.equalsIgnoreCase("yes")) {
-							storeEcf.load();
-						}
-					}
-				});
-			}
-
-			public void onLoad(Store store, Record[] records) {
-				mostrar();
-			}
-		});
-
-		cmbEcf = new ComboBox(OpenSigCore.i18n.txtEcf(), "comEcf.comEcfSerie", 150);
-		cmbEcf.setListWidth(250);
-		cmbEcf.setAllowBlank(false);
-		cmbEcf.setStore(storeEcf);
-		cmbEcf.setTriggerAction(ComboBox.ALL);
-		cmbEcf.setMode(ComboBox.LOCAL);
-		cmbEcf.setDisplayField("comEcfSerie");
-		cmbEcf.setValueField("comEcfId");
-		cmbEcf.setTpl("<div class=\"x-combo-list-item\"><b>{comEcfSerie}</b> - <i>" + OpenSigCore.i18n.txtCaixa() + "[{comEcfCaixa}]</i></div>");
-		cmbEcf.setForceSelection(true);
-		cmbEcf.setEditable(false);
-		cmbEcf.addListener(new ComboBoxListenerAdapter() {
-			public void onSelect(ComboBox comboBox, Record record, int index) {
-				hdnEcf.setValue(comboBox.getValue());
-			}
-
-			public void onBlur(Field field) {
-				if (cmbEcf.getRawValue().equals("")) {
-					hdnEcf.setValue("0");
-				}
-			}
-		});
-
-		return cmbEcf;
 	}
 
 	public void gerarListas() {
@@ -509,9 +438,17 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 			liquido += qtd * rec.getAsDouble("comEcfVendaProdutoLiquido");
 		}
 
-		double desc = (bruto - liquido) / bruto * 100;
+		double desc = 0;
+		double acres = 0;
+		if (bruto > liquido) {
+			desc = 100 - (liquido / bruto * 100);
+		} else if (bruto < liquido) {
+			acres = (liquido / bruto * 100) - 100;
+		}
+
 		txtBruto.setValue(bruto);
 		txtDesc.setValue(desc);
+		txtAcres.setValue(acres);
 		txtLiquido.setValue(liquido);
 	}
 
@@ -537,14 +474,6 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 
 	public void setHdnUsuario(Hidden hdnUsuario) {
 		this.hdnUsuario = hdnUsuario;
-	}
-
-	public TextArea getTxtObservacao() {
-		return txtObservacao;
-	}
-
-	public void setTxtObservacao(TextArea txtObservacao) {
-		this.txtObservacao = txtObservacao;
 	}
 
 	public Label getLblRegistros() {
@@ -587,12 +516,12 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 		this.hdnEcf = hdnEcf;
 	}
 
-	public ComboBox getCmbEcf() {
-		return cmbEcf;
+	public DateField getDtData() {
+		return dtData;
 	}
 
-	public void setCmbEcf(ComboBox cmbEcf) {
-		this.cmbEcf = cmbEcf;
+	public void setDtData(DateField dtData) {
+		this.dtData = dtData;
 	}
 
 	public NumberField getTxtCoo() {
@@ -626,4 +555,37 @@ public class FormularioEcfVenda extends AFormulario<ComEcfVenda> {
 	public void setTxtLiquido(NumberField txtLiquido) {
 		this.txtLiquido = txtLiquido;
 	}
+
+	public Hidden getHdnReceber() {
+		return hdnReceber;
+	}
+
+	public void setHdnReceber(Hidden hdnReceber) {
+		this.hdnReceber = hdnReceber;
+	}
+
+	public Hidden getHdnEcfZ() {
+		return hdnEcfZ;
+	}
+
+	public void setHdnEcfZ(Hidden hdnEcfZ) {
+		this.hdnEcfZ = hdnEcfZ;
+	}
+
+	public NumberField getTxtCcf() {
+		return txtCcf;
+	}
+
+	public void setTxtCcf(NumberField txtCcf) {
+		this.txtCcf = txtCcf;
+	}
+
+	public NumberField getTxtAcres() {
+		return txtAcres;
+	}
+
+	public void setTxtAcres(NumberField txtAcres) {
+		this.txtAcres = txtAcres;
+	}
+
 }

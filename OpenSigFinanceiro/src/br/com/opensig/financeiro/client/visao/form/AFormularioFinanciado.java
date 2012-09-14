@@ -9,7 +9,6 @@ import br.com.opensig.core.client.visao.abstrato.AFormulario;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.financeiro.shared.modelo.FinBanco;
-import br.com.opensig.financeiro.shared.modelo.FinBandeira;
 import br.com.opensig.financeiro.shared.modelo.FinForma;
 
 import com.gwtext.client.data.ArrayReader;
@@ -40,7 +39,6 @@ public abstract class AFormularioFinanciado<E extends Dados> extends AFormulario
 	protected Hidden hdnCod;
 	protected Hidden hdnFinanceiro;
 	protected ComboBox cmbForma;
-	protected ComboBox cmbBandeira;
 	protected Store stBanco;
 	protected TextField txtDocumento;
 	protected TextField txtParcela;
@@ -72,7 +70,6 @@ public abstract class AFormularioFinanciado<E extends Dados> extends AFormulario
 		linha1.setBorder(false);
 		linha1.addToRow(getForma(), 150);
 		linha1.addToRow(txtDocumento, new ColumnLayoutData(1));
-		linha1.addToRow(getBandeira(), new ColumnLayoutData(1));
 		add(linha1);
 
 		txtValor = new NumberField(OpenSigCore.i18n.txtValor(), nomes.get("valor"), 100);
@@ -144,7 +141,7 @@ public abstract class AFormularioFinanciado<E extends Dados> extends AFormulario
 		final Store storeForma = new Store(proxy, new ArrayReader(new RecordDef(fdForma)), false);
 		storeForma.addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
-				cmbBandeira.getStore().load();
+				stBanco.load();
 			}
 
 			public void onLoadException(Throwable error) {
@@ -170,9 +167,8 @@ public abstract class AFormularioFinanciado<E extends Dados> extends AFormulario
 		cmbForma.setEditable(false);
 		cmbForma.addListener(new ComboBoxListenerAdapter() {
 			public void onSelect(ComboBox comboBox, Record record, int index) {
-				mudarDocumento(comboBox.getValue());
-
-				if (record.getAsInteger("finFormaId") == 3) {
+				mostrarCheque();
+				if (record.getAsString("finFormaDescricao").equalsIgnoreCase(OpenSigCore.i18n.txtCheque())) {
 					txtDocumento.setMinLength(32);
 					txtDocumento.setMaxLength(32);
 				} else {
@@ -183,39 +179,6 @@ public abstract class AFormularioFinanciado<E extends Dados> extends AFormulario
 		});
 
 		return cmbForma;
-	}
-
-	protected ComboBox getBandeira() {
-		FieldDef[] fdBandeira = new FieldDef[] { new IntegerFieldDef("finBandeiraId"), new StringFieldDef("finBandeiraDescricao") };
-		CoreProxy<FinBandeira> proxy = new CoreProxy<FinBandeira>(new FinBandeira());
-		final Store bandeiraStore = new Store(proxy, new ArrayReader(new RecordDef(fdBandeira)), false);
-		bandeiraStore.addStoreListener(new StoreListenerAdapter() {
-			public void onLoad(Store store, Record[] records) {
-				stBanco.load();
-			}
-
-			public void onLoadException(Throwable error) {
-				MessageBox.confirm(OpenSigCore.i18n.txtOrigem(), OpenSigCore.i18n.msgRecarregar(), new ConfirmCallback() {
-					public void execute(String btnID) {
-						if (btnID.equalsIgnoreCase("yes")) {
-							bandeiraStore.load();
-						}
-					}
-				});
-			}
-		});
-
-		cmbBandeira = new ComboBox(OpenSigCore.i18n.txtBandeira(), "finBandeiraDescricao", 140);
-		cmbBandeira.setListWidth(140);
-		cmbBandeira.setEditable(false);
-		cmbBandeira.setStore(bandeiraStore);
-		cmbBandeira.setTriggerAction(ComboBox.ALL);
-		cmbBandeira.setMode(ComboBox.LOCAL);
-		cmbBandeira.setDisplayField("finBandeiraDescricao");
-		cmbBandeira.setValueField("finBandeiraId");
-		cmbBandeira.setForceSelection(true);
-
-		return cmbBandeira;
 	}
 
 	protected Store getBanco() {
@@ -255,23 +218,15 @@ public abstract class AFormularioFinanciado<E extends Dados> extends AFormulario
 
 		if (rec != null) {
 			getForm().loadRecord(rec);
-			if (rec.getAsInteger("finForma.finFormaId") == 2) {
-				for (Record record : cmbBandeira.getStore().getRecords()) {
-					if (record.getAsString("finBandeiraDescricao").equals(txtDocumento.getValueAsString())) {
-						cmbBandeira.setValue(record.getAsString("finBandeiraId"));
-						break;
-					}
-				}
-			}
 		}
 		cmbForma.focus(true);
-		mudarDocumento(cmbForma.getValue());
+		mostrarCheque();
 	}
 
 	protected void mostrarCheque() {
 		fsCheque.hide();
 		try {
-			if (cmbForma.getValue().equals("3")) {
+			if (cmbForma.getText().equalsIgnoreCase(OpenSigCore.i18n.txtCheque())) {
 				String cmc7 = txtDocumento.getValueAsString().replaceAll("\\D", "");
 
 				if (cmc7.length() == 30) {
@@ -297,19 +252,6 @@ public abstract class AFormularioFinanciado<E extends Dados> extends AFormulario
 		} catch (Exception e) {
 			// nada
 		}
-	}
-
-	protected void mudarDocumento(String id) {
-		if (id != null && id.equals("2")) {
-			txtDocumento.hide();
-			cmbBandeira.setAllowBlank(false);
-			cmbBandeira.show();
-		} else {
-			cmbBandeira.hide();
-			cmbBandeira.setAllowBlank(true);
-			txtDocumento.show();
-		}
-		mostrarCheque();
 	}
 
 	public void gerarListas() {
@@ -345,14 +287,6 @@ public abstract class AFormularioFinanciado<E extends Dados> extends AFormulario
 
 	public void setCmbForma(ComboBox cmbForma) {
 		this.cmbForma = cmbForma;
-	}
-
-	public ComboBox getCmbBandeira() {
-		return cmbBandeira;
-	}
-
-	public void setCmbBandeira(ComboBox cmbBandeira) {
-		this.cmbBandeira = cmbBandeira;
 	}
 
 	public TextField getTxtDocumento() {

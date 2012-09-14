@@ -46,7 +46,7 @@ public class ComandoFecharEcfVenda extends ComandoAcao {
 											rec.set("comEcfVendaFechada", true);
 											new ToastWindow(OpenSigCore.i18n.txtFechar(), OpenSigCore.i18n.msgSalvarOK()).show();
 										} else {
-											new ListagemValidarEstoque(result);
+											validarEstoque(result);
 										}
 									};
 								});
@@ -61,5 +61,9 @@ public class ComandoFecharEcfVenda extends ComandoAcao {
 			public void onFailure(Throwable caught) {
 			}
 		});
+	}
+
+	private void validarEstoque(String[][] result) {
+		new ListagemValidarEstoque(result, this, contexto);
 	}
 }

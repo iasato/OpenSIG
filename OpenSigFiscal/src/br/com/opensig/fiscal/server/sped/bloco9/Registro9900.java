@@ -19,7 +19,6 @@ public class Registro9900 extends ARegistro<Dados9900, Dados> {
 
 	@Override
 	public void executar() {
-		qtdLinhas = 0;
 		try {
 			// lendo o arquivo
 			BufferedReader br = new BufferedReader(new FileReader(leitor));

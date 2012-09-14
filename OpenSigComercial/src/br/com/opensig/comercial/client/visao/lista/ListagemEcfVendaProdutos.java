@@ -37,6 +37,7 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 
 	private NumberField txtQuantidade;
 	private NumberField txtDesconto;
+	private NumberField txtAcrescimo;
 	private NumberField txtLiquido;
 
 	public ListagemEcfVendaProdutos(boolean barraTarefa) {
@@ -48,12 +49,12 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 	public void inicializar() {
 		// campos
 		FieldDef[] fd = new FieldDef[] { new IntegerFieldDef("comEcfVendaProdutoId"), new IntegerFieldDef("comEcfVenda.comEcfVendaId"), new IntegerFieldDef("comEcfVenda.comEcf.comEcfId"),
-				new StringFieldDef("comEcfVenda.comEcf.comEcfSerie"), new IntegerFieldDef("empEmpresaId"), new StringFieldDef("empEmpresa"), new StringFieldDef("empCliente"),
-				new StringFieldDef("empFornecedor"), new IntegerFieldDef("prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"), new StringFieldDef("prodProduto.prodProdutoDescricao"),
+				new StringFieldDef("comEcfVenda.comEcf.comEcfSerie"), new IntegerFieldDef("empEmpresaId"), new StringFieldDef("empEmpresa"), new StringFieldDef("empFornecedor"),
+				new IntegerFieldDef("prodProdutoId"), new StringFieldDef("prodProduto.prodProdutoBarra"), new StringFieldDef("prodProduto.prodProdutoDescricao"),
 				new StringFieldDef("prodProduto.prodProdutoReferencia"), new DateFieldDef("comEcfVenda.comEcfVendaData"), new FloatFieldDef("comEcfVendaProdutoQuantidade"),
 				new IntegerFieldDef("prodEmbalagem.prodEmbalagemId"), new StringFieldDef("prodEmbalagem.prodEmbalagemNome"), new FloatFieldDef("comEcfVendaProdutoBruto"),
-				new FloatFieldDef("comEcfVendaProdutoDesconto"), new FloatFieldDef("comEcfVendaProdutoLiquido"), new FloatFieldDef("comEcfVendaProdutoTotal"),
-				new BooleanFieldDef("comEcfVendaProdutoCancelado"), new IntegerFieldDef("comEcfVendaProdutoOrdem") };
+				new FloatFieldDef("comEcfVendaProdutoDesconto"), new FloatFieldDef("comEcfVendaProdutoAcrescimo"), new FloatFieldDef("comEcfVendaProdutoLiquido"),
+				new FloatFieldDef("comEcfVendaProdutoTotal"), new BooleanFieldDef("comEcfVendaProdutoCancelado"), new IntegerFieldDef("comEcfVendaProdutoOrdem") };
 		campos = new RecordDef(fd);
 
 		// editores
@@ -68,6 +69,12 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 		txtDesconto.setAllowNegative(false);
 		txtDesconto.setSelectOnFocus(true);
 		txtDesconto.setMaxLength(13);
+
+		txtAcrescimo = new NumberField();
+		txtAcrescimo.setAllowBlank(false);
+		txtAcrescimo.setAllowNegative(false);
+		txtAcrescimo.setSelectOnFocus(true);
+		txtAcrescimo.setMaxLength(13);
 
 		txtLiquido = new NumberField();
 		txtLiquido.setAllowBlank(false);
@@ -99,10 +106,6 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 		ColumnConfig ccEmpresa = new ColumnConfig("", "empEmpresa", 10, true);
 		ccEmpresa.setHidden(true);
 		ccEmpresa.setFixed(true);
-
-		ColumnConfig ccCliente = new ColumnConfig("", "empCliente", 10, true);
-		ccCliente.setHidden(true);
-		ccCliente.setFixed(true);
 
 		ColumnConfig ccFornecedor = new ColumnConfig("", "empFornecedor", 10, true);
 		ccFornecedor.setHidden(true);
@@ -137,6 +140,9 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 		ColumnConfig ccDesconto = new ColumnConfig(OpenSigCore.i18n.txtDesconto(), "comEcfVendaProdutoDesconto", 50, true, IListagem.PORCENTAGEM);
 		ccDesconto.setEditor(new GridEditor(txtDesconto));
 
+		ColumnConfig ccAcrescimo = new ColumnConfig(OpenSigCore.i18n.txtAcrescimo(), "comEcfVendaProdutoAcrescimo", 50, true, IListagem.PORCENTAGEM);
+		ccAcrescimo.setEditor(new GridEditor(txtAcrescimo));
+
 		ColumnConfig ccLiquido = new ColumnConfig(OpenSigCore.i18n.txtLiquido(), "comEcfVendaProdutoLiquido", 75, true, IListagem.DINHEIRO);
 		ccLiquido.setEditor(new GridEditor(txtLiquido));
 
@@ -149,8 +155,8 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 		ColumnConfig ccTotal = new ColumnConfig(OpenSigCore.i18n.txtTotal(), "comEcfVendaProdutoTotal", 75, true, IListagem.DINHEIRO);
 		SummaryColumnConfig sumTotal = new SummaryColumnConfig(SummaryColumnConfig.SUM, ccTotal, IListagem.DINHEIRO);
 
-		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccVendaId, ccEcfId, ccEcfSerie, ccEmpresaId, ccEmpresa, ccCliente, ccFornecedor, ccProdId, ccBarra, ccProduto, ccReferencia, ccData,
-				ccQuantidade, ccEmbalagemId, ccEmbalagem, ccBruto, ccDesconto, ccLiquido, sumTotal, ccCancelado, ccOrdem };
+		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccVendaId, ccEcfId, ccEcfSerie, ccEmpresaId, ccEmpresa, ccFornecedor, ccProdId, ccBarra, ccProduto, ccReferencia, ccData,
+				ccQuantidade, ccEmbalagemId, ccEmbalagem, ccBruto, ccDesconto, ccAcrescimo, ccLiquido, sumTotal, ccCancelado, ccOrdem };
 		modelos = new ColumnModel(bcc);
 
 		// configurações padrão e carrega dados
@@ -159,27 +165,42 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 				double qtd = record.getAsDouble("comEcfVendaProdutoQuantidade");
 				double bruto = record.getAsDouble("comEcfVendaProdutoBruto");
 				double desc = record.getAsDouble("comEcfVendaProdutoDesconto");
+				double acres = record.getAsDouble("comEcfVendaProdutoAcrescimo");
 				double liquido = record.getAsDouble("comEcfVendaProdutoLiquido");
 
 				if (field.equals("comEcfVendaProdutoDesconto")) {
 					liquido = bruto - (bruto * desc / 100);
 					String strValor = NumberFormat.getFormat("0.##").format(liquido);
 					liquido = Double.valueOf(strValor.replace(",", "."));
+					acres = 0;
+				} else if (field.equals("comEcfVendaProdutoAcrescimo")) {
+					liquido = bruto + (bruto * acres / 100);
+					String strValor = NumberFormat.getFormat("0.##").format(liquido);
+					liquido = Double.valueOf(strValor.replace(",", "."));
+					desc = 0;
 				} else if (field.equals("comEcfVendaProdutoLiquido")) {
-					desc = 100 - (liquido / bruto * 100);
-					String strDesc = NumberFormat.getFormat("0.##").format(desc);
-					desc = Double.valueOf(strDesc.replace(",", "."));
+					if (liquido < bruto) {
+						desc = 100 - (liquido / bruto * 100);
+						String strDesc = NumberFormat.getFormat("0.##").format(desc);
+						desc = Double.valueOf(strDesc.replace(",", "."));
+						acres = 0;
+					} else if (liquido > bruto) {
+						acres = (liquido / bruto * 100) - 100;
+						String strAcres = NumberFormat.getFormat("0.##").format(acres);
+						acres = Double.valueOf(strAcres.replace(",", "."));
+						desc = 0;
+					}
 				}
 
 				if (desc > 100) {
-					desc = 100;
-					liquido = 0;
+					desc = 99.99;
+					liquido = 0.01;
 				}
 
 				double totLiquido = qtd * liquido;
-
 				record.set("comEcfVendaProdutoQuantidade", qtd);
 				record.set("comEcfVendaProdutoDesconto", desc);
+				record.set("comEcfVendaProdutoAcrescimo", acres);
 				record.set("comEcfVendaProdutoLiquido", liquido);
 				record.set("comEcfVendaProdutoTotal", totLiquido);
 			}
@@ -213,10 +234,11 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 				int embalagemId = rec.getAsInteger("prodEmbalagem.prodEmbalagemId");
 				double bruto = rec.getAsDouble("comEcfVendaProdutoBruto");
 				double desconto = rec.getAsDouble("comEcfVendaProdutoDesconto");
+				double acrescimo = rec.getAsDouble("comEcfVendaProdutoAcrescimo");
 				double liquido = rec.getAsDouble("comEcfVendaProdutoLiquido");
 				double totLiquido = rec.getAsDouble("comEcfVendaProdutoTotal");
 
-				if (prodId == 0 || quantidade < 1 || desconto > 100.00 || liquido < 0.01) {
+				if (prodId == 0 || quantidade < 1 || desconto >= 100.00 || liquido < 0.01) {
 					throw new Exception();
 				}
 
@@ -226,6 +248,7 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 				venEcfProduto.setProdEmbalagem(new ProdEmbalagem(embalagemId));
 				venEcfProduto.setComEcfVendaProdutoBruto(bruto);
 				venEcfProduto.setComEcfVendaProdutoDesconto(desconto);
+				venEcfProduto.setComEcfVendaProdutoAcrescimo(acrescimo);
 				venEcfProduto.setComEcfVendaProdutoLiquido(liquido);
 				venEcfProduto.setComEcfVendaProdutoTotal(totLiquido);
 				venEcfProduto.setComEcfVendaProdutoOrdem(ordem);
@@ -256,6 +279,14 @@ public class ListagemEcfVendaProdutos extends AListagemEditor<ComEcfVendaProduto
 
 	public void setTxtDesconto(NumberField txtDesconto) {
 		this.txtDesconto = txtDesconto;
+	}
+
+	public NumberField getTxtAcrescimo() {
+		return txtAcrescimo;
+	}
+
+	public void setTxtAcrescimo(NumberField txtAcrescimo) {
+		this.txtAcrescimo = txtAcrescimo;
 	}
 
 	public NumberField getTxtLiquido() {

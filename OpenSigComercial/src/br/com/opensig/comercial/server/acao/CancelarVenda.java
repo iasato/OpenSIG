@@ -194,7 +194,7 @@ public class CancelarVenda extends Chain {
 					conta = venda.getFinReceber().getFinConta();
 					double valPag = 0.00;
 					for (FinRecebimento rec : venda.getFinReceber().getFinRecebimentos()) {
-						if (rec.getFinRecebimentoQuitado()) {
+						if (!rec.getFinRecebimentoStatus().equalsIgnoreCase(auth.getConf().get("txtAberto"))) {
 							valPag += rec.getFinRecebimentoValor();
 						}
 					}

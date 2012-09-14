@@ -8,8 +8,6 @@ import javax.persistence.EntityManagerFactory;
 import br.com.opensig.comercial.client.servico.ComercialException;
 import br.com.opensig.comercial.shared.modelo.ComEcfZ;
 import br.com.opensig.comercial.shared.modelo.ComEcfZTotais;
-import br.com.opensig.comercial.shared.modelo.ComValorArredonda;
-import br.com.opensig.comercial.shared.modelo.ComValorProduto;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.padroes.Chain;
@@ -41,19 +39,20 @@ public class SalvarEcfZ extends Chain {
 			emf = Conexao.getInstancia(z.getPu());
 			em = emf.createEntityManager();
 			em.getTransaction().begin();
+			List<ComEcfZTotais> totais = z.getComEcfZTotais();
 
-			List<ComEcfZTotais> totais = z.getComZTotais();
+			// salva
+			z.setComEcfZTotais(null);
+			z.setComEcfVendas(null);
+			servico.salvar(em, z);
+
 			// deleta
 			if (z.getComEcfZId() > 0) {
 				FiltroObjeto fo = new FiltroObjeto("comEcfZ", ECompara.IGUAL, z);
 				Sql sql = new Sql(new ComEcfZTotais(), EComando.EXCLUIR, fo);
 				servico.executar(em, sql);
 			}
-
-			// salva
-			z.setComZTotais(null);
-			servico.salvar(em, z);
-
+			
 			// insere
 			for (ComEcfZTotais tot : totais) {
 				tot.setComEcfZ(z);

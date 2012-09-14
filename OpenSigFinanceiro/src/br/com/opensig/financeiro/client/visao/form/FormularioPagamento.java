@@ -2,6 +2,7 @@ package br.com.opensig.financeiro.client.visao.form;
 
 import java.util.Date;
 
+import br.com.opensig.core.client.OpenSigCore;
 import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
 import br.com.opensig.financeiro.shared.modelo.FinForma;
 import br.com.opensig.financeiro.shared.modelo.FinPagamento;
@@ -21,8 +22,9 @@ public class FormularioPagamento extends AFormularioFinanciado<FinPagamento> {
 		nomes.put("parcela", "finPagamentoParcela");
 		nomes.put("cadastro", "finPagamentoCadastro");
 		nomes.put("vencimento", "finPagamentoVencimento");
-		nomes.put("quitado", "finPagamentoQuitado");
+		nomes.put("status", "finPagamentoStatus");
 		nomes.put("realizado", "finPagamentoRealizado");
+		nomes.put("conciliado", "finPagamentoConciliado");
 		nomes.put("financeiroNfe", "finPagar.finPagarNfe");
 		nomes.put("observacao", "finPagamentoObservacao");
 		inicializar();
@@ -37,19 +39,16 @@ public class FormularioPagamento extends AFormularioFinanciado<FinPagamento> {
 		classe.setFinPagamentoId(Integer.valueOf(hdnCod.getValueAsString()));
 		classe.setFinPagamentoParcela(txtParcela.getValueAsString());
 		classe.setFinPagamentoObservacao(txtObservacao.getValueAsString());
-		classe.setFinPagamentoQuitado(false);
-		classe.setFinPagamentoRealizado(null);
 		classe.setFinPagamentoCadastro(new Date());
 		classe.setFinPagamentoVencimento(dtVencimento.getValue());
-		
+		classe.setFinPagamentoStatus(OpenSigCore.i18n.txtAberto().toUpperCase());
+		classe.setFinPagamentoRealizado(null);
+		classe.setFinPagamentoConciliado(null);
+
 		if (txtValor.getValue() != null) {
 			classe.setFinPagamentoValor(txtValor.getValue().doubleValue());
 		}
-		if (Integer.valueOf(cmbForma.getValue()) == 2) {
-			classe.setFinPagamentoDocumento(cmbBandeira.getRawValue());
-		} else {
-			classe.setFinPagamentoDocumento(txtDocumento.getValueAsString());
-		}
+		classe.setFinPagamentoDocumento(txtDocumento.getValueAsString());
 
 		return true;
 	}

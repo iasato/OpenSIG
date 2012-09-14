@@ -181,7 +181,7 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 									rec.set("documento", txtNfe.getValueAsString());
 									rec.set("valor", valorAux);
 									rec.set("parcela", parcela);
-									rec.set("quitado", false);
+									rec.set("status", OpenSigCore.i18n.txtAberto().toUpperCase());
 									gridFormas.getStore().add(rec);
 								}
 								gridFormas.startEditing(0, 4);
@@ -193,7 +193,7 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 					IComando cmdRemover = new AComando() {
 						public void execute(Map contexto) {
 							Record reg = gridFormas.getSelectionModel().getSelected();
-							if (reg != null && !reg.getAsBoolean("quitado")) {
+							if (reg != null && reg.getAsString("status").equalsIgnoreCase(OpenSigCore.i18n.txtAberto())) {
 								gridFormas.getStore().remove(reg);
 							} else {
 								MessageBox.alert(OpenSigCore.i18n.txtAcesso(), OpenSigCore.i18n.txtAcessoNegado());
@@ -211,8 +211,9 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 			public void onLoad(Store store, Record[] records) {
 				if (records.length > 0 && hdnCod.getValueAsString().equals("0")) {
 					for (Record rec : records) {
-						rec.set("quitado", false);
+						rec.set("status", OpenSigCore.i18n.txtAberto().toUpperCase());
 						rec.set("realizado", (Date) null);
+						rec.set("conciliado", (Date) null);
 						rec.set("observacao", "");
 					}
 				}
@@ -299,8 +300,6 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 		gridFormas.getProxy().setFiltroPadrao(fn);
 		gridFormas.getStore().removeAll();
 		treeCategoria.getLblValidacao().hide();
-		treeCategoria.limpar();
-		treeCategoria.carregar(null, null);
 	}
 
 	public void gerarListas() {
@@ -393,6 +392,7 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 		final Store storeConta = new Store(proxy, new ArrayReader(new RecordDef(fdConta)), true);
 		storeConta.addStoreListener(new StoreListenerAdapter() {
 			public void onLoad(Store store, Record[] records) {
+				treeCategoria.limpar();
 				treeCategoria.carregar(null, new AsyncCallback<Lista<FinCategoria>>() {
 
 					public void onSuccess(Lista<FinCategoria> result) {
@@ -445,11 +445,7 @@ public abstract class AFormularioFinanceiro<E extends Dados, T extends Dados> ex
 	}
 
 	public void mostrarDados() {
-		if (cmbConta.getStore().getRecords().length == 0) {
-			cmbConta.getStore().load();
-		} else {
-			mostrar();
-		}
+		cmbConta.getStore().reload();
 	}
 
 	private void mostrar() {

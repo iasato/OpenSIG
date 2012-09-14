@@ -36,7 +36,6 @@ import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.Sql;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 
 /**
  * Classe que implementa na parte do servidor a resposta a chamada de procedimento do cliente, executando os comandos de persistencia no banco de dados.
@@ -153,8 +152,10 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			UtilServer.LOG.error("Erro ao selecionar", ex);
 			throw new CoreException(ex.getMessage());
 		} finally {
-			em.close();
-			emf.close();
+			if (em != null && emf != null) {
+				em.close();
+				emf.close();
+			}
 		}
 	}
 
@@ -284,8 +285,10 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			UtilServer.LOG.error("Erro ao buscar", ex);
 			throw new CoreException(ex.getMessage());
 		} finally {
-			em.close();
-			emf.close();
+			if (em != null && emf != null) {
+				em.close();
+				emf.close();
+			}
 		}
 	}
 
@@ -351,8 +354,10 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			UtilServer.LOG.error("Erro ao pegar resultado", ex);
 			throw new CoreException(ex.getMessage());
 		} finally {
-			em.close();
-			emf.close();
+			if (em != null && emf != null) {
+				em.close();
+				emf.close();
+			}
 		}
 	}
 
@@ -386,13 +391,15 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			UtilServer.LOG.error("Erro ao salvar", ex);
 			throw new CoreException(ex.getMessage());
 		} finally {
-			if (removeDependencia) {
+			if (removeDependencia && unidades != null) {
 				for (E unidade : unidades) {
 					unidade.anularDependencia();
 				}
 			}
-			em.close();
-			emf.close();
+			if (em != null && emf != null) {
+				em.close();
+				emf.close();
+			}
 		}
 	}
 
@@ -444,8 +451,10 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			if (removeDependencia) {
 				unidade.anularDependencia();
 			}
-			em.close();
-			emf.close();
+			if (em != null && emf != null) {
+				em.close();
+				emf.close();
+			}
 		}
 	}
 
@@ -495,8 +504,10 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			UtilServer.LOG.error("Erro ao deletar", ex);
 			throw new CoreException(ex.getMessage());
 		} finally {
-			em.close();
-			emf.close();
+			if (em != null && emf != null) {
+				em.close();
+				emf.close();
+			}
 		}
 	}
 
@@ -536,8 +547,10 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			UtilServer.LOG.error("Erro ao deletar", ex);
 			throw new CoreException(ex.getMessage());
 		} finally {
-			em.close();
-			emf.close();
+			if (em != null && emf != null) {
+				em.close();
+				emf.close();
+			}
 		}
 	}
 
@@ -584,8 +597,10 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			UtilServer.LOG.error("Erro ao executar", ex);
 			throw new CoreException(ex.getMessage());
 		} finally {
-			em.close();
-			emf.close();
+			if (em != null && emf != null) {
+				em.close();
+				emf.close();
+			}
 		}
 
 		return resultado;
@@ -596,7 +611,6 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 		EntityManagerFactory emf = null;
 		EntityManager em = null;
 		Integer resultado = null;
-		int pos = 0;
 
 		try {
 			if (sql != null && !sql.equals("")) {
@@ -615,8 +629,10 @@ public class CoreServiceImpl<E extends Dados> extends RemoteServiceServlet imple
 			UtilServer.LOG.error("Erro ao executar", ex);
 			throw new CoreException(ex.getMessage());
 		} finally {
-			em.close();
-			emf.close();
+			if (em != null && emf != null) {
+				em.close();
+				emf.close();
+			}
 		}
 
 		return resultado;

@@ -9,12 +9,12 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigFiscal"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigPermissao"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigProduto"/>
-	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT-2.4.0"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/simplecaptcha.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
 		<attributes>
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/simplecaptcha.jar"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT-2.4.0"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

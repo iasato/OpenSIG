@@ -3,6 +3,7 @@ package br.com.opensig.fiscal.server.sped.blocoC;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.beanio.BeanWriter;
 import org.beanio.StreamFactory;
@@ -15,64 +16,47 @@ import br.com.opensig.fiscal.server.sped.ARegistro;
 
 public class RegistroC420 extends ARegistro<DadosC420, ComEcfZTotais> {
 
-	private List<ComEcfZTotais> totais;
+	private List<ComEcfVenda> vendas;
 	private Map<Integer, ComEcfVendaProduto> fiscal = new HashMap<Integer, ComEcfVendaProduto>();
 
 	@Override
 	public void executar() {
-		qtdLinhas = 0;
-
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", escritor);
 
-			ComEcfZTotais total = totais.get(0);
-			for (ComEcfVenda venda : ecfs) {
-				if (venda.getComEcf().getComEcfId() == total.getComEcfZ().getComEcf().getComEcfId() && venda.getComEcfVendaData().compareTo(total.getComEcfZ().getComEcfZData()) == 0) {
-					for (ComEcfVendaProduto prodVenda : venda.getComEcfVendaProdutos()) {
-						ComEcfVendaProduto vp = fiscal.get(prodVenda.getProdProduto().getProdProdutoId());
-						if (vp == null) {
-							fiscal.put(prodVenda.getProdProduto().getProdProdutoId(), prodVenda);
-						} else {
-							vp.setComEcfVendaProdutoQuantidade(vp.getComEcfVendaProdutoQuantidade() + prodVenda.getComEcfVendaProdutoQuantidade());
-							vp.setComEcfVendaProdutoTotal(vp.getComEcfVendaProdutoTotal() + prodVenda.getComEcfVendaProdutoTotal());
+			for (ComEcfVenda venda : vendas) {
+				if (venda.getComEcfVendaFechada() && !venda.getComEcfVendaCancelada()) {
+					for (ComEcfVendaProduto pv : venda.getComEcfVendaProdutos()) {
+						if (pv.getProdProduto().getProdTributacao().getProdTributacaoEcf().equals(dados.getComEcfZTotaisCodigo())) {
+							ComEcfVendaProduto vp = fiscal.get(pv.getProdProduto().getProdProdutoId());
+							if (vp == null) {
+								fiscal.put(pv.getProdProduto().getProdProdutoId(), pv);
+							} else {
+								vp.setComEcfVendaProdutoQuantidade(vp.getComEcfVendaProdutoQuantidade() + pv.getComEcfVendaProdutoQuantidade());
+								vp.setComEcfVendaProdutoTotal(vp.getComEcfVendaProdutoTotal() + pv.getComEcfVendaProdutoTotal());
+							}
 						}
 					}
 				}
 			}
 
-			RegistroC425 r425 = new RegistroC425();
-			r425.setEscritor(escritor);
-			r425.setAuth(auth);
+			if (dados.getComEcfZTotaisValor() > 0) {
+				bloco = getDados(dados);
+				out.write(bloco);
+				out.flush();
 
-			for (ComEcfZTotais tot : totais) {
-				if (tot.getComEcfZTotaisValor() > 0) {
-					bloco = getDados(tot);
-					out.write(bloco);
-					out.flush();
-
-					// somente perfil B
-					if (auth.getConf().get("sped.0000.ind_perfil").equals("B")) {
-						// itens que compoem este total
-						int idTributacao = 0;
-						if (tot.getComEcfZTotaisCodigo().equals("01T1700")) {
-							idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.tributado"));
-						} else if (tot.getComEcfZTotaisCodigo().equals("F1")) {
-							idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.substituicao"));
-						} else if (tot.getComEcfZTotaisCodigo().equals("I1")) {
-							idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.isento"));
-						} else if (tot.getComEcfZTotaisCodigo().equals("N1")) {
-							idTributacao = Integer.valueOf(auth.getConf().get("sped.c420.nao_tributado"));
-						}
-
-						if (idTributacao > 0) {
-							r425.setIdTributacao(idTributacao);
-							r425.setProdutos(fiscal.values());
-							r425.executar();
-							qtdLinhas += r425.getQtdLinhas();
-						}
+				// somente perfil B
+				if (auth.getConf().get("sped.0000.ind_perfil").equals("B")) {
+					RegistroC425 r425 = new RegistroC425();
+					r425.setEscritor(escritor);
+					r425.setAuth(auth);
+					for (Entry<Integer, ComEcfVendaProduto> vp : fiscal.entrySet()) {
+						r425.setDados(vp.getValue());
+						r425.executar();
 					}
+					qtdLinhas += r425.getQtdLinhas();
 				}
 			}
 		} catch (Exception e) {
@@ -95,13 +79,4 @@ public class RegistroC420 extends ARegistro<DadosC420, ComEcfZTotais> {
 		qtdLinhas++;
 		return d;
 	}
-
-	public List<ComEcfZTotais> getTotais() {
-		return totais;
-	}
-
-	public void setTotais(List<ComEcfZTotais> totais) {
-		this.totais = totais;
-	}
-
 }

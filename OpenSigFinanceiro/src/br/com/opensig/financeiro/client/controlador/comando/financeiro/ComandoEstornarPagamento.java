@@ -18,7 +18,6 @@ import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.parametro.GrupoParametro;
 import br.com.opensig.core.client.controlador.parametro.IParametro;
-import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.client.controlador.parametro.ParametroData;
 import br.com.opensig.core.client.controlador.parametro.ParametroFormula;
 import br.com.opensig.core.client.controlador.parametro.ParametroTexto;
@@ -49,8 +48,9 @@ public class ComandoEstornarPagamento extends ComandoAcao<FinPagamento> {
 				for (Record rec : recs) {
 					int row = LISTA.getPanel().getStore().indexOf(rec);
 					LISTA.getPanel().getSelectionModel().deselectRow(row);
-					rec.set("finPagamentoQuitado", false);
+					rec.set("finPagamentoStatus", OpenSigCore.i18n.txtAberto().toUpperCase());
 					rec.set("finPagamentoRealizado", (Date) null);
+					rec.set("finPagamentoConciliado", (Date) null);
 					rec.set("finPagamentoObservacao", motivo);
 				}
 			}
@@ -84,10 +84,11 @@ public class ComandoEstornarPagamento extends ComandoAcao<FinPagamento> {
 				}
 
 				// atualizando pagamento
-				ParametroBinario pb = new ParametroBinario("finPagamentoQuitado", 0);
+				ParametroTexto pt = new ParametroTexto("finPagamentoStatus", OpenSigCore.i18n.txtAberto().toUpperCase());
 				ParametroData pd = new ParametroData("finPagamentoRealizado", (Date) null);
-				ParametroTexto pt = new ParametroTexto("finPagamentoObservacao", motivo);
-				GrupoParametro gp = new GrupoParametro(new IParametro[] { pb, pd, pt });
+				ParametroData pd1 = new ParametroData("finPagamentoConciliado", (Date) null);
+				ParametroTexto pt1 = new ParametroTexto("finPagamentoObservacao", motivo);
+				GrupoParametro gp = new GrupoParametro(new IParametro[] { pt, pd, pd1, pt1 });
 				Sql sqlForma = new Sql(new FinPagamento(), EComando.ATUALIZAR, gf, gp);
 				sqls.add(sqlForma);
 
@@ -103,7 +104,7 @@ public class ComandoEstornarPagamento extends ComandoAcao<FinPagamento> {
 
 				// valida cada estono
 				for (Record rec : recs) {
-					if (!rec.getAsBoolean("finPagamentoQuitado")) {
+					if (rec.getAsString("finPagamentoStatus").equalsIgnoreCase(OpenSigCore.i18n.txtAberto())) {
 						int row = LISTA.getPanel().getStore().indexOf(rec);
 						LISTA.getPanel().getSelectionModel().deselectRow(row);
 					}

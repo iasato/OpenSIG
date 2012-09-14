@@ -1,7 +1,12 @@
 package br.com.opensig.empresa.client;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import br.com.opensig.core.client.controlador.comando.FabricaComando;
 import br.com.opensig.core.client.controlador.comando.IComando;
+import br.com.opensig.core.client.controlador.comando.lista.ComandoEditarFiltrados;
+import br.com.opensig.core.client.visao.Ponte;
 import br.com.opensig.empresa.client.controlador.comando.ComandoCliente;
 import br.com.opensig.empresa.client.controlador.comando.ComandoContatoTipo;
 import br.com.opensig.empresa.client.controlador.comando.ComandoEmpresa;
@@ -34,11 +39,21 @@ public class OpenSigEmpresa implements EntryPoint {
         fc.addComando(ComandoFuncionario.class.getName(), (IComando) GWT.create(ComandoFuncionario.class));
         fc.addComando(ComandoCliente.class.getName(), (IComando) GWT.create(ComandoCliente.class));
         fc.addComando(ComandoFornecedor.class.getName(), (IComando) GWT.create(ComandoFornecedor.class));
+        fc.addComando(ComandoTransportadora.class.getName(), (IComando) GWT.create(ComandoTransportadora.class));
         fc.addComando(ComandoContatoTipo.class.getName(), (IComando) GWT.create(ComandoContatoTipo.class));
         fc.addComando(ComandoEnderecoTipo.class.getName(), (IComando) GWT.create(ComandoEnderecoTipo.class));
-        fc.addComando(ComandoTransportadora.class.getName(), (IComando) GWT.create(ComandoTransportadora.class));
         fc.addComando(ComandoPais.class.getName(), (IComando) GWT.create(ComandoPais.class));
         fc.addComando(ComandoEstado.class.getName(), (IComando) GWT.create(ComandoEstado.class));
         fc.addComando(ComandoMunicipio.class.getName(), (IComando) GWT.create(ComandoMunicipio.class));
+        
+		// acoes proibidas dos cadastros comuns
+		Collection<Class> acoes = new ArrayList<Class>();
+		acoes.add(ComandoEditarFiltrados.class);
+		
+		Ponte.setAcoesProibidas(ComandoEmpresa.class.getName(), acoes);
+		Ponte.setAcoesProibidas(ComandoFuncionario.class.getName(), acoes);
+		Ponte.setAcoesProibidas(ComandoCliente.class.getName(), acoes);
+		Ponte.setAcoesProibidas(ComandoFornecedor.class.getName(), acoes);
+		Ponte.setAcoesProibidas(ComandoTransportadora.class.getName(), acoes);
     }
 }

@@ -393,7 +393,12 @@ public class FormularioVenda extends AFormulario<ComVenda> {
 			gridProdutos.getStore().reload();
 		} else {
 			txtUsuario.setValue(Ponte.getLogin().getUsuario());
-			cmbNatureza.setValue("1");
+			for (Record rec2 : cmbNatureza.getStore().getRecords()) {
+				if (rec2.getAsString("comNaturezaNome").equalsIgnoreCase("Venda")) {
+					cmbNatureza.setValue(rec2.getAsString("comNaturezaId"));
+					break;
+				}
+			}
 		}
 		cmbCliente.focus(true);
 

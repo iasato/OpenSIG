@@ -141,7 +141,7 @@ public class ComandoPagarFrete extends ComandoAcao<ComFrete> {
 				Scheduler.get().scheduleFixedPeriod(new RepeatingCommand() {
 					public boolean execute() {
 						if (formPagar.getTreeCategoria().getRoot().getChildNodes().length > 0) {
-							formPagar.getTreeCategoria().selecionar(new String[] {UtilClient.CONF.get("categoria.compra")});
+							formPagar.getTreeCategoria().selecionar(new String[] {UtilClient.CONF.get("categoria.frete")});
 							formPagar.getTreeCategoria().disable();
 							return false;
 						} else {

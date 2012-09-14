@@ -2,7 +2,7 @@ package br.com.opensig.core.client;
 
 /**
  * Interface to represent the messages contained in resource bundle:
- * 	/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/OpenSigCore/src/br/com/opensig/core/client/I18N.properties'.
+ * 	/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Git/OpenSIG/OpenSigCore/src/br/com/opensig/core/client/I18N.properties'.
  */
 public interface I18N extends com.google.gwt.i18n.client.Messages {
   
@@ -727,6 +727,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String msgVisualizar();
 
   /**
+   * Translated "Aberto".
+   * 
+   * @return translated "Aberto"
+   */
+  @DefaultMessage("Aberto")
+  @Key("txtAberto")
+  String txtAberto();
+
+  /**
    * Translated "Ação".
    * 
    * @return translated "Ação"
@@ -761,6 +770,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Acesso Negado")
   @Key("txtAcessoNegado")
   String txtAcessoNegado();
+
+  /**
+   * Translated "Acres".
+   * 
+   * @return translated "Acres"
+   */
+  @DefaultMessage("Acres")
+  @Key("txtAcrescimo")
+  String txtAcrescimo();
 
   /**
    * Translated "Adicionar".
@@ -1141,6 +1159,24 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtCategoria();
 
   /**
+   * Translated "CCF".
+   * 
+   * @return translated "CCF"
+   */
+  @DefaultMessage("CCF")
+  @Key("txtCcf")
+  String txtCcf();
+
+  /**
+   * Translated "CDC".
+   * 
+   * @return translated "CDC"
+   */
+  @DefaultMessage("CDC")
+  @Key("txtCdc")
+  String txtCdc();
+
+  /**
    * Translated "Celular".
    * 
    * @return translated "Celular"
@@ -1256,6 +1292,24 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Compra")
   @Key("txtCompra")
   String txtCompra();
+
+  /**
+   * Translated "Conciliado".
+   * 
+   * @return translated "Conciliado"
+   */
+  @DefaultMessage("Conciliado")
+  @Key("txtConciliado")
+  String txtConciliado();
+
+  /**
+   * Translated "Conciliar".
+   * 
+   * @return translated "Conciliar"
+   */
+  @DefaultMessage("Conciliar")
+  @Key("txtConciliar")
+  String txtConciliar();
 
   /**
    * Translated "Confirma".
@@ -2041,6 +2095,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtFuncao();
 
   /**
+   * Translated "GNF".
+   * 
+   * @return translated "GNF"
+   */
+  @DefaultMessage("GNF")
+  @Key("txtGnf")
+  String txtGnf();
+
+  /**
    * Translated "Gráfico".
    * 
    * @return translated "Gráfico"
@@ -2048,6 +2111,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Gráfico")
   @Key("txtGrafico")
   String txtGrafico();
+
+  /**
+   * Translated "GRG".
+   * 
+   * @return translated "GRG"
+   */
+  @DefaultMessage("GRG")
+  @Key("txtGrg")
+  String txtGrg();
 
   /**
    * Translated "Grupo".
@@ -2102,6 +2174,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Valor ICMS")
   @Key("txtIcmsValor")
   String txtIcmsValor();
+
+  /**
+   * Translated "Identificação".
+   * 
+   * @return translated "Identificação"
+   */
+  @DefaultMessage("Identificação")
+  @Key("txtIdentificacao")
+  String txtIdentificacao();
 
   /**
    * Translated "Igual".
@@ -2212,6 +2293,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtIrPara();
 
   /**
+   * Translated "Issqn".
+   * 
+   * @return translated "Issqn"
+   */
+  @DefaultMessage("Issqn")
+  @Key("txtIssqn")
+  String txtIssqn();
+
+  /**
    * Translated "Item".
    * 
    * @return translated "Item"
@@ -2311,6 +2401,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtLucro();
 
   /**
+   * Translated "Marca".
+   * 
+   * @return translated "Marca"
+   */
+  @DefaultMessage("Marca")
+  @Key("txtMarca")
+  String txtMarca();
+
+  /**
    * Translated "Marcar Todas".
    * 
    * @return translated "Marcar Todas"
@@ -2345,6 +2444,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Mês")
   @Key("txtMes")
   String txtMes();
+
+  /**
+   * Translated "MfAdicional".
+   * 
+   * @return translated "MfAdicional"
+   */
+  @DefaultMessage("MfAdicional")
+  @Key("txtMfAdicional")
+  String txtMfAdicional();
 
   /**
    * Translated "Mínimo".
@@ -2698,15 +2806,6 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtQtdCx();
 
   /**
-   * Translated "Quitado".
-   * 
-   * @return translated "Quitado"
-   */
-  @DefaultMessage("Quitado")
-  @Key("txtQuitado")
-  String txtQuitado();
-
-  /**
    * Translated "Quitar".
    * 
    * @return translated "Quitar"
@@ -2768,6 +2867,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Recolher")
   @Key("txtRecolher")
   String txtRecolher();
+
+  /**
+   * Translated "Rede".
+   * 
+   * @return translated "Rede"
+   */
+  @DefaultMessage("Rede")
+  @Key("txtRede")
+  String txtRede();
 
   /**
    * Translated "REF".
@@ -3004,6 +3112,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   String txtSubBase();
 
   /**
+   * Translated "Sub-Série".
+   * 
+   * @return translated "Sub-Série"
+   */
+  @DefaultMessage("Sub-Série")
+  @Key("txtSubSerie")
+  String txtSubSerie();
+
+  /**
    * Translated "Valor Subst.".
    * 
    * @return translated "Valor Subst."
@@ -3038,6 +3155,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Tags")
   @Key("txtTags")
   String txtTags();
+
+  /**
+   * Translated "TEF".
+   * 
+   * @return translated "TEF"
+   */
+  @DefaultMessage("TEF")
+  @Key("txtTef")
+  String txtTef();
 
   /**
    * Translated "Telefone".
@@ -3191,6 +3317,15 @@ public interface I18N extends com.google.gwt.i18n.client.Messages {
   @DefaultMessage("Versão")
   @Key("txtVersao")
   String txtVersao();
+
+  /**
+   * Translated "Vinculado".
+   * 
+   * @return translated "Vinculado"
+   */
+  @DefaultMessage("Vinculado")
+  @Key("txtVinculado")
+  String txtVinculado();
 
   /**
    * Translated "Visualizar".

@@ -19,6 +19,10 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 	private Hidden hdnCod;
 	private Hidden hdnEmpresa;
 	private TextField txtCodigo;
+	private TextField txtMfAdicional;
+	private TextField txtIdentificacao;
+	private TextField txtTipo;
+	private TextField txtMarca;
 	private TextField txtModelo;
 	private TextField txtSerie;
 	private NumberField txtCaixa;
@@ -41,12 +45,38 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 		txtCodigo.setAllowBlank(false);
 		txtCodigo.setMaxLength(2);
 		txtCodigo.setMinLength(2);
+		
+		txtMfAdicional = new TextField(OpenSigCore.i18n.txtMfAdicional(), "comEcfMfAdicional", 50);
+		txtMfAdicional.setMaxLength(1);
+		txtMfAdicional.setMinLength(1);
+		
+		txtIdentificacao = new TextField(OpenSigCore.i18n.txtIdentificacao(), "comEcfIdentificacao", 80);
+		txtIdentificacao.setAllowBlank(false);
+		txtIdentificacao.setMaxLength(6);
+		txtIdentificacao.setMinLength(6);
 
-		txtModelo = new TextField(OpenSigCore.i18n.txtModelo(), "comEcfModelo", 200);
+		txtTipo = new TextField(OpenSigCore.i18n.txtTipo(), "comEcfTipo", 100);
+		txtTipo.setAllowBlank(false);
+		txtTipo.setMaxLength(7);
+		
+		txtMarca = new TextField(OpenSigCore.i18n.txtMarca(), "comEcfMarca", 100);
+		txtMarca.setAllowBlank(false);
+		txtMarca.setMaxLength(20);
+		
+		MultiFieldPanel linha1 = new MultiFieldPanel();
+		linha1.setBorder(false);
+		linha1.addToRow(txtCodigo, 70);
+		linha1.addToRow(txtMfAdicional, 70);
+		linha1.addToRow(txtIdentificacao, 100);
+		linha1.addToRow(txtTipo, 120);
+		linha1.addToRow(txtMarca, 120);
+		add(linha1);
+		
+		txtModelo = new TextField(OpenSigCore.i18n.txtModelo(), "comEcfModelo", 150);
 		txtModelo.setAllowBlank(false);
 		txtModelo.setMaxLength(20);
 
-		txtSerie = new TextField(OpenSigCore.i18n.txtSerie(), "comEcfSerie", 200);
+		txtSerie = new TextField(OpenSigCore.i18n.txtSerie(), "comEcfSerie", 150);
 		txtSerie.setAllowBlank(false);
 		txtSerie.setMinLength(20);
 		txtSerie.setMaxLength(20);
@@ -60,19 +90,22 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 		chkAtivo = new Checkbox(OpenSigCore.i18n.txtAtivo(), "comEcfAtivo");
 		chkAtivo.setValue(true);
 
-		MultiFieldPanel linha1 = new MultiFieldPanel();
-		linha1.setBorder(false);
-		linha1.addToRow(txtCodigo, 70);
-		linha1.addToRow(txtModelo, 220);
-		linha1.addToRow(txtSerie, 220);
-		linha1.addToRow(txtCaixa, 70);
-		linha1.addToRow(chkAtivo, 70);
-		add(linha1);
+		MultiFieldPanel linha2 = new MultiFieldPanel();
+		linha2.setBorder(false);
+		linha2.addToRow(txtModelo, 170);
+		linha2.addToRow(txtSerie, 170);
+		linha2.addToRow(txtCaixa, 70);
+		linha2.addToRow(chkAtivo, 70);
+		add(linha2);
 	}
 
 	public boolean setDados() {
 		classe.setComEcfId(Integer.valueOf(hdnCod.getValueAsString()));
 		classe.setComEcfCodigo(txtCodigo.getValueAsString());
+		classe.setComEcfMfAdicional(txtMfAdicional.getValueAsString());
+		classe.setComEcfIdentificacao(txtIdentificacao.getValueAsString());
+		classe.setComEcfTipo(txtTipo.getValueAsString());
+		classe.setComEcfMarca(txtMarca.getValueAsString());
 		classe.setComEcfModelo(txtModelo.getValueAsString());
 		classe.setComEcfSerie(txtSerie.getValueAsString());
 		classe.setComEcfAtivo(chkAtivo.getValue());
@@ -129,6 +162,38 @@ public class FormularioEcf extends AFormulario<ComEcf> {
 
 	public void setTxtCodigo(TextField txtCodigo) {
 		this.txtCodigo = txtCodigo;
+	}
+
+	public TextField getTxtMfAdicional() {
+		return txtMfAdicional;
+	}
+
+	public void setTxtMfAdicional(TextField txtMfAdicional) {
+		this.txtMfAdicional = txtMfAdicional;
+	}
+
+	public TextField getTxtIdentificacao() {
+		return txtIdentificacao;
+	}
+
+	public void setTxtIdentificacao(TextField txtIdentificacao) {
+		this.txtIdentificacao = txtIdentificacao;
+	}
+
+	public TextField getTxtTipo() {
+		return txtTipo;
+	}
+
+	public void setTxtTipo(TextField txtTipo) {
+		this.txtTipo = txtTipo;
+	}
+
+	public TextField getTxtMarca() {
+		return txtMarca;
+	}
+
+	public void setTxtMarca(TextField txtMarca) {
+		this.txtMarca = txtMarca;
 	}
 
 	public TextField getTxtModelo() {

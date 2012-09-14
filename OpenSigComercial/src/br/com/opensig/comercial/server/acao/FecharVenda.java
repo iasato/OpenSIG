@@ -23,7 +23,6 @@ import br.com.opensig.core.server.Conexao;
 import br.com.opensig.core.server.CoreServiceImpl;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.Autenticacao;
-import br.com.opensig.core.shared.modelo.EBusca;
 import br.com.opensig.core.shared.modelo.EComando;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.produto.shared.modelo.ProdComposicao;
@@ -78,15 +77,13 @@ public class FecharVenda extends Chain {
 			List<ComVendaProduto> auxProdutos = new ArrayList<ComVendaProduto>();
 			for (ComVendaProduto venProd : venda.getComVendaProdutos()) {
 				auxProdutos.add(venProd);
-				if (venProd.getProdProduto().getProdComposicoes() != null) {
-					for (ProdComposicao comp : venProd.getProdProduto().getProdComposicoes()) {
-						ComVendaProduto auxVenProd = new ComVendaProduto();
-						auxVenProd.setProdProduto(comp.getProdProduto());
-						auxVenProd.setProdEmbalagem(comp.getProdEmbalagem());
-						double qtd = venProd.getComVendaProdutoQuantidade() * comp.getProdComposicaoQuantidade();
-						auxVenProd.setComVendaProdutoQuantidade(qtd);
-						auxProdutos.add(auxVenProd);
-					}
+				for (ProdComposicao comp : venProd.getProdProduto().getProdComposicoes()) {
+					ComVendaProduto auxVenProd = new ComVendaProduto();
+					auxVenProd.setProdProduto(comp.getProdProduto());
+					auxVenProd.setProdEmbalagem(comp.getProdEmbalagem());
+					double qtd = venProd.getComVendaProdutoQuantidade() * comp.getProdComposicaoQuantidade();
+					auxVenProd.setComVendaProdutoQuantidade(qtd);
+					auxProdutos.add(auxVenProd);
 				}
 			}
 			venda.setComVendaProdutos(auxProdutos);
@@ -98,7 +95,7 @@ public class FecharVenda extends Chain {
 					FiltroObjeto fo1 = new FiltroObjeto("prodProduto", ECompara.IGUAL, venProd.getProdProduto());
 					GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, fo1 });
 					// busca o item
-					double estQtd = servico.buscar(new ProdEstoque(), "t.prodEstoqueQuantidade", EBusca.SOMA, gf).doubleValue();
+					ProdEstoque est = (ProdEstoque) servico.selecionar(new ProdEstoque(), gf, false);
 					// fatorando a quantida no estoque
 					double qtd = venProd.getComVendaProdutoQuantidade();
 					if (venProd.getProdEmbalagem().getProdEmbalagemId() != venProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId()) {
@@ -106,8 +103,8 @@ public class FecharVenda extends Chain {
 						qtd /= getQtdEmbalagem(venProd.getProdProduto().getProdEmbalagem().getProdEmbalagemId());
 					}
 					// verificar a qtd do estoque
-					if (qtd > estQtd) {
-						invalidos.add(new String[] { venProd.getProdProduto().getProdProdutoDescricao(), venProd.getProdProduto().getProdProdutoReferencia(), estQtd + "", qtd + "" });
+					if (qtd > est.getProdEstoqueQuantidade()) {
+						invalidos.add(new String[] { est.getProdEstoqueId() + "", venProd.getProdProduto().getProdProdutoDescricao(), venProd.getProdProduto().getProdProdutoReferencia(), est.getProdEstoqueQuantidade().toString(), qtd + "" });
 					} else {
 						venProd.setComVendaProdutoQuantidade(qtd);
 					}

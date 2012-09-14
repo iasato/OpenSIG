@@ -15,7 +15,9 @@ public class RegistroC470 extends ARegistro<DadosC470, ComEcfVendaProduto> {
 		d.setUnid(dados.getProdEmbalagem().getProdEmbalagemNome());
 		d.setCfop(produto.getProdTributacao().getProdTributacaoCfop());
 		d.setVl_item(dados.getComEcfVendaProdutoTotal());
-		d.setCst_icms((produto.getProdOrigem().getProdOrigemId() - 1) + produto.getProdTributacao().getProdTributacaoCst());
+		String cstCson = auth.getConf().get("nfe.crt").equals("1") ? produto.getProdTributacao().getProdTributacaoCson() : (produto.getProdOrigem().getProdOrigemId() - 1)
+				+ produto.getProdTributacao().getProdTributacaoCst();
+		d.setCst_icms(cstCson);
 		d.setAliq_icms(produto.getProdTributacao().getProdTributacaoDentro());
 		return d;
 	}

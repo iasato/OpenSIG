@@ -204,6 +204,14 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		pagar.setFinConta(new FinConta(Integer.valueOf(auth.getConf().get("conta.padrao"))));
 		pagar.setFinPagamentos(pagamentos);
 		pagar.setFinPagarObservacao("");
+		// acha a forma de pagamento boleto
+		FiltroTexto ft = new FiltroTexto("finFormaDescricao", ECompara.IGUAL, auth.getConf().get("txtBoleto"));
+		FinForma forma = (FinForma) servico.selecionar(new FinForma(), ft, false);
+		// caso nao encontre coloca a primeira
+		if (forma == null) {
+			forma = new FinForma(1);
+			forma.setFinFormaDescricao(auth.getConf().get("txtDinheiro"));
+		}
 
 		if (nfe.getInfNFe().getCobr() != null) {
 			List<Dup> duplicatas = nfe.getInfNFe().getCobr().getDup();
@@ -223,8 +231,6 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 
 				// pagamentos
 				FinPagamento pag = new FinPagamento();
-				FinForma forma = new FinForma(4);
-				forma.setFinFormaDescricao(auth.getConf().get("txtboleto"));
 				pag.setFinForma(forma);
 				pag.setFinPagamentoDocumento(dup.getNDup());
 				pag.setFinPagamentoValor(Double.valueOf(dup.getVDup()));
@@ -303,7 +309,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			contato.setEmpContatoTipo(new EmpContatoTipo(Integer.valueOf(auth.getConf().get("nfe.tipoconttel"))));
 			contato.setEmpContatoDescricao(fone);
 			contato.setEmpContatoPessoa("");
-			
+
 			List<EmpContato> conts = new ArrayList<EmpContato>();
 			conts.add(contato);
 			enti.setEmpContatos(conts);
@@ -497,7 +503,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 
 	private ProdTributacao getTributacao(String cst) {
 		// se nao achar colocar a padrao 00
-		ProdTributacao resp = new ProdTributacao(1);
+		ProdTributacao resp = null;
 
 		// percorre as tributacoes
 		for (ProdTributacao trib : tributacao) {
@@ -507,6 +513,8 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			} else if (cst.length() == 3 && trib.getProdTributacaoCson().equals(cst)) {
 				resp = trib;
 				break;
+			} else if (trib.getProdTributacaoCst().equals("00")) {
+				resp = trib;
 			}
 		}
 

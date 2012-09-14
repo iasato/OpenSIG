@@ -43,8 +43,8 @@ public class FinRecebimento extends Dados implements Serializable {
 	@Column(name = "fin_recebimento_parcela")
 	private String finRecebimentoParcela;
 
-	@Column(name = "fin_recebimento_quitado")
-	private int finRecebimentoQuitado;
+	@Column(name = "fin_recebimento_status")
+	private String finRecebimentoStatus;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fin_recebimento_cadastro")
@@ -60,6 +60,10 @@ public class FinRecebimento extends Dados implements Serializable {
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fin_recebimento_vencimento")
 	private Date finRecebimentoVencimento;
+
+	@Temporal(TemporalType.DATE)
+	@Column(name = "fin_recebimento_conciliado")
+	private Date finRecebimentoConciliado;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "fin_receber_id")
@@ -110,12 +114,12 @@ public class FinRecebimento extends Dados implements Serializable {
 		this.finRecebimentoParcela = finRecebimentoParcela;
 	}
 
-	public boolean getFinRecebimentoQuitado() {
-		return this.finRecebimentoQuitado == 0 ? false : true;
+	public String getFinRecebimentoStatus() {
+		return this.finRecebimentoStatus;
 	}
 
-	public void setFinRecebimentoQuitado(boolean finRecebimentoQuitado) {
-		this.finRecebimentoQuitado = finRecebimentoQuitado == false ? 0 : 1;
+	public void setFinRecebimentoStatus(String finRecebimentoStatus) {
+		this.finRecebimentoStatus = finRecebimentoStatus;
 	}
 
 	public Date getFinRecebimentoRealizado() {
@@ -148,6 +152,14 @@ public class FinRecebimento extends Dados implements Serializable {
 
 	public void setFinRecebimentoVencimento(Date finRecebimentoVencimento) {
 		this.finRecebimentoVencimento = finRecebimentoVencimento;
+	}
+
+	public Date getFinRecebimentoConciliado() {
+		return finRecebimentoConciliado;
+	}
+
+	public void setFinRecebimentoConciliado(Date finRecebimentoConciliado) {
+		this.finRecebimentoConciliado = finRecebimentoConciliado;
 	}
 
 	public FinReceber getFinReceber() {
@@ -193,8 +205,8 @@ public class FinRecebimento extends Dados implements Serializable {
 		return new String[] { finRecebimentoId + "", finReceber.getFinReceberId() + "", finReceber.getEmpEmpresa().getEmpEmpresaId() + "",
 				finReceber.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(), finReceber.getEmpEntidade().getEmpEntidadeNome1(), finReceber.getFinConta().getFinContaId() + "",
 				finForma.getFinFormaId() + "", finForma.getFinFormaDescricao(), finRecebimentoDocumento, finRecebimentoValor.toString(), finRecebimentoParcela,
-				UtilClient.getDataGrid(finRecebimentoCadastro), UtilClient.getDataGrid(finRecebimentoVencimento), getFinRecebimentoQuitado() + "", UtilClient.getDataGrid(finRecebimentoRealizado),
-				finReceber.getFinReceberNfe() + "", finRecebimentoObservacao };
+				UtilClient.getDataGrid(finRecebimentoCadastro), UtilClient.getDataGrid(finRecebimentoVencimento), finRecebimentoStatus, UtilClient.getDataGrid(finRecebimentoRealizado),
+				UtilClient.getDataGrid(finRecebimentoConciliado), finReceber.getFinReceberNfe() + "", finRecebimentoObservacao };
 	}
 
 }

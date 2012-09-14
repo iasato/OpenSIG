@@ -10,10 +10,9 @@ import org.jboleto.Banco;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
-import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
 import br.com.opensig.core.client.controlador.filtro.FiltroData;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
-import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
+import br.com.opensig.core.client.controlador.filtro.FiltroTexto;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.filtro.IFiltro;
 import br.com.opensig.core.server.CoreServiceImpl;
@@ -23,7 +22,6 @@ import br.com.opensig.empresa.shared.modelo.EmpEndereco;
 import br.com.opensig.empresa.shared.modelo.EmpEntidade;
 import br.com.opensig.financeiro.client.servico.FinanceiroException;
 import br.com.opensig.financeiro.shared.modelo.FinConta;
-import br.com.opensig.financeiro.shared.modelo.FinForma;
 import br.com.opensig.financeiro.shared.modelo.FinRecebimento;
 import br.com.opensig.financeiro.shared.modelo.FinRemessa;
 import br.com.opensig.financeiro.shared.modelo.FinRetorno;
@@ -42,11 +40,11 @@ public class BancoBrasil extends ACobranca {
 			StringBuffer sb = new StringBuffer();
 
 			// filtros
-			FiltroObjeto fo = new FiltroObjeto("finForma", ECompara.IGUAL, new FinForma(4));
-			FiltroBinario fb = new FiltroBinario("finRecebimentoQuitado", ECompara.IGUAL, 0);
+			FiltroTexto ft = new FiltroTexto("finForma.finFormaDescricao", ECompara.IGUAL, auth.getConf().get("txtBoleto").toUpperCase());
+			FiltroTexto ft1 = new FiltroTexto("finRecebimentoStatus", ECompara.IGUAL, auth.getConf().get("txtAberto").toUpperCase());
 			FiltroData dt1 = new FiltroData("finRecebimentoCadastro", ECompara.MAIOR_IGUAL, rem.getFinRemessaDatade());
 			FiltroData dt2 = new FiltroData("finRecebimentoCadastro", ECompara.MENOR_IGUAL, rem.getFinRemessaDataate());
-			GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, fb, dt1, dt2 });
+			GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { ft, ft1, dt1, dt2 });
 
 			// Recuperando os boletos
 			CoreServiceImpl<FinRecebimento> persistencia = new CoreServiceImpl<FinRecebimento>();
@@ -459,7 +457,8 @@ public class BancoBrasil extends ACobranca {
 	private String[] getRecebimento(String seguimentoT, String seguimentoU) throws Exception {
 		int id;
 		double vl;
-		Date dt;
+		Date dtRealizado;
+		Date dtConciliado;
 		String status = "1";
 
 		// NUMERO DO DOCUMENTO DE COBRANCA
@@ -483,9 +482,18 @@ public class BancoBrasil extends ACobranca {
 		// DATA DA OCORRENCIA
 		try {
 			String data = seguimentoU.substring(137, 145);
-			dt = new SimpleDateFormat("ddMMyyyy").parse(data);
+			dtRealizado = new SimpleDateFormat("ddMMyyyy").parse(data);
 		} catch (Exception e) {
-			dt = null;
+			dtRealizado = null;
+			status = "0";
+		}
+
+		// DATA DO CREDITO
+		try {
+			String data = seguimentoU.substring(146, 153);
+			dtConciliado = new SimpleDateFormat("ddMMyyyy").parse(data);
+		} catch (Exception e) {
+			dtConciliado = null;
 			status = "0";
 		}
 
@@ -496,11 +504,12 @@ public class BancoBrasil extends ACobranca {
 			FinRecebimento fin = persiste.selecionar(new FinRecebimento(), fn, false);
 
 			return new String[] { fin.getFinRecebimentoId() + "", fin.getFinReceber().getEmpEntidade().getEmpEntidadeNome1(), fin.getFinRecebimentoDocumento(), vl + "",
-					fin.getFinRecebimentoParcela(), UtilClient.getDataGrid(fin.getFinRecebimentoVencimento()), fin.getFinRecebimentoQuitado() + "", UtilClient.getDataGrid(dt),
-					fin.getFinRecebimentoQuitado() ? "0" : status, fin.getFinRecebimentoObservacao(), fin.getFinReceber().getFinConta().getFinContaId() + "" };
+					fin.getFinRecebimentoParcela(), UtilClient.getDataGrid(fin.getFinRecebimentoVencimento()), fin.getFinRecebimentoStatus(), UtilClient.getDataGrid(dtRealizado),
+					UtilClient.getDataGrid(dtConciliado), fin.getFinRecebimentoStatus().equalsIgnoreCase(auth.getConf().get("txtAberto")) ? "0" : status, fin.getFinRecebimentoObservacao(),
+					fin.getFinReceber().getFinConta().getFinContaId() + "" };
 		} catch (Exception e) {
 			UtilServer.LOG.error("Erro ao produrar o recebimento", e);
-			return new String[] { id + "", "", "", vl + "", "", "", "0", UtilClient.getDataGrid(dt), "-1", seguimentoT, "0" };
+			return new String[] { id + "", "", "", vl + "", "", "", "0", UtilClient.getDataGrid(dtRealizado), "-1", seguimentoT, "0" };
 		}
 
 	}

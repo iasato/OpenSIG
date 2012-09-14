@@ -37,18 +37,6 @@ public class FisSpedFiscal extends Dados implements Serializable {
 	@Column(name = "fis_sped_fiscal_ano")
 	private int fisSpedFiscalAno;
 
-	@Column(name = "fis_sped_fiscal_compras")
-	private int fisSpedFiscalCompras;
-
-	@Column(name = "fis_sped_fiscal_frete")
-	private int fisSpedFiscalFrete;
-
-	@Column(name = "fis_sped_fiscal_vendas")
-	private int fisSpedFiscalVendas;
-
-	@Column(name = "fis_sped_fiscal_ecf")
-	private int fisSpedFiscalEcf;
-
 	@Column(name = "fis_sped_fiscal_protocolo")
 	private String fisSpedFiscalProtocolo;
 
@@ -71,21 +59,6 @@ public class FisSpedFiscal extends Dados implements Serializable {
 
 	@Transient
 	private int finalidade;
-
-	@Transient
-	private Integer[] registros;
-
-	@Transient
-	private Integer[] compras;
-
-	@Transient
-	private Integer[] fretes;
-
-	@Transient
-	private Integer[] vendas;
-
-	@Transient
-	private Integer[] ecfs;
 
 	public FisSpedFiscal() {
 		this(0);
@@ -136,38 +109,6 @@ public class FisSpedFiscal extends Dados implements Serializable {
 		this.fisSpedFiscalTipo = fisSpedFiscalTipo;
 	}
 
-	public int getFisSpedFiscalVendas() {
-		return fisSpedFiscalVendas;
-	}
-
-	public void setFisSpedFiscalVendas(int fisSpedFiscalVendas) {
-		this.fisSpedFiscalVendas = fisSpedFiscalVendas;
-	}
-
-	public int getFisSpedFiscalCompras() {
-		return fisSpedFiscalCompras;
-	}
-
-	public void setFisSpedFiscalCompras(int fisSpedFiscalCompras) {
-		this.fisSpedFiscalCompras = fisSpedFiscalCompras;
-	}
-
-	public int getFisSpedFiscalEcf() {
-		return fisSpedFiscalEcf;
-	}
-
-	public void setFisSpedFiscalEcf(int fisSpedFiscalEcf) {
-		this.fisSpedFiscalEcf = fisSpedFiscalEcf;
-	}
-
-	public int getFisSpedFiscalFrete() {
-		return fisSpedFiscalFrete;
-	}
-
-	public void setFisSpedFiscalFrete(int fisSpedFiscalFrete) {
-		this.fisSpedFiscalFrete = fisSpedFiscalFrete;
-	}
-
 	public boolean getFisSpedAtivo() {
 		return this.fisSpedFiscalAtivo == 0 ? false : true;
 	}
@@ -192,46 +133,6 @@ public class FisSpedFiscal extends Dados implements Serializable {
 		this.empEmpresa = empEmpresa;
 	}
 
-	public Integer[] getRegistros() {
-		return registros;
-	}
-
-	public void setRegistros(Integer[] registros) {
-		this.registros = registros;
-	}
-
-	public Integer[] getCompras() {
-		return compras;
-	}
-
-	public void setCompras(Integer[] compras) {
-		this.compras = compras;
-	}
-
-	public Integer[] getFretes() {
-		return fretes;
-	}
-
-	public void setFretes(Integer[] fretes) {
-		this.fretes = fretes;
-	}
-
-	public Integer[] getVendas() {
-		return vendas;
-	}
-
-	public void setVendas(Integer[] vendas) {
-		this.vendas = vendas;
-	}
-
-	public Integer[] getEcfs() {
-		return ecfs;
-	}
-
-	public void setEcfs(Integer[] ecfs) {
-		this.ecfs = ecfs;
-	}
-
 	public int getFinalidade() {
 		return finalidade;
 	}
@@ -250,8 +151,7 @@ public class FisSpedFiscal extends Dados implements Serializable {
 
 	public String[] toArray() {
 		return new String[] { fisSpedFiscalId + "", empEmpresa.getEmpEmpresaId() + "", empEmpresa.getEmpEntidade().getEmpEntidadeNome1(), fisSpedFiscalAno + "", fisSpedFiscalMes + "",
-				fisSpedFiscalTipo, UtilClient.getDataGrid(fisSpedFiscalData), fisSpedFiscalCompras + "", fisSpedFiscalFrete + "", fisSpedFiscalVendas + "", fisSpedFiscalEcf + "",
-				getFisSpedAtivo() + "", fisSpedFiscalProtocolo };
+				fisSpedFiscalTipo, UtilClient.getDataGrid(fisSpedFiscalData), getFisSpedAtivo() + "", fisSpedFiscalProtocolo };
 	}
 
 	public Dados getObjeto(String campo) {

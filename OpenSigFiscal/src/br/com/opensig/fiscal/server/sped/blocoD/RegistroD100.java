@@ -11,8 +11,6 @@ public class RegistroD100 extends ARegistro<DadosD100, ComFrete> {
 
 	@Override
 	public void executar() {
-		qtdLinhas = 0;
-
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));
@@ -20,8 +18,6 @@ public class RegistroD100 extends ARegistro<DadosD100, ComFrete> {
 
 			RegistroD190 r190 = new RegistroD190();
 			r190.setEscritor(escritor);
-			r190.setAuth(auth);
-
 			for (ComFrete frete : fretes) {
 				bloco = getDados(frete);
 				out.write(bloco);

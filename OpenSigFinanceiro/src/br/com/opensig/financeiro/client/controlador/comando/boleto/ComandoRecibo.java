@@ -21,7 +21,7 @@ public class ComandoRecibo extends ComandoGerar {
 		super.execute(contexto);
 		final Record rec = LISTA.getPanel().getSelectionModel().getSelected();
 
-		if (rec.getAsBoolean("finRecebimentoQuitado")) {
+		if (!rec.getAsString("finRecebimentoStatus").equalsIgnoreCase(OpenSigCore.i18n.txtAberto())) {
 			getGerar().execute(contexto);
 		} else {
 			MessageBox.alert(OpenSigCore.i18n.txtBoleto(), OpenSigCore.i18n.errRecibo());

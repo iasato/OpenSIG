@@ -41,12 +41,15 @@ public class ProdTributacao extends Dados implements Serializable {
 
 	@Column(name = "prod_tributacao_cfop")
 	private int prodTributacaoCfop;
-	
+
 	@Column(name = "prod_tributacao_cst")
 	private String prodTributacaoCst;
-	
+
 	@Column(name = "prod_tributacao_cson")
 	private String prodTributacaoCson;
+
+	@Column(name = "prod_tributacao_ecf")
+	private String prodTributacaoEcf;
 
 	public ProdTributacao() {
 		this(0);
@@ -121,6 +124,14 @@ public class ProdTributacao extends Dados implements Serializable {
 		this.prodTributacaoCson = prodTributacaoCson;
 	}
 
+	public String getProdTributacaoEcf() {
+		return prodTributacaoEcf;
+	}
+
+	public void setProdTributacaoEcf(String prodTributacaoEcf) {
+		this.prodTributacaoEcf = prodTributacaoEcf;
+	}
+
 	public Number getId() {
 		return prodTributacaoId;
 	}
@@ -130,7 +141,8 @@ public class ProdTributacao extends Dados implements Serializable {
 	}
 
 	public String[] toArray() {
-		return new String[] { prodTributacaoId + "", prodTributacaoNome, prodTributacaoCst, prodTributacaoCson, prodTributacaoCfop + "", prodTributacaoDentro + "", prodTributacaoFora + "", prodTributacaoDecreto };
+		return new String[] { prodTributacaoId + "", prodTributacaoNome, prodTributacaoCst, prodTributacaoCson, prodTributacaoCfop + "", prodTributacaoEcf, prodTributacaoDentro + "",
+				prodTributacaoFora + "", prodTributacaoDecreto };
 	}
 
 	public void anularDependencia() {

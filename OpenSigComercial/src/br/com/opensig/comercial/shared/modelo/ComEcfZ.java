@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Dados;
@@ -31,11 +32,14 @@ public class ComEcfZ extends Dados implements Serializable {
 	@Column(name = "com_ecf_z_id")
 	private int comEcfZId;
 
-	@Column(name = "com_ecf_z_bruto")
-	private Double comEcfZBruto;
+	@Column(name = "com_ecf_z_usuario")
+	private int comEcfZUsuario;
 
-	@Column(name = "com_ecf_z_coo")
-	private int comEcfZCoo;
+	@Column(name = "com_ecf_z_coo_ini")
+	private int comEcfZCooIni;
+
+	@Column(name = "com_ecf_z_coo_fin")
+	private int comEcfZCooFin;
 
 	@Column(name = "com_ecf_z_cro")
 	private int comEcfZCro;
@@ -44,25 +48,41 @@ public class ComEcfZ extends Dados implements Serializable {
 	private int comEcfZCrz;
 
 	@Temporal(TemporalType.DATE)
-	@Column(name = "com_ecf_z_data")
-	private Date comEcfZData;
+	@Column(name = "com_ecf_z_movimento")
+	private Date comEcfZMovimento;
 
-	@Column(name = "com_ecf_z_total")
-	private Double comEcfZTotal;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "com_ecf_z_emissao")
+	private Date comEcfZEmissao;
+
+	@Column(name = "com_ecf_z_bruto")
+	private Double comEcfZBruto;
+
+	@Column(name = "com_ecf_z_gt")
+	private Double comEcfZGt;
+
+	@Column(name = "com_ecf_z_issqn")
+	private int comEcfZIssqn;
 
 	@JoinColumn(name = "com_ecf_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private ComEcf comEcf;
 
 	@OneToMany(mappedBy = "comEcfZ", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	private List<ComEcfZTotais> comZTotais;
+	private List<ComEcfZTotais> comEcfZTotais;
+
+	@OneToMany(mappedBy = "comEcfZ", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private List<ComEcfVenda> comEcfVendas;
+
+	@Transient
+	private String issqn;
 
 	public ComEcfZ() {
 		this(0);
 	}
 
 	public ComEcfZ(int comEcfZId) {
-		super("pu_comercial", "ComEcfZ", "comEcfZId", "comEcfZData", EDirecao.DESC);
+		super("pu_comercial", "ComEcfZ", "comEcfZId", "comEcfZMovimento", EDirecao.DESC);
 		this.comEcfZId = comEcfZId;
 	}
 
@@ -74,20 +94,28 @@ public class ComEcfZ extends Dados implements Serializable {
 		this.comEcfZId = comEcfZId;
 	}
 
-	public Double getComEcfZBruto() {
-		return this.comEcfZBruto;
+	public int getComEcfZUsuario() {
+		return comEcfZUsuario;
 	}
 
-	public void setComEcfZBruto(Double comEcfZBruto) {
-		this.comEcfZBruto = comEcfZBruto;
+	public void setComEcfZUsuario(int comEcfZUsuario) {
+		this.comEcfZUsuario = comEcfZUsuario;
 	}
 
-	public int getComEcfZCoo() {
-		return this.comEcfZCoo;
+	public int getComEcfZCooIni() {
+		return comEcfZCooIni;
 	}
 
-	public void setComEcfZCoo(int comEcfZCoo) {
-		this.comEcfZCoo = comEcfZCoo;
+	public void setComEcfZCooIni(int comEcfZCooIni) {
+		this.comEcfZCooIni = comEcfZCooIni;
+	}
+
+	public int getComEcfZCooFin() {
+		return this.comEcfZCooFin;
+	}
+
+	public void setComEcfZCooFin(int comEcfZCooFin) {
+		this.comEcfZCooFin = comEcfZCooFin;
 	}
 
 	public int getComEcfZCro() {
@@ -106,20 +134,36 @@ public class ComEcfZ extends Dados implements Serializable {
 		this.comEcfZCrz = comEcfZCrz;
 	}
 
-	public Date getComEcfZData() {
-		return this.comEcfZData;
+	public Date getComEcfZMovimento() {
+		return this.comEcfZMovimento;
 	}
 
-	public void setComEcfZData(Date comEcfZData) {
-		this.comEcfZData = comEcfZData;
+	public void setComEcfZMovimento(Date comEcfZMovimento) {
+		this.comEcfZMovimento = comEcfZMovimento;
 	}
 
-	public Double getComEcfZTotal() {
-		return this.comEcfZTotal;
+	public Date getComEcfZEmissao() {
+		return comEcfZEmissao;
 	}
 
-	public void setComEcfZTotal(Double comEcfZTotal) {
-		this.comEcfZTotal = comEcfZTotal;
+	public void setComEcfZEmissao(Date comEcfZEmissao) {
+		this.comEcfZEmissao = comEcfZEmissao;
+	}
+
+	public Double getComEcfZBruto() {
+		return this.comEcfZBruto;
+	}
+
+	public void setComEcfZBruto(Double comEcfZBruto) {
+		this.comEcfZBruto = comEcfZBruto;
+	}
+
+	public Double getComEcfZGt() {
+		return this.comEcfZGt;
+	}
+
+	public void setComEcfZGt(Double comEcfZGt) {
+		this.comEcfZGt = comEcfZGt;
 	}
 
 	public ComEcf getComEcf() {
@@ -130,12 +174,36 @@ public class ComEcfZ extends Dados implements Serializable {
 		this.comEcf = comEcf;
 	}
 
-	public List<ComEcfZTotais> getComZTotais() {
-		return comZTotais;
+	public List<ComEcfZTotais> getComEcfZTotais() {
+		return comEcfZTotais;
 	}
 
-	public void setComZTotais(List<ComEcfZTotais> comZTotais) {
-		this.comZTotais = comZTotais;
+	public void setComEcfZTotais(List<ComEcfZTotais> comEcfZTotais) {
+		this.comEcfZTotais = comEcfZTotais;
+	}
+
+	public List<ComEcfVenda> getComEcfVendas() {
+		return comEcfVendas;
+	}
+
+	public void setComEcfVendas(List<ComEcfVenda> comEcfVendas) {
+		this.comEcfVendas = comEcfVendas;
+	}
+
+	public boolean getComEcfZIssqn() {
+		return comEcfZIssqn == 0 ? false : true;
+	}
+
+	public void setComEcfZIssqn(boolean comEcfZIssqn) {
+		this.comEcfZIssqn = comEcfZIssqn == false ? 0 : 1;
+	}
+
+	public String getIssqn() {
+		return issqn;
+	}
+
+	public void setIssqn(String issqn) {
+		this.issqn = issqn;
 	}
 
 	public Number getId() {
@@ -148,8 +216,8 @@ public class ComEcfZ extends Dados implements Serializable {
 
 	public String[] toArray() {
 		return new String[] { comEcfZId + "", comEcf.getComEcfId() + "", comEcf.getComEcfSerie(), comEcf.getEmpEmpresa().getEmpEmpresaId() + "",
-				comEcf.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(), comEcfZCoo + "", comEcfZCro + "", comEcfZCrz + "", UtilClient.getDataGrid(comEcfZData), comEcfZBruto.toString(),
-				comEcfZTotal.toString() };
+				comEcf.getEmpEmpresa().getEmpEntidade().getEmpEntidadeNome1(), comEcfZUsuario + "", comEcfZCooIni + "", comEcfZCooFin + "", comEcfZCro + "", comEcfZCrz + "",
+				UtilClient.getDataGrid(comEcfZMovimento), UtilClient.getDataHoraGrid(comEcfZEmissao), comEcfZBruto.toString(), comEcfZGt.toString(), getComEcfZIssqn() + "" };
 	}
 
 	public Dados getObjeto(String campo) {
@@ -162,6 +230,7 @@ public class ComEcfZ extends Dados implements Serializable {
 
 	public void anularDependencia() {
 		comEcf = null;
-		comZTotais = null;
+		comEcfZTotais = null;
+		comEcfVendas = null;
 	}
 }

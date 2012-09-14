@@ -14,19 +14,19 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/commons-fileupload.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/core-renderer.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/iText.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/jettison-1.1.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/Json.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/jtidy.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/log4j-1.2.14.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/mail.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/nfexml2.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/poi.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/quartz-2.0.2.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/simplecaptcha.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/xstream.jar"/>
-	<classpathentry kind="lib" path="/Users/pedrohenriquelira/Documents/Projetos/Externas/beanio.jar" sourcepath="/Users/pedrohenriquelira/.m2/repository/org/beanio/beanio/1.2.0/beanio-1.2.0-sources.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/commons-fileupload.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/core-renderer.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/iText.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/jettison-1.1.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/Json.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/jtidy.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/mail.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/nfexml2.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/poi.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/quartz-2.0.2.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/simplecaptcha.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/xstream.jar"/>
+	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/beanio.jar" sourcepath="/Users/pedrohenriquelira/.m2/repository/org/beanio/beanio/1.2.0/beanio-1.2.0-sources.jar"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>

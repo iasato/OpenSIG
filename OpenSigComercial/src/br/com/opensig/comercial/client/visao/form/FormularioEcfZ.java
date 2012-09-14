@@ -1,6 +1,7 @@
 package br.com.opensig.comercial.client.visao.form;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import com.gwtext.client.data.StringFieldDef;
 import com.gwtext.client.data.event.StoreListenerAdapter;
 import com.gwtext.client.widgets.MessageBox;
 import com.gwtext.client.widgets.MessageBox.ConfirmCallback;
+import com.gwtext.client.widgets.form.Checkbox;
 import com.gwtext.client.widgets.form.ComboBox;
 import com.gwtext.client.widgets.form.DateField;
 import com.gwtext.client.widgets.form.Hidden;
@@ -48,13 +50,16 @@ import com.gwtextux.client.widgets.window.ToastWindow;
 public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 
 	private Hidden hdnCod;
+	private Hidden hdnUsuario;
 	private ComboBox cmbEcf;
-	private NumberField txtCoo;
+	private NumberField txtCooIni;
+	private NumberField txtCooFin;
 	private NumberField txtCro;
 	private NumberField txtCrz;
-	private DateField dtData;
+	private DateField dtMovimento;
 	private NumberField txtBruto;
-	private NumberField txtTotal;
+	private NumberField txtGt;
+	private Checkbox chkIssqn;
 	private ListagemEcfZTotais gridTotais;
 
 	public FormularioEcfZ(SisFuncao funcao) {
@@ -68,11 +73,20 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 		hdnCod = new Hidden("comEcfZId", "0");
 		add(hdnCod);
 
-		txtCoo = new NumberField(OpenSigCore.i18n.txtCoo(), "comEcfZCoo", 50);
-		txtCoo.setAllowBlank(false);
-		txtCoo.setAllowDecimals(false);
-		txtCoo.setAllowNegative(false);
-		txtCoo.setMaxLength(6);
+		hdnUsuario = new Hidden("comEcfZUsuario", "0");
+		add(hdnUsuario);
+
+		txtCooIni = new NumberField(OpenSigCore.i18n.txtCoo() + " " + OpenSigCore.i18n.txtInicio(), "comEcfZCooIni", 60);
+		txtCooIni.setAllowBlank(false);
+		txtCooIni.setAllowDecimals(false);
+		txtCooIni.setAllowNegative(false);
+		txtCooIni.setMaxLength(6);
+
+		txtCooFin = new NumberField(OpenSigCore.i18n.txtCoo() + " " + OpenSigCore.i18n.txtFim(), "comEcfZCooFin", 60);
+		txtCooFin.setAllowBlank(false);
+		txtCooFin.setAllowDecimals(false);
+		txtCooFin.setAllowNegative(false);
+		txtCooFin.setMaxLength(6);
 
 		txtCro = new NumberField(OpenSigCore.i18n.txtCro(), "comEcfZCro", 50);
 		txtCro.setAllowBlank(false);
@@ -86,30 +100,34 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 		txtCrz.setAllowNegative(false);
 		txtCrz.setMaxLength(6);
 
-		dtData = new DateField(OpenSigCore.i18n.txtData(), "comEcfZData", 80);
-		dtData.setAllowBlank(false);
+		dtMovimento = new DateField(OpenSigCore.i18n.txtData(), "comEcfZMovimento", 80);
+		dtMovimento.setAllowBlank(false);
 
-		txtBruto = new NumberField(OpenSigCore.i18n.txtBruto(), "comEcfZBruto", 100);
+		txtBruto = new NumberField(OpenSigCore.i18n.txtBruto(), "comEcfZBruto", 70);
 		txtBruto.setAllowBlank(false);
 		txtBruto.setAllowNegative(false);
 		txtBruto.setMaxLength(11);
 
-		txtTotal = new NumberField(OpenSigCore.i18n.txtTotal(), "comEcfZTotal", 100);
-		txtTotal.setAllowBlank(false);
-		txtTotal.setAllowNegative(false);
-		txtTotal.setMaxLength(11);
+		txtGt = new NumberField(OpenSigCore.i18n.txtTotal(), "comEcfZGt", 80);
+		txtGt.setAllowBlank(false);
+		txtGt.setAllowNegative(false);
+		txtGt.setMaxLength(11);
+
+		chkIssqn = new Checkbox(OpenSigCore.i18n.txtIssqn(), "comEcfZIssqn");
 
 		MultiFieldPanel linha1 = new MultiFieldPanel();
 		linha1.setBorder(false);
 		linha1.addToRow(getEcf(), 180);
-		linha1.addToRow(txtCoo, 70);
+		linha1.addToRow(txtCooIni, 80);
+		linha1.addToRow(txtCooFin, 80);
 		linha1.addToRow(txtCro, 70);
 		linha1.addToRow(txtCrz, 70);
-		linha1.addToRow(dtData, 110);
-		linha1.addToRow(txtBruto, 120);
-		linha1.addToRow(txtTotal, 120);
+		linha1.addToRow(dtMovimento, 110);
+		linha1.addToRow(txtBruto, 90);
+		linha1.addToRow(txtGt, 100);
+		linha1.addToRow(chkIssqn, 50);
 		add(linha1);
-		
+
 		gridTotais = new ListagemEcfZTotais(true);
 		add(gridTotais);
 	}
@@ -129,7 +147,7 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 
 		return comando;
 	}
-	
+
 	public boolean setDados() {
 		boolean retorno = true;
 		List<ComEcfZTotais> totais = new ArrayList<ComEcfZTotais>();
@@ -138,15 +156,19 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 			retorno = false;
 			new ToastWindow(OpenSigCore.i18n.txtListagem(), OpenSigCore.i18n.errLista()).show();
 		}
-		
-		classe.setComZTotais(totais);
+
+		classe.setComEcfZTotais(totais);
 		classe.setComEcfZId(Integer.valueOf(hdnCod.getValueAsString()));
+		classe.setComEcfZUsuario(Integer.valueOf(hdnUsuario.getValueAsString()));
 		if (cmbEcf.getValue() != null) {
 			ComEcf ecf = new ComEcf(Integer.valueOf(cmbEcf.getValue()));
 			classe.setComEcf(ecf);
 		}
-		if (txtCoo.getValue() != null) {
-			classe.setComEcfZCoo(txtCoo.getValue().intValue());
+		if (txtCooIni.getValue() != null) {
+			classe.setComEcfZCooIni(txtCooIni.getValue().intValue());
+		}
+		if (txtCooFin.getValue() != null) {
+			classe.setComEcfZCooFin(txtCooFin.getValue().intValue());
 		}
 		if (txtCro.getValue() != null) {
 			classe.setComEcfZCro(txtCro.getValue().intValue());
@@ -154,13 +176,15 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 		if (txtCrz.getValue() != null) {
 			classe.setComEcfZCrz(txtCrz.getValue().intValue());
 		}
-		classe.setComEcfZData(dtData.getValue());
+		classe.setComEcfZMovimento(dtMovimento.getValue());
+		classe.setComEcfZEmissao(new Date());
 		if (txtBruto.getValue() != null) {
 			classe.setComEcfZBruto(txtBruto.getValue().doubleValue());
 		}
-		if (txtTotal.getValue() != null) {
-			classe.setComEcfZTotal(txtTotal.getValue().doubleValue());
+		if (txtGt.getValue() != null) {
+			classe.setComEcfZGt(txtGt.getValue().doubleValue());
 		}
+		classe.setComEcfZIssqn(chkIssqn.getValue());
 
 		return retorno;
 	}
@@ -220,7 +244,7 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 		// filtro
 		int id = UtilClient.getSelecionado(lista.getPanel());
 		FiltroObjeto filtro = new FiltroObjeto("comEcfZ", ECompara.IGUAL, new ComEcfZ(id));
-		
+
 		ExpListagem<ComEcfZTotais> totais = new ExpListagem<ComEcfZTotais>();
 		totais.setClasse(zTotal);
 		totais.setMetadados(metadados);
@@ -234,7 +258,8 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 
 	private ComboBox getEcf() {
 		FieldDef[] fdEcf = new FieldDef[] { new IntegerFieldDef("comEcfId"), new IntegerFieldDef("empEmpresa.empEmpresaId"), new StringFieldDef("empEmpresa.empEntidade.empEntidadeNome1"),
-				new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa") };
+				new StringFieldDef("comEcfCodigo"), new StringFieldDef("comEcfMfAdicional"), new StringFieldDef("comEcfIdentificacao"), new StringFieldDef("comEcfTipo"),
+				new StringFieldDef("comEcfMarca"), new StringFieldDef("comEcfModelo"), new StringFieldDef("comEcfSerie"), new IntegerFieldDef("comEcfCaixa") };
 		CoreProxy<ComEcf> proxy = new CoreProxy<ComEcf>(new ComEcf());
 		final Store storeEcf = new Store(proxy, new ArrayReader(new RecordDef(fdEcf)), true);
 		storeEcf.addStoreListener(new StoreListenerAdapter() {
@@ -247,7 +272,7 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 					}
 				});
 			}
-			
+
 			public void onLoad(Store store, Record[] records) {
 				mostrar();
 			}
@@ -275,7 +300,15 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 	public void setHdnCod(Hidden hdnCod) {
 		this.hdnCod = hdnCod;
 	}
-	
+
+	public Hidden getHdnUsuario() {
+		return hdnUsuario;
+	}
+
+	public void setHdnUsuario(Hidden hdnUsuario) {
+		this.hdnUsuario = hdnUsuario;
+	}
+
 	public ComboBox getCmbEcf() {
 		return cmbEcf;
 	}
@@ -284,12 +317,20 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 		this.cmbEcf = cmbEcf;
 	}
 
-	public NumberField getTxtCoo() {
-		return txtCoo;
+	public NumberField getTxtCooIni() {
+		return txtCooIni;
 	}
 
-	public void setTxtCoo(NumberField txtCoo) {
-		this.txtCoo = txtCoo;
+	public void setTxtCooIni(NumberField txtCooIni) {
+		this.txtCooIni = txtCooIni;
+	}
+
+	public NumberField getTxtCooFin() {
+		return txtCooFin;
+	}
+
+	public void setTxtCooFin(NumberField txtCooFin) {
+		this.txtCooFin = txtCooFin;
 	}
 
 	public NumberField getTxtCro() {
@@ -308,12 +349,12 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 		this.txtCrz = txtCrz;
 	}
 
-	public DateField getDtData() {
-		return dtData;
+	public DateField getDtMovimento() {
+		return dtMovimento;
 	}
 
-	public void setDtData(DateField dtData) {
-		this.dtData = dtData;
+	public void setDtMovimento(DateField dtMovimento) {
+		this.dtMovimento = dtMovimento;
 	}
 
 	public NumberField getTxtBruto() {
@@ -324,12 +365,28 @@ public class FormularioEcfZ extends AFormulario<ComEcfZ> {
 		this.txtBruto = txtBruto;
 	}
 
-	public NumberField getTxtTotal() {
-		return txtTotal;
+	public NumberField getTxtGt() {
+		return txtGt;
 	}
 
-	public void setTxtTotal(NumberField txtTotal) {
-		this.txtTotal = txtTotal;
+	public void setTxtGt(NumberField txtGt) {
+		this.txtGt = txtGt;
+	}
+
+	public Checkbox getChkIssqn() {
+		return chkIssqn;
+	}
+
+	public void setChkIssqn(Checkbox chkIssqn) {
+		this.chkIssqn = chkIssqn;
+	}
+
+	public ListagemEcfZTotais getGridTotais() {
+		return gridTotais;
+	}
+
+	public void setGridTotais(ListagemEcfZTotais gridTotais) {
+		this.gridTotais = gridTotais;
 	}
 
 }

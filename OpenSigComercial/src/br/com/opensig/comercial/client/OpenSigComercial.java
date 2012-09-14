@@ -6,6 +6,9 @@ import java.util.Collection;
 import br.com.opensig.comercial.client.controlador.comando.ComandoCompra;
 import br.com.opensig.comercial.client.controlador.comando.ComandoCompraProduto;
 import br.com.opensig.comercial.client.controlador.comando.ComandoEcf;
+import br.com.opensig.comercial.client.controlador.comando.ComandoEcfDocumento;
+import br.com.opensig.comercial.client.controlador.comando.ComandoEcfNota;
+import br.com.opensig.comercial.client.controlador.comando.ComandoEcfNotaProduto;
 import br.com.opensig.comercial.client.controlador.comando.ComandoEcfVenda;
 import br.com.opensig.comercial.client.controlador.comando.ComandoEcfVendaProduto;
 import br.com.opensig.comercial.client.controlador.comando.ComandoEcfZ;
@@ -29,7 +32,6 @@ import br.com.opensig.core.client.controlador.comando.lista.ComandoEditar;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoEditarFiltrados;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluir;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoExcluirFiltrados;
-import br.com.opensig.core.client.controlador.comando.lista.ComandoImportar;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovo;
 import br.com.opensig.core.client.controlador.comando.lista.ComandoNovoDuplicar;
 import br.com.opensig.core.client.visao.Ponte;
@@ -46,8 +48,7 @@ import com.google.gwt.core.client.GWT;
 public class OpenSigComercial implements EntryPoint {
 
 	/**
-	 * Metodo que é disparado ao iniciar o projeto que contém este módulo. Usar
-	 * este método para adicionar as classes de comando na fábrica de comandos.
+	 * Metodo que é disparado ao iniciar o projeto que contém este módulo. Usar este método para adicionar as classes de comando na fábrica de comandos.
 	 */
 	public void onModuleLoad() {
 		FabricaComando fc = FabricaComando.getInstancia();
@@ -70,6 +71,9 @@ public class OpenSigComercial implements EntryPoint {
 		fc.addComando(ComandoEcfZ.class.getName(), (IComando) GWT.create(ComandoEcfZ.class));
 		fc.addComando(ComandoEcfVenda.class.getName(), (IComando) GWT.create(ComandoEcfVenda.class));
 		fc.addComando(ComandoEcfVendaProduto.class.getName(), (IComando) GWT.create(ComandoEcfVendaProduto.class));
+		fc.addComando(ComandoEcfNota.class.getName(), (IComando) GWT.create(ComandoEcfNota.class));
+		fc.addComando(ComandoEcfNotaProduto.class.getName(), (IComando) GWT.create(ComandoEcfNotaProduto.class));
+		fc.addComando(ComandoEcfDocumento.class.getName(), (IComando) GWT.create(ComandoEcfDocumento.class));
 		fc.addComando(ComandoFecharEcfVenda.class.getName(), (IComando) GWT.create(ComandoFecharEcfVenda.class));
 
 		// frete
@@ -81,18 +85,25 @@ public class OpenSigComercial implements EntryPoint {
 		fc.addComando(ComandoValorProduto.class.getName(), (IComando) GWT.create(ComandoValorProduto.class));
 		fc.addComando(ComandoNatureza.class.getName(), (IComando) GWT.create(ComandoNatureza.class));
 
-		// acoes proibidas para os produtos do comercial
+		// acoes proibidas para venda das ecf
 		Collection<Class> acoes = new ArrayList<Class>();
 		acoes.add(ComandoNovo.class);
-		acoes.add(ComandoEditar.class);
+		acoes.add(ComandoNovoDuplicar.class);
 		acoes.add(ComandoEditarFiltrados.class);
 		acoes.add(ComandoExcluir.class);
 		acoes.add(ComandoExcluirFiltrados.class);
-		acoes.add(ComandoNovoDuplicar.class);
-		acoes.add(ComandoImportar.class);
 
-		Ponte.setAcoesProibidas(ComandoCompraProduto.class.getName(), acoes);
-		Ponte.setAcoesProibidas(ComandoVendaProduto.class.getName(), acoes);
-		Ponte.setAcoesProibidas(ComandoEcfVendaProduto.class.getName(), acoes);
+		// acoes proibidas para os produtos do comercial
+		Collection<Class> acoes2 = new ArrayList<Class>(acoes);
+		acoes2.add(ComandoEditar.class);
+
+		Ponte.setAcoesProibidas(ComandoEcfZ.class.getName(), acoes);
+		Ponte.setAcoesProibidas(ComandoEcfVenda.class.getName(), acoes);
+		Ponte.setAcoesProibidas(ComandoEcfDocumento.class.getName(), acoes2);
+		Ponte.setAcoesProibidas(ComandoEcfNota.class.getName(), acoes2);
+		Ponte.setAcoesProibidas(ComandoCompraProduto.class.getName(), acoes2);
+		Ponte.setAcoesProibidas(ComandoVendaProduto.class.getName(), acoes2);
+		Ponte.setAcoesProibidas(ComandoEcfVendaProduto.class.getName(), acoes2);
+		Ponte.setAcoesProibidas(ComandoEcfNotaProduto.class.getName(), acoes2);
 	}
 }

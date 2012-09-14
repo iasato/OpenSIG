@@ -14,8 +14,6 @@ public class RegistroH010 extends ARegistro<DadosH010, ProdProduto> {
 
 	@Override
 	public void executar() {
-		qtdLinhas = 0;
-
 		try {
 			StreamFactory factory = StreamFactory.newInstance();
 			factory.load(getClass().getResourceAsStream(bean));

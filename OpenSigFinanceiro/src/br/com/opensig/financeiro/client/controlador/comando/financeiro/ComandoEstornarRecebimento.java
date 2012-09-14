@@ -18,7 +18,6 @@ import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.GrupoFiltro;
 import br.com.opensig.core.client.controlador.parametro.GrupoParametro;
 import br.com.opensig.core.client.controlador.parametro.IParametro;
-import br.com.opensig.core.client.controlador.parametro.ParametroBinario;
 import br.com.opensig.core.client.controlador.parametro.ParametroData;
 import br.com.opensig.core.client.controlador.parametro.ParametroFormula;
 import br.com.opensig.core.client.controlador.parametro.ParametroTexto;
@@ -49,8 +48,9 @@ public class ComandoEstornarRecebimento extends ComandoAcao<FinRecebimento> {
 				for (Record rec : recs) {
 					int row = LISTA.getPanel().getStore().indexOf(rec);
 					LISTA.getPanel().getSelectionModel().deselectRow(row);
-					rec.set("finRecebimentoQuitado", false);
+					rec.set("finPagamentoStatus", OpenSigCore.i18n.txtAberto().toUpperCase());
 					rec.set("finRecebimentoRealizado", (Date) null);
+					rec.set("finRecebimentoConciliado", (Date) null);
 					rec.set("finRecebimentoObservacao", motivo);
 				}
 			}
@@ -84,10 +84,11 @@ public class ComandoEstornarRecebimento extends ComandoAcao<FinRecebimento> {
 				}
 
 				// atualizando recebimento
-				ParametroBinario pb = new ParametroBinario("finRecebimentoQuitado", 0);
+				ParametroTexto pt = new ParametroTexto("finRecebimentoStatus", OpenSigCore.i18n.txtAberto().toUpperCase());
 				ParametroData pd = new ParametroData("finRecebimentoRealizado", (Date) null);
-				ParametroTexto pt = new ParametroTexto("finRecebimentoObservacao", motivo);
-				GrupoParametro gp = new GrupoParametro(new IParametro[] { pb, pd, pt });
+				ParametroData pd1 = new ParametroData("finRecebimentoConciliado", (Date) null);
+				ParametroTexto pt1 = new ParametroTexto("finRecebimentoObservacao", motivo);
+				GrupoParametro gp = new GrupoParametro(new IParametro[] { pt, pd, pd1, pt1 });
 				Sql sqlForma = new Sql(new FinRecebimento(), EComando.ATUALIZAR, gf, gp);
 				sqls.add(sqlForma);
 
@@ -103,7 +104,7 @@ public class ComandoEstornarRecebimento extends ComandoAcao<FinRecebimento> {
 
 				// valida cada estono
 				for (Record rec : recs) {
-					if (!rec.getAsBoolean("finRecebimentoQuitado")) {
+					if (rec.getAsString("finRecebimentoStatus").equalsIgnoreCase(OpenSigCore.i18n.txtAberto())) {
 						int row = LISTA.getPanel().getStore().indexOf(rec);
 						LISTA.getPanel().getSelectionModel().deselectRow(row);
 					}
