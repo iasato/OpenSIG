@@ -1,7 +1,6 @@
 package br.com.opensig.fiscal.server.sped.blocoC;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -16,8 +15,7 @@ import br.com.opensig.fiscal.server.sped.ARegistro;
 
 public class RegistroC420 extends ARegistro<DadosC420, ComEcfZTotais> {
 
-	private List<ComEcfVenda> vendas;
-	private Map<Integer, ComEcfVendaProduto> fiscal = new HashMap<Integer, ComEcfVendaProduto>();
+	private Map<Integer, ComEcfVendaProduto> produtos = new HashMap<Integer, ComEcfVendaProduto>();
 
 	@Override
 	public void executar() {
@@ -26,13 +24,13 @@ public class RegistroC420 extends ARegistro<DadosC420, ComEcfZTotais> {
 			factory.load(getClass().getResourceAsStream(bean));
 			BeanWriter out = factory.createWriter("EFD", escritor);
 
-			for (ComEcfVenda venda : vendas) {
+			for (ComEcfVenda venda : dados.getComEcfZ().getComEcfVendas()) {
 				if (venda.getComEcfVendaFechada() && !venda.getComEcfVendaCancelada()) {
 					for (ComEcfVendaProduto pv : venda.getComEcfVendaProdutos()) {
 						if (pv.getProdProduto().getProdTributacao().getProdTributacaoEcf().equals(dados.getComEcfZTotaisCodigo())) {
-							ComEcfVendaProduto vp = fiscal.get(pv.getProdProduto().getProdProdutoId());
+							ComEcfVendaProduto vp = produtos.get(pv.getProdProduto().getProdProdutoId());
 							if (vp == null) {
-								fiscal.put(pv.getProdProduto().getProdProdutoId(), pv);
+								produtos.put(pv.getProdProduto().getProdProdutoId(), pv);
 							} else {
 								vp.setComEcfVendaProdutoQuantidade(vp.getComEcfVendaProdutoQuantidade() + pv.getComEcfVendaProdutoQuantidade());
 								vp.setComEcfVendaProdutoTotal(vp.getComEcfVendaProdutoTotal() + pv.getComEcfVendaProdutoTotal());
@@ -42,21 +40,21 @@ public class RegistroC420 extends ARegistro<DadosC420, ComEcfZTotais> {
 				}
 			}
 
-			if (dados.getComEcfZTotaisValor() > 0) {
-				bloco = getDados(dados);
-				out.write(bloco);
-				out.flush();
+			bloco = getDados(dados);
+			out.write(bloco);
+			out.flush();
 
-				// somente perfil B
-				if (auth.getConf().get("sped.0000.ind_perfil").equals("B")) {
-					RegistroC425 r425 = new RegistroC425();
-					r425.setEscritor(escritor);
-					r425.setAuth(auth);
-					for (Entry<Integer, ComEcfVendaProduto> vp : fiscal.entrySet()) {
+			// somente perfil B
+			if (auth.getConf().get("sped.0000.ind_perfil").equals("B")) {
+				RegistroC425 r425 = new RegistroC425();
+				r425.setEscritor(escritor);
+				r425.setAuth(auth);
+				for (Entry<Integer, ComEcfVendaProduto> vp : produtos.entrySet()) {
+					if (vp.getValue().getProdProduto().getProdTributacao().getProdTributacaoEcf().equals(dados.getComEcfZTotaisCodigo())) {
 						r425.setDados(vp.getValue());
 						r425.executar();
+						qtdLinhas += r425.getQtdLinhas();
 					}
-					qtdLinhas += r425.getQtdLinhas();
 				}
 			}
 		} catch (Exception e) {

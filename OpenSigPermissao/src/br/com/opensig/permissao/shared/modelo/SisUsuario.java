@@ -16,6 +16,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.opensig.core.shared.modelo.Colecao;
 import br.com.opensig.core.shared.modelo.Dados;
@@ -30,6 +34,7 @@ import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
  */
 @Entity
 @Table(name = "sis_usuario")
+@XmlRootElement
 public class SisUsuario extends Dados implements Serializable {
 
 	@Id
@@ -38,8 +43,12 @@ public class SisUsuario extends Dados implements Serializable {
 	private int sisUsuarioId;
 
 	@Column(name = "sis_usuario_ativo")
+	@XmlElement(type = Boolean.class)
 	private int sisUsuarioAtivo;
 
+	@Transient
+	private boolean sisUsuarioGerente;
+	
 	@Column(name = "sis_usuario_login")
 	private String sisUsuarioLogin;
 
@@ -47,23 +56,28 @@ public class SisUsuario extends Dados implements Serializable {
 	private String sisUsuarioSenha;
 
 	@Column(name = "sis_usuario_sistema")
+	@XmlTransient
 	private int sisUsuarioSistema;
 
 	@Column(name = "sis_usuario_desconto")
 	private int sisUsuarioDesconto;
 
 	@Column(name = "sis_usuario_email")
+	@XmlTransient
 	private String sisUsuarioEmail;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "sis_usuario_empresa", joinColumns = { @JoinColumn(name = "sis_usuario_id", referencedColumnName = "sis_usuario_id") }, inverseJoinColumns = { @JoinColumn(name = "emp_empresa_id", referencedColumnName = "emp_empresa_id") })
+	@XmlTransient
 	private List<EmpEmpresa> empEmpresas;
 
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "sis_grupo_usuario", joinColumns = { @JoinColumn(name = "sis_usuario_id", referencedColumnName = "sis_usuario_id") }, inverseJoinColumns = { @JoinColumn(name = "sis_grupo_id", referencedColumnName = "sis_grupo_id") })
+	@XmlTransient
 	private List<SisGrupo> sisGrupos;
 
 	@OneToMany(mappedBy = "sisUsuario", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@XmlTransient
 	private List<SisPermissao> sisPermissoes;
 
 	public SisUsuario() {
@@ -107,6 +121,14 @@ public class SisUsuario extends Dados implements Serializable {
 
 	public void setSisUsuarioAtivo(boolean sisUsuarioAtivo) {
 		this.sisUsuarioAtivo = sisUsuarioAtivo == false ? 0 : 1;
+	}
+
+	public boolean getSisUsuarioGerente() {
+		return sisUsuarioGerente;
+	}
+
+	public void setSisUsuarioGerente(boolean sisUsuarioGerente) {
+		this.sisUsuarioGerente = sisUsuarioGerente;
 	}
 
 	public boolean getSisUsuarioSistema() {

@@ -67,7 +67,8 @@ public class ProdOrigem extends Dados implements Serializable {
 		return new String[] { prodOrigemId + "", prodOrigemDescricao };
 	}
 	
+	@Override
 	public String toString(){
-		return prodOrigemDescricao;
+		return (prodOrigemId - 1) + "";
 	}
 }

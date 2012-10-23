@@ -103,7 +103,7 @@ public class FisNotaEntrada extends Dados implements Serializable {
 	public FisNotaEntrada(int fisNotaEntradaId) {
 		super("pu_fiscal", "FisNotaEntrada", "fisNotaEntradaId", "fisNotaEntradaData", EDirecao.DESC);
 		this.fisNotaEntradaId = fisNotaEntradaId;
-		this.tipoLetra = ELetra.NORMAL;
+		setTipoLetra(ELetra.NORMAL);
 	}
 
 	public int getFisNotaEntradaId() {

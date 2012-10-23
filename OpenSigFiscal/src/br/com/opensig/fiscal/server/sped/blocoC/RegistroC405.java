@@ -25,9 +25,11 @@ public class RegistroC405 extends ARegistro<DadosC405, ComEcfZ> {
 		RegistroC420 r420 = new RegistroC420();
 		r420.setEscritor(escritor);
 		for (ComEcfZTotais tot : dados.getComEcfZTotais()) {
-			r420.setDados(tot);
-			r420.executar();
-			qtdLinhas += r420.getQtdLinhas();
+			if (tot.getComEcfZTotaisValor() > 0) {
+				r420.setDados(tot);
+				r420.executar();
+				qtdLinhas += r420.getQtdLinhas();
+			}
 		}
 
 		// vendas da leitura Z

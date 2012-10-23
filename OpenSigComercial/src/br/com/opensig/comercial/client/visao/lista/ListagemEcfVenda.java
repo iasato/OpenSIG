@@ -30,7 +30,9 @@ import br.com.opensig.core.client.visao.abstrato.IFormulario;
 import br.com.opensig.core.shared.modelo.IFavorito;
 import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
 import br.com.opensig.core.shared.modelo.sistema.SisFuncao;
+import br.com.opensig.empresa.client.controlador.comando.ComandoCliente;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
+import br.com.opensig.financeiro.client.controlador.comando.ComandoReceber;
 import br.com.opensig.permissao.shared.modelo.SisUsuario;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -273,11 +275,25 @@ public class ListagemEcfVenda extends AListagem<ComEcfVenda> {
 			mnuContexto.addItem(itemZ);
 		}
 		
+		// cliente
+		SisFuncao cliente = UtilClient.getFuncaoPermitida(ComandoCliente.class);
+		MenuItem itemCliente = gerarFuncao(cliente, "empClienteId", "empCliente.empClienteId");
+		if (itemCliente != null) {
+			mnuContexto.addItem(itemCliente);
+		}
+		
 		// produtos venda
 		SisFuncao produto = UtilClient.getFuncaoPermitida(ComandoEcfVendaProduto.class);
 		MenuItem itemProduto = gerarFuncao(produto, "comEcfVenda.comEcfVendaId", "comEcfVendaId");
 		if (itemProduto != null) {
 			mnuContexto.addItem(itemProduto);
+		}
+		
+		// receber
+		SisFuncao receber = UtilClient.getFuncaoPermitida(ComandoReceber.class);
+		MenuItem itemReceber = gerarFuncao(receber, "finReceberId", "finReceber.finReceberId");
+		if (itemReceber != null) {
+			mnuContexto.addItem(itemReceber);
 		}
 
 		if (mnuContexto.getItems().length > 0) {

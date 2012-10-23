@@ -58,7 +58,7 @@ public class FisCertificado extends Dados implements Serializable {
 	public FisCertificado(int fisCertificadoId) {
 		super("pu_fiscal", "FisCertificado", "fisCertificadoId", "fisCertificadoId");
 		this.fisCertificadoId = fisCertificadoId;
-		this.tipoLetra = ELetra.NORMAL;
+		setTipoLetra(ELetra.NORMAL);
 	}
 
 	public int getFisCertificadoId() {

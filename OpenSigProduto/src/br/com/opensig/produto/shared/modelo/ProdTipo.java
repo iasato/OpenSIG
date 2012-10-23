@@ -80,4 +80,9 @@ public class ProdTipo extends Dados implements Serializable {
 
 	public void anularDependencia() {
 	}
+	
+	@Override
+	public String toString() {
+		return prodTipoValor;
+	}
 }

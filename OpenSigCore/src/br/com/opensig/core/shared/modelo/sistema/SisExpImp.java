@@ -70,7 +70,7 @@ public class SisExpImp extends Dados implements Serializable {
 	public SisExpImp(int sisExpImpId) {
 		super("pu_core", "SisExpImp", "sisExpImpId", "sisExpImpNome");
 		this.sisExpImpId = sisExpImpId;
-		this.tipoLetra = ELetra.NORMAL;
+		setTipoLetra(ELetra.NORMAL);
 	}
 
 	public int getSisExpImpId() {

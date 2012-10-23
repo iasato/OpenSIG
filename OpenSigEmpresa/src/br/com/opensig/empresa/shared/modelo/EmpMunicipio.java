@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.opensig.core.shared.modelo.Dados;
 
@@ -18,26 +20,29 @@ import br.com.opensig.core.shared.modelo.Dados;
  * Classe que representa um municipio no sistema.
  * 
  * @author Pedro H. Lira
- * @version 1.0
- * @since 09/06/2009
  */
 @Entity
 @Table(name = "emp_municipio")
+@XmlRootElement
 public class EmpMunicipio extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "emp_municipio_id")
+	@XmlElement(name = "sisMunicipioId")
 	private int empMunicipioId;
 
 	@Column(name = "emp_municipio_ibge")
+	@XmlElement(name = "sisMunicipioIbge")
 	private int empMunicipioIbge;
-	
+
 	@Column(name = "emp_municipio_descricao")
+	@XmlElement(name = "sisMunicipioDescricao")
 	private String empMunicipioDescricao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "emp_estado_id")
+	@XmlElement(name = "sisEstado")
 	private EmpEstado empEstado;
 
 	public EmpMunicipio() {
@@ -102,7 +107,7 @@ public class EmpMunicipio extends Dados implements Serializable {
 	}
 
 	public String[] toArray() {
-		return new String[] { empMunicipioId + "", empMunicipioIbge + "", empMunicipioDescricao, empEstado.getEmpEstadoId() + "", empEstado.getEmpEstadoDescricao(), empEstado.getEmpPais().getEmpPaisId() + "",
-				empEstado.getEmpPais().getEmpPaisDescricao() };
+		return new String[] { empMunicipioId + "", empMunicipioIbge + "", empMunicipioDescricao, empEstado.getEmpEstadoId() + "", empEstado.getEmpEstadoDescricao(),
+				empEstado.getEmpPais().getEmpPaisId() + "", empEstado.getEmpPais().getEmpPaisDescricao() };
 	}
 }

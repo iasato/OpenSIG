@@ -74,7 +74,7 @@ public class FinRemessa extends Dados implements Serializable {
 	public FinRemessa(int finRemessaId) {
 		super("pu_financeiro", "FinRemessa", "finRemessaId", "finRemessaCadastro", EDirecao.DESC);
 		this.finRemessaId = finRemessaId;
-		this.limpaBranco = false;
+		setLimpaBranco(false);
 	}
 
 	public int getFinRemessaId() {

@@ -17,7 +17,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import br.com.opensig.comercial.server.rest.BooleanToInteger;
+import br.com.opensig.comercial.shared.rest.SisCliente;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EDirecao;
@@ -28,58 +35,75 @@ import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
  * Classe que representa uma venda tipo D1 do ECF.
  * 
  * @author Pedro H. Lira
- * @version 1.0
- * @since 10/09/2012
  */
 @Entity
 @Table(name = "com_ecf_nota")
+@XmlRootElement(name = "EcfNota")
 public class ComEcfNota extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "com_ecf_nota_id")
+	@XmlElement(name = "ecfNotaId")
 	private int comEcfNotaId;
 
 	@Column(name = "com_ecf_nota_serie")
+	@XmlElement(name = "ecfNotaSerie")
 	private String comEcfNotaSerie;
 
 	@Column(name = "com_ecf_nota_subserie")
+	@XmlElement(name = "ecfNotaSubserie")
 	private String comEcfNotaSubserie;
 
 	@Column(name = "com_ecf_nota_numero")
+	@XmlElement(name = "ecfNotaNumero")
 	private int comEcfNotaNumero;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "com_ecf_nota_data")
+	@XmlElement(name = "ecfNotaData")
 	private Date comEcfNotaData;
 
 	@Column(name = "com_ecf_nota_bruto")
+	@XmlElement(name = "ecfNotaBruto")
 	private Double comEcfNotaBruto;
 
 	@Column(name = "com_ecf_nota_desconto")
+	@XmlElement(name = "ecfNotaDesconto")
 	private Double comEcfNotaDesconto;
 
 	@Column(name = "com_ecf_nota_liquido")
+	@XmlElement(name = "ecfNotaLiquido")
 	private Double comEcfNotaLiquido;
 
 	@Column(name = "com_ecf_nota_pis")
+	@XmlElement(name = "ecfNotaPis")
 	private Double comEcfNotaPis;
 
 	@Column(name = "com_ecf_nota_cofins")
+	@XmlElement(name = "ecfNotaCofins")
 	private Double comEcfNotaCofins;
 
 	@Column(name = "com_ecf_nota_cancelada")
+	@XmlElement(name = "ecfNotaCancelada")
+	@XmlJavaTypeAdapter(BooleanToInteger.class)
 	private int comEcfNotaCancelada;
 
 	@JoinColumn(name = "emp_cliente_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@XmlTransient
 	private EmpCliente empCliente;
+
+	@Transient
+	private SisCliente sisCliente;
 
 	@JoinColumn(name = "emp_empresa_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@XmlTransient
 	private EmpEmpresa empEmpresa;
 
 	@OneToMany(mappedBy = "comEcfNota", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@XmlElement(name = "ecfNotaProdutos")
 	private List<ComEcfNotaProduto> comEcfNotaProdutos;
 
 	public ComEcfNota() {
@@ -185,6 +209,14 @@ public class ComEcfNota extends Dados implements Serializable {
 
 	public void setEmpCliente(EmpCliente empCliente) {
 		this.empCliente = empCliente;
+	}
+
+	public SisCliente getSisCliente() {
+		return sisCliente;
+	}
+
+	public void setSisCliente(SisCliente sisCliente) {
+		this.sisCliente = sisCliente;
 	}
 
 	public EmpEmpresa getEmpEmpresa() {

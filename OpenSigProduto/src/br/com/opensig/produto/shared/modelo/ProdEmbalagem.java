@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import br.com.opensig.core.shared.modelo.Dados;
 
@@ -20,6 +21,7 @@ import br.com.opensig.core.shared.modelo.Dados;
  */
 @Entity
 @Table(name = "prod_embalagem")
+@XmlRootElement
 public class ProdEmbalagem extends Dados implements Serializable {
 
 	@Id

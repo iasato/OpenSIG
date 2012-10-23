@@ -13,7 +13,7 @@ public class RegistroC410 extends ARegistro<DadosC410, List<ComEcfZTotais>> {
 		double liquido = 0.00;
 		for (ComEcfZTotais t : dados) {
 			if (!t.getComEcfZTotaisCodigo().equals("OPNF") && t.getComEcfZTotaisCodigo().equals("DT") && t.getComEcfZTotaisCodigo().equals("DS") && t.getComEcfZTotaisCodigo().equals("Can-T")
-					&& t.getComEcfZTotaisCodigo().equals("Cant-S")) {
+					&& t.getComEcfZTotaisCodigo().equals("Can-S")) {
 				liquido += t.getComEcfZTotaisValor();
 			}
 		}

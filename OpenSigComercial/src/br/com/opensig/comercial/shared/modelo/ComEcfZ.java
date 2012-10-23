@@ -18,63 +18,94 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import br.com.opensig.comercial.server.rest.BooleanToInteger;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EDirecao;
 
+/**
+ * Classe que representa a reducao Z.
+ * 
+ * @author Pedro H. Lira
+ */
 @Entity
 @Table(name = "com_ecf_z")
+@XmlRootElement(name = "EcfZ")
 public class ComEcfZ extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "com_ecf_z_id")
+	@XmlElement(name = "ecfZId")
 	private int comEcfZId;
 
 	@Column(name = "com_ecf_z_usuario")
+	@XmlElement(name = "ecfZUsuario")
 	private int comEcfZUsuario;
 
 	@Column(name = "com_ecf_z_coo_ini")
+	@XmlElement(name = "ecfZCooIni")
 	private int comEcfZCooIni;
 
 	@Column(name = "com_ecf_z_coo_fin")
+	@XmlElement(name = "ecfZCooFin")
 	private int comEcfZCooFin;
 
 	@Column(name = "com_ecf_z_cro")
+	@XmlElement(name = "ecfZCro")
 	private int comEcfZCro;
 
 	@Column(name = "com_ecf_z_crz")
+	@XmlElement(name = "ecfZCrz")
 	private int comEcfZCrz;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "com_ecf_z_movimento")
+	@XmlElement(name = "ecfZMovimento")
 	private Date comEcfZMovimento;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "com_ecf_z_emissao")
+	@XmlElement(name = "ecfZEmissao")
 	private Date comEcfZEmissao;
 
 	@Column(name = "com_ecf_z_bruto")
+	@XmlElement(name = "ecfZBruto")
 	private Double comEcfZBruto;
 
 	@Column(name = "com_ecf_z_gt")
+	@XmlElement(name = "ecfZGt")
 	private Double comEcfZGt;
 
 	@Column(name = "com_ecf_z_issqn")
+	@XmlElement(name = "ecfZIssqn")
+	@XmlJavaTypeAdapter(BooleanToInteger.class)
 	private int comEcfZIssqn;
 
 	@JoinColumn(name = "com_ecf_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@XmlTransient
 	private ComEcf comEcf;
 
 	@OneToMany(mappedBy = "comEcfZ", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@XmlElement(name = "ecfZTotais")
 	private List<ComEcfZTotais> comEcfZTotais;
 
 	@OneToMany(mappedBy = "comEcfZ", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@XmlElement(name = "ecfVendas")
 	private List<ComEcfVenda> comEcfVendas;
 
 	@Transient
+	@XmlElement(name = "ecfDocumentos")
+	private List<ComEcfDocumento> comEcfDocumentos;
+
+	@Transient
+	@XmlTransient
 	private String issqn;
 
 	public ComEcfZ() {
@@ -188,6 +219,14 @@ public class ComEcfZ extends Dados implements Serializable {
 
 	public void setComEcfVendas(List<ComEcfVenda> comEcfVendas) {
 		this.comEcfVendas = comEcfVendas;
+	}
+
+	public List<ComEcfDocumento> getComEcfDocumentos() {
+		return comEcfDocumentos;
+	}
+
+	public void setComEcfDocumentos(List<ComEcfDocumento> comEcfDocumentos) {
+		this.comEcfDocumentos = comEcfDocumentos;
 	}
 
 	public boolean getComEcfZIssqn() {

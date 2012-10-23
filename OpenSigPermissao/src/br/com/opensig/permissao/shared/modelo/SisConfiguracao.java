@@ -48,7 +48,7 @@ public class SisConfiguracao extends Dados implements Serializable {
 	public SisConfiguracao(int sisConfiguracaoId) {
 		super("pu_permissao", "SisConfiguracao", "sisConfiguracaoId", "sisConfiguracaoChave");
 		this.sisConfiguracaoId = sisConfiguracaoId;
-		this.tipoLetra = ELetra.NORMAL;
+		setTipoLetra(ELetra.NORMAL);
 	}
 
 	public int getSisConfiguracaoId() {

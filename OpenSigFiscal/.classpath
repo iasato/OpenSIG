@@ -2,11 +2,9 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GWT_EXT"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigCore"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigPermissao"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigEmpresa"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Jersey"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JPA">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
@@ -18,19 +16,15 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/axiom-api-1.2.10.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/axis2-kernel-1.5.3.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/jasperreports-4.0.2p.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/jasypt-1.8.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/Json.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/log4j-1.2.14.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/nfews2.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/nfexml2.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/simplecaptcha.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/commons-httpclient-3.1.jar"/>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/beanio.jar" sourcepath="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/.m2/repository/org/beanio/beanio/1.2.0/beanio-1.2.0-sources.jar"/>
 	<classpathentry kind="lib" path="/OpenSigFinanceiro/dist/OpenSigFinanceiro.jar"/>
 	<classpathentry kind="lib" path="/OpenSigProduto/dist/OpenSigProduto.jar"/>
 	<classpathentry kind="lib" path="/OpenSigComercial/dist/OpenSigComercial.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GWT EXT"/>
+	<classpathentry kind="lib" path="/OpenSig/jars/beanio.jar"/>
+	<classpathentry kind="lib" path="/OpenSig/jars/jasypt-1.9.0.jar"/>
+	<classpathentry kind="lib" path="/OpenSig/jars/Json.jar"/>
+	<classpathentry kind="lib" path="/OpenSig/jars/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="/OpenSig/jars/simplecaptcha.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/NFe"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>

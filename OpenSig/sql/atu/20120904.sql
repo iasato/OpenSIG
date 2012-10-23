@@ -38,10 +38,19 @@ INSERT INTO `sis_funcao` (`sis_modulo_id`, `sis_funcao_classe`, `sis_funcao_orde
 # atualizando as formas de pagamentos
 ALTER TABLE `fin_forma` ADD COLUMN `fin_forma_codigo` VARCHAR(2) NOT NULL  AFTER `fin_forma_descricao` , ADD COLUMN `fin_forma_tef` TINYINT(1) NOT NULL  AFTER `fin_forma_codigo` , ADD COLUMN `fin_forma_vinculado` TINYINT(1) NOT NULL  AFTER `fin_forma_tef` , ADD COLUMN `fin_forma_debito` TINYINT(1) NOT NULL  AFTER `fin_forma_vinculado` , ADD COLUMN `fin_forma_rede` VARCHAR(20) NOT NULL  AFTER `fin_forma_debito` 
 , DROP INDEX `UNIQUE` ;
-UPDATE `fin_forma` SET `fin_forma_descricao` = 'OUTRO CARTÃO' WHERE `fin_forma_descricao` = 'CARTÃO';
-UPDATE `fin_forma` SET `fin_forma_codigo` = '00', `fin_forma_rede` = 'LOJA' WHERE `fin_forma_descricao` <> 'DINHEIRO';
+UPDATE `fin_forma` SET `fin_forma_codigo` = '00', `fin_forma_rede` = 'LOJA' WHERE `fin_forma_descricao` <> 'DINHEIRO' && `fin_forma_descricao` <> 'CHEQUE';
 UPDATE `fin_forma` SET `fin_forma_codigo` = '01', `fin_forma_rede` = 'LOJA' WHERE `fin_forma_descricao` = 'DINHEIRO';
+UPDATE `fin_forma` SET `fin_forma_codigo` = '02', `fin_forma_tef` = 1, `fin_forma_vinculado` = 1, `fin_forma_rede` = 'REDECARD' WHERE `fin_forma_descricao` = 'CHEQUE';
 UPDATE `fin_forma` SET `fin_forma_descricao` = UPPER(`fin_forma_descricao`);
+INSERT INTO `fin_forma` (`fin_forma_descricao`, `fin_forma_codigo`, `fin_forma_tef`, `fin_forma_vinculado`, `fin_forma_debito`, `fin_forma_rede`, `fin_forma_pagar`, `fin_forma_receber`) VALUES ('MASTER - DEB', '03', '1', '1', '1', 'REDECARD', '1', '1');
+INSERT INTO `fin_forma` (`fin_forma_descricao`, `fin_forma_codigo`, `fin_forma_tef`, `fin_forma_vinculado`, `fin_forma_debito`, `fin_forma_rede`, `fin_forma_pagar`, `fin_forma_receber`) VALUES ('MASTER - CRED', '03', '1', '1', '0', 'REDECARD', '1', '1');
+INSERT INTO `fin_forma` (`fin_forma_descricao`, `fin_forma_codigo`, `fin_forma_tef`, `fin_forma_vinculado`, `fin_forma_debito`, `fin_forma_rede`, `fin_forma_pagar`, `fin_forma_receber`) VALUES ('VISA - DEB', '03', '1', '1', '1', 'VISANET', '1', '1');
+INSERT INTO `fin_forma` (`fin_forma_descricao`, `fin_forma_codigo`, `fin_forma_tef`, `fin_forma_vinculado`, `fin_forma_debito`, `fin_forma_rede`, `fin_forma_pagar`, `fin_forma_receber`) VALUES ('VISA - CRED', '03', '1', '1', '0', 'VISANET', '1', '1');
+INSERT INTO `fin_forma` (`fin_forma_descricao`, `fin_forma_codigo`, `fin_forma_tef`, `fin_forma_vinculado`, `fin_forma_debito`, `fin_forma_rede`, `fin_forma_pagar`, `fin_forma_receber`) VALUES ('HIPER - DEB', '03', '1', '1', '1', 'HCARD', '1', '1');
+INSERT INTO `fin_forma` (`fin_forma_descricao`, `fin_forma_codigo`, `fin_forma_tef`, `fin_forma_vinculado`, `fin_forma_debito`, `fin_forma_rede`, `fin_forma_pagar`, `fin_forma_receber`) VALUES ('HIPER - CRED', '03', '1', '1', '0', 'HCARD', '1', '1');
+INSERT INTO `fin_forma` (`fin_forma_descricao`, `fin_forma_codigo`, `fin_forma_tef`, `fin_forma_vinculado`, `fin_forma_debito`, `fin_forma_rede`, `fin_forma_pagar`, `fin_forma_receber`) VALUES ('AMERICAN EXPRESS', '03', '1', '1', '0', 'AMEX', '1', '1');
+# CASO TENHA MAIS CARTOES, VERIFICAR SE PERTENCE A UMA DAS 3 REDES HOMOLOGADAS, SE SIM SO CADASTRAR, SENAO FICA SEM PODER USAR
+
 
 # remove a tabela de bandeira, nao sera mais usada e coloca a forma de pagamento no lugar
 DROP TABLE `fin_bandeira`;
@@ -72,7 +81,7 @@ CREATE  TABLE `com_ecf_documento` (
 # criando a tabela de nota avulsas
 CREATE TABLE `com_ecf_nota` (
   `com_ecf_nota_id` int(11) NOT NULL AUTO_INCREMENT,
-  `emp_cliente_id` int(11) NULL DEFAULT NULL,
+  `emp_cliente_id` int(11) NOT NULL,
   `emp_empresa_id` int(11) NOT NULL,
   `com_ecf_nota_serie` varchar(3) NOT NULL,
   `com_ecf_nota_subserie` varchar(3) NOT NULL,

@@ -2,26 +2,48 @@ package br.com.opensig.core.shared.modelo;
 
 import java.io.Serializable;
 
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlTransient;
+
 import br.com.opensig.core.client.UtilClient;
 
 /**
- * Classe de abstrae os dados das classes POJOs que representam os dados das
- * tabelas.
+ * Classe de abstrae os dados das classes POJOs que representam os dados das tabelas.
  * 
  * @author Pedro H. Lira
- * @version 1.0
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public abstract class Dados implements Serializable {
 
-	protected String pu;
-	protected String tabela;
-	protected Colecao[] colecao;
-	protected String campoId;
-	protected String campoOrdem;
-	protected EDirecao ordemDirecao;
-	protected ELetra tipoLetra;
-	protected boolean limpaBranco;
-	protected int empresa;
+	@Transient
+	@XmlTransient
+	private String pu;
+	@Transient
+	@XmlTransient
+	private String tabela;
+	@Transient
+	@XmlTransient
+	private Colecao[] colecao;
+	@Transient
+	@XmlTransient
+	private String campoId;
+	@Transient
+	@XmlTransient
+	private String campoOrdem;
+	@Transient
+	@XmlTransient
+	private EDirecao ordemDirecao;
+	@Transient
+	@XmlTransient
+	private ELetra tipoLetra;
+	@Transient
+	@XmlTransient
+	private boolean limpaBranco;
+	@Transient
+	@XmlTransient
+	private int empresa;
 
 	/**
 	 * Construtor que define as valores padrões de cada classe POJO.
@@ -211,8 +233,7 @@ public abstract class Dados implements Serializable {
 	}
 
 	/**
-	 * Metodo que retorna se o sistema limpa os espaços em branco dos campos
-	 * Texto na hora de salvar.
+	 * Metodo que retorna se o sistema limpa os espaços em branco dos campos Texto na hora de salvar.
 	 * 
 	 * @return true [padrao] se ele esta limpando, false se nao é limpado.
 	 */
@@ -221,8 +242,7 @@ public abstract class Dados implements Serializable {
 	}
 
 	/**
-	 * Metodo que define se o sistema deve limpar os campos de Texto na hora de
-	 * salvar.
+	 * Metodo que define se o sistema deve limpar os campos de Texto na hora de salvar.
 	 * 
 	 * @param limpaBranco
 	 *            true [padrao] se ele deve limpar, false se nao deve limpar.

@@ -11,32 +11,39 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.opensig.core.shared.modelo.Dados;
 
 /**
- * Classe que representa um total do Z.
+ * Classe que representa os totais da reducao Z.
  * 
  * @author Pedro H. Lira
- * @version 1.0
  */
 @Entity
 @Table(name = "com_ecf_z_totais")
+@XmlRootElement(name = "EcfZTotais")
 public class ComEcfZTotais extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "com_ecf_z_totais_id")
+	@XmlElement(name = "ecfZTotaisId")
 	private int comEcfZTotaisId;
 
 	@Column(name = "com_ecf_z_totais_codigo")
+	@XmlElement(name = "ecfZTotaisCodigo")
 	private String comEcfZTotaisCodigo;
 
 	@Column(name = "com_ecf_z_totais_valor")
+	@XmlElement(name = "ecfZTotaisValor")
 	private Double comEcfZTotaisValor;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "com_ecf_z_id")
+	@XmlTransient
 	private ComEcfZ comEcfZ;
 
 	public ComEcfZTotais() {

@@ -14,44 +14,62 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.core.shared.modelo.EDirecao;
 
+/**
+ * Classe que representa os documentos emitidos pelo ECF.
+ * 
+ * @author Pedro H. Lira
+ */
 @Entity
 @Table(name = "com_ecf_documento")
+@XmlRootElement(name = "EcfDocumento")
 public class ComEcfDocumento extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "com_ecf_documento_id")
+	@XmlElement(name = "ecfDocumentoId")
 	private int comEcfDocumentoId;
 
 	@Column(name = "com_ecf_documento_usuario")
+	@XmlElement(name = "ecfDocumentoUsuario")
 	private int comEcfDocumentoUsuario;
 
 	@Column(name = "com_ecf_documento_coo")
+	@XmlElement(name = "ecfDocumentoCoo")
 	private int comEcfDocumentoCoo;
 
 	@Column(name = "com_ecf_documento_gnf")
+	@XmlElement(name = "ecfDocumentoGnf")
 	private int comEcfDocumentoGnf;
 
 	@Column(name = "com_ecf_documento_grg")
+	@XmlElement(name = "ecfDocumentoGrg")
 	private int comEcfDocumentoGrg;
 
 	@Column(name = "com_ecf_documento_cdc")
+	@XmlElement(name = "ecfDocumentoCdc")
 	private int comEcfDocumentoCdc;
 
 	@Column(name = "com_ecf_documento_tipo")
+	@XmlElement(name = "ecfDocumentoTipo")
 	private String comEcfDocumentoTipo;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "com_ecf_documento_data")
+	@XmlElement(name = "ecfDocumentoData")
 	private Date comEcfDocumentoData;
 
 	@JoinColumn(name = "com_ecf_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@XmlTransient
 	private ComEcf comEcf;
 
 	public ComEcfDocumento() {

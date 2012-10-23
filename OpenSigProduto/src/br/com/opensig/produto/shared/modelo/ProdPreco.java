@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 
 import br.com.opensig.core.shared.modelo.Dados;
 
@@ -18,11 +21,10 @@ import br.com.opensig.core.shared.modelo.Dados;
  * Classe que representa um preço no sistema.
  * 
  * @author Pedro H. Lira
- * @version 1.0
- * @since 16/07/2009
  */
 @Entity
 @Table(name = "prod_preco")
+@XmlRootElement
 public class ProdPreco extends Dados implements Serializable {
 
 	@Id
@@ -38,6 +40,7 @@ public class ProdPreco extends Dados implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_produto_id")
+	@XmlInverseReference(mappedBy = "prodPrecos")
 	private ProdProduto prodProduto;
 
 	@ManyToOne(fetch = FetchType.LAZY)

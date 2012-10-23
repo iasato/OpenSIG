@@ -15,6 +15,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Dados;
@@ -26,75 +30,95 @@ import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
  * Classe que representa uma nfe de saida no sistema.
  * 
  * @author Pedro H. Lira
- * @version 1.0
- * @since 20/07/2010
  */
 @Entity
 @Table(name = "fis_nota_saida")
+@XmlRootElement(name = "EcfNotaEletronica")
 public class FisNotaSaida extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "fis_nota_saida_id")
+	@XmlElement(name = "ecfNotaEletronicaId")
 	private int fisNotaSaidaId;
 
 	@Column(name = "fis_nota_saida_chave")
+	@XmlElement(name = "ecfNotaEletronicaChave")
 	private String fisNotaSaidaChave;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fis_nota_saida_cadastro")
+	@XmlTransient
 	private Date fisNotaSaidaCadastro;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fis_nota_saida_data")
+	@XmlElement(name = "ecfNotaEletronicaData")
 	private Date fisNotaSaidaData;
 
 	@Column(name = "fis_nota_saida_numero")
+	@XmlElement(name = "ecfNotaEletronicaNumero")
 	private int fisNotaSaidaNumero;
 
 	@Column(name = "fis_nota_saida_protocolo")
+	@XmlElement(name = "ecfNotaEletronicaProtocolo")
 	private String fisNotaSaidaProtocolo;
 
 	@Column(name = "fis_nota_saida_recibo")
+	@XmlElement(name = "ecfNotaEletronicaRecibo")
 	private String fisNotaSaidaRecibo;
 
 	@Column(name = "fis_nota_saida_protocolo_cancelado")
+	@XmlElement(name = "ecfNotaEletronicaProtocoloCancelado")
 	private String fisNotaSaidaProtocoloCancelado;
 
 	@Column(name = "fis_nota_saida_valor")
+	@XmlElement(name = "ecfNotaEletronicaValor")
 	private Double fisNotaSaidaValor;
 
 	@Column(name = "fis_nota_saida_icms")
+	@XmlElement(name = "ecfNotaEletronicaIcms")
 	private Double fisNotaSaidaIcms;
 
 	@Column(name = "fis_nota_saida_ipi")
+	@XmlElement(name = "ecfNotaEletronicaIpi")
 	private Double fisNotaSaidaIpi;
 
 	@Column(name = "fis_nota_saida_pis")
+	@XmlElement(name = "ecfNotaEletronicaPis")
 	private Double fisNotaSaidaPis;
 
 	@Column(name = "fis_nota_saida_cofins")
+	@XmlElement(name = "ecfNotaEletronicaCofins")
 	private Double fisNotaSaidaCofins;
 
 	@Lob()
 	@Column(name = "fis_nota_saida_xml")
+	@XmlElement(name = "ecfNotaEletronicaXml")
 	private String fisNotaSaidaXml;
 
 	@Lob()
 	@Column(name = "fis_nota_saida_xml_cancelado")
+	@XmlElement(name = "ecfNotaEletronicaXmlCancelado")
 	private String fisNotaSaidaXmlCancelado;
 
 	@Lob()
 	@Column(name = "fis_nota_saida_erro")
+	@XmlTransient
 	private String fisNotaSaidaErro;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "fis_nota_status_id")
+	@XmlTransient
 	private FisNotaStatus fisNotaStatus;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "emp_empresa_id")
+	@XmlTransient
 	private EmpEmpresa empEmpresa;
+
+	@Transient
+	private String ecfNotaEletronicaStatus;
 
 	public FisNotaSaida() {
 		this(0);
@@ -103,7 +127,7 @@ public class FisNotaSaida extends Dados implements Serializable {
 	public FisNotaSaida(int fisNotaSaidaId) {
 		super("pu_fiscal", "FisNotaSaida", "fisNotaSaidaId", "fisNotaSaidaData", EDirecao.DESC);
 		this.fisNotaSaidaId = fisNotaSaidaId;
-		this.tipoLetra = ELetra.NORMAL;
+		setTipoLetra(ELetra.NORMAL);
 	}
 
 	public int getFisNotaSaidaId() {
@@ -256,6 +280,14 @@ public class FisNotaSaida extends Dados implements Serializable {
 
 	public void setFisNotaSaidaXmlCancelado(String fisNotaSaidaXmlCancelado) {
 		this.fisNotaSaidaXmlCancelado = fisNotaSaidaXmlCancelado;
+	}
+
+	public String getEcfNotaEletronicaStatus() {
+		return ecfNotaEletronicaStatus;
+	}
+
+	public void setEcfNotaEletronicaStatus(String ecfNotaEletronicaStatus) {
+		this.ecfNotaEletronicaStatus = ecfNotaEletronicaStatus;
 	}
 
 	public String[] toArray() {

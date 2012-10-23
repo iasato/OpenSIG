@@ -17,6 +17,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Colecao;
@@ -28,11 +32,10 @@ import br.com.opensig.empresa.shared.modelo.EmpFornecedor;
  * Classe que representa um produto no sistema.
  * 
  * @author Pedro H. Lira
- * @version 1.0
- * @since 16/07/2009
  */
 @Entity
 @Table(name = "prod_produto")
+@XmlRootElement
 public class ProdProduto extends Dados implements Serializable {
 
 	@Id
@@ -48,9 +51,11 @@ public class ProdProduto extends Dados implements Serializable {
 	private Date prodProdutoAlterado;
 
 	@Column(name = "prod_produto_ativo")
+	@XmlElement(type = Boolean.class)
 	private int prodProdutoAtivo;
 
 	@Column(name = "prod_produto_incentivo")
+	@XmlTransient
 	private int prodProdutoIncentivo;
 
 	@Column(name = "prod_produto_barra")
@@ -61,9 +66,11 @@ public class ProdProduto extends Dados implements Serializable {
 	private Date prodProdutoCadastrado;
 
 	@Column(name = "prod_produto_categoria")
+	@XmlTransient
 	private String prodProdutoCategoria;
 
 	@Column(name = "prod_produto_custo")
+	@XmlTransient
 	private Double prodProdutoCusto;
 
 	@Column(name = "prod_produto_descricao")
@@ -73,12 +80,14 @@ public class ProdProduto extends Dados implements Serializable {
 	private Double prodProdutoPreco;
 
 	@Column(name = "prod_produto_volume")
+	@XmlTransient
 	private int prodProdutoVolume;
 
 	@Column(name = "prod_produto_referencia")
 	private String prodProdutoReferencia;
 	
 	@Column(name = "prod_produto_observacao")
+	@XmlTransient
 	private String prodProdutoObservacao;
 
 	@OneToMany(mappedBy = "prodProduto", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
@@ -88,30 +97,37 @@ public class ProdProduto extends Dados implements Serializable {
 	private List<ProdComposicao> prodComposicoes;
 
 	@OneToMany(mappedBy = "prodProduto", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@XmlTransient
 	private List<ProdEstoque> prodEstoques;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_tributacao_id")
+	@XmlTransient
 	private ProdTributacao prodTributacao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_ipi_id")
+	@XmlTransient
 	private ProdIpi prodIpi;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_tipo_id")
+	@XmlElement(name = "prodProdutoTipo", type = String.class)
 	private ProdTipo prodTipo;
 
 	@JoinColumn(name = "emp_fornecedor_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@XmlTransient
 	private EmpFornecedor empFornecedor;
 
 	@JoinColumn(name = "emp_fabricante_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@XmlTransient
 	private EmpFornecedor empFabricante;
 
 	@JoinColumn(name = "prod_origem_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@XmlElement(name = "prodProdutoOrigem", type = String.class)
 	private ProdOrigem prodOrigem;
 
 	@JoinColumn(name = "prod_embalagem_id")
@@ -119,8 +135,30 @@ public class ProdProduto extends Dados implements Serializable {
 	private ProdEmbalagem prodEmbalagem;
 
 	@Column(name = "prod_produto_sinc")
+	@XmlTransient
 	private int prodProdutoSinc;
+	
+	@Transient
+	private Double prodProdutoEstoque;
+	
+	@Transient
+	private String prodProdutoCstCson;
+	
+	@Transient
+	private char prodProdutoTributacao;
+	
+	@Transient
+	private Double prodProdutoIcms;
+	
+	@Transient
+	private Double prodProdutoIssqn;
+	
+	@Transient
+	private char prodProdutoIat;
 
+	@Transient
+	private char prodProdutoIppt;
+	
 	public ProdProduto() {
 		this(0);
 	}
@@ -334,6 +372,62 @@ public class ProdProduto extends Dados implements Serializable {
 		this.prodProdutoSinc = prodProdutoSinc;
 	}
 
+	public Double getProdProdutoEstoque() {
+		return prodProdutoEstoque;
+	}
+
+	public void setProdProdutoEstoque(Double prodProdutoEstoque) {
+		this.prodProdutoEstoque = prodProdutoEstoque;
+	}
+
+	public String getProdProdutoCstCson() {
+		return prodProdutoCstCson;
+	}
+
+	public void setProdProdutoCstCson(String prodProdutoCstCson) {
+		this.prodProdutoCstCson = prodProdutoCstCson;
+	}
+
+	public char getProdProdutoTributacao() {
+		return prodProdutoTributacao;
+	}
+
+	public void setProdProdutoTributacao(char prodProdutoTributacao) {
+		this.prodProdutoTributacao = prodProdutoTributacao;
+	}
+
+	public Double getProdProdutoIcms() {
+		return prodProdutoIcms;
+	}
+
+	public void setProdProdutoIcms(Double prodProdutoIcms) {
+		this.prodProdutoIcms = prodProdutoIcms;
+	}
+
+	public Double getProdProdutoIssqn() {
+		return prodProdutoIssqn;
+	}
+
+	public void setProdProdutoIssqn(Double prodProdutoIssqn) {
+		this.prodProdutoIssqn = prodProdutoIssqn;
+	}
+
+	public char getProdProdutoIat() {
+		return prodProdutoIat;
+	}
+
+	public void setProdProdutoIat(char prodProdutoIat) {
+		this.prodProdutoIat = prodProdutoIat;
+	}
+
+	public char getProdProdutoIppt() {
+		return prodProdutoIppt;
+	}
+
+	public void setProdProdutoIppt(char prodProdutoIppt) {
+		this.prodProdutoIppt = prodProdutoIppt;
+	}
+
 	public Number getId() {
 		return prodProdutoId;
 	}
@@ -345,7 +439,7 @@ public class ProdProduto extends Dados implements Serializable {
 	public String[] toArray() {
 		double estoque = 0;
 		for (ProdEstoque est : prodEstoques) {
-			if (est.getEmpEmpresa().getEmpEmpresaId() == empresa) {
+			if (est.getEmpEmpresa().getEmpEmpresaId() == getEmpresa()) {
 				estoque = est.getProdEstoqueQuantidade();
 				break;
 			}

@@ -11,6 +11,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 
 import br.com.opensig.core.shared.modelo.Dados;
 
@@ -21,6 +24,7 @@ import br.com.opensig.core.shared.modelo.Dados;
  */
 @Entity
 @Table(name = "prod_composicao")
+@XmlRootElement
 public class ProdComposicao extends Dados implements Serializable {
 
 	@Id
@@ -36,6 +40,7 @@ public class ProdComposicao extends Dados implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "prod_produto_principal")
+	@XmlInverseReference(mappedBy = "prodComposicoes")
 	private ProdProduto prodProdutoPrincipal;
 	
 	@ManyToOne(fetch = FetchType.LAZY)

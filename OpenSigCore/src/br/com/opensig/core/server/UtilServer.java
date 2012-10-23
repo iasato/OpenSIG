@@ -44,6 +44,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+import org.jasypt.util.text.BasicTextEncryptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -423,6 +424,22 @@ public class UtilServer extends HttpServlet {
 			return DateFormat.getDateInstance(formato, LOCAL).format(data);
 		}
 	}
+	
+	/**
+     * Metodo que formata a data.
+     *
+     * @param data    a data em formato string.
+     * @param formato o formado desejado.
+     * <p/>
+     * @return a data como objeto ou null se tiver erro.
+     */
+    public static Date formataData(String data, String formato) {
+        try {
+            return new SimpleDateFormat(formato).parse(data);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
 
 	/**
 	 * Metodo que formata a hora.
@@ -640,4 +657,28 @@ public class UtilServer extends HttpServlet {
 		}
 		return true;
 	}
+	
+    /**
+     * Metodo que criptografa um texto passado usando a chave privada.
+     *
+     * @param texto valor a ser criptografado.
+     * @return o texto informado criptografado.
+     */
+    public static String encriptar(String texto) {
+        BasicTextEncryptor encryptor = new BasicTextEncryptor();
+        encryptor.setPassword(ChavePrivada.VALOR);
+        return encryptor.encrypt(texto);
+    }
+
+    /**
+     * Metodo que descriptografa um texto passado usando a chave privada.
+     *
+     * @param texto valor a ser descriptografado.
+     * @return o texto informado descriptografado.
+     */
+    public static String descriptar(String texto) {
+        BasicTextEncryptor encryptor = new BasicTextEncryptor();
+        encryptor.setPassword(ChavePrivada.VALOR);
+        return encryptor.decrypt(texto);
+    }
 }

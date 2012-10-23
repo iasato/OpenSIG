@@ -8,6 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.opensig.core.shared.modelo.Dados;
 
@@ -15,40 +18,48 @@ import br.com.opensig.core.shared.modelo.Dados;
  * Classe que representa uma forma de pagamento no sistema.
  * 
  * @author Pedro H. Lira
- * @version 1.0
- * @since 18/11/2009
  */
 @Entity
 @Table(name = "fin_forma")
+@XmlRootElement(name = "EcfPagamentoTipo")
 public class FinForma extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "fin_forma_id")
+	@XmlElement(name = "ecfPagamentoTipoId")
 	private int finFormaId;
 
 	@Column(name = "fin_forma_descricao")
+	@XmlElement(name = "ecfPagamentoTipoDescricao")
 	private String finFormaDescricao;
 
 	@Column(name = "fin_forma_codigo")
+	@XmlElement(name = "ecfPagamentoTipoCodigo")
 	private String finFormaCodigo;
 
 	@Column(name = "fin_forma_tef")
+	@XmlElement(name = "ecfPagamentoTipoTef", type = Boolean.class)
 	private int finFormaTef;
 
 	@Column(name = "fin_forma_vinculado")
+	@XmlElement(name = "ecfPagamentoTipoVinculado", type = Boolean.class)
 	private int finFormaVinculado;
 
 	@Column(name = "fin_forma_debito")
+	@XmlElement(name = "ecfPagamentoTipoDebito", type = Boolean.class)
 	private int finFormaDebito;
 
 	@Column(name = "fin_forma_rede")
+	@XmlElement(name = "ecfPagamentoTipoRede")
 	private String finFormaRede;
 
 	@Column(name = "fin_forma_pagar")
+	@XmlTransient
 	private int finFormaPagar;
 
 	@Column(name = "fin_forma_receber")
+	@XmlTransient
 	private int finFormaReceber;
 
 	public FinForma() {

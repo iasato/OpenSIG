@@ -19,8 +19,6 @@ import br.com.opensig.core.shared.modelo.Dados;
  * Classe que representa um funcionario no sistema.
  * 
  * @author Pedro H. Lira
- * @version 1.0
- * @since 31/07/2009
  */
 @Entity
 @Table(name = "emp_funcionario")

@@ -11,48 +11,63 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.empresa.shared.modelo.EmpEmpresa;
 
 @Entity
 @Table(name = "com_ecf")
+@XmlRootElement(name = "EcfImpressora")
 public class ComEcf extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "com_ecf_id")
+	@XmlElement(name = "ecfImpressoraId")
 	private int comEcfId;
 
 	@Column(name = "com_ecf_caixa")
+	@XmlElement(name = "ecfImpressoraCaixa")
 	private int comEcfCaixa;
 
 	@Column(name = "com_ecf_codigo")
+	@XmlElement(name = "ecfImpressoraCodigo")
 	private String comEcfCodigo;
 
 	@Column(name = "com_ecf_mfadicional")
+	@XmlElement(name = "ecfImpressoraMfAdicional")
 	private String comEcfMfAdicional;
 
 	@Column(name = "com_ecf_identificacao")
+	@XmlElement(name = "ecfImpressoraIdentificacao")
 	private String comEcfIdentificacao;
 
 	@Column(name = "com_ecf_tipo")
+	@XmlElement(name = "ecfImpressoraTipo")
 	private String comEcfTipo;
 
 	@Column(name = "com_ecf_marca")
+	@XmlElement(name = "ecfImpressoraMarca")
 	private String comEcfMarca;
 
 	@Column(name = "com_ecf_modelo")
+	@XmlElement(name = "ecfImpressoraModelo")
 	private String comEcfModelo;
 
 	@Column(name = "com_ecf_serie")
+	@XmlElement(name = "ecfImpressoraSerie")
 	private String comEcfSerie;
 
 	@Column(name = "com_ecf_ativo")
+	@XmlElement(name = "ecfImpressoraAtivo", type = Boolean.class)
 	private int comEcfAtivo;
 
 	@JoinColumn(name = "emp_empresa_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@XmlTransient
 	private EmpEmpresa empEmpresa;
 
 	public ComEcf() {

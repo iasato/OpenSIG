@@ -17,6 +17,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Dados;
@@ -28,48 +32,61 @@ import br.com.opensig.empresa.shared.modelo.EmpEntidade;
  * Classe que representa um a receber no sistema.
  * 
  * @author Pedro H. Lira
- * @version 1.0
- * @since 18/11/2009
  */
 @Entity
 @Table(name = "fin_receber")
+@XmlRootElement(name = "EcfPagamento")
 public class FinReceber extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "fin_receber_id")
+	@XmlElement(name = "ecfPagamentoId")
 	private int finReceberId;
 
 	@Column(name = "fin_receber_valor")
+	@XmlElement(name = "ecfPagamentoValor")
 	private Double finReceberValor;
 
 	@Column(name = "fin_receber_categoria")
+	@XmlElement(name = "ecfPagamentoNsu")
 	private String finReceberCategoria;
 	
 	@Column(name = "fin_receber_nfe")
+	@XmlElement(name = "ecfPagamentoGnf")
 	private int finReceberNfe;
 
 	@Column(name = "fin_receber_cadastro")
 	@Temporal(TemporalType.DATE)
+	@XmlElement(name = "ecfPagamentoData")
 	private Date finReceberCadastro;
 
 	@Column(name = "fin_receber_observacao")
+	@XmlTransient
 	private String finReceberObservacao;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "emp_empresa_id")
+	@XmlTransient
 	private EmpEmpresa empEmpresa;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "emp_entidade_id")
+	@XmlTransient
 	private EmpEntidade empEntidade;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "fin_conta_id")
+	@XmlTransient
 	private FinConta finConta;
 
 	@OneToMany(mappedBy = "finReceber", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+	@XmlElement(name = "ecfPagamentoParcelas")
 	private List<FinRecebimento> finRecebimentos;
+	
+	@Transient
+	@XmlElement(name = "ecfPagamentoTipo")
+	private FinForma finForma;
 	
 	public FinReceber() {
 		this(0);
@@ -160,6 +177,14 @@ public class FinReceber extends Dados implements Serializable {
 		this.finReceberObservacao = finReceberObservacao;
 	}
 
+	public FinForma getFinForma() {
+		return finForma;
+	}
+	
+	public void setFinForma(FinForma finForma) {
+		this.finForma = finForma;
+	}
+	
 	public Number getId() {
 		return finReceberId;
 	}

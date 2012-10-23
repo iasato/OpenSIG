@@ -13,6 +13,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.opensig.core.shared.modelo.Dados;
 
@@ -20,32 +23,37 @@ import br.com.opensig.core.shared.modelo.Dados;
  * Classe que representa um estado no sistema.
  * 
  * @author Pedro H. Lira
- * @version 1.0
- * @since 09/06/2009
  */
 @Entity
 @Table(name = "emp_estado")
+@XmlRootElement
 public class EmpEstado extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "emp_estado_id")
+	@XmlElement(name = "sisEstadoId")
 	private int empEstadoId;
 
 	@Column(name = "emp_estado_ibge")
+	@XmlElement(name = "sisEstadoIbge")
 	private int empEstadoIbge;
 	
 	@Column(name = "emp_estado_descricao")
+	@XmlElement(name = "sisEstadoDescricao")
 	private String empEstadoDescricao;
 
 	@Column(name = "emp_estado_sigla")
+	@XmlElement(name = "sisEstadoSigla")
 	private String empEstadoSigla;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "emp_pais_id")
+	@XmlTransient
 	private EmpPais empPais;
 
 	@OneToMany(mappedBy = "empEstado")
+	@XmlTransient
 	private List<EmpMunicipio> empMunicipios;
 
 	public EmpEstado() {

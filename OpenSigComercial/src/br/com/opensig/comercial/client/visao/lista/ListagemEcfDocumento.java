@@ -64,7 +64,7 @@ public class ListagemEcfDocumento extends AListagem<ComEcfDocumento> {
 		ColumnConfig ccGrg = new ColumnConfig(OpenSigCore.i18n.txtGrg(), "comEcfDocumentoGrg", 75, true);
 		ColumnConfig ccCdc = new ColumnConfig(OpenSigCore.i18n.txtCdc(), "comEcfDocumentoCdc", 75, true);
 		ColumnConfig ccTipo = new ColumnConfig(OpenSigCore.i18n.txtTipo(), "comEcfDocumentoTipo", 50, true);
-		ColumnConfig ccData = new ColumnConfig(OpenSigCore.i18n.txtData(), "comEcfDocumentoData", 100, true, DATAHORA);
+		ColumnConfig ccData = new ColumnConfig(OpenSigCore.i18n.txtData(), "comEcfDocumentoData", 120, true, DATAHORA);
 
 		BaseColumnConfig[] bcc = new BaseColumnConfig[] { ccId, ccEmpresaId, ccEmpresa, ccEcfId, ccCoo, ccEcf, ccGnf, ccGrg, ccCdc, ccTipo, ccData };
 		modelos = new ColumnModel(bcc);

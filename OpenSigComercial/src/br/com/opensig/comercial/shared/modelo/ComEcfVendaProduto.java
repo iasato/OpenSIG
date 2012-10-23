@@ -11,60 +11,73 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import br.com.opensig.comercial.server.rest.BooleanToInteger;
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Dados;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
 
+/**
+ * Classe que representa os produtos da venda pelo ECF.
+ * 
+ * @author Pedro H. Lira
+ */
 @Entity
 @Table(name = "com_ecf_venda_produto")
+@XmlRootElement(name = "EcfVendaProduto")
 public class ComEcfVendaProduto extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "com_ecf_venda_produto_id")
+	@XmlElement(name = "ecfVendaProdutoId")
 	private int comEcfVendaProdutoId;
 
 	@Column(name = "com_ecf_venda_produto_codigo")
+	@XmlTransient
 	private String comEcfVendaProdutoCodigo;
 
 	@Column(name = "com_ecf_venda_produto_descricao")
+	@XmlTransient
 	private String comEcfVendaProdutoDescricao;
 
 	@Column(name = "com_ecf_venda_produto_quantidade")
+	@XmlElement(name = "ecfVendaProdutoQuantidade")
 	private Double comEcfVendaProdutoQuantidade;
 
 	@Column(name = "com_ecf_venda_produto_bruto")
+	@XmlElement(name = "ecfVendaProdutoBruto")
 	private Double comEcfVendaProdutoBruto;
 
 	@Column(name = "com_ecf_venda_produto_desconto")
+	@XmlElement(name = "ecfVendaProdutoDesconto")
 	private Double comEcfVendaProdutoDesconto;
 
 	@Column(name = "com_ecf_venda_produto_acrescimo")
+	@XmlElement(name = "ecfVendaProdutoAcrescimo")
 	private Double comEcfVendaProdutoAcrescimo;
 
 	@Column(name = "com_ecf_venda_produto_liquido")
+	@XmlElement(name = "ecfVendaProdutoLiquido")
 	private Double comEcfVendaProdutoLiquido;
 
 	@Column(name = "com_ecf_venda_produto_total")
+	@XmlElement(name = "ecfVendaProdutoTotal")
 	private Double comEcfVendaProdutoTotal;
 
 	@Column(name = "com_ecf_venda_produto_cancelado")
+	@XmlElement(name = "ecfVendaProdutoCancelado")
+	@XmlJavaTypeAdapter(BooleanToInteger.class)
 	private int comEcfVendaProdutoCancelado;
 
 	@Column(name = "com_ecf_venda_produto_ordem")
+	@XmlElement(name = "ecfVendaProdutoOrdem")
 	private int comEcfVendaProdutoOrdem;
-
-	@Transient
-	private String cancelado;
-
-	@Transient
-	private int comEcfVendaProdutoCoo;
-
-	@Transient
-	private String comEcfVendaProdutoUnd;
 
 	@JoinColumn(name = "prod_produto_id")
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -76,8 +89,15 @@ public class ComEcfVendaProduto extends Dados implements Serializable {
 
 	@JoinColumn(name = "com_ecf_venda_id")
 	@ManyToOne(fetch = FetchType.LAZY)
+	@XmlTransient
 	private ComEcfVenda comEcfVenda;
 
+	private transient String cancelado;
+
+	private transient int comEcfVendaProdutoCoo;
+
+	private transient String comEcfVendaProdutoUnd;
+	
 	public ComEcfVendaProduto() {
 		this(0);
 	}

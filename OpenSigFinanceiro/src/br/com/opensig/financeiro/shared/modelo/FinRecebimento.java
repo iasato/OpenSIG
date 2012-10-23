@@ -14,6 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import br.com.opensig.core.client.UtilClient;
 import br.com.opensig.core.shared.modelo.Dados;
@@ -22,55 +25,66 @@ import br.com.opensig.core.shared.modelo.Dados;
  * Classe que representa um Recebimento no sistema.
  * 
  * @author Pedro H. Lira
- * @version 1.0
- * @since 18/11/2009
  */
 @Entity
 @Table(name = "fin_recebimento")
+@XmlRootElement(name = "EcfPagamentoParcela")
 public class FinRecebimento extends Dados implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "fin_recebimento_id")
+	@XmlElement(name = "ecfPagamentoParcelaId")
 	private int finRecebimentoId;
 
 	@Column(name = "fin_recebimento_documento")
+	@XmlElement(name = "ecfPagamentoParcelaNsu")
 	private String finRecebimentoDocumento;
 
 	@Column(name = "fin_recebimento_observacao")
+	@XmlTransient
 	private String finRecebimentoObservacao;
 
 	@Column(name = "fin_recebimento_parcela")
+	@XmlTransient
 	private String finRecebimentoParcela;
 
 	@Column(name = "fin_recebimento_status")
+	@XmlTransient
 	private String finRecebimentoStatus;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fin_recebimento_cadastro")
+	@XmlTransient
 	private Date finRecebimentoCadastro;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fin_recebimento_realizado")
+	@XmlTransient
 	private Date finRecebimentoRealizado;
 
 	@Column(name = "fin_recebimento_valor")
+	@XmlElement(name = "ecfPagamentoParcelaValor")
 	private Double finRecebimentoValor;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fin_recebimento_vencimento")
+	@XmlElement(name = "ecfPagamentoParcelaData")
 	private Date finRecebimentoVencimento;
 
 	@Temporal(TemporalType.DATE)
 	@Column(name = "fin_recebimento_conciliado")
+	@XmlTransient
 	private Date finRecebimentoConciliado;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "fin_receber_id")
+	@XmlTransient
 	private FinReceber finReceber;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "fin_forma_id")
+	@XmlTransient
 	private FinForma finForma;
 
 	public FinRecebimento() {

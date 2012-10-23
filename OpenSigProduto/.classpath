@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GWT_EXT"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT-2.4.0"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigCore"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/OpenSigEmpresa"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/JPA">
@@ -16,6 +15,7 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/Volumes/Macintosh HD 2/Users/pedrohenriquelira/Documents/Projetos/Externas/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="/OpenSig/jars/log4j-1.2.14.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/GWT EXT"/>
 	<classpathentry kind="output" path="src"/>
 </classpath>
