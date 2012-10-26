@@ -11,19 +11,18 @@ import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
  * Classe que define a exportacao de arquivo no formato de PDF.
  * 
  * @author Pedro H. Lira
- * @version 1.0
  */
 public class Pdf<E extends Dados> extends Html<E> {
 
 	@Override
 	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpListagem<E> exp, String[][] enderecos, String[][] contatos) {
 		byte[] obj = super.getArquivo(service, modo, exp, enderecos, contatos);
-		return UtilServer.getPDF(obj);
+		return UtilServer.getPDF(obj, formato);
 	}
 
 	@Override
 	public byte[] getArquivo(CoreService<E> service, SisExpImp modo, ExpRegistro<E> exp, String[][] enderecos, String[][] contatos) {
 		byte[] obj = super.getArquivo(service, modo, exp, enderecos, contatos);
-		return UtilServer.getPDF(obj);
+		return UtilServer.getPDF(obj, formato);
 	}
 }

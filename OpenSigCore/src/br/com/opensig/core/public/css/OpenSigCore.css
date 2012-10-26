@@ -56,6 +56,10 @@
 	background: url(../img/pdf.png) no-repeat center left !important;
 }
 
+.icon-html {
+	background: url(../img/html.png) no-repeat center left !important;
+}
+
 .icon-xml {
 	background: url(../img/xml.png) no-repeat center left !important;
 }
@@ -81,8 +85,7 @@
 }
 
 .icon-filtroMenos {
-	background: url(../img/filtroMenos.png) no-repeat center left !important
-		;
+	background: url(../img/filtroMenos.png) no-repeat center left !important;
 }
 
 .icon-expandir {
@@ -106,7 +109,7 @@
 }
 
 .destaque {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 .icon-voltar {
@@ -134,8 +137,7 @@
 }
 
 .icon-agrupamento {
-	background: url(../img/agrupamento.png) no-repeat center left !important
-		;
+	background: url(../img/agrupamento.png) no-repeat center left !important;
 }
 
 .icon-imagem {

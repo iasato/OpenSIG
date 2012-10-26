@@ -17,7 +17,6 @@ import br.com.opensig.core.shared.modelo.sistema.SisExpImp;
  * Classe que define a exportacao de arquivo no formato de HTML.
  * 
  * @author Pedro H. Lira
- * @version 1.0
  */
 public class Html<E extends Dados> extends AExportacao<E> {
 
@@ -37,11 +36,12 @@ public class Html<E extends Dados> extends AExportacao<E> {
 		// inicio do arquivo
 		StringBuffer sb = new StringBuffer("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><html xmlns='http://www.w3.org/1999/xhtml'>");
 		// estilo do arquivo
-		sb.append(getEstilo("landscape", exp.getNome()));
+		formato = "landscape";
+		sb.append(getEstilo(exp.getNome()));
 		// cabecalho da empresa
 		sb.append(getCabecalhoEmpresa());
 		// inicio da listagem
-		sb.append("<table -fs-table-paginate: paginate;page-break-inside: avoid;>");
+		sb.append("<table -fs-table-paginate: paginate;>");
 		// cabeçalho da listagem
 		sb.append(getCabecalhoListagem());
 		// corpo da listagem
@@ -73,7 +73,8 @@ public class Html<E extends Dados> extends AExportacao<E> {
 		// inicio do arquivo
 		StringBuffer sb = new StringBuffer("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\">");
 		// estilo do arquivo
-		sb.append(getEstilo(exp.getExpLista() == null ? "portrait" : "landscape", exp.getNome()));
+		formato = exp.getExpLista() == null ? "portrait" : "landscape";
+		sb.append(getEstilo(exp.getNome()));
 		// cabecalho da empresa
 		sb.append(getCabecalhoEmpresa());
 
@@ -88,11 +89,6 @@ public class Html<E extends Dados> extends AExportacao<E> {
 		}
 		for (int pos = 0; pos < fim; pos++) {
 			String[] reg = registro.getDados()[pos];
-			if (pos + 1 < fim) {
-				sb.append("<div style=\"page-break-after: always\"");
-			} else {
-				sb.append("<div>");
-			}
 			// inicio do registro
 			sb.append("<table>");
 			// cabeçalho do registro
@@ -131,7 +127,6 @@ public class Html<E extends Dados> extends AExportacao<E> {
 					sb.append("</table>");
 				}
 			}
-			sb.append("</div>");
 		}
 		// rodape da empresa
 		sb.append(getRodapeEmpresa(enderecos, contatos));
@@ -163,7 +158,7 @@ public class Html<E extends Dados> extends AExportacao<E> {
 
 		for (ExpMeta meta : expReg.getMetadados()) {
 			if (meta != null) {
-				sb.append("<td><b>" + meta.getRotulo() + "</b>: " + getValor(dados[col]) + "</td>");
+				sb.append("<td><div class=\"nobreak\"><b>" + meta.getRotulo() + "</b>: " + getValor(dados[col]) + "</div></td>");
 				visivel++;
 				if (visivel != 0 && visivel % 4 == 0) {
 					sb.append("</tr><tr>");
@@ -174,7 +169,7 @@ public class Html<E extends Dados> extends AExportacao<E> {
 
 		int rest = 4 - (visivel % 4);
 		if (rest != 4) {
-			sb.append("<td colspan='" + rest + "'>&nbsp;</td>");
+			sb.append("<td colspan='" + rest + "'><div class=\"nobreak\">&nbsp;</div></td>");
 		}
 		sb.append("</tr></tbody>");
 		return sb.toString();
@@ -242,22 +237,21 @@ public class Html<E extends Dados> extends AExportacao<E> {
 	/**
 	 * Metodo que gera os estilos usados pela exportacao.
 	 * 
-	 * @param size
-	 *            o tamanho da pagina.
 	 * @param titulo
 	 *            o titulo da pagina.
 	 * @return o estilo usado.
 	 */
-	public String getEstilo(String size, String titulo) {
+	public String getEstilo(String titulo) {
 		StringBuffer sb = new StringBuffer("<head>");
-		sb.append("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
+		sb.append("<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></meta>");
 		sb.append("<style type=\"text/css\" media=\"all\">");
-		sb.append("@page {size: " + size + "; margin: 0.25in; @bottom-center { content: \"Pagina \" counter(page) \" de \" counter(pages); }}");
+		sb.append("@page {size: " + formato + "; margin: 0.25in; @bottom-center { content: \"Pagina \" counter(page) \" de \" counter(pages); }}");
 		sb.append("table {width: 100%;border-spacing: 0px;border-bottom: none; font-family: serif; font-size: 12px;}");
 		sb.append("caption {height: 30px;font-size: 14px;font-weight: bold;}");
 		sb.append("thead tr {height: 30px;vertical-align: top; text-align: left; text-transform: uppercase;font-weight: bold;}");
 		sb.append("tfoot tr {height: 30px;vertical-align: bottom; text-transform: uppercase;font-weight: bold;}");
 		sb.append("tbody tr {height: 20px;vertical-align: middle;}");
+		sb.append(".nobreak {page-break-inside: avoid;}");
 		sb.append("</style>");
 		sb.append("<title>" + titulo + "</title></head>");
 		sb.append("<body>");
@@ -270,10 +264,10 @@ public class Html<E extends Dados> extends AExportacao<E> {
 	 * @return o cabecalho da listagem.
 	 */
 	public String getCabecalhoListagem() {
-		StringBuffer sb = new StringBuffer("<caption>:: " + expLista.getNome() + " ::</caption><thead><tr>");
+		StringBuffer sb = new StringBuffer("<caption>:: " + expLista.getNome() + " ::</caption><thead>");
 		for (ExpMeta meta : expLista.getMetadados()) {
 			if (meta != null) {
-				sb.append("<th style='width:" + (meta.getTamanho() + 5) + "px'>" + meta.getRotulo() + "</th>");
+				sb.append("<th style='width:" + (meta.getTamanho() + 5) + "px'><div class=\"nobreak\">" + meta.getRotulo() + "</div></th>");
 			}
 		}
 		sb.append("</thead>");
@@ -301,7 +295,7 @@ public class Html<E extends Dados> extends AExportacao<E> {
 			for (int i = 0; i < expLista.getMetadados().size(); i++) {
 				ExpMeta meta = expLista.getMetadados().get(i);
 				if (meta != null) {
-					sb.append("<td>" + getValor(lista.getDados()[j][i]) + "</td>");
+					sb.append("<td><div class=\"nobreak\">" + getValor(lista.getDados()[j][i]) + "</div></td>");
 
 					if (meta.getGrupo() != null) {
 						double valor = Double.valueOf(lista.getDados()[j][i]);
@@ -355,16 +349,16 @@ public class Html<E extends Dados> extends AExportacao<E> {
 				rodape += "<td>&nbsp;</td>";
 			} else if (agrupados[i] > 0) {
 				semGrupo = false;
-				rodape += "<td>" + UtilServer.formataNumero(agrupados[i], 1, 2, true) + "</td>";
+				rodape += "<td><div class=\"nobreak\">" + UtilServer.formataNumero(agrupados[i], 1, 2, true) + "</div></td>";
 			}
 		}
 
 		StringBuffer sb = new StringBuffer("<tfoot>");
 		if (!semGrupo) {
-			sb.append("<tr><td colspan='" + agrupados.length + "'>" + auth.getConf().get("txtTotal") + "<hr /></td></tr>");
-			sb.append("<tr>" + rodape + "<tr>");
+			sb.append("<tr><td colspan='" + agrupados.length + "'><div class=\"nobreak\">" + auth.getConf().get("txtTotal") + "<hr /></div></td></tr>");
+			sb.append("<tr>" + rodape + "</tr>");
 		}
-		sb.append("<tr><td colspan='" + agrupados.length + "'>" + auth.getConf().get("txtRegistro") + " :: " + reg + "</td></tr></tfoot>");
+		sb.append("<tr><td colspan='" + agrupados.length + "'><div class=\"nobreak\">" + auth.getConf().get("txtRegistro") + " :: " + reg + "</div></td></tr></tfoot>");
 
 		return sb.toString();
 	}

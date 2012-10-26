@@ -48,7 +48,7 @@ public class ComandoEstornarRecebimento extends ComandoAcao<FinRecebimento> {
 				for (Record rec : recs) {
 					int row = LISTA.getPanel().getStore().indexOf(rec);
 					LISTA.getPanel().getSelectionModel().deselectRow(row);
-					rec.set("finPagamentoStatus", OpenSigCore.i18n.txtAberto().toUpperCase());
+					rec.set("finRecebimentoStatus", OpenSigCore.i18n.txtAberto().toUpperCase());
 					rec.set("finRecebimentoRealizado", (Date) null);
 					rec.set("finRecebimentoConciliado", (Date) null);
 					rec.set("finRecebimentoObservacao", motivo);

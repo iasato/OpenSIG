@@ -1,6 +1,12 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 /*Limpando o Comercial*/;
+TRUNCATE TABLE com_ecf_documento;
+
+TRUNCATE TABLE com_ecf_nota_produto;
+
+TRUNCATE TABLE com_ecf_nota;
+
 TRUNCATE TABLE com_ecf_venda_produto;
 
 TRUNCATE TABLE com_ecf_venda;
@@ -56,6 +62,8 @@ TRUNCATE TABLE fin_receber;
 TRUNCATE TABLE fin_conta;
 
 TRUNCATE TABLE fin_categoria;
+
+TRUNCATE TABLE fin_forma;
 
 /* Limpando o Fiscal*/;
 TRUNCATE TABLE fis_nota_entrada;

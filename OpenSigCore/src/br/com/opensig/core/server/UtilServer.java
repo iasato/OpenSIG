@@ -1,12 +1,16 @@
 package br.com.opensig.core.server;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
@@ -48,8 +52,6 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.tidy.Tidy;
-import org.xhtmlrenderer.pdf.ITextRenderer;
 import org.xml.sax.ErrorHandler;
 
 import br.com.opensig.core.client.servico.OpenSigException;
@@ -187,26 +189,60 @@ public class UtilServer extends HttpServlet {
 	 * 
 	 * @param obj
 	 *            html em bytes.
+	 * @param formato
+	 *            o tipo de apresentacao.
 	 * @return bytes do pdf.
 	 */
-	public static byte[] getPDF(byte[] obj) {
-		Tidy tidy = new Tidy();
-		tidy.setInputEncoding("utf-8");
-		tidy.setOutputEncoding("utf-8");
+	public static byte[] getPDF(byte[] obj, String formato) {
+		// define as variaveis
+		String nome = new Date().getTime() + "";
+		String comando = PATH + "tmp/htmltopdf.sh";
+		String pathHtml = PATH + "tmp/" + nome + ".html";
+		String pathPdf = PATH + "tmp/" + nome + ".pdf";
 
-		Document doc = tidy.parseDOM(new ByteArrayInputStream(obj), null);
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		ITextRenderer renderer = new ITextRenderer();
-		renderer.setDocument(doc, null);
-		renderer.layout();
-
+		// salva o html em arquivo
 		try {
-			renderer.createPDF(baos);
-			return baos.toByteArray();
-		} catch (Exception e) {
-			return null;
+			BufferedWriter bw = new BufferedWriter(new FileWriter(pathHtml));
+			bw.write(new String(obj));
+			bw.close();
+		} catch (Exception ex) {
+			UtilServer.LOG.error("Nao salvaou o html no temp.", ex);
+			obj = null;
 		}
+
+		// gera o pdf usando o wkhtmltopdf
+		try {
+			ProcessBuilder pb = new ProcessBuilder(comando, formato, nome); 
+			pb.redirectErrorStream(true); 
+			Process process = pb.start(); 
+			BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			while((line = reader.readLine()) != null) 
+			{ 
+			    System.out.println(line); 
+			} 
+		} catch (Exception ex) {
+			UtilServer.LOG.error("Erro na geracao do pdf.", ex);
+			obj = null;
+		}
+
+		// le o arquivo pdf em arquivo
+		try {
+			File f = new File(pathPdf);
+			obj = new byte[(int) f.length()];
+			InputStream inStream = new FileInputStream(pathPdf);
+			inStream.read(obj);
+			inStream.close();
+		} catch (Exception ex) {
+			UtilServer.LOG.error("Erro na leitura do pdf.", ex);
+			obj = null;
+		}
+
+		// delete os arquivos temporarios
+		new File(pathHtml).delete();
+		new File(pathPdf).delete();
+
+		return obj;
 	}
 
 	/**
@@ -228,6 +264,7 @@ public class UtilServer extends HttpServlet {
 				zout.closeEntry();
 			}
 		} catch (Exception ex) {
+			UtilServer.LOG.error("Nao recuperou o zip.", ex);
 			return null;
 		} finally {
 			try {
@@ -264,7 +301,8 @@ public class UtilServer extends HttpServlet {
 				zin.closeEntry();
 			}
 			zin.close();
-		} catch (Exception e) {
+		} catch (Exception ex) {
+			UtilServer.LOG.error("Nao pegou os arquivos", ex);
 			return null;
 		}
 
@@ -424,22 +462,24 @@ public class UtilServer extends HttpServlet {
 			return DateFormat.getDateInstance(formato, LOCAL).format(data);
 		}
 	}
-	
+
 	/**
-     * Metodo que formata a data.
-     *
-     * @param data    a data em formato string.
-     * @param formato o formado desejado.
-     * <p/>
-     * @return a data como objeto ou null se tiver erro.
-     */
-    public static Date formataData(String data, String formato) {
-        try {
-            return new SimpleDateFormat(formato).parse(data);
-        } catch (Exception ex) {
-            return null;
-        }
-    }
+	 * Metodo que formata a data.
+	 * 
+	 * @param data
+	 *            a data em formato string.
+	 * @param formato
+	 *            o formado desejado.
+	 *            <p/>
+	 * @return a data como objeto ou null se tiver erro.
+	 */
+	public static Date formataData(String data, String formato) {
+		try {
+			return new SimpleDateFormat(formato).parse(data);
+		} catch (Exception ex) {
+			return null;
+		}
+	}
 
 	/**
 	 * Metodo que formata a hora.
@@ -657,28 +697,30 @@ public class UtilServer extends HttpServlet {
 		}
 		return true;
 	}
-	
-    /**
-     * Metodo que criptografa um texto passado usando a chave privada.
-     *
-     * @param texto valor a ser criptografado.
-     * @return o texto informado criptografado.
-     */
-    public static String encriptar(String texto) {
-        BasicTextEncryptor encryptor = new BasicTextEncryptor();
-        encryptor.setPassword(ChavePrivada.VALOR);
-        return encryptor.encrypt(texto);
-    }
 
-    /**
-     * Metodo que descriptografa um texto passado usando a chave privada.
-     *
-     * @param texto valor a ser descriptografado.
-     * @return o texto informado descriptografado.
-     */
-    public static String descriptar(String texto) {
-        BasicTextEncryptor encryptor = new BasicTextEncryptor();
-        encryptor.setPassword(ChavePrivada.VALOR);
-        return encryptor.decrypt(texto);
-    }
+	/**
+	 * Metodo que criptografa um texto passado usando a chave privada.
+	 * 
+	 * @param texto
+	 *            valor a ser criptografado.
+	 * @return o texto informado criptografado.
+	 */
+	public static String encriptar(String texto) {
+		BasicTextEncryptor encryptor = new BasicTextEncryptor();
+		encryptor.setPassword(ChavePrivada.VALOR);
+		return encryptor.encrypt(texto);
+	}
+
+	/**
+	 * Metodo que descriptografa um texto passado usando a chave privada.
+	 * 
+	 * @param texto
+	 *            valor a ser descriptografado.
+	 * @return o texto informado descriptografado.
+	 */
+	public static String descriptar(String texto) {
+		BasicTextEncryptor encryptor = new BasicTextEncryptor();
+		encryptor.setPassword(ChavePrivada.VALOR);
+		return encryptor.decrypt(texto);
+	}
 }

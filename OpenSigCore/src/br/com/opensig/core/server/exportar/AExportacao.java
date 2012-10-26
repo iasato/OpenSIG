@@ -49,6 +49,10 @@ public abstract class AExportacao<E extends Dados> implements IExportacao<E> {
 	 * tipo de exportacao em registro.
 	 */
 	protected ExpRegistro<E> expReg;
+	/**
+	 * formato de apresentacao
+	 */
+	protected String formato;
  
 	@Override
 	public void setAuth(Autenticacao auth) {

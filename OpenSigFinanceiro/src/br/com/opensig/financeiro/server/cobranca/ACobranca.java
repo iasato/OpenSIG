@@ -45,6 +45,7 @@ public abstract class ACobranca implements ICobranca {
 		EmpEndereco endereco = cliente.getEmpEnderecos().isEmpty() ? new EmpEndereco() : cliente.getEmpEnderecos().get(0);
 
 		JBoletoBean jBoletoBean = new JBoletoBean();
+		jBoletoBean.setImagemMarketing(UtilServer.getRealPath("img/boleto.gif"));
 		jBoletoBean.setTituloBoletoHtml("boleto");
 		jBoletoBean.setEspecieDocumento("DM");
 		jBoletoBean.setAceite("N");
