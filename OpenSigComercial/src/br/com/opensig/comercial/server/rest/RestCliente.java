@@ -42,7 +42,7 @@ import br.com.opensig.produto.shared.modelo.ProdEstoque;
 import br.com.opensig.produto.shared.modelo.ProdProduto;
 
 /**
- * Classe que representa a comunicao do Servidor para o Cliente via Rest
+ * Classe que representa a comunicacao do Servidor para o Cliente via Rest
  * 
  * @author Pedro H. Lira
  */

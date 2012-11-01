@@ -196,9 +196,9 @@ public class UtilServer extends HttpServlet {
 	public static byte[] getPDF(byte[] obj, String formato) {
 		// define as variaveis
 		String nome = new Date().getTime() + "";
-		String comando = PATH + "tmp/htmltopdf.sh";
-		String pathHtml = PATH + "tmp/" + nome + ".html";
-		String pathPdf = PATH + "tmp/" + nome + ".pdf";
+		String comando = PATH_EMPRESA + "htmltopdf.sh";
+		String pathHtml = PATH_EMPRESA + nome + ".html";
+		String pathPdf = PATH_EMPRESA + nome + ".pdf";
 
 		// salva o html em arquivo
 		try {
@@ -206,7 +206,7 @@ public class UtilServer extends HttpServlet {
 			bw.write(new String(obj));
 			bw.close();
 		} catch (Exception ex) {
-			UtilServer.LOG.error("Nao salvaou o html no temp.", ex);
+			UtilServer.LOG.error("Nao salvaou o html.", ex);
 			obj = null;
 		}
 

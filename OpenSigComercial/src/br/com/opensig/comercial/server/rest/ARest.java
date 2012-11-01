@@ -99,7 +99,8 @@ public abstract class ARest {
 	}
 
 	/**
-	 * Metodo que autoriza o acesso do cliente ao servidor REST, usando as informacoes enviadas pela Autorization Basic (CNPJ do cliente, SERIE do ECF criptograda com a chave privada)
+	 * Metodo que autoriza o acesso do cliente ao servidor REST, usando as informacoes enviadas pela 
+	 * Autorization Basic (CNPJ do cliente, SERIE do ECF criptograda com a chave privada)
 	 * 
 	 * @throws RestException
 	 *             dispara um erro caso nao consiga.

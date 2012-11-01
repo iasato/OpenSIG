@@ -36,8 +36,8 @@ INSERT INTO `sis_funcao` (`sis_modulo_id`, `sis_funcao_classe`, `sis_funcao_orde
 ### dar permissao aos grupos e usuarios que tem permissao de ecf
 
 # atualizando as formas de pagamentos
-ALTER TABLE `fin_forma` ADD COLUMN `fin_forma_codigo` VARCHAR(2) NOT NULL  AFTER `fin_forma_descricao` , ADD COLUMN `fin_forma_tef` TINYINT(1) NOT NULL  AFTER `fin_forma_codigo` , ADD COLUMN `fin_forma_vinculado` TINYINT(1) NOT NULL  AFTER `fin_forma_tef` , ADD COLUMN `fin_forma_debito` TINYINT(1) NOT NULL  AFTER `fin_forma_vinculado` , ADD COLUMN `fin_forma_rede` VARCHAR(20) NOT NULL  AFTER `fin_forma_debito` 
-, DROP INDEX `UNIQUE` ;
+ALTER TABLE `fin_forma` ADD COLUMN `fin_forma_codigo` VARCHAR(2) NOT NULL  AFTER `fin_forma_descricao` , ADD COLUMN `fin_forma_tef` TINYINT(1) NOT NULL  AFTER `fin_forma_codigo` , ADD COLUMN `fin_forma_vinculado` TINYINT(1) NOT NULL  AFTER `fin_forma_tef` , 
+ADD COLUMN `fin_forma_debito` TINYINT(1) NOT NULL  AFTER `fin_forma_vinculado` , ADD COLUMN `fin_forma_rede` VARCHAR(20) NOT NULL  AFTER `fin_forma_debito` , ADD COLUMN `fin_forma_pagar` TINYINT(1) NOT NULL  AFTER `fin_forma_rede` , ADD COLUMN `fin_forma_receber` TINYINT(1) NOT NULL  AFTER `fin_forma_pagar` , DROP INDEX `UNIQUE`;
 UPDATE `fin_forma` SET `fin_forma_codigo` = '00', `fin_forma_rede` = 'LOJA' WHERE `fin_forma_descricao` <> 'DINHEIRO' && `fin_forma_descricao` <> 'CHEQUE';
 UPDATE `fin_forma` SET `fin_forma_codigo` = '01', `fin_forma_rede` = 'LOJA' WHERE `fin_forma_descricao` = 'DINHEIRO';
 UPDATE `fin_forma` SET `fin_forma_codigo` = '02', `fin_forma_tef` = 1, `fin_forma_vinculado` = 1, `fin_forma_rede` = 'REDECARD' WHERE `fin_forma_descricao` = 'CHEQUE';

@@ -238,6 +238,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 				pag.setFinPagamentoCadastro(new Date());
 				pag.setFinPagamentoVencimento(dtData);
 				pag.setFinPagar(pagar);
+				pag.setFinPagamentoStatus(auth.getConf().get("txtAberto"));
 				pag.setFinPagamentoObservacao("");
 				pagamentos.add(pag);
 				par++;
@@ -339,13 +340,16 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 		for (Det det : nfe.getInfNFe().getDet()) {
 			MyIcms myicms = getIcms(det.getImposto().getICMS());
 			String ipi = "";
-			String porcentagemIpi = "";
+			String pIpi = "";
 			try {
 				ipi = det.getImposto().getIPI().getIPITrib().getCST();
-				porcentagemIpi = det.getImposto().getIPI().getIPITrib().getPIPI();
+				pIpi = det.getImposto().getIPI().getIPITrib().getPIPI();
+				if (pIpi == null) {
+					pIpi = "0.00";
+				}
 			} catch (Exception e) {
 				ipi = "99";
-				porcentagemIpi = "0.00";
+				pIpi = "0.00";
 			}
 
 			// setando o produto da compra
@@ -356,7 +360,7 @@ public class ImportarNfe implements IImportacao<ComCompra> {
 			int cfop = Integer.valueOf(det.getProd().getCFOP());
 			comProd.setComCompraProdutoCfop(cfop >= 5000 ? cfop - 4000 : cfop);
 			comProd.setComCompraProdutoIcms(Double.valueOf(myicms.getAliquota()));
-			comProd.setComCompraProdutoIpi(Double.valueOf(porcentagemIpi));
+			comProd.setComCompraProdutoIpi(Double.valueOf(pIpi));
 			comProd.setComCompraProdutoQuantidade(Double.valueOf(det.getProd().getQCom()));
 			comProd.setComCompraProdutoValor(Double.valueOf(det.getProd().getVUnCom()));
 			comProd.setComCompraProdutoTotal(Double.valueOf(det.getProd().getVProd()));
