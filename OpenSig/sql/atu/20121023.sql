@@ -167,39 +167,6 @@ ALTER TABLE `com_ecf_venda` CHANGE COLUMN `com_ecf_z_id` `com_ecf_z_id` INT(11) 
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
 
-
-# atualizando os produtos das vendas do ECF
-ALTER TABLE `com_ecf_venda_produto` ADD COLUMN `com_ecf_venda_produto_acrescimo` DECIMAL(10,2) NOT NULL  AFTER `com_ecf_venda_produto_desconto` 
-, DROP INDEX `SEARCH_2` 
-, DROP INDEX `SEARCH_1` ;
-
-# Atualizando as reducoes Z, colocando o COO INI e o GT corretos, precisa que a PRIMEIRA Z de cada ECF seja arrumada manualmente antes, colocando COO_INI e GT corretos.
-DELIMITER $$
-CREATE PROCEDURE atualiza_z()
-	BEGIN
-		DECLARE ecfA, idA, finA, ecfB, idB, finB INT DEFAULT 0;
-		DECLARE brutoA, gtA, brutoB, gtB DECIMAL(10,2) DEFAULT 0.00;
-		DECLARE z CURSOR FOR SELECT com_ecf_id, com_ecf_z_id, com_ecf_z_coo_fin, com_ecf_z_bruto, com_ecf_z_gt FROM com_ecf_z ORDER BY com_ecf_id, com_ecf_z_movimento ASC;
-		
-		OPEN z;
-		label1: LOOP
-			FETCH z INTO ecfB, idB, finB, brutoB, gtB;
-				IF ecfA > 0 AND ecfA = ecfB THEN
-					UPDATE com_ecf_z SET com_ecf_z_coo_ini = finA + 1, com_ecf_z_gt = gtA + brutoB WHERE com_ecf_z_id = idB;
-				END IF;
-				SET ecfA := ecfB;
-				SET idA := idB;
-				SET finA := finB;
-				SET brutoA := brutoB;
-				SET gtA := gtB;
-		END LOOP label1;
-
-		CLOSE z;
-	END;$$
-DELIMITER ;
-CALL atualiza_z();
-DROP PROCEDURE IF EXISTS atualiza_z;
-
 # adicionando novo campo pra tributacao e igualar ao ECF
 ALTER TABLE `prod_tributacao` ADD COLUMN `prod_tributacao_ecf` VARCHAR(7) NOT NULL  AFTER `prod_tributacao_cfop` ;
 UPDATE prod_tributacao SET prod_tributacao_ecf = '01T1700' WHERE prod_tributacao_cst = '00' OR prod_tributacao_cson = '102';

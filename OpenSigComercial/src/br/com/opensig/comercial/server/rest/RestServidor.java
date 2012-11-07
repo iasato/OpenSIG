@@ -1,9 +1,11 @@
 package br.com.opensig.comercial.server.rest;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -29,6 +31,7 @@ import br.com.opensig.comercial.shared.rest.SisCliente;
 import br.com.opensig.core.client.controlador.filtro.ECompara;
 import br.com.opensig.core.client.controlador.filtro.EJuncao;
 import br.com.opensig.core.client.controlador.filtro.FiltroBinario;
+import br.com.opensig.core.client.controlador.filtro.FiltroData;
 import br.com.opensig.core.client.controlador.filtro.FiltroNumero;
 import br.com.opensig.core.client.controlador.filtro.FiltroObjeto;
 import br.com.opensig.core.client.controlador.filtro.FiltroTexto;
@@ -40,6 +43,7 @@ import br.com.opensig.core.client.servico.CoreException;
 import br.com.opensig.core.client.servico.OpenSigException;
 import br.com.opensig.core.server.UtilServer;
 import br.com.opensig.core.shared.modelo.EComando;
+import br.com.opensig.core.shared.modelo.EDirecao;
 import br.com.opensig.core.shared.modelo.Lista;
 import br.com.opensig.core.shared.modelo.Sql;
 import br.com.opensig.empresa.shared.modelo.EmpCliente;
@@ -238,7 +242,7 @@ public class RestServidor extends ARest {
 				// identifica a natureza de venda
 				FiltroNumero fn = new FiltroNumero("comNaturezaCfopTrib", ECompara.IGUAL, 5102);
 				ComNatureza natureza = (ComNatureza) service.selecionar(new ComNatureza(), fn, false);
-				
+
 				// salva a venda
 				ComVenda venda = new ComVenda();
 				venda.setSisUsuario(new SisUsuario(1));
@@ -277,7 +281,7 @@ public class RestServidor extends ARest {
 					// monta a atualizacao do estoque
 					double qtd = Double.valueOf(det.getProd().getQCom());
 					sqls.add(getEstoque(qtd, emb, prod));
-					
+
 					// montando o produto da venda
 					ComVendaProduto vp = new ComVendaProduto();
 					vp.setProdProduto(prod);
@@ -297,7 +301,7 @@ public class RestServidor extends ARest {
 
 				// salva os produtos da venda
 				service.salvar(cvp);
-				
+
 				// remove do estoque
 				if (status == ENotaStatus.AUTORIZADO) {
 					service.executar(sqls.toArray(new Sql[] {}));
@@ -362,6 +366,48 @@ public class RestServidor extends ARest {
 			service.salvar(docs);
 		} catch (Exception ex) {
 			log.error("Erro ao salvar reduzao Z.", ex);
+			throw new RestException(ex.getMessage());
+		}
+	}
+
+	@Path("/validarPDV")
+	@PUT
+	@Consumes(MediaType.TEXT_PLAIN)
+	@Produces(MediaType.TEXT_PLAIN)
+	public String validarPDV(String aux) throws RestException {
+		autorizar();
+		try {
+			// recuperando os valores
+			Properties mapa = new Properties();
+			String[] props = UtilServer.descriptar(aux).split("\n");
+			for (String prop : props) {
+				String[] chaveValor = prop.split("=");
+				mapa.put(chaveValor[0], chaveValor[1]);
+			}
+
+			// recuperando o ultimo recebimento realizado pela empresa do ECF.
+			FinRecebimento recebimento = new FinRecebimento();
+			recebimento.setCampoOrdem(EDirecao.DESC.toString());
+			FiltroTexto ft = new FiltroTexto("finReceber.empEntidade.empEntidadeDocumento1", ECompara.IGUAL, UtilServer.formataTexto(mapa.getProperty("cli.cnpj"), "##.###.###/####-##"));
+			FiltroData ft1 = new FiltroData("finRecebimentoStatus", ECompara.DIFERENTE, "ABERTO");
+			GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { ft, ft1 });
+			Lista<FinRecebimento> lista = service.selecionar(recebimento, 0, 1, gf, false);
+			recebimento = lista.getLista().get(0);
+			
+			// setando a data de validade
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(recebimento.getFinRecebimentoVencimento());
+			cal.add(Calendar.MONTH, 1);
+			mapa.setProperty("out.validade", UtilServer.formataData(cal.getTime(), "dd/MM/yyyy"));
+
+			// gerando o arquivo de retorno
+			StringBuilder sb = new StringBuilder();
+			for (String chave : mapa.stringPropertyNames()) {
+				sb.append(chave).append("=").append(mapa.getProperty(chave)).append("\n");
+			}
+			return UtilServer.encriptar(sb.toString());
+		} catch (Exception ex) {
+			log.error("Erro ao validar o PDV.", ex);
 			throw new RestException(ex.getMessage());
 		}
 	}

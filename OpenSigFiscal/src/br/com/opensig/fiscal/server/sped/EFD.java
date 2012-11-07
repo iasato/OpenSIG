@@ -91,8 +91,10 @@ public class EFD implements Runnable {
 			zs = getZs();
 			estoque = getEstoque();
 			// pis/cofins
-			FiltroNumero fn1 = new FiltroNumero("comNaturezaCfopTrib", ECompara.IGUAL, 5102);
-			ComNatureza nat = (ComNatureza) service.selecionar(new ComNatureza(), fn1, true);
+			FiltroNumero fn1 = new FiltroNumero("comNaturezaCfopTrib", ECompara.IGUAL, 5101);
+			FiltroNumero fn2 = new FiltroNumero("comNaturezaCfopTrib", ECompara.IGUAL, 5102);
+			GrupoFiltro gf = new GrupoFiltro(EJuncao.OU, new IFiltro[] { fn1, fn2 });
+			ComNatureza nat = (ComNatureza) service.selecionar(new ComNatureza(), gf, true);
 			pis = nat.getComNaturezaPis();
 			cofins = nat.getComNaturezaCofins();
 			// lendo dados do arquivo
@@ -111,9 +113,9 @@ public class EFD implements Runnable {
 			os.flush();
 			os.close();
 			// atualizando o status do registro
-			FiltroNumero fn2 = new FiltroNumero("fisSpedFiscalId", ECompara.IGUAL, sped.getFisSpedFiscalId());
+			FiltroNumero fn3 = new FiltroNumero("fisSpedFiscalId", ECompara.IGUAL, sped.getFisSpedFiscalId());
 			ParametroBinario pb = new ParametroBinario("fisSpedFiscalAtivo", 1);
-			Sql sql = new Sql(new FisSpedFiscal(), EComando.ATUALIZAR, fn2, pb);
+			Sql sql = new Sql(new FisSpedFiscal(), EComando.ATUALIZAR, fn3, pb);
 			service.executar(new Sql[] { sql });
 		} catch (Exception e) {
 			UtilServer.LOG.error("Nao gerou o efd.", e);

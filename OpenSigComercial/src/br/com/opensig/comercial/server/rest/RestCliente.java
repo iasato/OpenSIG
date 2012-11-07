@@ -1,6 +1,7 @@
 package br.com.opensig.comercial.server.rest;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -36,6 +37,7 @@ import br.com.opensig.empresa.shared.modelo.EmpFuncionario;
 import br.com.opensig.financeiro.shared.modelo.FinForma;
 import br.com.opensig.fiscal.shared.modelo.FisNotaSaida;
 import br.com.opensig.permissao.shared.modelo.SisConfiguracao;
+import br.com.opensig.permissao.shared.modelo.SisGrupo;
 import br.com.opensig.permissao.shared.modelo.SisUsuario;
 import br.com.opensig.produto.shared.modelo.ProdEmbalagem;
 import br.com.opensig.produto.shared.modelo.ProdEstoque;
@@ -65,12 +67,13 @@ public class RestCliente extends ARest {
 		return super.ajuda();
 	}
 
-    /**
-     * Metodo que retorna o proximo numero de NFe a ser usado.
-     *
-     * @return uma string com o nuemro da NFe.
-     * @throws RestException em caso de nao conseguir acessar a informacao.
-     */
+	/**
+	 * Metodo que retorna o proximo numero de NFe a ser usado.
+	 * 
+	 * @return uma string com o nuemro da NFe.
+	 * @throws RestException
+	 *             em caso de nao conseguir acessar a informacao.
+	 */
 	@Path("/nfe")
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
@@ -94,13 +97,13 @@ public class RestCliente extends ARest {
 		}
 	}
 
-    /**
-     * Metodo que retorna os dados da empresa, com base no cnpj informado como
-     * usuario no cabecalho de autorizacao.
-     *
-     * @return um objeto tipo empresa no formato JSON.
-     * @throws RestException em caso de nao conseguir acessar a informacao.
-     */
+	/**
+	 * Metodo que retorna os dados da empresa, com base no cnpj informado como usuario no cabecalho de autorizacao.
+	 * 
+	 * @return um objeto tipo empresa no formato JSON.
+	 * @throws RestException
+	 *             em caso de nao conseguir acessar a informacao.
+	 */
 	@Path("/empresa")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -122,13 +125,13 @@ public class RestCliente extends ARest {
 		}
 	}
 
-    /**
-     * Metodo que retorna os dados do contador, com base no cnpj informado como
-     * usuario no cabecalho de autorizacao.
-     *
-     * @return um objeto tipo empresa no formato JSON.
-     * @throws RestException em caso de nao conseguir acessar a informacao.
-     */
+	/**
+	 * Metodo que retorna os dados do contador, com base no cnpj informado como usuario no cabecalho de autorizacao.
+	 * 
+	 * @return um objeto tipo empresa no formato JSON.
+	 * @throws RestException
+	 *             em caso de nao conseguir acessar a informacao.
+	 */
 	@Path("/contador")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -158,13 +161,13 @@ public class RestCliente extends ARest {
 		}
 	}
 
-    /**
-     * Metodo que retorna os dados do ECF, com base no numero de serie informado
-     * como senha no cabecalho de autorizacao.
-     *
-     * @return um objeto tipo impressora no formato JSON.
-     * @throws RestException em caso de nao conseguir acessar a informacao.
-     */
+	/**
+	 * Metodo que retorna os dados do ECF, com base no numero de serie informado como senha no cabecalho de autorizacao.
+	 * 
+	 * @return um objeto tipo impressora no formato JSON.
+	 * @throws RestException
+	 *             em caso de nao conseguir acessar a informacao.
+	 */
 	@Path("/impressora")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -173,12 +176,13 @@ public class RestCliente extends ARest {
 		return ecf;
 	}
 
-    /**
-     * Metodo que retorna a lista de usuario permitidos ao acesso ao sistema.
-     *
-     * @return uma lista de objetos usuario em formato JSON.
-     * @throws RestException em caso de nao conseguir acessar a informacao.
-     */
+	/**
+	 * Metodo que retorna a lista de usuario permitidos ao acesso ao sistema, devem estar vinculado ao grupo com nome CAIXA, para ser gerente precisar ter valor de desconto maior que zero.
+	 * 
+	 * @return uma lista de objetos usuario em formato JSON.
+	 * @throws RestException
+	 *             em caso de nao conseguir acessar a informacao.
+	 */
 	@Path("/usuario")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -188,25 +192,33 @@ public class RestCliente extends ARest {
 			FiltroTexto ft = getFiltroCnpj("empEntidade.empEntidadeDocumento1");
 			ft.setCampoPrefixo("t1.");
 			List<SisUsuario> usuarios = service.selecionar(new SisUsuario(), 0, 0, ft, false).getLista();
+			List<SisUsuario> escolhidos = new ArrayList<SisUsuario>();
 
 			for (SisUsuario usuario : usuarios) {
-				if (usuario.getSisUsuarioDesconto() > 0) {
-					usuario.setSisUsuarioGerente(true);
+				for (SisGrupo grupo : usuario.getSisGrupos()) {
+					if (grupo.getSisGrupoNome().equalsIgnoreCase("caixa")) {
+						if (usuario.getSisUsuarioDesconto() > 0) {
+							usuario.setSisUsuarioGerente(true);
+						}
+						escolhidos.add(usuario);
+						break;
+					}
 				}
 			}
-			return usuarios;
+			return escolhidos;
 		} catch (Exception ex) {
 			log.error(ex);
 			throw new RestException(ex);
 		}
 	}
 
-    /**
-     * Metodo que retorna a lista de tipos de pagamento cadastrados no sistema.
-     *
-     * @return uma lista de objetos tipos de pagamento em formato JSON.
-     * @throws RestException em caso de nao conseguir acessar a informacao.
-     */
+	/**
+	 * Metodo que retorna a lista de tipos de pagamento cadastrados no sistema.
+	 * 
+	 * @return uma lista de objetos tipos de pagamento em formato JSON.
+	 * @throws RestException
+	 *             em caso de nao conseguir acessar a informacao.
+	 */
 	@Path("/tipo_pagamento")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -221,12 +233,13 @@ public class RestCliente extends ARest {
 		}
 	}
 
-    /**
-     * Metodo que retorna a lista de embalagens cadastradas no sistema.
-     *
-     * @return uma lista de objetos embalagem em formato JSON.
-     * @throws RestException em caso de nao conseguir acessar a informacao.
-     */
+	/**
+	 * Metodo que retorna a lista de embalagens cadastradas no sistema.
+	 * 
+	 * @return uma lista de objetos embalagem em formato JSON.
+	 * @throws RestException
+	 *             em caso de nao conseguir acessar a informacao.
+	 */
 	@Path("/embalagem")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -240,15 +253,19 @@ public class RestCliente extends ARest {
 		}
 	}
 
-    /**
-     * Metodo que retorna a lista de novos produtos cadastrados no sistema.
-     *
-     * @param data data usada como corte para considerar novo produto.
-     * @param pagina numero da pagina de retorno dos dados comecando pelo ZERO.
-     * @param limite limite de registros a serem retornados.
-     * @return uma lista de produtos novos cadastrados no sistema.
-     * @throws RestException em caso de nao conseguir acessar a informacao.
-     */
+	/**
+	 * Metodo que retorna a lista de novos produtos cadastrados no sistema.
+	 * 
+	 * @param data
+	 *            data usada como corte para considerar novo produto.
+	 * @param pagina
+	 *            numero da pagina de retorno dos dados comecando pelo ZERO.
+	 * @param limite
+	 *            limite de registros a serem retornados.
+	 * @return uma lista de produtos novos cadastrados no sistema.
+	 * @throws RestException
+	 *             em caso de nao conseguir acessar a informacao.
+	 */
 	@Path("/produtoNovo")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -272,15 +289,19 @@ public class RestCliente extends ARest {
 		}
 	}
 
-    /**
-     * Metodo que retorna a lista de novos produtos atualizados no sistema.
-     *
-     * @param data data usada como corte para considerar produto atualizado.
-     * @param pagina numero da pagina de retorno dos dados comecando pelo ZERO.
-     * @param limite limite de registros a serem retornados.
-     * @return uma lista de produtos novos cadastrados no sistema.
-     * @throws RestException em caso de nao conseguir acessar a informacao.
-     */
+	/**
+	 * Metodo que retorna a lista de novos produtos atualizados no sistema.
+	 * 
+	 * @param data
+	 *            data usada como corte para considerar produto atualizado.
+	 * @param pagina
+	 *            numero da pagina de retorno dos dados comecando pelo ZERO.
+	 * @param limite
+	 *            limite de registros a serem retornados.
+	 * @return uma lista de produtos novos cadastrados no sistema.
+	 * @throws RestException
+	 *             em caso de nao conseguir acessar a informacao.
+	 */
 	@Path("/produtoAtualizado")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -330,8 +351,11 @@ public class RestCliente extends ARest {
 	 * @throws ParametroException
 	 */
 	private void setValoresProduto(List<ProdProduto> produtos) throws CoreException {
+		FiltroObjeto fo = new FiltroObjeto("empEmpresa", ECompara.IGUAL, ecf.getEmpEmpresa());
 		FiltroTexto ft = new FiltroTexto("sisConfiguracaoChave", ECompara.IGUAL, "NFE.CRT");
-		SisConfiguracao config = (SisConfiguracao) service.selecionar(new SisConfiguracao(), ft, false);
+		GrupoFiltro gf = new GrupoFiltro(EJuncao.E, new IFiltro[] { fo, ft });
+		SisConfiguracao config = (SisConfiguracao) service.selecionar(new SisConfiguracao(), gf, false);
+		
 		for (ProdProduto produto : produtos) {
 			// seta o arrendondamento e fabricacao
 			produto.setProdProdutoIat('A');

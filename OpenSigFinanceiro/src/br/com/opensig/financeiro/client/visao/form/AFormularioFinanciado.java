@@ -169,7 +169,7 @@ public abstract class AFormularioFinanciado<E extends Dados> extends AFormulario
 			public void onSelect(ComboBox comboBox, Record record, int index) {
 				mostrarCheque();
 				if (record.getAsString("finFormaDescricao").equalsIgnoreCase(OpenSigCore.i18n.txtCheque())) {
-					txtDocumento.setMinLength(32);
+					txtDocumento.setMinLength(30);
 					txtDocumento.setMaxLength(32);
 				} else {
 					txtDocumento.setMinLength(1);
@@ -226,7 +226,7 @@ public abstract class AFormularioFinanciado<E extends Dados> extends AFormulario
 	protected void mostrarCheque() {
 		fsCheque.hide();
 		try {
-			if (cmbForma.getText().equalsIgnoreCase(OpenSigCore.i18n.txtCheque())) {
+			if (cmbForma.getRawValue().equalsIgnoreCase(OpenSigCore.i18n.txtCheque())) {
 				String cmc7 = txtDocumento.getValueAsString().replaceAll("\\D", "");
 
 				if (cmc7.length() == 30) {
